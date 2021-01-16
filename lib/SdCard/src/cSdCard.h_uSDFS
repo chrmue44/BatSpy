@@ -1,0 +1,132 @@
+#ifndef CSDCARD_H
+#define CSDCARD_H
+
+// using Teensy library uSDFS
+
+#include <wchar.h>
+#include "ff.h"
+#include <my_vector.h>
+
+#define FILENAME_LEN        80
+#define MAX_DIRENTRIES      30
+#define WRITE_BLOCK_SIZE  1024   ///< block size for file transfer from host to device
+
+struct stDirEntry {
+  char name[FILENAME_LEN];
+  size_t fSize;
+  bool isDir;
+};
+
+typedef my_vector<stDirEntry, MAX_DIRENTRIES+1> tDirInfo;
+
+class cSdCard {
+ public:
+   static cSdCard& inst();
+   cSdCard();
+
+   bool isFileTransferActive() { return m_fileTransferActive; }
+
+   FRESULT mount();
+   
+   FRESULT unmount();
+
+  /**
+   * get directory entries
+   * reads directory entries to output variable directory as long the capacity of the output variable allows
+   * To read big directories that exceed the capacity use parameter 'startIndex' to read the directory in 
+   * several pieces
+   *
+   * directory: vector to store diectory entries
+   * terminal: true: generate terminal output
+   * ext: file extension to filter directory entries (NULL = no filter)
+   * startIndex: index from which the directory entries are filled
+   */
+   FRESULT dir(tDirInfo*& directory , bool terminal = false, const char* ext = NULL, size_t startIndex = 0);
+   
+   FRESULT mkDir(const char* name);
+
+   FRESULT del(const char* name);
+
+   /**
+    * change directory:
+    * 1. "0:/...": absolute path
+    * 2. "..": one level up ("../.." not possible)
+    * 3. "name1/name2": relative path from actual dir
+    */
+   FRESULT chdir(const char* name);
+   
+   char* getActPath();
+   
+   char* getActDir() { return m_actDir; }
+
+  /**
+    * open a file
+    * mode flags: 
+    * FA_READ:  Specifies read access to the object. Data can be read from the file.
+    * FA_WRITE  Specifies write access to the object. Data can be written to the file. Combine with FA_READ for read-write access.
+    * FA_OPEN_EXISTING  Opens the file. The function fails if the file is not existing. (Default)
+    * FA_CREATE_NEW Creates a new file. The function fails with FR_EXIST if the file is existing.
+    * FA_CREATE_ALWAYS  Creates a new file. If the file is existing, it will be truncated and overwritten.
+    * FA_OPEN_ALWAYS  Opens the file if it is existing. If not, a new file will be created.
+    * FA_OPEN_APPEND  Same as FA_OPEN_ALWAYS except the read/write pointer is set end of the file.
+    *
+    **/
+   FRESULT openFile(const char* name, FIL& file, BYTE mode);
+   
+   FRESULT readFile(FIL& file, void* buf, UINT& bytesRead, UINT bytesToRead);
+
+   FRESULT readLine(FIL& file, void* buf, UINT bufSize, UINT& bytesRead);
+
+   FRESULT writeFile(FIL& file, const void* buf, UINT& bytesWritten, UINT bytesToWrite);
+
+   FRESULT closeFile(FIL& file);
+
+   UINT fileSize(FIL& file) { return f_size(&file); }
+
+   bool eof(FIL& file) { return (f_eof(&file) > 0); }
+  
+   FRESULT setFilePos(FIL& file, size_t pos) { return f_lseek(&file, pos); }
+
+   /*
+    * send file with given name to serial interface
+    * format length 9 digit decimal as ASCII followed by ':'
+    * then file content in binary format
+    */
+   FRESULT sendFileToTerminal(char* name);
+
+   /*
+    * read file with given name from serial interface
+    * format: length 9 digit decimal as ASCII followed by ':'
+    * then file content in binary format
+    */
+   FRESULT readFileFromTerminal(char* name);
+
+   /*
+    * rename a file or directory
+    */
+   FRESULT rename (const char* oldName, const char* newName);
+
+   /*
+    * get free memory in kByte
+    */
+   FRESULT getFreeMem(size_t& freeSpaceKb, size_t& totSpacekB);
+
+ protected:
+   /**
+    * transform path name to TCHAR
+    * if path starts with "0:", result is simply <name> transformed to TCHAR (absolute path)
+    * if path is relative, result is <actDir>/<name> transformed to TCHAR
+    */
+  void transformPathName(TCHAR* buf, UINT bufsize, const char* name);
+
+ private:  
+  FATFS m_fatfs;                     ///< File system object
+  DIR m_dir;                         ///< Directory object
+  FILINFO m_fno;                     ///< File information object
+  char m_actDir[FILENAME_LEN];       ///< actual directory (no trailing '/' if in sub dir)
+  tDirInfo m_dirInfo;                ///< content of actual directory
+  bool m_fileTransferActive = false; ///< indicates that a file transfer is running and serial line should not be used by others
+  static cSdCard* m_pthis;
+};
+
+#endif //#ifndef CSDCARD_H

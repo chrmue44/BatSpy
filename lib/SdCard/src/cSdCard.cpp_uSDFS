@@ -1,0 +1,362 @@
+#include "cSdCard.h"
+#include <Arduino.h>
+#define DEBUG_LEVEL 1
+#include "debug.h"
+
+cSdCard* cSdCard::m_pthis = NULL;
+
+cSdCard& cSdCard::inst() {
+  if (m_pthis == NULL)
+    m_pthis = new cSdCard();
+  return *m_pthis;
+}
+
+
+char * tchar2char( TCHAR * tcharString, int nn, char * charString)
+{   int ii;
+    for(ii = 0; ii<nn; ii++) 
+    { charString[ii] = (char)tcharString[ii];
+      if(!charString[ii]) 
+        break;
+    }
+    return charString;
+}
+
+
+TCHAR * char2tchar( const char * charString, int nn, TCHAR * tcharString) {
+  for(int i = 0; i < nn; i++) {
+    tcharString[i] = (TCHAR)charString[i];
+    if(!tcharString[i]) 
+      break;
+  }
+  return tcharString;
+}
+
+
+cSdCard::cSdCard() {
+  memset(&m_fatfs,0,sizeof(m_fatfs));
+  memset(m_actDir,0,sizeof(m_actDir));
+}
+
+
+FRESULT cSdCard::mount() {
+  FRESULT rc;
+  TCHAR tdir[FILENAME_LEN];
+  strcpy(m_actDir, "0:/");
+  char2tchar(m_actDir, sizeof(m_actDir), tdir);
+  Serial.println(m_actDir);
+  rc = f_mount(&m_fatfs, tdir, 1);      /* Mount/Unmount a logical drive */  
+  return rc;
+}
+
+
+FRESULT cSdCard::unmount() {
+  FRESULT rc;
+    TCHAR tdir[FILENAME_LEN];
+    char2tchar(m_actDir, sizeof(m_actDir), tdir);
+  rc = f_mount (NULL, tdir, 0);      /* Mount/Unmount a logical drive */    
+  return rc;
+}
+
+
+FRESULT cSdCard::dir(tDirInfo*& directory, bool terminal, const char* ext, size_t startIndex) {
+  FRESULT rc;
+  TCHAR tdir[FILENAME_LEN];
+  char2tchar(m_actDir, sizeof(m_actDir), tdir);
+  rc = f_opendir(&m_dir, tdir);
+  char text[FILENAME_LEN];
+ 
+  if (rc)
+    return rc;
+
+  if(terminal && (startIndex == 0))
+    Serial.printf("dir: %s\n", m_actDir);
+  m_dirInfo.clear();
+  stDirEntry d;
+  for(int i = 0; i < startIndex; i++) {    
+    rc = f_readdir(&m_dir, &m_fno);
+  }
+
+  for (int i = 0; i < MAX_DIRENTRIES; i++) {
+    DPRINTLN1("dir0");
+    rc = f_readdir(&m_dir, &m_fno);   // Read a directory item 
+    DPRINTLN1("dir1");
+    if (rc || !m_fno.fname[0]) {
+      if(terminal)
+        Serial.printf("dir end\n");
+      break; // Error or end of dir 
+    }
+    DPRINTLN1("dir2");
+    tchar2char(m_fno.fname,FILENAME_LEN, d.name);
+    DPRINTLN1("dir3");
+    if(ext != NULL) {
+      
+      char* p = strrchr (d.name, '.');
+      if(p == NULL)
+        continue;
+      p++;
+      if(strcmp(p, ext) != 0)
+        continue;
+    }
+
+    DPRINTLN1("dir3");
+    if (m_fno.fattrib & AM_DIR) {
+      d.isDir = true; 
+      d.fSize = 0;
+      Serial.printf("[ %s ]\n", d.name);
+    }
+    else {
+      d.isDir = false; 
+      d.fSize = m_fno.fsize;
+      Serial.printf("%s : %u\n", d.name, d.fSize);
+    }
+    m_dirInfo.push_back(d);      
+    DPRINTLN1("dir4");
+//    delay(3);
+//    delay(30);
+    DPRINTLN1("dir4.1");
+  } 
+  d.isDir = true; 
+  d.fSize = 0;
+  strcpy(d.name,"..");
+  DPRINTLN1("dir5");
+  m_dirInfo.push_back(d);      
+  rc = f_closedir(&m_dir);
+  DPRINTLN1("dir6");
+//  delay(10);
+  directory = &m_dirInfo; 
+  DPRINTLN1("dir7");
+  return rc;
+}
+
+
+FRESULT cSdCard::mkDir(const char* name) {
+  TCHAR buf[FILENAME_LEN];
+  transformPathName(buf, FILENAME_LEN, name);  
+  return f_mkdir (buf);  
+}
+
+
+FRESULT cSdCard::del(const char* name) {
+  FRESULT rc;
+  TCHAR buf[FILENAME_LEN];
+  transformPathName(buf, FILENAME_LEN, name);    
+  return f_unlink(buf);
+}
+
+FRESULT cSdCard::rename(const char* oldName, const char* newName) {
+  TCHAR buf_old[FILENAME_LEN];
+  TCHAR buf_new[FILENAME_LEN];
+  transformPathName(buf_old, FILENAME_LEN, oldName);    
+  transformPathName(buf_new, FILENAME_LEN, newName);
+  return f_rename(buf_old, buf_new);   
+}
+
+
+FRESULT cSdCard::chdir(const char* name) {
+  FRESULT rc;
+  char dir[FILENAME_LEN];
+  TCHAR tdir[FILENAME_LEN];
+  
+  strcpy(dir, m_actDir);
+  DPRINTLN1("chdir1");
+  
+  // one directory level up
+  if(strcmp(name, "..") == 0) {
+    DPRINTLN1("chdir1.1");
+    char* last = strrchr(dir, '/');
+    if((last - &dir[0]) == 2) 
+      dir[3] = 0;
+    else
+      *(last) = 0;
+  }
+  
+  // absolute path
+  else if((name[0] == '0') && (name[1] == ':')) {
+    DPRINTLN1("chdir1.2");
+    strcpy(dir, name);
+  }
+  
+  // relative path
+  else {
+    DPRINTLN1("chdir1.3");
+    int dirlen = strlen(dir);
+    if (dir[dirlen - 1] != '/')
+      strcat(dir,"/");
+    strcat(dir,name);
+  }
+  
+  DPRINTLN1("chdir2");
+  rc = f_opendir(&m_dir, char2tchar(dir, sizeof(dir), tdir));
+    DPRINTLN1("chdir3");
+  if (rc == 0) {
+    strcpy(m_actDir, dir);
+  }
+  return rc;
+}
+
+/* f_getcwd seems to be not implemented...
+char* cSdCard::getActPath() {
+  TCHAR buf[FILENAME_LEN];
+  FRESULT rc = f_getcwd(buf, sizeof(buf));
+  tchar2char(buf, sizeof(buf), m_actDir);
+  return m_actDir;
+}
+*/
+FRESULT cSdCard::openFile(const char* name, FIL& file, BYTE mode) {
+  TCHAR buf[FILENAME_LEN];
+  transformPathName(buf, FILENAME_LEN, name);
+  return f_open (&file, buf, mode);        
+}
+
+FRESULT cSdCard::readFile(FIL& file, void* buf, UINT& bytesRead, UINT bytesToRead) {
+  return f_read (&file, buf, bytesToRead, &bytesRead); 
+}
+
+
+FRESULT cSdCard::readLine(FIL& file, void* buf, UINT bufSize, UINT& bytesRead) {
+  char* pBuf = (char*)buf;
+  bytesRead = 0;
+  UINT count;
+  while (pBuf < ((char*)buf + bufSize)) {
+    FRESULT res = f_read(&file, pBuf, 1, &count);
+    if((count == 0 ) || (res != 0))
+      break;
+    bytesRead += count;
+    if(*pBuf == '\n')
+      break;
+    pBuf++;
+  }
+  if(*pBuf == '\n')
+    return 0;
+  else
+    return 22;
+}
+
+
+FRESULT cSdCard::writeFile(FIL& file, const void* buf, UINT& bytesWritten, UINT bytesToWrite) {
+  return f_write (&file, buf, bytesToWrite, &bytesWritten);
+}
+
+FRESULT cSdCard::closeFile(FIL& file) {
+  return f_close (&file); 
+}
+
+
+void cSdCard::transformPathName(TCHAR* buf, UINT bufsize, const char* name) {
+  char path[FILENAME_LEN];
+  if((name[0] == '0') && (name[1] == ':')) {
+    char2tchar(name, bufsize, buf);
+  }
+  else {
+    strcpy(path, m_actDir);
+    int len = strlen(path);
+    if (path[len - 1] != '/')
+      strcat(path,"/");
+    strcat(path, name);
+    char2tchar(path, bufsize, buf);
+  }
+}
+
+#define BUFLEN  64
+
+FRESULT cSdCard::sendFileToTerminal(char* name) {
+  FIL file;
+  char buf[BUFLEN + 2];
+  UINT bytesRead;
+  FRESULT rc = openFile(name, file, FA_READ);
+  if(rc == 0) {  
+    UINT size = fileSize(file);
+    Serial.printf("%09u:",size);
+    while(! eof(file)) {
+      rc = readFile(file, &buf, bytesRead, BUFLEN);
+      Serial.write(&buf[0],bytesRead);
+    }
+  }
+}
+
+
+FRESULT cSdCard::readFileFromTerminal(char* name) {
+  FIL file;
+  char buf[80];
+  uint32_t bytesLeft;
+  UINT bytesWritten;
+  FRESULT rc = FR_OK;
+  m_fileTransferActive = true;
+  uint32_t startTime = millis();
+  Serial.print("0"); //send reply to start file transfer
+
+  while(Serial.available() < 10) {
+    if((millis() - startTime) > 5000) {
+      Serial.print("timeout receiving file");
+      m_fileTransferActive = false;
+      return FR_INT_ERR;
+    }
+  }
+  for(int i = 0; i < 10; i++)
+    buf[i] = Serial.read();
+
+  if(buf[9] == ':') {
+    Serial.print("0");
+    rc = openFile(name, file, FA_WRITE | FA_CREATE_ALWAYS);
+    buf[9] = 0;
+    bytesLeft = atoi(buf);
+ 
+    while(bytesLeft > 0) {
+      startTime = millis();
+      uint32_t bytesToRead = WRITE_BLOCK_SIZE;
+      if(bytesLeft < bytesToRead)
+      bytesToRead = bytesLeft;
+      uint32_t written = 0;
+      while(bytesToRead > 0) {
+        while(Serial.available() < 1) {
+          if((millis() - startTime) > 5000) {
+            Serial.print("2 timeout receiving file");
+            m_fileTransferActive = false;
+            closeFile(file);
+            return FR_INT_ERR;
+          }
+        }          
+        buf[0] = Serial.read();
+        rc = writeFile(file, &buf, bytesWritten, 1);
+        written += bytesWritten;
+        bytesToRead--;
+        bytesLeft--;
+      }
+      Serial.printf("0 bytes written: %i", written);
+    }
+    rc = closeFile(file);
+  }
+  else {
+    rc = FR_INT_ERR;
+    Serial.print("1");
+  }
+  m_fileTransferActive = false;
+}
+
+FRESULT cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
+{
+  FATFS *fs;
+  DWORD fre_clust, fre_sect, tot_sect;
+
+  char cbuf[10];
+  TCHAR tbuf[10];
+  strcpy(cbuf,"0:");
+  transformPathName(tbuf, 10, cbuf);
+
+  /* Get volume information and free clusters of drive 1 */
+  FRESULT res = f_getfree(tbuf, &fre_clust, &fs);
+  if (res == 0) {
+    /* Get total sectors and free sectors */
+    tot_sect = (fs->n_fatent - 2) * fs->csize;
+    fre_sect = fre_clust * fs->csize;
+    freeSpaceKb = fre_sect / 2;
+    totSpaceKb = tot_sect / 2;
+    /* Print the free space (assuming 512 bytes/sector) */
+//    printf("%10lu KiB total drive space.\n%10lu KiB available.\n",
+//           tot_sect / 2, fre_sect / 2);
+  }
+  return res;
+}
+
+

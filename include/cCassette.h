@@ -1,0 +1,96 @@
+#ifndef CCASSETTE_H
+#define CCASSETTE_H
+
+#include "types.h"
+//#define WAV
+#ifndef SIMU_DISPLAY
+#include "Audio.h"
+#endif
+#include "cSdCard.h"
+#ifdef WAV
+#include "play_fats_wav.h"
+#else
+#include "play_fats_raw.h"
+#endif
+#include "ctimer.h"
+
+#define WAV_DATACHUNK_POS  36
+
+//#define MXFN 100 // maximal number of files
+#if defined(ARDUINO_TEENSY41)
+#define BUFFSIZE (8*1024) // size of buffer to be written
+#define BUFF 48
+#elif defined(__MK20DX256__)
+#define BUFFSIZE (8*1024) // size of buffer to be written
+#elif defined(__MK66FX1M0__)
+//#define BUFF 96
+#define BUFF 48
+#define BUFFSIZE (BUFF*1024) // size of buffer to be written
+#endif
+
+
+class cCassette {
+  public:
+    int startRec(float recTime);
+    int startRec(const char* name, float recTime);
+    int startRec();
+    int stop();
+    void startPlay();
+    int operate(enCassMode& mode);
+    void setFileName(const char* name) { strncpy(m_fileName, name, sizeof(m_fileName)); }
+    AudioRecordQueue& getRecorder() { return m_recorder; }
+#ifdef WAV
+    AudioPlayFatsWav& getPlayer() { return m_player; }
+#else
+    AudioPlayFatsRaw& getPlayer() { return m_player; }
+#endif
+    void setSamplingRate(uint32_t s);
+    
+    /**
+     * return the play time of the actual title [s] 
+     */
+    float getRunTime() { return m_player.getRunTime(); }
+
+    /**
+     *  returns the length of the actual title [s]
+     */
+    float getTitleTime() { return m_player.getTitleTime(); }
+
+  private:
+    void writeWavHeader();
+    void writeInfoFile();
+    void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
+    void finalizeWavFile();
+    enSdRes createRecordingDir();
+
+  private:
+    enCassMode m_mode = CAS_STOP;
+    AudioRecordQueue m_recorder;
+    bool m_isRecFileOpen = false;
+    bool m_isPlayFileOpen = false;
+    //FATFS m_fatfs;                 ///< File system object
+    tFILE m_fil;                     ///< File object
+
+    uint8_t m_buffern[BUFFSIZE] __attribute__( ( aligned ( 16 ) ) );
+//    uint8_t m_buffern2[BUFFSIZE] __attribute__( ( aligned ( 16 ) ) );    
+    uint32_t m_nj = 0;
+    size_t m_wr;
+    uint32_t m_sampleRate;
+    cTimer m_timer;
+    float m_recordingTime;
+    int m_year;
+    int m_month;
+    int m_day;
+    int m_hour;
+    int m_min;
+    int m_sec;
+
+#ifdef WAV
+    AudioPlayFatsWav m_player;
+#else
+    AudioPlayFatsRaw m_player;
+#endif
+    char m_fileName[80];
+};
+
+#endif  //#ifndef CCASSETTE_H

@@ -1,0 +1,42 @@
+#ifndef CWHEELS_H_
+#define CWHEELS_H_
+
+#include <Encoder.h>
+#include <MenueSystem.h>
+#include <Bounce.h>
+
+
+#define BUF_SIZE 20
+#define DEBOUNCE_TIME 100  //50
+#define SENSITIVITY   4  //4
+
+class cWheels {
+ public:
+  cWheels(int la, int lb, int btnL, int ra, int rb, int btnR);
+  void init();
+  tKey getKey();
+  void setDirection(bool ccw) { m_ccw = ccw; }
+   
+ protected:
+  void checkEncoders();
+  void increaseWrIdx();
+
+ private:
+  Encoder m_left;
+  int m_leftPos;
+  Bounce m_btnLeft;
+  Encoder m_right;
+  int m_rightPos;
+  Bounce m_btnRight;
+  bool m_ccw;
+
+  tKey m_keys[BUF_SIZE];
+  int m_wrIdx = 0;
+  int m_rdIdx = 0;
+  int m_diffl = 0;
+  int m_diffr = 0;
+};
+
+
+
+#endif  //#ifndef CWHEELS_H_

@@ -1,0 +1,136 @@
+#ifndef CMENUE_H
+#define CMENUE_H
+
+#include <MenueSystem.h>
+#include "types.h"
+#include "ctext.h"
+#ifndef SIMU_DISPLAY
+#include "cCassette.h"
+#include "cAudio.h"
+#include "cRtc.h"
+#endif
+
+#define FREQ_MIN   0
+#define FREQ_MAX   150
+#define MAX_ADC             0x7FFF
+#define DEC_TIM_MIN   5   ///< nr of decimals for left border of graph
+
+/**
+ * @brief operation modes of the bat detector
+ */
+
+/**
+ * @brief The stBatInfo struct
+ */
+struct stBatInfo {
+  stBatInfo() {}
+  cParEnum name = 0;
+  cParStr nameLat = "";
+  cParStr freq = "";
+  cParStr callLen = "";
+  cParStr callDist = "";
+  cParStr characteristic = "";
+  cParStr wingSpan = "";
+  cParStr weight = "";
+  cParStr size = "";
+  cParStr habitat = "";
+  cParStr comment = "";
+  cParStr occurrence = "";
+};
+
+
+/**
+ * @brief device status
+ */
+struct stStatus {
+  stStatus() : graph(GRAPH_XT), waterf(GRAPH_FFT) {}
+
+  cParEnum opMode = 0;            ///< display mode
+  cParNum recCount = 0;           ///< nr of recordings
+  cParGeoPos geoPos;              ///< actual geographic position
+  cParStr fPlayName = "";         ///< name of file to play
+  cParStr fRecName = "";          ///< name of actual recFile
+  cParEnum playStatus = 0;        ///< status Aufnahme/Abspielen
+  cParNum timMin = 0;             ///< left border of time-, waterfall-diagram
+  cParNum timMax = 2.5;           ///< right border of time-, waterfall-diagram
+  cParNum timStep = 0.5;          ///< time step for cursor in time-, waterfall-diagram
+  enCassMode cassMode = CAS_STOP; ///< mode of operation of cassette player
+  cParNum cpuAudioAvg = 0;        ///< average audio CPU usage
+  cParNum cpuAudioMax = 0;        ///< maximum audio CPU usage
+  cParNum audioMem = 0;           ///< audio memory usage
+  cParTime time;                  ///< actual time
+  cParDate date;                  ///< actual date
+  cParGraph graph;                ///< x-t-diagram
+  cParBtn* btnMeas;               ///< button to measure pulse width
+  cParNum pulseWidth = 0;         ///< measured pulse width
+  cParStr measUnit = "ms";
+  cParGraph waterf;               ///< waterfall diagram
+  int forceDisplay = 0;           ///< force display activity
+  cParNum amplMax = 100;          ///< max. amplitude for td display
+  cParNum amplMin = -100;         ///< min. amplitude for td display
+  stBatInfo bats;                 ///< struct to store bat informations
+  cParBtn* btnAudio;              ///< button to clear audio performance measurement
+  tDirInfo* pDir;                 ///< content of current dir
+  size_t fileIndex;               ///< index of file in dir
+  size_t startIndex;              ///< start index of directory
+  cParBtn* btnSetTime;
+  cParNum year = 2020;
+  cParNum month = 5;
+  cParNum day = 22;
+  cParNum hour = 22;
+  cParNum minute = 0;
+};
+
+
+/**
+ * @brief device parameters
+ */
+struct stParams {
+  cParNum volume =   6;           ///< volume setting
+  cParNum mixFreq = 40;           ///< mixer frequency
+  cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
+  cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
+  cParNum recTime = 3;            ///< recording time
+  cParEnum sampleRate = SR_352K;  ///< sample rate
+  cParEnum lang   = LANG_GER;     ///< display language
+  cParList dirSel = 0;            ///< select directory
+  cParList fileSel = 0;           ///< select file
+  cParStr dir = "";               ///< actual directory on SD card
+  cParStr fileName = "";          ///< actual file name
+  cParNum threshHold = 10;        ///< threshhold level graph, waterfall
+  cParNum fftLevelMin = 3500;     ///< low (threshhold) level for FFT display
+  cParNum fftLevelMax = 70000;    ///< high level for FFT display
+  cParNum recThreshhold = -18;    ///< auto recording threshhold
+  cParNum deafTime = 0;           ///< timeout after one recording
+  cParNum backLightTime = 120;    ///< time for backlight
+  cParEnum preAmpGain = GAIN_MED; ///< gain of pre amplifier
+  cParEnum preAmpType = PRE_AMP_HIGH_PASS;  ///< type of pre amplifier
+  cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
+  cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
+};
+
+
+
+extern stStatus devStatus;        ///< status of the device
+extern stParams devPars;          ///< parameters of the device
+
+class cMenue : public cMenuesystem  {
+public:
+  cMenue(int width, int height, ILI9341_t3* pDisplay);
+  virtual ~cMenue();
+  virtual void initDialogs();
+  virtual void save();
+  virtual void load();
+  void printPars();
+  void printStatus();
+
+protected:
+  virtual void initPars();
+
+private:
+  void initBats();
+  bool checkCRC();
+  void loadLanguage();
+};
+
+#endif // CMENUE_H
