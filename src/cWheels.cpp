@@ -1,5 +1,5 @@
 #include "cWheels.h"
-#define DEBUG_LEVEL  1
+//#define DEBUG_LEVEL  1
 #include "debug.h"
 
 cWheels::cWheels(int la, int lb, int btnL, int ra, int rb, int btnR) :
