@@ -6,6 +6,13 @@
 // Teensy version
 //#define TEENSY36
 
+// *****   Audio definitions *****
+#define AUDIO_IN_I2S
+//#define AUDIO_OUT_I2S
+//#define AUDIO_SGTL5000
+
+//#define AUDIO_IN_SPI
+#define AUDIO_OUT_TEENSY
 
 // *****   pin definitions *****
 //control pre amplifier

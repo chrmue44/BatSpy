@@ -5,6 +5,7 @@
 #include "cCassette.h"
 #include "ctimer.h"
 #include "types.h"
+#include "config.h"
 
 class cMenue;
 
@@ -21,9 +22,10 @@ class cMenue;
 // audio settings that cause a change in the settings (and a therefor a longer pause of a few 100 ms)
 struct stAudioSettings
 {
-  enSampleRate sampleRate = SR_44K;
+  uint32_t sampleRate = SR_44K;
   float oscFrequency = 0.0;
-  enOpMode opMode;  
+  enOpMode opMode;
+  float volume = 1.0;
 };
   
 // sampl rate description
@@ -44,8 +46,14 @@ struct stSrDesc
 class cAudio
 {
  private:
+#ifdef AUDIO_IN_I2S
   AudioInputI2S            m_audioIn;   // audio shield: mic or line-in
+#endif
+#ifdef AUDIO_OUT_I2S
   AudioOutputI2S           m_audioOut;  // audio shield: headphones & line-out
+#elif defined (AUDIO_OUT_TEENSY) && defined(ARDUINO_TEENSY41)
+  AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
+#endif
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
   AudioEffectMultiply      m_mult1;     // multiplier for heterodyne
   AudioMixer4              m_mixer;     // selector for input: player or mic
@@ -63,12 +71,14 @@ class cAudio
   AudioConnection m_cMi2Ol; // mixer to audio output left
   AudioConnection m_cMi2Or; // mixer to audio output right
   AudioConnection m_cMi2Ca; // microphone to recorder
-  
+
+#ifdef AUDIO_SGTL5000  
   AudioControlSGTL5000 m_audioShield;
+#endif
 
   int m_input;
-  int m_sampleRate;                 // sample rate in Hz  
-  int m_oscFreq = 45000;            // start heterodyne detecting at this frequency
+  uint32_t m_sampleRate;                 // sample rate in Hz  
+  uint32_t m_oscFreq = 45000;            // start heterodyne detecting at this frequency
   float m_freq_oscillator = 50000;  // oscillator frequency calculated for m_sine (depending on SR)
   stAudioSettings m_old;            // old settings
   float m_recThresh;                // recording thresh hold
@@ -78,7 +88,7 @@ class cAudio
  public:
   cAudio();
   void init();
-  void volume(float vol) { m_audioShield.volume(vol); }
+  void volume(float vol);
   void setSampleRate(enSampleRate sr);
   void setPreAmpType(enPreAmp type);
   void setPreAmpGain(enGain gain);

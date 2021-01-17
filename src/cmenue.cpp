@@ -178,7 +178,7 @@ void dirFunc(cMenuesystem* pThis, tKey key) {
       tDirInfo* p;
       rc = sd.dir(p);
       devPars.dirSel.clear();
-      if (p) {
+      if (p && (rc == OK)) {
         tDirInfo& dir = *p;
         for (size_t i = 0; i < dir.size(); i++) {
           if (dir[i].isDir) {

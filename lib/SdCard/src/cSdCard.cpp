@@ -1,7 +1,7 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <SPI.h>
-#define DEBUG_LEVEL 1
+//#define DEBUG_LEVEL 1
 #include "debug.h"
 /*
 #ifdef CARDLIB_SDFAT
@@ -470,7 +470,12 @@ char* cSdCard::getActPath() {
 */
 enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
   enSdRes retVal = OK;
-  DPRINTF1("openFile( %s, tFILE, mode)\n", name);
+#ifdef DEBUG_LEVEL
+  if (mode == READ)
+    DPRINTF1("openFile( %s, tFILE, READ)\n", name);
+  if (mode == WRITE)
+    DPRINTF1("openFile( %s, tFILE, WRITE)\n", name);
+#endif
 #if defined(CARDLIB_SD)
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);
@@ -490,6 +495,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
 #elif defined (CARDLIB_SDFAT)
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);
+  DPRINTF1("full path: %s\n", buf);
   bool ok;
   if (mode == READ)
     ok = file.open(buf, O_RDONLY);
@@ -576,6 +582,7 @@ enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, s
 
 enSdRes cSdCard::closeFile(tFILE& file) {
   enSdRes retVal = OK;  
+  DPRINTLN1("closeFile(tFILE)\n");
 
   #if defined(CARDLIB_SD)
   file.close();
@@ -583,15 +590,19 @@ enSdRes cSdCard::closeFile(tFILE& file) {
   #elif defined(CARDLIB_USDFS)
   FRESULT rc = f_close (&file); 
   retVal = rc == FR_OK ? OK : CLOSE_ERR;
-  #endif
 
+  #elif defined(CARDLIB_SDFAT)
+  bool ok = file.close();
+  retVal = ok ? OK : CLOSE_ERR;
+  #endif
+  DPRINTF1("returned %i\n", (int)retVal);
   return retVal; 
 }
 
 #if defined(CARDLIB_SD) || defined(CARDLIB_SDFAT)
 void cSdCard::transformPathName(char* buf, size_t bufsize, const char* name) {
   char path[PATH_LEN];
-  if((name[0] == '0') && (name[1] == ':')) {
+  if(name[0] == '/') {
     strncpy(buf, name, bufsize);
   }
   else {

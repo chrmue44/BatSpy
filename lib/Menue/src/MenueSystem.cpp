@@ -679,7 +679,7 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
 
   cParList* pL = NULL;
   cParEnum* pE = NULL;
-  size_t s;
+  size_t s = 0;
 
   if(item.type == ITEM_ENUM)
   {

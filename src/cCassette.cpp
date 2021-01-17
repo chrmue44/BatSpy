@@ -4,6 +4,8 @@
 #include "cutils.h"
 #include <cstring>
 #include "cRtc.h"
+#define DEBUG_LEVEL 1
+#include "debug.h"
 
 #ifndef ARDUINO_TEENSY41
 extern "C" uint32_t usd_getError(void);
@@ -134,6 +136,7 @@ int cCassette::operate(enCassMode& mode) {
   else if(m_mode == CAS_PLAY) {
     if (!m_player.isPlaying()) {
       m_player.stop();
+      DPRINTLN1("File is over");
       m_mode = CAS_STOP;
     }
   } 
@@ -164,11 +167,11 @@ int cCassette::stop() {
       return 1;
     //
     m_isRecFileOpen = false;
-//    Serial.println (" Recording stopped!");
+    DPRINTLN1(" Recording stopped!");
   }
   
   else if(m_mode == CAS_PLAY) {
-//    Serial.print("stopPlaying");
+    DPRINTLN1("stopPlaying");
     m_player.stop();
   }
   m_mode = CAS_STOP;
@@ -177,8 +180,8 @@ int cCassette::stop() {
 
 
 void cCassette::startPlay() {
-//  Serial.println ("startPlaying ");
-//  Serial.print ("Playfile: "); Serial.println (m_fileName);
+  DPRINTLN1("startPlaying ");
+  DPRINTF1("Playfile: %s\n", m_fileName);
   delay(100);
   m_player.play(m_fileName);
   m_mode = CAS_PLAY;
