@@ -56,7 +56,7 @@ class cParGraph : public cParBase {
   void setPlotBorders(float tMin, float tMax) { m_tMin = tMin; m_tMax = tMax; }
   void setX(int16_t x) { m_x = x; }
   void setSize(uint16_t w, uint16_t h) { m_width = w; m_height = h; }
-  long getRemBytes() { return m_fileSize - m_filePos; }
+  size_t getRemBytes() { return m_fileSize - m_filePos; }
   void advanceFilePos(size_t bytes) { m_filePos += bytes; }
   bool getInitPlot() { return m_initPlot; }
   void setPlotFile(const char* pName, uint32_t sampleRate) {
@@ -87,7 +87,7 @@ class cParGraph : public cParBase {
   void createFftPlot(float samplesPerPixelf, size_t samplesPerPixel);
   void sety(size_t i, uint16_t x);
   void sety(size_t i, int16_t min, int16_t max);
-  void plotAsBand(long samplesPerPixel, int16_t xMax);
+  void plotAsBand(size_t samplesPerPixel, int16_t xMax);
   void plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot);
   void plotCursor(uint16_t x);
   int initFile();
@@ -112,9 +112,9 @@ class cParGraph : public cParBase {
   uint16_t m_x;
   uint16_t m_width;
   uint16_t m_height;
-  long m_filePos = 0;      ///< start position in file
-  long m_fileSize = 0;     ///< size of the opened file
-  int16_t m_actPixel = 0;  ///< x pos. of currently plotted pixel};
+  size_t m_filePos = 0;      ///< start position in file
+  size_t m_fileSize = 0;     ///< size of the opened file
+  uint16_t m_actPixel = 0;   ///< x pos. of currently plotted pixel};
   uData m_dat;
   enGraphMode m_mode;
 

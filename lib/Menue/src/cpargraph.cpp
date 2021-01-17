@@ -175,7 +175,7 @@ void cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) 
   m_actPixel = m_width;
 }
 
-void cParGraph::plotAsBand(long samplesPerPixel, int16_t xMax) {
+void cParGraph::plotAsBand(size_t samplesPerPixel, int16_t xMax) {
   int16_t scratch[256];
   size_t bytesRead;
   cSdCard& sd = cSdCard::inst();
@@ -383,7 +383,7 @@ void cParGraph::drawColorMap() {
 }
 
 void cParGraph::createFftPlot(float samplesPerPixelF, size_t samplesPerPixel) {
-    int16_t pixelToPlot;
+    uint16_t pixelToPlot;
     if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
       pixelToPlot =m_width - SCALE_WIDTH;
     else if (((m_tMax - m_tMin) * m_sampleRate) < 50000)
@@ -395,7 +395,7 @@ void cParGraph::createFftPlot(float samplesPerPixelF, size_t samplesPerPixel) {
 
     int16_t scratch[FFT_SIZE];
     cSdCard sd = cSdCard::inst();
-    long totBytes2read;
+    size_t totBytes2read;
     int16_t* pStart;
     float max = 0;
     for(int x = m_actPixel; x < xMax; x++) {
@@ -406,7 +406,7 @@ void cParGraph::createFftPlot(float samplesPerPixelF, size_t samplesPerPixel) {
       }
       else {
         totBytes2read = samplesPerPixel * 2;
-        for(int a = 0; a < FFT_SIZE - samplesPerPixel; a++)
+        for(size_t a = 0; a < FFT_SIZE - samplesPerPixel; a++)
           scratch[a] = scratch[a + samplesPerPixel];
         pStart = &scratch[FFT_SIZE - samplesPerPixel];
       }

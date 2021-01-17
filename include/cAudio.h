@@ -22,7 +22,8 @@ class cMenue;
 // audio settings that cause a change in the settings (and a therefor a longer pause of a few 100 ms)
 struct stAudioSettings
 {
-  uint32_t sampleRate = SR_44K;
+  uint32_t sampleRate = 352000;        //< current sampling rate [Hz]
+  enSampleRate parSampleR = SR_352K;   //< selected sample rate (enumerator)
   float oscFrequency = 0.0;
   enOpMode opMode;
   float volume = 1.0;

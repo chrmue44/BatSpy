@@ -165,7 +165,12 @@ bool cAudio::isSetupNeeded()
   bool retVal = false;
   if (m_old.sampleRate != m_sampleRate)
   {
-    DPRINTF2("new sample rate %i, old %i\n", devPars.sampleRate.get(), m_old.sampleRate);
+    DPRINTF2("new sample rate %i, old %i\n", m_sampleRate, m_old.sampleRate);
+    retVal = true;
+  }
+  if (m_old.parSampleR != devPars.sampleRate.get())
+  {
+    DPRINTF2("new sample rate %i, old %i\n", devPars.sampleRate.get(), m_old.parSampleR);
     retVal = true;
   }
   if (m_old.oscFrequency != devPars.mixFreq.get())
