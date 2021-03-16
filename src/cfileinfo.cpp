@@ -62,7 +62,7 @@ int cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
   strcpy(buf,"<");
 strcat(buf,tag);
   strcat(buf,">");
-  snprintf(valbuf,sizeof(valbuf),"%i %s", val, unit); 
+  snprintf(valbuf,sizeof(valbuf),"%li %s", val, unit); 
   strcat(buf,valbuf);
   strcat(buf,"</");
   strcat(buf,tag);

@@ -1,7 +1,8 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <SPI.h>
-//#define DEBUG_LEVEL 1
+#define DEBUG_LEVEL 1
+
 #include "debug.h"
 /*
 #ifdef CARDLIB_SDFAT
@@ -509,7 +510,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
 
 enSdRes cSdCard::readFile(tFILE& file, void* buf, size_t& bytesRead, size_t bytesToRead) {
   enSdRes retVal = OK;
-  DPRINTF1("readFile(tFILE, mode, buf, bytesRead, %i)\n", bytesToRead);
+  DPRINTF1("readFile(tFILE, buf, bytesRead, %i)\n", bytesToRead);
 #if defined(CARDLIB_SD)
   int rc = file.read(buf, bytesToRead);
   if(rc < 0)
@@ -656,7 +657,7 @@ enSdRes cSdCard::readFileFromTerminal(char* name) {
   tFILE file;
   char buf[80];
   size_t bytesLeft;
-  size_t bytesWritten;
+  size_t bytesWritten = 0;
   enSdRes rc = OK;
   m_fileTransferActive = true;
   uint32_t startTime = millis();

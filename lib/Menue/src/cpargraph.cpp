@@ -69,7 +69,6 @@ void cParGraph::plotGraph() {
     cSdCard& sd = cSdCard::inst();
     int result;
     float samplesPerPixelf = (float)((m_tMax - m_tMin) * m_sampleRate) / m_width;
-    size_t samplesPerPixel = samplesPerPixelf;
     bool plot = false;
 
     switch (m_plotState) {
@@ -100,10 +99,10 @@ void cParGraph::plotGraph() {
       switch(m_mode) {
         default:
         case GRAPH_XT:
-          createXtPlot(samplesPerPixelf, samplesPerPixel);
+          createXtPlot(samplesPerPixelf);
           break;
         case GRAPH_FFT:
-          createFftPlot(samplesPerPixelf, samplesPerPixel);
+          createFftPlot(samplesPerPixelf);
           break;
 
       }
@@ -116,8 +115,9 @@ void cParGraph::plotGraph() {
     }
 }
 
-void cParGraph::createXtPlot(float samplesPerPixelf, size_t samplesPerPixel) {
+void cParGraph::createXtPlot(float samplesPerPixelf) {
   int16_t pixelToPlot;
+  size_t samplesPerPixel = samplesPerPixelf;
   if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
     pixelToPlot =m_width;
   else if (((m_tMax - m_tMin) * m_sampleRate) < 50000)
@@ -213,8 +213,8 @@ void cParGraph::initDiagram() {
       drawGrid();
       break;
     case GRAPH_FFT:
-      drawYscale();
-      drawColorMap();
+      drawYscale();   
+      drawColorMap();  
       break;
   }
 }
@@ -259,23 +259,22 @@ void cParGraph::initPlot(bool b) {
 }
 
 
-
-
 int cParGraph::initFile() {
   cSdCard& sd = cSdCard::inst();
   int retVal = 1;
   enSdRes result = sd.openFile(m_plotFileName, m_file, READ);
-  if(result == 0) {
+  if(result == OK) {
     m_filePos = m_sampleRate * m_tMin * 2;
     m_filePos >>= 1;
     m_filePos <<= 1;
     m_fileSize = sd.fileSize(m_file);
-    sd.setFilePos(m_file, m_filePos);
-    retVal = 0;
+    result = sd.setFilePos(m_file, m_filePos);
+    if(result == OK)
+      retVal = 0;
   }
+  Serial.printf("opened file: %s, pos: %lu, result: %i\n",m_plotFileName, m_filePos, retVal);  //@@@
   return retVal;
 }
-
 
 
 float cParGraph::measure(int16_t levelRaw) {
@@ -382,68 +381,76 @@ void cParGraph::drawColorMap() {
   }
 }
 
-void cParGraph::createFftPlot(float samplesPerPixelF, size_t samplesPerPixel) {
-    uint16_t pixelToPlot;
-    if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
-      pixelToPlot =m_width - SCALE_WIDTH;
-    else if (((m_tMax - m_tMin) * m_sampleRate) < 50000)
-      pixelToPlot = (m_width - SCALE_WIDTH)/ 2;
-    else
-      pixelToPlot = GRAPH_PIXEL_PER_TICK;
-    size_t fftWidth = m_width - SCALE_WIDTH;
-    int16_t xMax = (m_actPixel + pixelToPlot) < fftWidth ? m_actPixel + pixelToPlot :m_width;
+void cParGraph::createFftPlot(float samplesPerPixelF) {
+  uint16_t pixelToPlot;
+  size_t samplesPerPixel = samplesPerPixelF;
+  if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
+    pixelToPlot =m_width - SCALE_WIDTH;
+  else if (((m_tMax - m_tMin) * m_sampleRate) < 50000)
+    pixelToPlot = (m_width - SCALE_WIDTH)/ 2;
+  else
+    pixelToPlot = GRAPH_PIXEL_PER_TICK;
+  size_t fftWidth = m_width - SCALE_WIDTH;
+  size_t xMax = (m_actPixel + pixelToPlot) < fftWidth ? m_actPixel + pixelToPlot :m_width;
 
-    int16_t scratch[FFT_SIZE];
-    cSdCard sd = cSdCard::inst();
-    size_t totBytes2read;
-    int16_t* pStart;
-    float max = 0;
-    for(int x = m_actPixel; x < xMax; x++) {
-      if ((samplesPerPixel >= fftWidth) || m_dat.f.firstFft){
-        totBytes2read = getRemBytes() < sizeof(scratch) ? getRemBytes() : sizeof(scratch);
-        pStart = &scratch[0];
-        m_dat.f.firstFft = false;
-      }
-      else {
-        totBytes2read = samplesPerPixel * 2;
-        for(size_t a = 0; a < FFT_SIZE - samplesPerPixel; a++)
-          scratch[a] = scratch[a + samplesPerPixel];
-        pStart = &scratch[FFT_SIZE - samplesPerPixel];
-      }
+  Serial.printf("fft plot: s/pix: %f, sRate: %i, pixToPlot: %i\n", samplesPerPixelF, m_sampleRate, pixelToPlot); //@@@
 
-      size_t bytes2read = (size_t)totBytes2read;
-      size_t bytesRead;
-      enSdRes result = sd.readFile(m_file, pStart, bytesRead, bytes2read);
-      if (result != OK)
-        break;
-      advanceFilePos(bytesRead);
+  int16_t scratch[FFT_SIZE];
+  cSdCard sd = cSdCard::inst();
+  size_t totBytes2read;
+  int16_t* pStart;
+  float max = 0;
+  for(size_t x = m_actPixel; x < xMax; x++) {
+    Serial.printf("start copy to scratch, x: %lu\n", x);  //@@@
+    /*if ((samplesPerPixel >= fftWidth) || m_dat.f.firstFft){
+      totBytes2read = getRemBytes() < sizeof(scratch) ? getRemBytes() : sizeof(scratch);
+      pStart = &scratch[0];
+      m_dat.f.firstFft = false;
+    }
+    else {
+      totBytes2read = samplesPerPixel * 2;
+      for(size_t a = 0; a < FFT_SIZE - samplesPerPixel; a++)
+        scratch[a] = scratch[a + samplesPerPixel];
+      pStart = &scratch[FFT_SIZE - samplesPerPixel];
+    }
+    Serial.printf("start read\n");  //@@@
+    size_t bytes2read = (size_t)totBytes2read; */
+    pStart = &scratch[0];
+    size_t bytes2read = FFT_SIZE * 2;
+    size_t bytesRead = 0;
+    Serial.printf("available: %lu\n", sd.available(m_file));  //@@@
+  //  enSdRes result = sd.readFile(m_file, pStart, bytesRead, bytes2read);
+  //  if (result != OK)
+  //    break;
+    Serial.printf("advance\n");
+    advanceFilePos(bytesRead);
 
-      float v[FFT_SIZE/2];
+    float v[FFT_SIZE/2];
 
 
-      for(int j = 0; j < FFT_SIZE; j++)
-        m_dat.f.fft.setInput(j, scratch[j]);
-       
-      m_dat.f.fft.process();
+    for(int j = 0; j < FFT_SIZE; j++)
+      m_dat.f.fft.setInput(j, scratch[j]);
+    Serial.printf("process start\n");
+    m_dat.f.fft.process();
+    Serial.printf("process done\n");
 
-      for(int j = 0; j < FFT_SIZE/2; j++) {
-        v[j] = m_dat.f.fft.getOutput(j);
-          if (max < v[j])
-            max = v[j];
-      }
-
-      for(int j = 0; j < FFT_SIZE/2; j++) {
-        uint16_t col = getColor(v[j], m_dat.f.levelMin, m_dat.f.levelMax);
-        gpDisplay->drawPixel(x + m_x + SCALE_WIDTH, m_y0 + m_height/2 - j, col);
-      } 
-
-      if (samplesPerPixel > fftWidth) {
-        advanceFilePos(((samplesPerPixel*2 - bytesRead) >> 1) << 1);
-        sd.setFilePos(m_file, m_filePos);
-      }
-
+    for(int j = 0; j < FFT_SIZE/2; j++) {
+      v[j] = m_dat.f.fft.getOutput(j);
+        if (max < v[j])
+          max = v[j];
     }
 
-    m_actPixel = xMax;
-    update(true);
+    for(int j = 0; j < FFT_SIZE/2; j++) {
+      uint16_t col = getColor(v[j], m_dat.f.levelMin, m_dat.f.levelMax);
+      gpDisplay->drawPixel(x + m_x + SCALE_WIDTH, m_y0 + m_height/2 - j, col);
+    } 
+
+    if (samplesPerPixel > fftWidth) {
+      advanceFilePos(((samplesPerPixel*2 - bytesRead) >> 1) << 1);
+      sd.setFilePos(m_file, m_filePos);
+    }
+  }
+ 
+  m_actPixel = xMax;
+  update(true);
 }

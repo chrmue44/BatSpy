@@ -176,6 +176,7 @@ void dirFunc(cMenuesystem* pThis, tKey key) {
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
       tDirInfo* p;
+      Serial.println("dirFunc"); //@@@
       rc = sd.dir(p);
       devPars.dirSel.clear();
       if (p && (rc == OK)) {
@@ -218,6 +219,8 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
       tDirInfo* p;
+      Serial.println("fileFunc"); //@@@
+
       rc = sd.dir(p);
       devPars.fileSel.clear();
       if (rc == 0) {
@@ -321,14 +324,13 @@ void f1DropFunc(cMenuesystem* pThis, tKey key) {
       pThis->setFkeyPanel(fkeyMainPan);
       break;
     case 1:
-      cSdCard::inst().dir(devStatus.pDir);
       devStatus.graph.initPlot(true);
       pThis->setMainPanel(panTime);
       pThis->setHdrPanel(hdrPanWaterfall);;
       pThis->setFkeyPanel(fkeyWaterPan);
       break;
     case 2:
-      cSdCard::inst().dir(devStatus.pDir);
+      devStatus.waterf.initPlot(true);
       pThis->setMainPanel(panWaterfall);
       pThis->setHdrPanel(hdrPanWaterfall);
       pThis->setFkeyPanel(fkeyWaterPan);
@@ -670,7 +672,7 @@ void cMenue::initDialogs() {
   err |= getPan(panWaterfall)->addTextItem(305,              182, 213,           35, lf, false);
   err |= getPan(panWaterfall)->addNumItem(&devStatus.timMax, 255, 213,           53, lf, false);
   err |= getPan(panWaterfall)->addTextItem(301,              310, 213,           25, lf, false);
-  err |= getPan(panWaterfall)->addGraphItem(&devStatus.waterf,40,  25,          261, 128);
+  err |= getPan(panWaterfall)->addGraphItem(&devStatus.waterf,40,  25,          261, 128, graphFunc);
 
   // x-t-diagram panel
   panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);

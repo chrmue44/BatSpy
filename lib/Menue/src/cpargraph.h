@@ -4,8 +4,8 @@
 #ifdef SIMU_DISPLAY
 #include "simulation/crfft.h"
 #else
-#include "crfft.h"
-//#include "crfft_o2.h"
+//#include "crfft.h"
+#include "crfft_o2.h"
 #endif
 
 #include "menuedefs.h"
@@ -14,7 +14,6 @@
 #define SCALE_WIDTH   5
 #define COLMAP_DIST   3    ///< distance FFT to color map in pixel
 #define COLMAP_HEGHT  15
-#define FFT_SIZE      256
 
 struct stTime {
   int16_t yMin[DISP_WIDTH];
@@ -25,7 +24,7 @@ struct stTime {
 };
 
 struct stFft {
-  cRfft<FFT_SIZE> fft;
+  cRfft fft;
   float levelMin;
   float levelMax;
   bool firstFft;
@@ -83,8 +82,8 @@ class cParGraph : public cParBase {
    */
   void drawGrid();
   void drawYscale();
-  void createXtPlot(float samplesPerPixelf, size_t samplesPerPixel);
-  void createFftPlot(float samplesPerPixelf, size_t samplesPerPixel);
+  void createXtPlot(float samplesPerPixelf);
+  void createFftPlot(float samplesPerPixelf);
   void sety(size_t i, uint16_t x);
   void sety(size_t i, int16_t min, int16_t max);
   void plotAsBand(size_t samplesPerPixel, int16_t xMax);
@@ -117,7 +116,6 @@ class cParGraph : public cParBase {
   uint16_t m_actPixel = 0;   ///< x pos. of currently plotted pixel};
   uData m_dat;
   enGraphMode m_mode;
-
 };
 
 #endif // CPARGRAPH_H

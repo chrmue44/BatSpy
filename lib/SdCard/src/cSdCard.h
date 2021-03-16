@@ -142,6 +142,7 @@ class cSdCard {
 
    size_t fileSize(tFILE& file) { return file.fileSize(); }
 
+   size_t available(tFILE& f)  { return f.available32();}
    bool eof(tFILE& f) { return f.available32() == 0;}
   
    /* 

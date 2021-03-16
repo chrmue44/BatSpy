@@ -1,6 +1,8 @@
 #ifndef _CRFFT_H_
 #define _CRFFT_H_
 
+#define FFT_SIZE    256
+
 // https://www.cs.indiana.edu/~bhimebau/CMSIS/Documentation/DSP/html/group___c_f_f_t___c_i_f_f_t.html#ga521f670cd9c571bc61aff9bec89f4c26
 
 #include <Arduino.h>
@@ -12,10 +14,12 @@
 extern "C" {
 extern const int16_t AudioWindowHanning256[];
 }
+
+
 /**
- * calculate FFT and IFFT (Supported FFT Lengths are 16, 64, 256, 1024) 
+ * calculate FFT and IFFT  
  */
-template  <size_t NN> class cRfft {
+class cRfft {
  public:
   cRfft() :
     m_window(AudioWindowHanning256),
@@ -28,8 +32,8 @@ template  <size_t NN> class cRfft {
   /**
    * set a single value in the input buffer
    */
-//  float setInput(uint32_t i, int16_t v) { m_input[i * 2] = v; m_input[i*2+1] = 0; }
-  void setInput(uint32_t i, int16_t v) { m_input[i] = v; }
+  void setInput(uint32_t i, int16_t v) { m_input[i * 2] = v; m_input[i*2+1] = 0; }
+  
   int16_t* getInputBuf() { return m_input; }
 
   /**
@@ -40,7 +44,7 @@ template  <size_t NN> class cRfft {
   /**
    * get frequency at specified index
    */
-  float getFrequency(size_t i) { return (float)i/ NN * m_sampleRate; }
+  float getFrequency(size_t i) { return (float)i/ FFT_SIZE * m_sampleRate; }
 
   /**
    * set sampling rate (for frequency calculation)
@@ -51,7 +55,7 @@ template  <size_t NN> class cRfft {
     int16_t *buf = (int16_t *)buffer;
     const int16_t *win = (int16_t *)window;;
 
-    for (int i=0; i < NN; i++) {
+    for (uint32_t i=0; i < FFT_SIZE; i++) {
       int32_t val = *buf * *win++;
       //*buf = signed_saturate_rshift(val, 16, 15);
       *buf = val >> 15;
@@ -70,13 +74,13 @@ template  <size_t NN> class cRfft {
 	// G. Heinzel's paper says we're supposed to average the magnitude
 	// squared, then do the square root at the end.
       if (m_count == 0) {
-        for (int i=0; i < NN/2; i++) {
+        for (uint32_t i=0; i < FFT_SIZE/2; i++) {
           uint32_t tmp = *((uint32_t *)m_input + i);
           uint32_t magsq = multiply_16tx16t_add_16bx16b(tmp, tmp);
           m_sum[i] = magsq / m_naverage;
         }
       } else {
-        for (int i=0; i < NN/2; i++) {
+        for (uint32_t i=0; i < FFT_SIZE/2; i++) {
           uint32_t tmp = *((uint32_t *)m_input + i);
           uint32_t magsq = multiply_16tx16t_add_16bx16b(tmp, tmp);
           m_sum[i] += magsq / m_naverage;
@@ -84,7 +88,7 @@ template  <size_t NN> class cRfft {
       }
       if (++m_count == m_naverage) {
         m_count = 0;
-        for (int i=0; i < NN/2; i++) {
+        for (uint32_t i=0; i < FFT_SIZE/2; i++) {
           m_output[i] = sqrt_uint32_approx(m_sum[i]);
         }
         m_outputflag = true;
@@ -98,15 +102,14 @@ template  <size_t NN> class cRfft {
 	const int16_t* m_window;
 	arm_cfft_radix4_instance_q15 m_fft_inst;
   arm_status m_status;
-  int16_t m_input[2*NN] __attribute__ ((aligned (4)));;
-  int16_t m_output[NN/2] __attribute__ ((aligned (4)));
-	uint32_t m_sum[NN/2];
+  int16_t m_input[2*FFT_SIZE] __attribute__ ((aligned (4)));;
+  int16_t m_output[FFT_SIZE/2] __attribute__ ((aligned (4)));
+	uint32_t m_sum[FFT_SIZE/2] __attribute__ ((aligned (4)));
 	uint8_t m_naverage;
   float m_maxValue;
   uint32_t m_maxIndex;
   float m_sampleRate;
 	uint8_t m_count;
 	volatile bool m_outputflag;
-  
 };
 #endif   // #ifndef _CRFFT_H_
