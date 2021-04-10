@@ -103,6 +103,7 @@
 #include "input_pdm.h"
 #include "input_pdm_i2s2.h"
 #include "input_spdif3.h"
+#include "input_spi_mono.h"
 #include "mixer.h"
 #include "output_dac.h"
 #include "output_dacs.h"

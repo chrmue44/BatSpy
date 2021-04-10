@@ -27,7 +27,8 @@ enum enSampleRate
   SR_234K =    13,
   SR_281K =    14,
   SR_352K =    15,
-  SR_384K =    16
+  SR_384K =    16,
+  SR_480K =    17
 };
 
 // available pre amp selections

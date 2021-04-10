@@ -23,10 +23,12 @@ const stSrDesc SR[] =
         {SR_96K, 96000, 219, 1604, SR_96K, 2}, //F: 95880.0 3 22
         {SR_176K, 176400, 1, 4, SR_17K, 3},
         {SR_192K, 192000, 219, 802, SR_19K, 3}, //F: 191790.0 3 11
-        {SR_234K, 234000, 1, 3, SR_23K, 4},
-        {SR_281K, 281000, 2, 5, SR_28K, 5},
-        {SR_352K, 352800, 1, 2, SR_35K, 6},
-        {SR_384K, 383500, 6, 11, SR_38K, 7}};
+        {SR_234K, 234000, 1,  3, SR_23K, 4},
+        {SR_281K, 281000, 2,  5, SR_28K, 5},
+        {SR_352K, 352800, 1,  2, SR_35K, 6},
+        {SR_384K, 383500, 6, 11, SR_38K, 7},
+        {SR_480K, 480000, 6,  9, SR_48K, 7}
+      };
 
 cAudio::cAudio() : m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
                    m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
@@ -75,6 +77,7 @@ void cAudio::setSampleRate(enSampleRate sr)
   if (m_old.sampleRate != SR[sr].osc_frequency)
   {
     m_sampleRate = SR[sr].osc_frequency;
+    m_sampleRate /= 2;
     int n1 = 4; //SAI prescaler 4 => (n1*n2) = multiple of 4
     int n2 = 1 + (24000000 * 27) / (m_sampleRate * 256 * n1);
     double C = ((double)m_sampleRate * 256 * n1 * n2) / 24000000;
@@ -82,11 +85,18 @@ void cAudio::setSampleRate(enSampleRate sr)
     int c2 = 10000;
     int c1 = C * c2 - (c0 * c2);
     set_audioClock(c0, c1, c2, true);
-    CCM_CS1CDR = (CCM_CS1CDR & ~(CCM_CS1CDR_SAI1_CLK_PRED_MASK | CCM_CS1CDR_SAI1_CLK_PODF_MASK)) | CCM_CS1CDR_SAI1_CLK_PRED(n1 - 1) // &0x07
-                 | CCM_CS1CDR_SAI1_CLK_PODF(n2 - 1);                                                                                // &0x3f
-    m_old.sampleRate = m_sampleRate;
+    m_sampleRate *= 2;
+    // clock for input
+    CCM_CS1CDR = (CCM_CS1CDR & ~(CCM_CS1CDR_SAI1_CLK_PRED_MASK | CCM_CS1CDR_SAI1_CLK_PODF_MASK))
+       | CCM_CS1CDR_SAI1_CLK_PRED(n1-1) // &0x07
+       | CCM_CS1CDR_SAI1_CLK_PODF(n2-1); // &0x3f 
+    // clock for output
+  	CCM_CS1CDR = (CCM_CS1CDR & ~(CCM_CS1CDR_SAI3_CLK_PRED_MASK | CCM_CS1CDR_SAI3_CLK_PODF_MASK))
+		   | CCM_CS1CDR_SAI3_CLK_PRED(n1-1)
+		   | CCM_CS1CDR_SAI3_CLK_PODF(n2-1);      
     DPRINTF1("factors c0:%i  c1:%i   c2:%i\n", c0, c1, c2);
     DPRINTF1("setSampleRate(%d)\n", m_sampleRate);
+    m_old.sampleRate = SR[sr].osc_frequency;
   }
 }
 
@@ -250,7 +260,7 @@ void cAudio::setup()
     AudioInterrupts();
     delay(20);
 
-    DPRINTLN4("[***** AUDIO SETTINGS ******]\n");
+    DPRINTLN4("\n[***** AUDIO SETTINGS ******]\n");
     DPRINTF4("       op mode: %i %s\n", devStatus.opMode.get(), devStatus.opMode.getActText());
     DPRINTF4("   sample rate: %s  index: %i   value: %i\n", devPars.sampleRate.getActText(), devPars.sampleRate.get(), m_sampleRate);
     DPRINTF4("      mix freq: %f  setup freq: %f\n", freq, m_freq_oscillator);

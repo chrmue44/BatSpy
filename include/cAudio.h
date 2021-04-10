@@ -33,11 +33,11 @@ struct stAudioSettings
 struct stSrDesc
 {
   const enSampleRate SR_n;
-  const u_int osc_frequency;
-  const u_int MUL_Fs;
-  const u_int DIV_Fs;
+  const uint32_t osc_frequency;
+  const uint32_t MUL_Fs;
+  const uint32_t DIV_Fs;
   const enSampleRate stretched;
-  const u_int FFT_N;
+  const uint32_t FFT_N;
 };
 
 
@@ -48,7 +48,7 @@ class cAudio
 {
  private:
 #ifdef AUDIO_IN_I2S
-  AudioInputI2S            m_audioIn;   // audio shield: mic or line-in
+  AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
 #endif
 #ifdef AUDIO_OUT_I2S
   AudioOutputI2S           m_audioOut;  // audio shield: headphones & line-out
