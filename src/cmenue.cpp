@@ -12,8 +12,11 @@
 #include <Time.h>
 #else
 #include "simulation/cSdCard.h"
+typedef std::size_t size_t;
 #endif
 #pragma GCC diagnostic ignored "-Wunused-parameter" //disable because fuFocus functions may not use the parameters
+
+#define DEBUG_LEVEL  1
 
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
@@ -176,7 +179,7 @@ void dirFunc(cMenuesystem* pThis, tKey key) {
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
       tDirInfo* p;
-      Serial.println("dirFunc"); //@@@
+      DPRINTLN1("dirFunc"); //@@@
       rc = sd.dir(p);
       devPars.dirSel.clear();
       if (p && (rc == OK)) {
@@ -219,7 +222,7 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
       tDirInfo* p;
-      Serial.println("fileFunc"); //@@@
+      DPRINTF1("fileFunc\n");
 
       rc = sd.dir(p);
       devPars.fileSel.clear();

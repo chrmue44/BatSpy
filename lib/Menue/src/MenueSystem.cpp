@@ -1,9 +1,17 @@
+/*********************************************************************
+ * Author: Christian Mueller
+ *   Date: 09.04.21
+ *********************************************************************/
+
 #include <stdint.h>
 #include "MenueSystem.h"
 #include "cutils.h"
 //#include "errors.h"
 #include <ILI9341_t3.h>
 #include <Arduino.h>
+
+//#define DEBUG_LEVEL 1
+#include <debug.h>
 
 ILI9341_t3* gpDisplay;
 
@@ -19,7 +27,7 @@ cMenuesystem::cMenuesystem(int width, int height, ILI9341_t3* pDisplay) :
 }
 
 cMenuesystem::~cMenuesystem() {
-  for(uint i = 0; i < m_panelList.size(); i++) {
+  for(uint32_t i = 0; i < m_panelList.size(); i++) {
      m_panelList[i].itemList.clear();
   }
   m_panelList.clear();
@@ -184,27 +192,27 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
 
 }
 
-void cMenuesystem::drawSubPanel(cPanel& pan, thPanel hPanel) {
-  size_t size = pan.itemList.size();
-  switch(pan.type) {
+void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel) {
+  size_t size = pan->itemList.size();
+  switch(pan->type) {
     case PNL_FKEYS:
       if(m_refreshFkey) {
-        gpDisplay->drawLine(pan.x, pan.y, m_width - 1, pan.y, COL_TEXT);
+        gpDisplay->drawLine(pan->x, pan->y, m_width - 1, pan->y, COL_TEXT);
         for(uint32_t i = 1; i < 4; i++) {
            int x = m_width * i / 4;
-           gpDisplay->drawLine(x, pan.y, x, m_height - 1, COL_TEXT);
+           gpDisplay->drawLine(x, pan->y, x, m_height - 1, COL_TEXT);
         }
       }
       break;
     case PNL_HEADER:
-      gpDisplay->drawLine(pan.x, pan.height-1, m_width - 1, pan.height-1, COL_TEXT);
+      gpDisplay->drawLine(pan->x, pan->height-1, m_width - 1, pan->height-1, COL_TEXT);
       break;
 
     case PNL_DROPDOWN:
-      if(pan.isRefresh()) {
-        pan.refresh();
-        gpDisplay->fillRect(pan.x, pan.y, pan.width, pan.height, COL_TEXTBACK);
-        gpDisplay->drawRect(pan.x, pan.y, pan.width, pan.height, COL_TEXT);
+      if(pan->isRefresh()) {
+        pan->refresh();
+        gpDisplay->fillRect(pan->x, pan->y, pan->width, pan->height, COL_TEXTBACK);
+        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
       }
       break;
 
@@ -212,21 +220,21 @@ void cMenuesystem::drawSubPanel(cPanel& pan, thPanel hPanel) {
     case PNL_PARLIST:
       break;
     case PNL_MESSAGE:
-      if(pan.isRefresh()) {
-        pan.refresh();
-        gpDisplay->fillRect(pan.x, pan.y, pan.width, 15, COL_TEXTHDRBACK);
-        gpDisplay->setCursor(pan.x + pan.width/2 - 40, pan.y + 4);
+      if(pan->isRefresh()) {
+        pan->refresh();
+        gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, COL_TEXTHDRBACK);
+        gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4);
         gpDisplay->setTextColor(COL_TEXTHDR, COL_TEXTHDRBACK);
         printText(Txt::get(11));
-        gpDisplay->fillRect(pan.x, pan.y + 15, pan.width, pan.height, COL_TEXTBACK);
-        gpDisplay->drawRect(pan.x, pan.y, pan.width, pan.height, COL_TEXT);
-        gpDisplay->fillRect(pan.x + pan.width, pan.y + 3, 3, pan.height, COL_MSGSHADOW);
-        gpDisplay->fillRect(pan.x + 3, pan.y + pan.height, pan.width, 3, COL_MSGSHADOW);
+        gpDisplay->fillRect(pan->x, pan->y + 15, pan->width, pan->height, COL_TEXTBACK);
+        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
+        gpDisplay->fillRect(pan->x + pan->width, pan->y + 3, 3, pan->height, COL_MSGSHADOW);
+        gpDisplay->fillRect(pan->x + 3, pan->y + pan->height, pan->width, 3, COL_MSGSHADOW);
       }
       break;
   }
   for(uint32_t i = 0; i < size; i++) {
-     drawItem(pan.itemList[i], hPanel, i, pan.type);
+     drawItem(pan->itemList[i], hPanel, i, pan->type);
   }
 }
 
@@ -234,9 +242,10 @@ void cMenuesystem::drawPanels() {
   // draw header panel
   if(m_hHeadrPanel < m_panelList.size()) {
     if(m_refreshHdr) {
+      DPRINTLN1("refresh header");
       m_refreshHdr = false;
-      cPanel& pan = m_panelList[m_hHeadrPanel];
-      gpDisplay->fillRect(pan.x,pan.y,pan.width, pan.height, COL_TEXTHDRBACK);
+      cPanel* pan = &m_panelList[m_hHeadrPanel];
+      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
       drawSubPanel(pan, m_fKeyPanel);
 
     }
@@ -245,24 +254,27 @@ void cMenuesystem::drawPanels() {
   // draw fKey panel
   if(m_fKeyPanel < m_panelList.size()) {
     if(m_refreshFkey) {
-      cPanel& pan = m_panelList[m_fKeyPanel];
-      gpDisplay->fillRect(pan.x,pan.y,pan.width, pan.height, COL_TEXTHDRBACK);
+      DPRINTLN1("refresh keys");
+      cPanel* pan = &m_panelList[m_fKeyPanel];
+      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
       drawSubPanel(pan, m_fKeyPanel);
       m_refreshFkey = false;
     }
   }
   // draw main panel
   if(m_refreshMain) {
+    DPRINTLN1("refresh main");
     m_refreshMain = false;
     cPanel& p = m_panelList[m_mainPanel];
     gpDisplay->fillRect(p.x, p.y, p.width, p.height, COL_TEXTBACK);
   }
 
-  drawSubPanel(m_panelList[m_mainPanel], m_mainPanel);
+  DPRINTLN1("draw sub panel");
+  drawSubPanel(&m_panelList[m_mainPanel], m_mainPanel);
 
   // draw focus panel
   if ((m_focus.panel < m_panelList.size() ) && (m_focus.panel != m_hHeadrPanel)){
-    cPanel& pan = m_panelList[m_focus.panel];
+    cPanel* pan = &m_panelList[m_focus.panel];
     drawSubPanel(pan, m_focus.panel);
   }
 
@@ -270,10 +282,16 @@ void cMenuesystem::drawPanels() {
 
 
 void cMenuesystem::init() {
-   initPars();
-   initDialogs();
-   drawPanels();
-   refreshAll();
+  initPars();
+  initDialogs();
+  drawPanels();
+  refreshAll();
+}
+
+void cMenuesystem::setFocus(thPanel pan, thItem item, enFocusState state) {
+  m_focus.panel = pan;
+  m_focus.item = item;
+  m_focus.state = state;
 }
 
 void cMenuesystem::setMainPanel(thPanel pan) {
@@ -338,6 +356,7 @@ int32_t cMenuesystem::handleKey(tKey key) {
     handleEditMode(*pan, key);
   }
   drawPanels();
+  DPRINTLN1("drawPanels done");
   return retVal;
 }
 
@@ -372,7 +391,7 @@ void cMenuesystem::setListDropDown(cMenuesystem* pThis, tKey key) {
 void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
   stPanelItem& item = pan.itemList[m_focus.item];
 
-  cParEnum* pEnum = NULL;
+  cParEnum* pEnum = nullptr;
   if (pan.type == PNL_DROPDOWN)
     pEnum = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
 
@@ -434,13 +453,16 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
       break;
 
     case DEV_KEY_UP:
+      DPRINTLN1("Key up\n");
       switch(m_focus.state) {
         case FST_DISP:
+          DPRINTLN1("FST_DISP\n");
 //          m_focus.item = pan.findFirstEditItem();
           m_focus.state = FST_SELECT;
           // fall through intended
 
         case FST_SELECT:
+          DPRINTLN1("FST_SELECT\n");
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
           if (pan.type != PNL_DROPDOWN) {
@@ -477,9 +499,11 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
               m_focus.item--;
           }
           pan.itemList[m_focus.item].p->update(true);
+          DPRINTLN1("update done");
           break;
 
       case FST_EDIT:
+          DPRINTLN1("FST_EDIT\n");
           editPar(item, key);
           break;
       }
@@ -565,24 +589,37 @@ void cMenuesystem::editPar(stPanelItem &item, tKey key) {
 void cMenuesystem::reInitDropDownItems() {
   cPanel& pan = m_panelList[m_dropDownPan];
   size_t s = pan.itemList.size() - 1;
-  uint firstItem = 0;
+  uint32_t firstItem = 0;
   if(m_firstDropDownItem > 0) {
     firstItem = 1;
     cParText* p = reinterpret_cast<cParText*>(pan.itemList[0].p);
     p->setText("    \x1E");
   }
-  cParEnum* pDr = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
-  for (uint i = firstItem; i < s; i++) {
-    cParText* p = reinterpret_cast<cParText*>(pan.itemList[i].p);
-    p->setText(pDr->getText(i + m_firstDropDownItem));
+
+  if(m_pDropDownEnum.type == ITEM_ENUM) {
+    cParEnum* pDr = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
+    for (uint32_t i = firstItem; i < s; i++) {
+      cParText* p = reinterpret_cast<cParText*>(pan.itemList[i].p);
+      p->setText(pDr->getText(i + m_firstDropDownItem));
+    }
+    cParText* p1 = reinterpret_cast<cParText*>(pan.itemList[s].p);
+    if((s + m_firstDropDownItem) < (pDr->size() - 1))
+      p1->setText("    \x1F");
+    if((s + m_firstDropDownItem) == (pDr->size() - 1))
+      p1->setText(pDr->getText(s + m_firstDropDownItem));
   }
-
-  cParText* p1 = reinterpret_cast<cParText*>(pan.itemList[s].p);
-  if((s + m_firstDropDownItem) < (pDr->size() - 1))
-    p1->setText("    \x1F");
-
-  if((s + m_firstDropDownItem) == (pDr->size() - 1))
-    p1->setText(pDr->getText(s + m_firstDropDownItem));
+  else if (m_pDropDownEnum.type == ITEM_LIST) {
+    cParList* pDr = reinterpret_cast<cParList*>(m_pDropDownEnum.p);
+    for (uint32_t i = firstItem; i < s; i++) {
+      cParText* p = reinterpret_cast<cParText*>(pan.itemList[i].p);
+      p->setText(pDr->getText(i + m_firstDropDownItem));
+    }
+    cParText* p1 = reinterpret_cast<cParText*>(pan.itemList[s].p);
+    if((s + m_firstDropDownItem) < (pDr->size() - 1))
+      p1->setText("    \x1F");
+    if((s + m_firstDropDownItem) == (pDr->size() - 1))
+      p1->setText(pDr->getText(s + m_firstDropDownItem));
+  }
 }
 
 
@@ -657,18 +694,18 @@ void cMenuesystem::destroyMsg() {
     for (size_t i = 0; i < s; i++) {
       if(m_panelList[m_MsgPan].itemList[i].type == ITEM_STRING) {
          delete m_panelList[m_MsgPan].itemList[i].p;
-         m_panelList[m_MsgPan].itemList[i].p = NULL;
+         m_panelList[m_MsgPan].itemList[i].p = nullptr;
       }
       if(m_panelList[m_MsgPan].itemList[i].type == ITEM_BUTTON) {
          delete m_panelList[m_MsgPan].itemList[i].p;
-         m_panelList[m_MsgPan].itemList[i].p = NULL;
+         m_panelList[m_MsgPan].itemList[i].p = nullptr;
       }
     }
     m_panelList[m_MsgPan].itemList.clear();
     m_panelList.pop_back();
     m_MsgPan = 9999;
     m_focus = m_focusSaveMsg;
-    m_msgCallBack = NULL;
+    m_msgCallBack = nullptr;
     refreshMainPanel();
   }
 }
@@ -677,8 +714,8 @@ void cMenuesystem::destroyMsg() {
 
 thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoord width, fuFocus f) {
 
-  cParList* pL = NULL;
-  cParEnum* pE = NULL;
+  cParList* pL = nullptr;
+  cParEnum* pE = nullptr;
   size_t s = 0;
 
   if(item.type == ITEM_ENUM)
@@ -792,4 +829,7 @@ void cMenuesystem::printText(const char *txt) {
 
   cUtils::replaceUTF8withInternalCoding(txt, buf, sizeof(buf));
   gpDisplay->print(buf);
+/*  if(txt != nullptr)
+    gpDisplay->print(txt); */
+
 }

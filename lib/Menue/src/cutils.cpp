@@ -4,7 +4,7 @@
 #include "ctext.h"
 int cUtils::stripExtension(const char* fileName, char* result, size_t resultSize) {
   const char* p = strrchr(fileName, '.');
-  if (p != NULL) {
+  if (p != nullptr) {
     size_t end = p - fileName - 1;
     return subStr(fileName, 0, end, result, resultSize);
   }
@@ -15,7 +15,7 @@ int cUtils::stripExtension(const char* fileName, char* result, size_t resultSize
 
 int cUtils::getExtension(const char* fileName,char* result, size_t resultSize) {
   const char* p = strrchr(fileName, '.');
-  if (p != NULL) {
+  if (p != nullptr) {
     size_t start = p - fileName + 1;
     return subStr(fileName, start, 256, result, resultSize);
   }
@@ -56,7 +56,7 @@ int cUtils::replace(const char* str, const char* toSearch, const char* replaceSt
 {
   int retVal = 0;
   const char* p = strstr(str, toSearch);
-  if (p != NULL) {
+  if (p != nullptr) {
     if(p != str)
     {
       size_t end = p - str - 1;
@@ -107,6 +107,9 @@ int cUtils::replaceAll(const char* str, const char* toSearch, const char* replac
 }
 
 int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize) {
+  if(str == nullptr)
+     return 0;
+
   bool found = false;
   int retVal = replaceAll(str, "\xc3\x9f", CH_SS, result, resultSize);
   if(retVal == 0)

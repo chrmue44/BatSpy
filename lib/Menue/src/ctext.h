@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <cstdlib>
 
+#ifndef size_t
+typedef  std::size_t size_t;
+#endif
+
 #define CH_AE   "\x80"
 #define CH_OE   "\x81"
 #define CH_UE   "\x82"
@@ -11,7 +15,6 @@
 #define CH_OEs  "\x84"
 #define CH_UEs  "\x85"
 #define CH_SS   "\x86"
-
 
 enum enLang {
     LANG_GER = 1,
@@ -28,7 +31,7 @@ struct stTxtList {
 };
 
 class Txt {
-  public:
+ public:
   static void setResource(stTxtList* p);
   static void setLang(enLang lang);
   static const char* get(thText id);

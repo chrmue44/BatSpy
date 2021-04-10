@@ -136,7 +136,7 @@ public:
    * @param item handle to focus item
    * @param state target state for focus item
    */
-  void setFocus(thPanel pan, thItem item, enFocusState state) {m_focus.panel = pan; m_focus.item = item; m_focus.state = state; }
+  void setFocus(thPanel pan, thItem item, enFocusState state);
   void setMainPanel(thPanel pan);
 
   /**
@@ -198,7 +198,7 @@ private:
    * @param pan
    * @param hPanel
    */
-  void drawSubPanel(cPanel& pan, thPanel hPanel);
+  void drawSubPanel(cPanel* pan, thPanel hPanel);
 
   /**
    * @brief draw a single item of a panel

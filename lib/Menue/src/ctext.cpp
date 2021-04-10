@@ -3,6 +3,13 @@
 #include "ctext.h"
 #include <Arduino.h>
 
+#ifndef size_t
+typedef std::size_t size_t;
+#endif
+#ifndef NULL
+#define NULL 0
+#endif
+
 enLang Txt::m_actLang = LANG_GER;
 stTxtList* Txt::m_pTextList = NULL;
 size_t Txt::m_size;
