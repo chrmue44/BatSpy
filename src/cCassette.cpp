@@ -17,8 +17,8 @@ void cCassette::setSamplingRate(uint32_t s) {
 }
 
 int cCassette::startRec(float recTime) {
+  DPRINTLN1("cCassette::startRecording()");
   m_recordingTime = recTime;
-//  Serial.print("startRecording");
   if (m_isRecFileOpen)
   {
     
@@ -48,43 +48,19 @@ int cCassette::startRec(const char* name, float recTime) {
 }
 
 int cCassette::startRec() {
- // TCHAR wfilename[80];
-
-  
   m_mode = CAS_REC;
   cSdCard& sd = cSdCard::inst();
-//      Serial.println(m_fileName);
-//  char2tchar(m_fileName, 80, wfilename);
-  //m_rc = f_stat (wfilename, 0);
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
-//    Serial.printf("stat %d %x\n", m_rc, m_fil.obj.sclust);
-//  m_rc = f_open (&m_fil, wfilename, FA_WRITE | FA_CREATE_ALWAYS);
-//    Serial.printf(" opened %d %x\n\r", m_rc, m_fil.obj.sclust);
-
     // check if file is Good
   if (rc != OK) { // only option is to close file
     sd.closeFile(m_fil);
-//    m_rc = f_close(&m_fil);
-//    if (m_rc == FR_INVALID_OBJECT) {
-//        Serial.println("unlinking file");
-//      m_rc = f_unlink(wfilename);
- //     if (m_rc) 
- //       return m_rc;
-  //    return OPEN_ERR;
-  //  }
-   // else
-      return 1;
+   return 1;
   }
-  /*    // retry open file
-  m_rc = f_open(&m_fil, wfilename, FA_WRITE | FA_CREATE_ALWAYS);
-  if (m_rc) 
-    return m_rc;
-  m_isRecFileOpen = true;
-
+  else
+    m_isRecFileOpen = true;
 #ifdef WAV
   writeWavHeader();
 #endif
-*/
   m_timer.start();
   m_recorder.begin();
   return 0;
@@ -97,7 +73,7 @@ int cCassette::operate(enCassMode& mode) {
     mode = m_mode;    
     return 0;
   }
-
+/*
   else if (m_mode == CAS_REC) {
     #define N_BUFFER 2
     #define N_LOOPS (BUFF * N_BUFFER)
@@ -127,7 +103,26 @@ int cCassette::operate(enCassMode& mode) {
         }
       }
     }
-    
+*/
+  else if (m_mode == CAS_REC) {
+    #define N_BUFFER 4
+    size_t av = m_recorder.available();
+    if (av >= N_BUFFER  ) {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
+      for (int i = 0; i < av; i++) {
+        memcpy(m_buffern + i * 256, m_recorder.readBuffer(), 256);
+        m_recorder.freeBuffer();
+      }
+
+      cSdCard& sd = cSdCard::inst();
+      rc = sd.writeFile (m_fil, m_buffern, m_wr, av * 256);
+      DPRINTF1("wr buf %i\n", av);
+      if (rc != OK) { // IO error
+        m_mode = CAS_STOP;
+        mode = m_mode;
+        return 1;
+      }
+    }
+
     if(m_timer.runTime() > m_recordingTime)
       stop();
     return 0;
@@ -259,29 +254,29 @@ enSdRes cCassette::createRecordingDir()
   m_min = minute();
   m_sec = second();
 
-  snprintf(m_fileName, sizeof(m_fileName),"0:/rec/%02i/%02i/%02i/%02i",m_year, m_month, m_day, m_hour);
+  snprintf(m_fileName, sizeof(m_fileName),"/rec/%02i/%02i/%02i/%02i",m_year, m_month, m_day, m_hour);
   enSdRes ret = cSdCard::inst().chdir(m_fileName);
   if(ret != OK) {
-    ret = cSdCard::inst().chdir("0:/rec");
+    ret = cSdCard::inst().chdir("/rec");
     if(ret != OK) {
-      ret = cSdCard::inst().mkDir(buf);
+      ret = cSdCard::inst().mkDir("/rec");
     }
-    snprintf(buf, sizeof(buf),"0:/rec/%02i",m_year);
+    snprintf(buf, sizeof(buf),"/rec/%02i",m_year);
     ret = cSdCard::inst().chdir(buf);
     if(ret != OK) {
       ret = cSdCard::inst().mkDir(buf);
     }
-    snprintf(buf, sizeof(buf),"0:/rec/%02i/%02i", m_year, m_month);
+    snprintf(buf, sizeof(buf),"/rec/%02i/%02i", m_year, m_month);
     ret = cSdCard::inst().chdir(buf);
     if(ret != OK) {
       ret = cSdCard::inst().mkDir(buf);
     }      
-    snprintf(buf, sizeof(buf),"0:/rec/%02i/%02i/%02i",m_year ,m_month ,m_day);
+    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i",m_year ,m_month ,m_day);
     ret = cSdCard::inst().chdir(buf);
     if(ret != OK) {
       ret = cSdCard::inst().mkDir(buf);
     }      
-    snprintf(buf, sizeof(buf),"0:/rec/%02i/%02i/%02i/%02i",m_year ,m_month, m_day, m_hour);
+    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i/%02i",m_year ,m_month, m_day, m_hour);
     ret = cSdCard::inst().chdir(buf);
     if(ret != OK) {
       ret = cSdCard::inst().mkDir(buf);

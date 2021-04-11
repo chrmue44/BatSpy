@@ -47,19 +47,14 @@ struct stSrDesc
 class cAudio
 {
  private:
-#ifdef AUDIO_IN_I2S
   AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
-#endif
-#ifdef AUDIO_OUT_I2S
-  AudioOutputI2S           m_audioOut;  // audio shield: headphones & line-out
-#elif defined (AUDIO_OUT_TEENSY) && defined(ARDUINO_TEENSY41)
   AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
-#endif
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
   AudioEffectMultiply      m_mult1;     // multiplier for heterodyne
   AudioMixer4              m_mixer;     // selector for input: player or mic
   AudioAnalyzePeak         m_peak;      // peak detector
   AudioFilterStateVariable m_filter;    // filter before peak detection
+  AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
 
 
@@ -71,11 +66,8 @@ class cAudio
   AudioConnection m_cFi2Pk; // filter to peak detector
   AudioConnection m_cMi2Ol; // mixer to audio output left
   AudioConnection m_cMi2Or; // mixer to audio output right
-  AudioConnection m_cMi2Ca; // microphone to recorder
-
-#ifdef AUDIO_SGTL5000  
-  AudioControlSGTL5000 m_audioShield;
-#endif
+  AudioConnection m_cMi2De; // microphone to delay
+  AudioConnection m_cDe2Ca; // delay to recorder
 
   int m_input;
   uint32_t m_sampleRate;                 // sample rate in Hz  

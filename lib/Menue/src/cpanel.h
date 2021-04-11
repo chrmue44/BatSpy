@@ -18,8 +18,18 @@ class cParNum : public cParBase {
    m_step(1),
    m_decimals(0),
    m_val(v) {}
-  void set(float v) {m_val = v; update(true); }
-  float get() {return m_val; }
+  
+  void set(float v) {
+    if((v >= m_min) && (v <= m_max))
+      m_val = v;
+    else if(v < m_min)
+      m_val = m_min;
+    else
+      m_val = m_max;
+    update(true);
+  }
+
+  float get() { return m_val; }
   uint32_t getDecimals() { return m_decimals; }
   float getMin() { return m_min; }
   float getMax() { return m_max; }

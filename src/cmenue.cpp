@@ -596,6 +596,8 @@ void cMenue::initPars() {
   devPars.dispOrient.addItem(1161);
   devPars.dispOrient.addItem(1162);
 
+  devPars.preTrigger.init(0.0, 50.0, 1.0, 0);
+
   devStatus.btnAudio = new cParBtn(Txt::get(309));
   load();
 #ifndef SIMU_DISPLAY
@@ -721,31 +723,28 @@ void cMenue::initDialogs() {
 
   // parameter panel
   panParams =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panParams)->addTextItem(1100,                  15, 20,         80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.lang,        140, 20,        100, lf, true, languageFunc);
-  err |= getPan(panParams)->addTextItem(1110,                  15, 20 +     lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.sampleRate,  140, 20 +     lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem(1111,                 175, 20 +     lf,  80, lf);
-  err |= getPan(panParams)->addTextItem(1120,                  15, 20 + 2 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.recTime,      140, 20 + 2 * lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem( 301,                 175, 20 + 2 * lf,  80, lf);
-  err |= getPan(panParams)->addTextItem(1140,                  15, 20 + 3 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.recThreshhold,140, 20 + 3 * lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem(1141,                 175, 20 + 3 * lf,  80, lf);
-  err |= getPan(panParams)->addTextItem(1144,                  15, 20 + 4 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.deafTime,     140, 20 + 4 * lf,  20, lf, true);
-  err |= getPan(panParams)->addTextItem( 301,                 175, 20 + 4 * lf,  80, lf);
-  err |= getPan(panParams)->addTextItem(1145,                  15, 20 + 5 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.backLightTime,140, 20 + 5 * lf,  20, lf, true);
-  err |= getPan(panParams)->addTextItem( 301,                 175, 20 + 5 * lf,  80, lf);
-  err |= getPan(panParams)->addTextItem(1320,                  15, 20 + 6 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.preAmpType,  140, 20 + 6 * lf,  80, lf, true);
-  err |= getPan(panParams)->addTextItem(1325,                  15, 20 + 7 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.preAmpGain,  140, 20 + 7 * lf,  80, lf, true);
-  err |= getPan(panParams)->addTextItem(1150,                  15, 20 + 8 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.knobRotation,140, 20 + 8 * lf, 100, lf, true);
-  err |= getPan(panParams)->addTextItem(1160,                  15, 20 + 9 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.dispOrient,  140, 20 + 9 * lf,  80, lf, true);
+  err |= getPan(panParams)->addTextItem(1100,                  15, 20,            80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
+  err |= getPan(panParams)->addTextItem(1110,                  15, 20 +      lf,  80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.sampleRate,  170, 20 +      lf,  30, lf, true);
+  err |= getPan(panParams)->addTextItem(1120,                  15, 20 +  2 * lf,  80, lf);
+  err |= getPan(panParams)->addNumItem(&devPars.recTime,      170, 20 +  2 * lf,  30, lf, true);
+  err |= getPan(panParams)->addTextItem(1140,                  15, 20 +  3 * lf,  80, lf);
+  err |= getPan(panParams)->addNumItem(&devPars.recThreshhold,170, 20 +  3 * lf,  30, lf, true);
+  err |= getPan(panParams)->addTextItem(1330,                  15, 20 +  4 * lf,  80, lf);
+  err |= getPan(panParams)->addNumItem(&devPars.preTrigger,   170, 20 +  4 * lf,  80, lf, true);
+  err |= getPan(panParams)->addTextItem(1144,                  15, 20 +  5 * lf,  80, lf);
+  err |= getPan(panParams)->addNumItem(&devPars.deafTime,     170, 20 +  5 * lf,  20, lf, true);
+  err |= getPan(panParams)->addTextItem(1145,                  15, 20 +  6 * lf,  80, lf);
+  err |= getPan(panParams)->addNumItem(&devPars.backLightTime,170, 20 +  6 * lf,  20, lf, true);
+  err |= getPan(panParams)->addTextItem(1320,                  15, 20 +  7 * lf,  80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.preAmpType,  170, 20 +  7 * lf,  80, lf, true);
+  err |= getPan(panParams)->addTextItem(1325,                  15, 20 +  8 * lf,  80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.preAmpGain,  170, 20 +  8 * lf,  80, lf, true);
+  err |= getPan(panParams)->addTextItem(1150,                  15, 20 +  9 * lf,  80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.knobRotation,170, 20 +  9 * lf, 100, lf, true);
+  err |= getPan(panParams)->addTextItem(1160,                  15, 20 + 10 * lf,  80, lf);
+  err |= getPan(panParams)->addEnumItem(&devPars.dispOrient,  170, 20 + 10 * lf,  80, lf, true);
 
   panBats =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= getPan(panBats)->addTextItem(1200,                        5,  20,           60, lf);
@@ -858,8 +857,9 @@ void cMenue::save() {
   writeFloatToEep(0x0020, devPars.fftLevelMin.get());
   writeFloatToEep(0x0024, devPars.fftLevelMax.get());
   writeFloatToEep(0x002C, devPars.recThreshhold.get());
-  writeInt16ToEep(0x002E, devPars.knobRotation.get());
-  writeInt16ToEep(0x0030, devPars.dispOrient.get());
+  writeInt16ToEep(0x0030, devPars.knobRotation.get());
+  writeInt16ToEep(0x0032, devPars.dispOrient.get());
+  writeFloatToEep(0x0034, devPars.preTrigger.get());
  /*
    * some space left to fill here
    */
@@ -892,8 +892,9 @@ void cMenue::load() {
     devPars.fftLevelMin.set(readFloatFromEep(0x0020));
     devPars.fftLevelMax.set(readFloatFromEep(0x0024));
     devPars.recThreshhold.set(readFloatFromEep(0x002C));
-    devPars.knobRotation.set(readInt16FromEep(0x002E));
-    devPars.dispOrient.set(readInt16FromEep(0x0030));
+    devPars.knobRotation.set(readInt16FromEep(0x0030));
+    devPars.dispOrient.set(readInt16FromEep(0x0032));
+    devPars.preTrigger.set(readFloatFromEep(0x0034));
     /*
      * some space left to fill here
      */
@@ -917,7 +918,7 @@ bool cMenue::checkCRC() {
   
   bool retVal = (rdCks == cks);
   if(!retVal)
-    Serial.printf("checksum error in EEPROM, expected %i, read %i\n", rdCks, cks);
+    DPRINTF1("checksum error in EEPROM, expected %i, read %i\n", rdCks, cks);
   return retVal;
 #else
   return true;

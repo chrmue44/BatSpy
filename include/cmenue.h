@@ -107,6 +107,7 @@ struct stParams {
   cParEnum preAmpType = PRE_AMP_HIGH_PASS;  ///< type of pre amplifier
   cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
   cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
+  cParNum preTrigger = 20;        ///< pre trigger time [ms]
 };
 
 

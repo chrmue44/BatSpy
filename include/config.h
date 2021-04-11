@@ -2,14 +2,10 @@
 #define _CONFIG_H
 
 // debug level: 1(lowest) .. 4(highest) or undefine for no messages
-#define DEBUG_LEVEL   2
+//#define DEBUG_LEVEL   2
 // Teensy version
 //#define TEENSY36
 
-// *****   Audio definitions *****
-#define AUDIO_IN_I2S
-//#define AUDIO_OUT_I2S
-//#define AUDIO_SGTL5000
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY

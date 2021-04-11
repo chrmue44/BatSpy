@@ -1,11 +1,11 @@
 #include "cAudio.h"
 #include "config.h"
+#define DEBUG_LEVEL 1
 #include "debug.h"
 #include "cmenue.h"
 #ifdef ARDUINO_TEENSY41
 #include <utility/imxrt_hw.h>
 #endif
-//705600
 
 // SRtext and position for the FFT spectrum display scale
 const stSrDesc SR[] =
@@ -38,8 +38,8 @@ cAudio::cAudio() : m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
                    m_cFi2Pk(m_filter, 0, m_peak, 0),
                    m_cMi2Ol(m_mixer, 0, m_audioOut, 0),
                    m_cMi2Or(m_mixer, 0, m_audioOut, 1),
-                   m_cMi2Ca(m_audioIn, 0, m_cass.getRecorder(), 0),
-
+                   m_cMi2De(m_audioIn, 0, m_delay, 0),
+                   m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
                    m_input(AUDIO_INPUT_LINEIN)
 {
 }
@@ -53,7 +53,7 @@ void cAudio::init()
 
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
-  AudioMemory(100);
+  AudioMemory(300);
   // Enable the audio shield and set the output volume.
 #ifdef AUDIO_SGTL5000
   m_audioShield.enable();
@@ -97,6 +97,7 @@ void cAudio::setSampleRate(enSampleRate sr)
     DPRINTF1("factors c0:%i  c1:%i   c2:%i\n", c0, c1, c2);
     DPRINTF1("setSampleRate(%d)\n", m_sampleRate);
     m_old.sampleRate = SR[sr].osc_frequency;
+    m_old.parSampleR = sr;
   }
 }
 
@@ -256,6 +257,7 @@ void cAudio::setup()
     }
     m_old.opMode = (enOpMode)devStatus.opMode.get();
     m_recThresh = pow(10, (devPars.recThreshhold.get() / 10));
+    m_delay.delay(7, 20.0 * m_sampleRate / 44100);
     delay(200);
     AudioInterrupts();
     delay(20);
@@ -328,7 +330,6 @@ void cAudio::checkAutoRecording(cMenue &menue)
       {
         if ((pv > m_recThresh) && (devStatus.cassMode != CAS_REC))
         {
-          //        Serial.println(pv);
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           m_cass.startRec(devPars.recTime.get());
           m_timeout.start();

@@ -18,8 +18,8 @@
 
 //#define MXFN 100 // maximal number of files
 #if defined(ARDUINO_TEENSY41)
-#define BUFFSIZE (8*1024) // size of buffer to be written
 #define BUFF 48
+#define BUFFSIZE (8*1024) // size of buffer to be written
 #elif defined(__MK20DX256__)
 #define BUFFSIZE (8*1024) // size of buffer to be written
 #elif defined(__MK66FX1M0__)

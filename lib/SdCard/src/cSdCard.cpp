@@ -1,7 +1,7 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <SPI.h>
-#define DEBUG_LEVEL 1
+//#define DEBUG_LEVEL 1
 
 #include "debug.h"
 /*
@@ -425,6 +425,7 @@ enSdRes cSdCard::chdir(const char* name) {
   // absolute path
 #if defined(CARDLIB_SD) || defined(CARDLIB_SDFAT)
   else if(name[0] == '/') {
+    strncpy(dir, name, sizeof(dir));
 #elif defined(CARDLIB_USDFS)
   else if((name[0] == '0') && (name[1] == ':')) {
 #endif
