@@ -54,7 +54,6 @@ struct stStatus {
   cParNum timMin = 0;             ///< left border of time-, waterfall-diagram
   cParNum timMax = 2.5;           ///< right border of time-, waterfall-diagram
   cParNum timStep = 0.5;          ///< time step for cursor in time-, waterfall-diagram
-  enCassMode cassMode = CAS_STOP; ///< mode of operation of cassette player
   cParNum cpuAudioAvg = 0;        ///< average audio CPU usage
   cParNum cpuAudioMax = 0;        ///< maximum audio CPU usage
   cParNum audioMem = 0;           ///< audio memory usage

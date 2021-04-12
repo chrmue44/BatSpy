@@ -10,6 +10,10 @@ m_btnRight(btnR, DEBOUNCE_TIME)
 {
   pinMode(btnL,INPUT_PULLUP);
   pinMode(btnR,INPUT_PULLUP);
+  pinMode(la, INPUT_PULLUP);
+  pinMode(ra, INPUT_PULLUP);
+  pinMode(lb, INPUT_PULLUP);
+  pinMode(rb, INPUT_PULLUP);
   init();
 }
 

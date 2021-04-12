@@ -18,7 +18,7 @@ class cTimer
   uint32_t runTimeMs() {
     uint32_t actTime = millis();
     uint32_t retVal;
-    if(actTime > m_startTime)
+    if(actTime >= m_startTime)
       retVal = actTime - m_startTime;
     else {
       retVal = 0xFFFFFFFF - m_startTime;

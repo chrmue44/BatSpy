@@ -222,7 +222,7 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
       tDirInfo* p;
-      DPRINTF1("fileFunc\n");
+      DPRINTLN1("fileFunc\n");
 
       rc = sd.dir(p);
       devPars.fileSel.clear();

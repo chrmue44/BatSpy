@@ -18,8 +18,8 @@
 
 //#define MXFN 100 // maximal number of files
 #if defined(ARDUINO_TEENSY41)
-#define BUFF 48
-#define BUFFSIZE (8*1024) // size of buffer to be written
+#define N_BUFFER 8  // min. nr of buffers to write to SD card
+#define BUFFSIZE (3 * N_BUFFER * AUDIO_BLOCK_SAMPLES * sizeof(int16_t)) // size of buffer
 #elif defined(__MK20DX256__)
 #define BUFFSIZE (8*1024) // size of buffer to be written
 #elif defined(__MK66FX1M0__)
@@ -36,7 +36,7 @@ class cCassette {
     int startRec();
     int stop();
     void startPlay();
-    int operate(enCassMode& mode);
+    int operate();
     void setFileName(const char* name) { strncpy(m_fileName, name, sizeof(m_fileName)); }
     AudioRecordQueue& getRecorder() { return m_recorder; }
 #ifdef WAV
@@ -45,7 +45,8 @@ class cCassette {
     AudioPlayFatsRaw& getPlayer() { return m_player; }
 #endif
     void setSamplingRate(uint32_t s);
-    
+    enCassMode getMode() { return m_mode; }
+
     /**
      * return the play time of the actual title [s] 
      */
@@ -55,6 +56,7 @@ class cCassette {
      *  returns the length of the actual title [s]
      */
     float getTitleTime() { return m_player.getTitleTime(); }
+
 
   private:
     void writeWavHeader();

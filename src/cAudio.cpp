@@ -1,6 +1,6 @@
 #include "cAudio.h"
 #include "config.h"
-#define DEBUG_LEVEL 1
+#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "cmenue.h"
 #ifdef ARDUINO_TEENSY41
@@ -285,7 +285,7 @@ void cAudio::updateCassMode()
     m_cass.stop();
     break;
   case 1:
-    if (devStatus.cassMode != CAS_PLAY)
+    if (m_cass.getMode() != enCassMode::CAS_PLAY)
     {
       m_cass.setFileName(devPars.fileName.get());
       m_cass.startPlay();
@@ -293,7 +293,7 @@ void cAudio::updateCassMode()
     }
     break;
   case 2:
-    if (devStatus.cassMode != CAS_REC)
+    if (m_cass.getMode() != enCassMode::CAS_REC)
     {
       setAudioConnections(0);
       m_cass.startRec(devPars.recTime.get());
@@ -328,11 +328,11 @@ void cAudio::checkAutoRecording(cMenue &menue)
     {
       if (devStatus.playStatus.get() == 0)
       {
-        if ((pv > m_recThresh) && (devStatus.cassMode != CAS_REC))
+        if ((pv > m_recThresh) && (m_cass.getMode() != CAS_REC))
         {
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           m_cass.startRec(devPars.recTime.get());
-          m_timeout.start();
+          devStatus.playStatus.set(2);
           delay(5);
         }
       }
@@ -342,11 +342,11 @@ void cAudio::checkAutoRecording(cMenue &menue)
 
 void cAudio::operateRecorder()
 {
-  m_cass.operate(devStatus.cassMode);
+  m_cass.operate();
 
-  if (m_oldCassMode != devStatus.cassMode)
+  if (m_oldCassMode != m_cass.getMode())
   {
-    if (devStatus.cassMode == CAS_STOP)
+    if (m_cass.getMode() == enCassMode::CAS_STOP)
     {
       switch (devStatus.playStatus.get())
       {
@@ -354,7 +354,9 @@ void cAudio::operateRecorder()
         devStatus.playStatus.set(0);
         break;
       case 2:
+        m_timeout.start();
         devStatus.playStatus.set(3);
+        DPRINTLN1("start timeout");
         break;
       default:
         break;
@@ -362,15 +364,18 @@ void cAudio::operateRecorder()
     }
     else
     {
-      devStatus.playStatus.set(devStatus.cassMode - 1);
+      devStatus.playStatus.set(m_cass.getMode() - 1);
     }
-    m_oldCassMode = devStatus.cassMode;
+    m_oldCassMode = m_cass.getMode();
   }
 
   if (devStatus.playStatus.get() == 3)
   {
     if (m_timeout.runTime() > devPars.deafTime.get())
+    {
       devStatus.playStatus.set(0);
+      DPRINTF1("timeout over, timeout %f,  timer %f\n", devPars.deafTime.get(), m_timeout.runTime());
+    }
   }
 }
 

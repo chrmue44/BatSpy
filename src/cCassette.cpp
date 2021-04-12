@@ -4,7 +4,7 @@
 #include "cutils.h"
 #include <cstring>
 #include "cRtc.h"
-#define DEBUG_LEVEL 1
+//#define DEBUG_LEVEL 1
 #include "debug.h"
 
 #ifndef ARDUINO_TEENSY41
@@ -21,7 +21,6 @@ int cCassette::startRec(float recTime) {
   m_recordingTime = recTime;
   if (m_isRecFileOpen)
   {
-    
     enSdRes rc = cSdCard::inst().closeFile(m_fil);
     if (rc != OK) 
       return 1;
@@ -67,58 +66,28 @@ int cCassette::startRec() {
 }
 
 
-int cCassette::operate(enCassMode& mode) {
+int cCassette::operate() {
   enSdRes rc = OK;
-  if (m_mode == CAS_STOP) {
-    mode = m_mode;    
+  if (m_mode == enCassMode::CAS_STOP) {
     return 0;
   }
-/*
-  else if (m_mode == CAS_REC) {
-    #define N_BUFFER 2
-    #define N_LOOPS (BUFF * N_BUFFER)
-  // buffer size total = 256 * n_buffer * n_loops
-  // queue: write n_buffer blocks * 256 bytes to buffer at a time; free queue buffer;
-  // repeat n_loops times ( * n_buffer * 256 = total amount to write at one time)
-  // then write to SD card
-
-    if (m_recorder.available() >= N_BUFFER  ) {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
-      for (int i = 0; i < N_BUFFER; i++) {
-        memcpy(m_buffern + i * 256 + m_nj * 256 * N_BUFFER, m_recorder.readBuffer(), 256);
-        m_recorder.freeBuffer();
-      }
-
-      m_nj ++;
-
-      if (m_nj >=  (N_LOOPS - 1)) {
-        m_nj = 0;
-        
-//        m_rc = f_write (&m_fil, m_buffern, N_BUFFER * 256 * N_LOOPS, &m_wr);
-        cSdCard& sd = cSdCard::inst();
-        rc = sd.writeFile (m_fil, m_buffern, m_wr, N_BUFFER * 256 * N_LOOPS);
-        if (rc != OK) { // IO error
-          m_mode = CAS_STOP;
-          mode = m_mode;
-          return 1;
-        }
-      }
-    }
-*/
-  else if (m_mode == CAS_REC) {
-    #define N_BUFFER 4
+  else if (m_mode == enCassMode::CAS_REC) {
     size_t av = m_recorder.available();
     if (av >= N_BUFFER  ) {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
-      for (int i = 0; i < av; i++) {
-        memcpy(m_buffern + i * 256, m_recorder.readBuffer(), 256);
+      if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
+        av = sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t);
+      for (size_t i = 0; i < av; i++) {
+        memcpy(m_buffern + i * AUDIO_BLOCK_SAMPLES * sizeof(int16_t),
+               m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
         m_recorder.freeBuffer();
       }
 
       cSdCard& sd = cSdCard::inst();
-      rc = sd.writeFile (m_fil, m_buffern, m_wr, av * 256);
-      DPRINTF1("wr buf %i\n", av);
+      size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
+      rc = sd.writeFile (m_fil, m_buffern, m_wr, cnt);
+      DPRINTF1("wr buf %i\n", cnt);
       if (rc != OK) { // IO error
         m_mode = CAS_STOP;
-        mode = m_mode;
         return 1;
       }
     }
@@ -128,28 +97,24 @@ int cCassette::operate(enCassMode& mode) {
     return 0;
   }
 
-  else if(m_mode == CAS_PLAY) {
+  else if(m_mode == enCassMode::CAS_PLAY) {
     if (!m_player.isPlaying()) {
       m_player.stop();
       DPRINTLN1("File is over");
-      m_mode = CAS_STOP;
+      m_mode = enCassMode::CAS_STOP;
     }
   } 
-  mode = m_mode; 
   return 0;
 }
 
 
 int cCassette::stop() {
   enSdRes rc = OK;
-  if (m_mode == CAS_REC) {
-//    Serial.print("stopRecording");
+  if (m_mode == enCassMode::CAS_REC) {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
     while (m_recorder.available() > 0) {
-//      m_rc = f_write (&m_fil, (byte*)m_recorder.readBuffer(), 256, &m_wr);
-      //      frec.write((byte*)recorder.readBuffer(), 256);
-      rc = sd.writeFile(m_fil, (byte*)m_recorder.readBuffer(), m_wr, 256);
+      rc = sd.writeFile(m_fil, (byte*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
     }
 #ifdef WAV
