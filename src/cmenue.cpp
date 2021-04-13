@@ -245,7 +245,7 @@ void batFunc(cMenuesystem* pThis, tKey key) {
   size_t byteCount;
   cSdCard& sd = cSdCard::inst();
   tFILE file;
-  enSdRes res = sd.openFile("0:/info/bat_info.tsv", file, READ);
+  enSdRes res = sd.openFile("/info/bat_info.tsv", file, READ);
   bool found = false;
   if(res == 0)
   {
@@ -967,9 +967,10 @@ void cMenue::initBats() {
   size_t byteCount;
   cSdCard& sd = cSdCard::inst();
   tFILE file;
-  enSdRes res = sd.openFile("0:/info/bat_info.tsv", file, READ);
+  enSdRes res = sd.openFile("/info/bat_info.tsv", file, READ);
   if(res == 0)
   {
+    devStatus.bats.name.clear();
     // read and forget first two header
     res = sd.readLine(file, line, sizeof(line), byteCount);
     if(res == 0) {
@@ -980,6 +981,7 @@ void cMenue::initBats() {
           line[byteCount] = 0;
           cUtils::replaceUTF8withInternalCoding(line, line2, sizeof(line2));             
           char* token = strtok(line2, "\t");
+          DPRINTF1("token: %s", token);
           devStatus.bats.name.addItem(token);
         }
         else

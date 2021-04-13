@@ -96,6 +96,7 @@ void cAudio::setSampleRate(enSampleRate sr)
 		   | CCM_CS1CDR_SAI3_CLK_PODF(n2-1);      
     DPRINTF1("factors c0:%i  c1:%i   c2:%i\n", c0, c1, c2);
     DPRINTF1("setSampleRate(%d)\n", m_sampleRate);
+    m_cass.setSamplingRate(m_sampleRate);
     m_old.sampleRate = SR[sr].osc_frequency;
     m_old.parSampleR = sr;
   }

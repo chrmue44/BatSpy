@@ -551,7 +551,11 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
     pBuf++;
   }
   if(*pBuf == '\n')
+  {
+    pBuf++;
+    *pBuf = 0;
     return OK;
+  }
   else
     return LINE_ERR;
 }
