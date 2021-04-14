@@ -89,9 +89,7 @@ int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h,
   item.p = pPar;
   item.type = ITEM_GRAPH;
   int ret = addItem(item, x, y, w, h,false, f);
-  pPar->setX(x);
-  pPar->setSize(w, h);
-  pPar->setY0(y + h/2);
+  pPar->setSize(x, y, w, h);
   pPar->setAmplitude(100);
   return ret;
 }

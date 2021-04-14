@@ -53,8 +53,7 @@ class cParGraph : public cParBase {
   void initPlot(bool b);
   bool isMinMax() { return m_isMinMax; }
   void setPlotBorders(float tMin, float tMax) { m_tMin = tMin; m_tMax = tMax; }
-  void setX(int16_t x) { m_x = x; }
-  void setSize(uint16_t w, uint16_t h) { m_width = w; m_height = h; }
+  void setSize(int16_t x, int16_t y, uint16_t w, uint16_t h) { m_x = x; m_y = y; m_width = w; m_height = h; m_y0 = m_y + h/2; m_yMax = m_y + h;}
   size_t getRemBytes() { return m_fileSize - m_filePos; }
   void advanceFilePos(size_t bytes) { m_filePos += bytes; }
   bool getInitPlot() { return m_initPlot; }
@@ -84,6 +83,7 @@ class cParGraph : public cParBase {
   void drawYscale();
   void createXtPlot(float samplesPerPixelf);
   void createFftPlot(float samplesPerPixelf);
+  int16_t limitY(int16_t y);
   void sety(size_t i, uint16_t x);
   void sety(size_t i, int16_t min, int16_t max);
   void plotAsBand(size_t samplesPerPixel, int16_t xMax);
@@ -109,6 +109,8 @@ class cParGraph : public cParBase {
   char m_plotFileName[PAR_STR_LEN]; ///< name of plotted file
   uint32_t m_sampleRate;   ///< sample rate of actual file
   uint16_t m_x;
+  uint16_t m_y;
+  uint16_t m_yMax;
   uint16_t m_width;
   uint16_t m_height;
   size_t m_filePos = 0;      ///< start position in file

@@ -1,11 +1,14 @@
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
 
+#ifndef SIMU_DISPLAY
 #include <Audio.h>
 #include "cCassette.h"
 #include "ctimer.h"
+#endif
 #include "types.h"
 #include "config.h"
+#include <cstdint>
 
 class cMenue;
 
@@ -47,6 +50,7 @@ struct stSrDesc
 class cAudio
 {
  private:
+#ifndef SIMU_DISPLAY
   AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
   AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
@@ -91,9 +95,11 @@ class cAudio
   void operateRecorder();
 
  private:
-  void setOscFrequency(float freq);
+  void setMixOscFrequency(float freq);
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
-
+#endif //#ifndef SIMU_DISPLAY
+public:
+  static int32_t getSampleRateHz(enSampleRate sr);
 };
 #endif   //#ifndef _CAUDIO_H

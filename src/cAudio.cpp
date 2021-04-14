@@ -30,12 +30,23 @@ const stSrDesc SR[] =
         {SR_480K, 480000, 6,  9, SR_48K, 7}
       };
 
+int32_t cAudio::getSampleRateHz(enSampleRate sr)
+{
+  uint32_t idx = sr;
+  if(idx >= sizeof (SR) / sizeof (SR[0]))
+    idx = 0;
+  return SR[idx].osc_frequency;
+}
+
+#ifndef SIMU_DISPLAY
 cAudio::cAudio() : m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
                    m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
                    m_cMx2Mu(m_mixer, 0, m_mult1, 0),
                    m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
                    m_cMi2Fi(m_audioIn, 0, m_filter, 0),
                    m_cFi2Pk(m_filter, 0, m_peak, 0),
+//                   m_cMi2Ol(m_audioIn, 0, m_audioOut, 0),  //test direct out
+//                   m_cMi2Or(m_audioIn, 0, m_audioOut, 1),  //test direct out
                    m_cMi2Ol(m_mixer, 0, m_audioOut, 0),
                    m_cMi2Or(m_mixer, 0, m_audioOut, 1),
                    m_cMi2De(m_audioIn, 0, m_delay, 0),
@@ -123,17 +134,6 @@ void cAudio::setSampleRate(enSampleRate sr)
 }
 #endif //#ifdef ARDUINO_TEENSY41
 
-/*  if (!(m_playActive or m_recorderActive))
-     {D_PRINTXY("DETECTOR SampleRate:",m_SR_real);
-     }
-  if (m_playActive)
-  {
-     D_PRINTXY("PLAYER SampleRate:",SR_real);
-  }
-  if (m_recorderActive)
-   {
-     D_PRINTXY("RECORDER SampleRate:",SR_real);
-   }  */
 
 void cAudio::setPreAmpType(enPreAmp type)
 {
@@ -224,21 +224,21 @@ void cAudio::setup()
     case OPMODE_HEAR_DIRECT:
       m_mixer.gain(MIX_CHAN_MIC, vol);
       m_mixer.gain(MIX_CHAN_PLAY, 0);
-      setOscFrequency(0);
+      setMixOscFrequency(0);
       break;
 
     case OPMODE_HEAR_HET:
     case OPMODE_REC_AUTO:
       m_mixer.gain(MIX_CHAN_MIC, vol);
       m_mixer.gain(MIX_CHAN_PLAY, 0);
-      setOscFrequency(freq);
+      setMixOscFrequency(freq);
       break;
 
     case OPMODE_PLAY_STRETCHED:
     {
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setOscFrequency(0);
+      setMixOscFrequency(0);
       enSampleRate srStretch = SR[devPars.sampleRate.get()].stretched;
       setSampleRate(srStretch);
     }
@@ -247,13 +247,13 @@ void cAudio::setup()
     case OPMODE_PLAY_DIRECT:
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setOscFrequency(0);
+      setMixOscFrequency(0);
       break;
 
     case OPMODE_PLAY_HET:
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setOscFrequency(freq);
+      setMixOscFrequency(freq);
       break;
     }
     m_old.opMode = (enOpMode)devStatus.opMode.get();
@@ -305,7 +305,7 @@ void cAudio::updateCassMode()
   }
 }
 
-void cAudio::setOscFrequency(float freq)
+void cAudio::setMixOscFrequency(float freq)
 {
   if (freq < 0.1)
     m_sineHet.phase(90);
@@ -386,3 +386,4 @@ void cAudio::volume(float vol)
   m_audioShield.volume(vol);
 #endif
 }
+#endif  //#ifndef SIMU_DISPLAY

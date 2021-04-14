@@ -6,6 +6,7 @@
 #include <ILI9341_t3.h>
 #include "cRtc.h"
 #include "debug.h"
+#include "cAudio.h"
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
 #include <EEPROM.h>
@@ -43,8 +44,9 @@ void f2WaterFunc(cMenuesystem* pThis, tKey key) {
         strcat(buf,"/");
         strcat(buf, pName);
         devPars.fileName.set(buf);
-        devStatus.graph.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
-        devStatus.waterf.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
+        uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+        devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
+        devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
         pThis->refreshMainPanel();
@@ -71,8 +73,9 @@ void f3WaterFunc(cMenuesystem* pThis, tKey key) {
         strcat(buf,"/");
         strcat(buf, pName);
         devPars.fileName.set(buf);
-        devStatus.graph.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
-        devStatus.waterf.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
+        uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+        devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
+        devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
         pThis->refreshMainPanel();
@@ -235,8 +238,9 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
       }
     }
   }
-  devStatus.graph.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
-  devStatus.waterf.setPlotFile(devPars.fileName.get(), devPars.sampleRate.get() * 1000);
+  uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+  devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
+  devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
 
 void batFunc(cMenuesystem* pThis, tKey key) {
@@ -254,7 +258,7 @@ void batFunc(cMenuesystem* pThis, tKey key) {
       line[byteCount] = 0;
       cUtils::replaceUTF8withInternalCoding(line, line2, sizeof(line2));   
       if(res == 0) {
-        if(strstr(line2, devStatus.bats.name.getActText()) != NULL) {
+        if(strstr(line2, devStatus.bats.name.getActText()) != nullptr) {
           found = true;
           break;
         }
@@ -266,30 +270,30 @@ void batFunc(cMenuesystem* pThis, tKey key) {
     if(found)
     {
       char* token = strtok(line2, "\t");  //name
-      token = strtok(NULL, "\t");
+      token = strtok(nullptr, "\t");
       devStatus.bats.nameLat.set(token);
-      token = strtok(NULL, "\t");   //Kürzel
-      token = strtok(NULL, "\t");   //vorkommen
+      token = strtok(nullptr, "\t");   //Kürzel
+      token = strtok(nullptr, "\t");   //vorkommen
       devStatus.bats.occurrence.set(token);
-      token = strtok(NULL, "\t");   //Hauptfrequenz
+      token = strtok(nullptr, "\t");   //Hauptfrequenz
       devStatus.bats.freq.set(token);
-      token = strtok(NULL, "\t");   //Ruflaenge
+      token = strtok(nullptr, "\t");   //Ruflaenge
       devStatus.bats.callLen.set(token);
-      token = strtok(NULL, "\t");   //Rufabstand
+      token = strtok(nullptr, "\t");   //Rufabstand
       devStatus.bats.callDist.set(token);
-      token = strtok(NULL, "\t");   //Characteristik
+      token = strtok(nullptr, "\t");   //Characteristik
       devStatus.bats.characteristic.set(token);
-      token = strtok(NULL, "\t");   //Comments
+      token = strtok(nullptr, "\t");   //Comments
       devStatus.bats.comment.set(token);
-      token = strtok(NULL, "\t");   //Skiba
-      token = strtok(NULL, "\t");   //Bild
-      token = strtok(NULL, "\t");   //Groesse
+      token = strtok(nullptr, "\t");   //Skiba
+      token = strtok(nullptr, "\t");   //Bild
+      token = strtok(nullptr, "\t");   //Groesse
       devStatus.bats.size.set(token);
-      token = strtok(NULL, "\t");   //Spannweite
+      token = strtok(nullptr, "\t");   //Spannweite
       devStatus.bats.wingSpan.set(token);
-      token = strtok(NULL, "\t");   //Gewicht
+      token = strtok(nullptr, "\t");   //Gewicht
       devStatus.bats.weight.set(token);
-      token = strtok(NULL, "\t");   //Lebensraum
+      token = strtok(nullptr, "\t");   //Lebensraum
       devStatus.bats.habitat.set(token);
     }
   }

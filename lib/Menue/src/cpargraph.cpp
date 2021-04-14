@@ -27,19 +27,9 @@ const uint16_t colorMap[] = {
 };
 
 void cParGraph::sety(size_t i, uint16_t y) {
-  long cy_old = m_amplitude * m_dat.t.yMin[i] / m_amplRaw + m_y0;
-  long cy_new = m_amplitude * y / m_amplRaw + m_y0;
+  long cy_old = limitY(m_amplitude * m_dat.t.yMin[i] / m_amplRaw + m_y0);
+  long cy_new = limitY(m_amplitude * y / m_amplRaw + m_y0);
   int16_t x = m_x + i;
-  int16_t he = m_height / 2;
-
-  if (cy_old > (m_y0 + he))
-    cy_old = m_y0 + he;
-  else if (cy_old < (m_y0 - he))
-    cy_old = m_y0 - he;
-  if (cy_new > (m_y0 + he))
-    cy_new = m_y0 + he;
-  else if (cy_new < (m_y0 - he))
-    cy_new = m_y0 - he;
 
   gpDisplay->drawPixel(x, cy_old, COL_TEXTBACK);
   gpDisplay->drawPixel(x, cy_new, COL_GRAPH);
@@ -48,21 +38,11 @@ void cParGraph::sety(size_t i, uint16_t y) {
 
 
 void cParGraph::sety(size_t i, int16_t min, int16_t max) {
-  long cy_old_min = m_y0 - m_amplitude * m_dat.t.yMin[i] / m_amplRaw;
-  long cy_old_max = m_y0 - m_amplitude * m_dat.t.yMax[i] / m_amplRaw;
-  long cy_new_min = m_y0 - m_amplitude * min / m_amplRaw;
-  long cy_new_max = m_y0 - m_amplitude * max / m_amplRaw;
+  long cy_old_min = limitY(m_y0 - m_amplitude * m_dat.t.yMin[i] / m_amplRaw);
+  long cy_old_max = limitY(m_y0 - m_amplitude * m_dat.t.yMax[i] / m_amplRaw);
+  long cy_new_min = limitY(m_y0 - m_amplitude * min / m_amplRaw);
+  long cy_new_max = limitY(m_y0 - m_amplitude * max / m_amplRaw);
   int16_t x = m_x + i;
-  int16_t he = m_height / 2;
-
-  if (cy_old_min > (m_y0 + he))
-      cy_old_min = m_y0 + he;
-  if (cy_new_min > (m_y0 + he))
-      cy_new_min = m_y0 + he;
-  if (cy_old_max < (m_y0 - he))
-      cy_old_max = m_y0 - he;
-  if (cy_new_max < (m_y0 - he))
-      cy_new_max = m_y0 - he;
 
   if((cy_old_min < cy_old_max) && (cy_old_min > (m_y0 - m_amplitude)))
     gpDisplay->drawLine(x, cy_old_min, x, cy_old_max, COL_TEXTBACK);
@@ -143,6 +123,13 @@ void cParGraph::createXtPlot(float samplesPerPixelf) {
   update(true);
 }
 
+int16_t cParGraph::limitY(int16_t y){
+  if(y > m_yMax)
+    return m_yMax;
+  if(y < m_y)
+    return m_y;
+  return y;
+}
 
 void cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) {
   int16_t scratch[FFT_SIZE];
@@ -161,15 +148,15 @@ void cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) 
   int32_t y1 = 0;
   size_t size = bytesRead / 2 - 1;
   if(m_actPixel != 0) {
-    x1 = m_x +m_actPixel;
+    x1 = m_x + m_actPixel;
     y1 = m_y0 - scratch[0] * m_amplitude / m_amplRaw;
     gpDisplay->drawLine(m_dat.t.lastX, m_dat.t.lastY, x1, y1, COL_GRAPH);
   }
   for(size_t i = 0; i < size; i++) {
     x0 = m_x +m_actPixel + (pixelToPlot - 1) * i / size;  //TODO: X coords not aequidistant if plotted in slices
     x1 = m_x +m_actPixel + (pixelToPlot - 1) *(i + 1) / size; //TODO: X coords not aequidistant if plotted in slices
-    y0 = m_y0 - scratch[i] * m_amplitude / m_amplRaw;
-    y1 = m_y0 - scratch[i + 1] * m_amplitude / m_amplRaw;
+    y0 = limitY(m_y0 - scratch[i] * m_amplitude / m_amplRaw);
+    y1 = limitY(m_y0 - scratch[i + 1] * m_amplitude / m_amplRaw);
     if(x0 > m_x +m_width)
       break;
     gpDisplay->drawLine(x0, y0, x1, y1, COL_GRAPH);
