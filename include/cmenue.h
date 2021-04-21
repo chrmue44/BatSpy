@@ -24,7 +24,7 @@
  */
 struct stBatInfo {
   stBatInfo() {}
-  cParEnum name = 0;
+  cParList name = 0;
   cParStr nameLat = "";
   cParStr freq = "";
   cParStr callLen = "";

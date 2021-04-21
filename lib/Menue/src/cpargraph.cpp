@@ -388,44 +388,39 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
 
   DPRINTF1("fft plot: s/pix: %f, sRate: %i, pixToPlot: %i\n", samplesPerPixelF, m_sampleRate, pixelToPlot); //@@@
 
-  int16_t scratch[FFT_SIZE];
   cSdCard sd = cSdCard::inst();
   size_t totBytes2read;
   int16_t* pStart;
   float max = 0;
   for(size_t x = m_actPixel; x < xMax; x++) {
     DPRINTF1("start copy to scratch, x: %lu\n", x);  //@@@
-    /*if ((samplesPerPixel >= fftWidth) || m_dat.f.firstFft){
-      totBytes2read = getRemBytes() < sizeof(scratch) ? getRemBytes() : sizeof(scratch);
-      pStart = &scratch[0];
+    if ((samplesPerPixel >= fftWidth) || m_dat.f.firstFft){
+      totBytes2read = getRemBytes() < sizeof(m_dat.f.scratch) ? getRemBytes() : sizeof(m_dat.f.scratch);
+      pStart = &m_dat.f.scratch[0];
       m_dat.f.firstFft = false;
     }
     else {
       totBytes2read = samplesPerPixel * 2;
       for(size_t a = 0; a < FFT_SIZE - samplesPerPixel; a++)
-        scratch[a] = scratch[a + samplesPerPixel];
-      pStart = &scratch[FFT_SIZE - samplesPerPixel];
+        m_dat.f.scratch[a] = m_dat.f.scratch[a + samplesPerPixel];
+      pStart = &m_dat.f.scratch[FFT_SIZE - samplesPerPixel];
     }
-    Serial.printf("start read\n");  //@@@
-    size_t bytes2read = (size_t)totBytes2read; */
-    pStart = &scratch[0];
-    size_t bytes2read = FFT_SIZE * 2;
+    size_t bytes2read = (size_t)totBytes2read;
+//    pStart = &scratch[0];
+//    size_t bytes2read = FFT_SIZE * 2;
     size_t bytesRead = 0;
-    DPRINTF1("available: %lu\n", sd.available(m_file));  //@@@
-  //  enSdRes result = sd.readFile(m_file, pStart, bytesRead, bytes2read);
-  //  if (result != OK)
-  //    break;
-    DPRINTF1("advance\n");
+    DPRINTF1("available: %lu bytes to read %i\n", sd.available(m_file), bytes2read);  //@@@
+    enSdRes result = sd.readFile(m_file, pStart, bytesRead, bytes2read);
+    if ((result != OK) || (bytesRead < bytes2read))
+      break;
     advanceFilePos(bytesRead);
-/*
+
     float v[FFT_SIZE/2];
 
 
     for(int j = 0; j < FFT_SIZE; j++)
-      m_dat.f.fft.setInput(j, scratch[j]);
-    Serial.printf("process start\n");
+      m_dat.f.fft.setInput(j, m_dat.f.scratch[j]);
     m_dat.f.fft.process();
-    Serial.printf("process done\n");
 
     for(int j = 0; j < FFT_SIZE/2; j++) {
       v[j] = m_dat.f.fft.getOutput(j);
@@ -437,7 +432,7 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
       uint16_t col = getColor(v[j], m_dat.f.levelMin, m_dat.f.levelMax);
       gpDisplay->drawPixel(x + m_x + SCALE_WIDTH, m_y0 + m_height/2 - j, col);
     } 
-*/
+
     if (samplesPerPixel > fftWidth) {
       advanceFilePos(((samplesPerPixel*2 - bytesRead) >> 1) << 1);
       sd.setFilePos(m_file, m_filePos);

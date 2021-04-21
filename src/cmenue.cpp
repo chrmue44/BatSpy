@@ -752,7 +752,7 @@ void cMenue::initDialogs() {
 
   panBats =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= getPan(panBats)->addTextItem(1200,                        5,  20,           60, lf);
-  err |= getPan(panBats)->addEnumItem(&devStatus.bats.name,      120,  20,          120, lf, true, batFunc);
+  err |= getPan(panBats)->addListItem(&devStatus.bats.name,      120,  20,          120, lf, true, batFunc);
   err |= getPan(panBats)->addTextItem(1202,                        5,  20 + 1 * lf,  60, lf);
   err |= getPan(panBats)->addStrItem(&devStatus.bats.nameLat,    120,  20 + 1 * lf, 120, lf);
   err |= getPan(panBats)->addTextItem(1204,                        5,  20 + 2 * lf,  60, lf);

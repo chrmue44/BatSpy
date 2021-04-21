@@ -32,6 +32,16 @@
     #define DPRINTLN4(x)
     #define DPRINTF4(x, ...)
   #endif
+#elif defined SIMU_DISPLAY
+#include "mainwindow.h"
+#include <cstdio>
+extern MainWindow* pw;
+
+#define DPRINTLN1(x) {char b[128]; snprintf(b, sizeof(b), x); pw->log(b,1);}
+#define DPRINTF1(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,1);}
+#define DPRINTF2(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,2);}
+#define DPRINTF3(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,3);}
+#define DPRINTF4(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,4);}
 #else
   #define DPRINTLN1(x)
   #define DPRINTF1(x, ...)

@@ -242,7 +242,6 @@ void cMenuesystem::drawPanels() {
   // draw header panel
   if(m_hHeadrPanel < m_panelList.size()) {
     if(m_refreshHdr) {
-      DPRINTLN1("refresh header");
       m_refreshHdr = false;
       cPanel* pan = &m_panelList[m_hHeadrPanel];
       gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
@@ -254,7 +253,6 @@ void cMenuesystem::drawPanels() {
   // draw fKey panel
   if(m_fKeyPanel < m_panelList.size()) {
     if(m_refreshFkey) {
-      DPRINTLN1("refresh keys");
       cPanel* pan = &m_panelList[m_fKeyPanel];
       gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
       drawSubPanel(pan, m_fKeyPanel);
@@ -263,13 +261,11 @@ void cMenuesystem::drawPanels() {
   }
   // draw main panel
   if(m_refreshMain) {
-    DPRINTLN1("refresh main");
     m_refreshMain = false;
     cPanel& p = m_panelList[m_mainPanel];
     gpDisplay->fillRect(p.x, p.y, p.width, p.height, COL_TEXTBACK);
   }
 
-  DPRINTLN1("draw sub panel");
   drawSubPanel(&m_panelList[m_mainPanel], m_mainPanel);
 
   // draw focus panel
@@ -356,7 +352,6 @@ int32_t cMenuesystem::handleKey(tKey key) {
     handleEditMode(*pan, key);
   }
   drawPanels();
-  DPRINTLN1("drawPanels done");
   return retVal;
 }
 

@@ -28,6 +28,7 @@ struct stFft {
   float levelMin;
   float levelMax;
   bool firstFft;
+  int16_t scratch[FFT_SIZE];
 };
 
 union uData {
