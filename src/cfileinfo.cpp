@@ -1,5 +1,6 @@
 #include "cfileinfo.h"
 #include <cSdCard.h>
+#include "cutils.h"
 #include <cstring>
 
 int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile)
@@ -9,7 +10,7 @@ int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, c
     writeLine("<BatRecord>");
     writeTag("FileName", wavFile);
     writeTag("DateTime", date);
-    writeTag("Samplerate", sampleRate, "Hz");
+    writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
     writeTag("Duration", duration, "Sec");
     writeLine("</BatRecord>");
     cSdCard::inst().closeFile(m_file);
@@ -85,12 +86,15 @@ void cFileInfo::putBack()
 {
   size_t pos = cSdCard::inst().getFilePos(m_file);
   if(pos > 0)
-  cSdCard::inst().setFilePos(m_file, pos - 1);
+    cSdCard::inst().setFilePos(m_file, pos - 1);
 }
 
 
 enToken cFileInfo::getToken() {
-  int ret = getNextChar();
+  int ret;
+  do {
+    ret = getNextChar();
+  } while (cUtils::isWhiteSpace(ret));
   size_t idx = 0;
   if (ret < 0)
     return enToken::END;
@@ -110,8 +114,7 @@ enToken cFileInfo::getToken() {
         } while ((ret != '>') || (ret < 0));
         if((ret > 0) && (idx > 0))
           m_name[idx - 1] = 0;
-        if(ret > 0)
-          putBack();
+
         return enToken::CLOSE_TAG;
     }
 
@@ -126,14 +129,13 @@ enToken cFileInfo::getToken() {
       } while ((ret != '>') || (ret < 0));
       if((ret > 0) && (idx > 0))
         m_name[idx - 1] = 0;
-      if(ret > 0)
-        putBack();
       return enToken::OPEN_TAG;
     }
   }
 
   // text
   else {
+      m_name[idx++] = (char)ret;
       do {
         ret = getNextChar();
         m_name[idx++] = (char)ret;
@@ -149,3 +151,37 @@ enToken cFileInfo::getToken() {
   return enToken::ERR_TOKEN;
 }
 
+int cFileInfo::readParameter(const char* fileName, uint32_t& sampleRate) {
+  int retVal = 0;
+  enSdRes res = cSdCard::inst().openFile(fileName, m_file, enMode::READ);
+  if(res == enSdRes::OK) {
+    do {
+      enToken tok = getToken();
+      if (tok == enToken::END)
+        break;
+      if(tok == enToken::OPEN_TAG) {
+        if(strcmp(m_name, TAG_SAMPLE_RATE) == 0) {
+          tok = getToken();
+          if(tok == enToken::TEXT) {
+            char* p = strstr(m_name, "Hz");
+            if(p == nullptr) {
+              retVal = 3;
+              break;
+            }
+            *p = 0;
+            sampleRate = atoi(m_name);
+            break;
+          }
+          else {
+            retVal = 2;
+            break;
+          }
+        }
+      }
+    } while(true);
+    cSdCard::inst().closeFile(m_file);
+  }
+  else
+    retVal = 1;
+  return retVal;
+}

@@ -7,6 +7,8 @@
 #include "cRtc.h"
 #include "debug.h"
 #include "cAudio.h"
+#include "cfileinfo.h"
+
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
 #include <EEPROM.h>
@@ -29,6 +31,20 @@ thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 thPanel panWaterfall;
 thPanel hdrPanWaterfall;
 
+void setFileToDisplay(const char* buf) {
+  char infoFile[FILENAME_LEN];
+  cUtils::replace(buf, ".raw", ".xml", infoFile, sizeof(infoFile));
+  cFileInfo info;
+  uint32_t sampleRate;
+  int ret = info.readParameter(infoFile, sampleRate);
+  if(ret != 0)
+    sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+  devPars.freqMax.set(sampleRate / 2000);
+  devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
+  devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
+}
+
+
 void f2WaterFunc(cMenuesystem* pThis, tKey key) {
   devStatus.fileIndex--;
   while(devStatus.fileIndex >= 0 )
@@ -39,14 +55,14 @@ void f2WaterFunc(cMenuesystem* pThis, tKey key) {
       char* pName = (*devStatus.pDir)[devStatus.fileIndex].name;
       cUtils::getExtension(pName, ext, sizeof(ext));
       if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
-        char buf[128];
+        char buf[FILENAME_LEN];
         strncpy(buf, cSdCard::inst().getActDir(), sizeof(buf));
         strcat(buf,"/");
         strcat(buf, pName);
         devPars.fileName.set(buf);
-        uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-        devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
-        devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
+
+        setFileToDisplay(buf);
+
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
         pThis->refreshMainPanel();
@@ -68,14 +84,14 @@ void f3WaterFunc(cMenuesystem* pThis, tKey key) {
       char* pName = (*devStatus.pDir)[devStatus.fileIndex].name;
       cUtils::getExtension(pName, ext, sizeof(ext));
       if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
-        char buf[128];
+        char buf[FILENAME_LEN];
         strncpy(buf, cSdCard::inst().getActDir(), sizeof(buf));
         strcat(buf,"/");
         strcat(buf, pName);
         devPars.fileName.set(buf);
-        uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-        devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
-        devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
+
+        setFileToDisplay(buf);
+
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
         pThis->refreshMainPanel();
@@ -208,12 +224,14 @@ void dispModeFunc(cMenuesystem* pThis, tKey key) {
     p->itemList[2].isVisible = false;
 }
 
+
 void fileFunc(cMenuesystem* pThis, tKey key) {
   enSdRes rc = OK;
   cSdCard& sd = cSdCard::inst();
   enFocusState state = pThis->getFocusState();
+  char buf[FILENAME_LEN];
+
   if (pThis->isDropDownInFocus()) {
-    char buf[FILENAME_LEN];
     strncpy(buf, sd.getActDir(), FILENAME_LEN);
     size_t len = strlen(buf);
     if (buf[len - 1] != '/')
@@ -238,9 +256,7 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
       }
     }
   }
-  uint32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-  devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
-  devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
+  setFileToDisplay(buf);
 }
 
 void batFunc(cMenuesystem* pThis, tKey key) {
@@ -601,6 +617,7 @@ void cMenue::initPars() {
   devPars.dispOrient.addItem(1162);
 
   devPars.preTrigger.init(0.0, 50.0, 1.0, 0);
+  devPars.freqMax.init(1, 300, 1, 0);
 
   devStatus.btnAudio = new cParBtn(Txt::get(309));
   load();

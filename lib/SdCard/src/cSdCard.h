@@ -150,6 +150,7 @@ class cSdCard {
     */
    enSdRes setFilePos(tFILE& f, size_t pos) { return f.seekSet(pos) ? OK : SEEK_ERR; }
 
+   size_t getFilePos(tFILE& f) { return f.curPosition();}
    /*
     * send file with given name to serial interface
     * format length 9 digit decimal as ASCII followed by ':'

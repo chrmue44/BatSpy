@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "MenueSystem.h"
 #include "cutils.h"
-//#include "errors.h"
 #include <ILI9341_t3.h>
 #include <Arduino.h>
 

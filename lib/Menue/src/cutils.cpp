@@ -136,3 +136,8 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
     strncpy(result, str, resultSize);
   return retVal;
 }
+
+
+bool cUtils::isWhiteSpace(char c) {
+  return ((c == ' ') || (c == '\t') || (c == '\n'));
+}

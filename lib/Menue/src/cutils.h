@@ -14,6 +14,7 @@ class cUtils
   static void replaceCharsInPlace(char* str, size_t strSize, char toSearch, char replaceCh);
   static int replaceAll(const char* str, const char* toSearch, const char* replaceStr, char* result, size_t resultSize);
   static int replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize);
+  static bool isWhiteSpace(char c);
 };
 
 #endif  //#ifndef C_UTILS_H

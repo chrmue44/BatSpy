@@ -4,6 +4,8 @@
 #include <cstdint>
 #include "cSdCard.h"
 
+#define TAG_SAMPLE_RATE "Samplerate"
+
 enum enToken {
   OPEN_TAG,
   TEXT,
@@ -16,7 +18,7 @@ class cFileInfo {
 
  public:
   int write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile);
-  int readSampleRate(const char* fileName, int32_t& sampleRate);
+  int readParameter(const char* fileName, uint32_t& sampleRate);
 
  private:
   int writeLine(const char* text);
