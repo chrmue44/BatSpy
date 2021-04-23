@@ -50,9 +50,9 @@ void f2WaterFunc(cMenuesystem* pThis, tKey key) {
   while(devStatus.fileIndex >= 0 )
   {
     char ext[8];
-    if(!(*devStatus.pDir)[devStatus.fileIndex].isDir)
+    if(!devStatus.dir[devStatus.fileIndex].isDir)
     {
-      char* pName = (*devStatus.pDir)[devStatus.fileIndex].name;
+      char* pName = devStatus.dir[devStatus.fileIndex].name;
       cUtils::getExtension(pName, ext, sizeof(ext));
       if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
         char buf[FILENAME_LEN];
@@ -76,12 +76,12 @@ void f2WaterFunc(cMenuesystem* pThis, tKey key) {
 
 void f3WaterFunc(cMenuesystem* pThis, tKey key) {
   devStatus.fileIndex++;
-  while(devStatus.fileIndex < devStatus.pDir->size())
+  while(devStatus.fileIndex < devStatus.dir.size())
   {
     char ext[8];
-    if(!(*devStatus.pDir)[devStatus.fileIndex].isDir)
+    if(!devStatus.dir[devStatus.fileIndex].isDir)
     {
-      char* pName = (*devStatus.pDir)[devStatus.fileIndex].name;
+      char* pName = devStatus.dir[devStatus.fileIndex].name;
       cUtils::getExtension(pName, ext, sizeof(ext));
       if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
         char buf[FILENAME_LEN];
@@ -189,20 +189,20 @@ void dirFunc(cMenuesystem* pThis, tKey key) {
   enFocusState state = pThis->getFocusState();
   // leaving dropdown
   if (pThis->isDropDownInFocus()) {
-    DPRINTF2("change dir: %s\n", devPars.dirSel.getActText());
     sd.chdir(devPars.dirSel.getActText());
     devPars.fileName.set(sd.getActDir());
+    sd.dir(devStatus.dir);
     devStatus.fileIndex = 1;
   }
   // before opening dropdown
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
-      tDirInfo* p;
+      tDirInfo p;
       DPRINTLN1("dirFunc"); //@@@
       rc = sd.dir(p);
       devPars.dirSel.clear();
-      if (p && (rc == OK)) {
-        tDirInfo& dir = *p;
+      if (rc == OK) {
+        tDirInfo& dir = p;
         for (size_t i = 0; i < dir.size(); i++) {
           if (dir[i].isDir) {
             devPars.dirSel.addItem(dir[i].name);
@@ -242,16 +242,19 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
   //
   else {
     if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
-      tDirInfo* p;
-      DPRINTLN1("fileFunc\n");
-
+      tDirInfo p;
       rc = sd.dir(p);
       devPars.fileSel.clear();
       if (rc == 0) {
-        tDirInfo& dir = *p;
+        tDirInfo& dir = p;
         for (size_t i = 0; i < dir.size(); i++) {
-          if (!dir[i].isDir)
-            devPars.fileSel.addItem(dir[i].name);
+          char ext[8];
+          if (!dir[i].isDir) {
+            char* pName = dir[i].name;
+            cUtils::getExtension(pName, ext, sizeof(ext));
+            if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))
+              devPars.fileSel.addItem(dir[i].name);
+          }
         }
       }
     }

@@ -69,7 +69,7 @@ struct stStatus {
   cParNum amplMin = -100;         ///< min. amplitude for td display
   stBatInfo bats;                 ///< struct to store bat informations
   cParBtn* btnAudio;              ///< button to clear audio performance measurement
-  tDirInfo* pDir;                 ///< content of current dir
+  tDirInfo dir;                   ///< content of current dir
   size_t fileIndex;               ///< index of file in dir
   size_t startIndex;              ///< start index of directory
   cParBtn* btnSetTime;
