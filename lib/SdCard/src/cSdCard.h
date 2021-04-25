@@ -106,7 +106,7 @@ class cSdCard {
    * ext: file extension to filter directory entries (NULL = no filter)
    * startIndex: index from which the directory entries are filled
    */
-   enSdRes dir(tDirInfo*& directory , bool terminal = false, const char* ext = NULL, size_t startIndex = 0);
+   enSdRes dir(tDirInfo& directory , bool terminal = false, const char* ext = NULL, size_t startIndex = 0);
    
    enSdRes mkDir(const char* name);
 

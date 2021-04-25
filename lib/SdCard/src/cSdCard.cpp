@@ -117,7 +117,7 @@ enSdRes cSdCard::unmount() {
 }
 
 #if defined(CARDLIB_SDFAT)
-enSdRes cSdCard::dir(tDirInfo*& directory, bool terminal, const char* ext, size_t startIndex) {
+enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) {
   enSdRes retVal = OK;
   File32 dir;
   File32 file;
@@ -180,12 +180,12 @@ enSdRes cSdCard::dir(tDirInfo*& directory, bool terminal, const char* ext, size_
     m_dirInfo.push_back(d);      
     dir.close();
   } 
-  directory = &m_dirInfo; 
+  directory = m_dirInfo; 
   return retVal;
 }
 
 #elif defined(CARDLIB_SD)
-enSdRes cSdCard::dir(tDirInfo*& directory, bool terminal, const char* ext, size_t startIndex) {
+enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) {
   enSdRes retVal = OK;
   File dir = SD.open(m_actDir);
   if (!dir)

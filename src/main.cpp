@@ -46,12 +46,23 @@ void initTft() {
   setDispLight(255);
 }
 
+void waitForSerial()
+{
+  int a = 0;
+  while( a == 0)
+  {
+    Serial.println("press key to coninue");
+    a = Serial.available();
+    delay(500);
+  }
+}
 
 void setup() {
   size_t freeMem, totMem;
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
+//  waitForSerial();
   initTft();
   tft.println("setting up bat detector");
   delay(500);
@@ -64,6 +75,7 @@ void setup() {
   menue.printPars();
   audio.setup();
   wheels.setDirection(true);  
+  setDispLight(255);
 }
 
 
@@ -77,12 +89,12 @@ void loop() {
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
     menue.handleKey(DEV_KEY_TICK);
-    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
+/*    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {
         setDispLight(0);
         backLightOn = false;
       }
-    }
+    } */
   }
   else
   {

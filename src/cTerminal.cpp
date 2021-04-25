@@ -26,7 +26,7 @@ void cTerminal::parseCmd() {
 void cTerminal::execCmd() {
   enSdRes rc;
   m_recbuf[m_recIdx] = 0;
-  tDirInfo* dirInfo;
+  tDirInfo dirInfo;
   size_t dirIdx;
   char ret;
 
@@ -61,7 +61,7 @@ void cTerminal::execCmd() {
         do {
           rc = cSdCard::inst().dir(dirInfo, true, p, dirIdx);
           dirIdx += MAX_DIRENTRIES;
-        } while(dirInfo->size() >= MAX_DIRENTRIES);
+        } while(dirInfo.size() >= MAX_DIRENTRIES);
       
         Serial.write(0x04);
       }
