@@ -128,7 +128,6 @@ protected:
   virtual void initPars();
 
 private:
-  void initBats();
   bool checkCRC();
   void loadLanguage();
 };

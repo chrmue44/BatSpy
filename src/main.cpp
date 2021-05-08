@@ -8,10 +8,23 @@
 #include "cWheels.h"
 #include "debug.h"
 #include "cTerminal.h"
+#include "clFixMemPool.h"
+
 extern struct stTxtList Texts[];
-
-
+/*
+const tChunkTab memChunks[] = {
+  {1024, 10},
+  {512, 10},
+  {256, 10},
+  {128, 10},
+  {64, 20},
+  {32, 20},
+  {16, 20},
+  {8, 20}
+};
+*/
 // ************************ global objects *************************
+//clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
 ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST, 
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
 cAudio audio;  // audio control
@@ -89,12 +102,12 @@ void loop() {
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
     menue.handleKey(DEV_KEY_TICK);
-/*    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
+    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {
         setDispLight(0);
         backLightOn = false;
       }
-    } */
+    } 
   }
   else
   {

@@ -8,6 +8,9 @@
 #include "debug.h"
 #include "cAudio.h"
 #include "cfileinfo.h"
+#include "pnlmain.h"
+#include "pnlwaterfall.h"
+#include "pnlbats.h"
 
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
@@ -25,443 +28,6 @@ stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
 extern cRtc rtc;
 
-// ***************************************************
-// waterfall panel
-thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
-thPanel panWaterfall;
-thPanel hdrPanWaterfall;
-
-void setFileToDisplay(const char* buf) {
-  char infoFile[FILENAME_LEN];
-  cUtils::replace(buf, ".raw", ".xml", infoFile, sizeof(infoFile));
-  cFileInfo info;
-  uint32_t sampleRate;
-  int ret = info.readParameter(infoFile, sampleRate);
-  if(ret != 0)
-    sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-  devPars.freqMax.set(sampleRate / 2000);
-  devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
-  devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
-}
-
-
-void f2WaterFunc(cMenuesystem* pThis, tKey key) {
-  devStatus.fileIndex--;
-  while(devStatus.fileIndex >= 0 )
-  {
-    char ext[8];
-    if(!devStatus.dir[devStatus.fileIndex].isDir)
-    {
-      char* pName = devStatus.dir[devStatus.fileIndex].name;
-      cUtils::getExtension(pName, ext, sizeof(ext));
-      if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
-        char buf[FILENAME_LEN];
-        strncpy(buf, cSdCard::inst().getActDir(), sizeof(buf));
-        strcat(buf,"/");
-        strcat(buf, pName);
-        devPars.fileName.set(buf);
-
-        setFileToDisplay(buf);
-
-        devStatus.graph.initPlot(true);
-        devStatus.waterf.initPlot(true);
-        pThis->refreshMainPanel();
-        pThis->refreshHdrPanel();
-        break;
-      }
-    }
-    devStatus.fileIndex--;
-  }
-}
-
-void f3WaterFunc(cMenuesystem* pThis, tKey key) {
-  devStatus.fileIndex++;
-  while(devStatus.fileIndex < devStatus.dir.size())
-  {
-    char ext[8];
-    if(!devStatus.dir[devStatus.fileIndex].isDir)
-    {
-      char* pName = devStatus.dir[devStatus.fileIndex].name;
-      cUtils::getExtension(pName, ext, sizeof(ext));
-      if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
-        char buf[FILENAME_LEN];
-        strncpy(buf, cSdCard::inst().getActDir(), sizeof(buf));
-        strcat(buf,"/");
-        strcat(buf, pName);
-        devPars.fileName.set(buf);
-
-        setFileToDisplay(buf);
-
-        devStatus.graph.initPlot(true);
-        devStatus.waterf.initPlot(true);
-        pThis->refreshMainPanel();
-        pThis->refreshHdrPanel();
-        break;
-      }
-    }
-    devStatus.fileIndex++;
-  }
-}
-
-const float ampStepTab[] = {1, 2, 5, 10, 20, 50, 100};
-
-void amplitudeFunc(cMenuesystem* pThis, tKey key) {
-  float ampl = devStatus.amplMax.get();
-  size_t i;
-  for(i = 0; i < (sizeof(ampStepTab)/sizeof(ampStepTab[0])); i++) {
-    if(ampl == ampStepTab[i])
-      break;
-  }
-
-  switch (key) {
-    case DEV_KEY_UP:
-      if (i > 0) {
-        float val = ampStepTab[i - 1];
-        devStatus.amplMax.set(val);
-      }
-      break;
-
-    case DEV_KEY_DOWN:
-      if (i < (sizeof(ampStepTab)/sizeof(ampStepTab[0]) - 1))
-        devStatus.amplMax.set(ampStepTab[i + 1]);
-      break;
-  }
-  devStatus.amplMin.set(devStatus.amplMax.get() * -1.0);
-  devStatus.graph.initPlot(true);
-  devStatus.graph.setAmplitude(devStatus.amplMax.get());
-  pThis->refreshMainPanel();
-}
-
-const float stepTab[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2};
-
-void timeStepFunc(cMenuesystem* pThis, tKey key) {
-  float step = devStatus.timStep.get();
-  size_t i;
-  for(i = 0; i < (sizeof(stepTab)/sizeof(stepTab[0])); i++) {
-    if(step == stepTab[i])
-      break;
-  }
-
-  switch (key) {
-    case DEV_KEY_UP:
-      if (i > 0) {
-        float val = stepTab[i - 1];
-        devStatus.timStep.set(val);
-      }
-      break;
-
-    case DEV_KEY_DOWN:
-      if (i < (sizeof(stepTab)/sizeof(stepTab[0]) - 1))
-        devStatus.timStep.set(stepTab[i + 1]);
-      break;
-  }
-
-  devStatus.timMin.init(0, 20, 2 * devStatus.timStep.get(), DEC_TIM_MIN);
-  devStatus.timMax.set(devStatus.timMin.get() + devStatus.timStep.get() * GRAPH_DIVX_COUNT);
-  devStatus.graph.setPlotBorders(devStatus.timMin.get(), devStatus.timMax.get());
-  devStatus.waterf.setPlotBorders(devStatus.timMin.get(), devStatus.timMax.get());
-  devStatus.graph.initPlot(true);
-  devStatus.waterf.initPlot(true);
-
-  pThis->refreshMainPanel();
-}
-
-void panWaterZoomFunc(cMenuesystem* pThis, tKey key) {
-  switch (key) {
-    case DEV_KEY_UP:
-    case DEV_KEY_DOWN:
-      devStatus.timMax.set(devStatus.timMin.get() + GRAPH_DIVX_COUNT * devStatus.timStep.get());
-      if (devStatus.timMax.get() > devStatus.timMax.getMax())
-        devStatus.timMax.set(devStatus.timMax.getMax());
-      devStatus.graph.setPlotBorders(devStatus.timMin.get(), devStatus.timMax.get());
-      devStatus.graph.initPlot(true);
-      devStatus.waterf.setPlotBorders(devStatus.timMin.get(), devStatus.timMax.get());
-      devStatus.waterf.initPlot(true);
-      pThis->refreshMainPanel();
-      break;
-
-  }
-}
-
-void dirFunc(cMenuesystem* pThis, tKey key) {
-  enSdRes rc = OK;
-  cSdCard& sd = cSdCard::inst();
-  enFocusState state = pThis->getFocusState();
-  // leaving dropdown
-  if (pThis->isDropDownInFocus()) {
-    sd.chdir(devPars.dirSel.getActText());
-    devPars.fileName.set(sd.getActDir());
-    sd.dir(devStatus.dir);
-    devStatus.fileIndex = 1;
-  }
-  // before opening dropdown
-  else {
-    if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
-      tDirInfo p;
-      DPRINTLN1("dirFunc"); //@@@
-      rc = sd.dir(p);
-      devPars.dirSel.clear();
-      if (rc == OK) {
-        tDirInfo& dir = p;
-        for (size_t i = 0; i < dir.size(); i++) {
-          if (dir[i].isDir) {
-            devPars.dirSel.addItem(dir[i].name);
-            DPRINTF2("dir name: %s\n", dir[i].name);
-          }
-        }
-      }
-      DPRINTF2("devPars.dirSel.size: %u\n", devPars.dirSel.size());
-    }
-  }
-}
-
-void dispModeFunc(cMenuesystem* pThis, tKey key) {
-  thPanel i = pThis->getMainPanel();
-  cPanel* p = pThis->getPan(i);
-  if(devStatus.opMode.get() == OPMODE_REC_AUTO)
-    p->itemList[2].isVisible = true;
-  else
-    p->itemList[2].isVisible = false;
-}
-
-
-void fileFunc(cMenuesystem* pThis, tKey key) {
-  enSdRes rc = OK;
-  cSdCard& sd = cSdCard::inst();
-  enFocusState state = pThis->getFocusState();
-  char buf[FILENAME_LEN];
-
-  if (pThis->isDropDownInFocus()) {
-    strncpy(buf, sd.getActDir(), FILENAME_LEN);
-    size_t len = strlen(buf);
-    if (buf[len - 1] != '/')
-      strcat(buf, "/");
-    strcat(buf, devPars.fileSel.getActText());
-    devPars.fileName.set(buf);
-  }
-  //
-  else {
-    if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
-      tDirInfo p;
-      rc = sd.dir(p);
-      devPars.fileSel.clear();
-      if (rc == 0) {
-        tDirInfo& dir = p;
-        for (size_t i = 0; i < dir.size(); i++) {
-          char ext[8];
-          if (!dir[i].isDir) {
-            char* pName = dir[i].name;
-            cUtils::getExtension(pName, ext, sizeof(ext));
-            if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))
-              devPars.fileSel.addItem(dir[i].name);
-          }
-        }
-      }
-    }
-  }
-  setFileToDisplay(buf);
-}
-
-void batFunc(cMenuesystem* pThis, tKey key) {
-  char line[512];
-  char line2[512];
-  size_t byteCount;
-  cSdCard& sd = cSdCard::inst();
-  tFILE file;
-  enSdRes res = sd.openFile("/info/bat_info.tsv", file, READ);
-  bool found = false;
-  if(res == 0)
-  {
-    for(;;) {
-      res = sd.readLine(file, line, sizeof(line), byteCount);
-      line[byteCount] = 0;
-      cUtils::replaceUTF8withInternalCoding(line, line2, sizeof(line2));   
-      if(res == 0) {
-        if(strstr(line2, devStatus.bats.name.getActText()) != nullptr) {
-          found = true;
-          break;
-        }
-      }
-      else
-        break;
-    }
-    sd.closeFile(file);
-    if(found)
-    {
-      char* token = strtok(line2, "\t");  //name
-      token = strtok(nullptr, "\t");
-      devStatus.bats.nameLat.set(token);
-      token = strtok(nullptr, "\t");   //Kürzel
-      token = strtok(nullptr, "\t");   //vorkommen
-      devStatus.bats.occurrence.set(token);
-      token = strtok(nullptr, "\t");   //Hauptfrequenz
-      devStatus.bats.freq.set(token);
-      token = strtok(nullptr, "\t");   //Ruflaenge
-      devStatus.bats.callLen.set(token);
-      token = strtok(nullptr, "\t");   //Rufabstand
-      devStatus.bats.callDist.set(token);
-      token = strtok(nullptr, "\t");   //Characteristik
-      devStatus.bats.characteristic.set(token);
-      token = strtok(nullptr, "\t");   //Comments
-      devStatus.bats.comment.set(token);
-      token = strtok(nullptr, "\t");   //Skiba
-      token = strtok(nullptr, "\t");   //Bild
-      token = strtok(nullptr, "\t");   //Groesse
-      devStatus.bats.size.set(token);
-      token = strtok(nullptr, "\t");   //Spannweite
-      devStatus.bats.wingSpan.set(token);
-      token = strtok(nullptr, "\t");   //Gewicht
-      devStatus.bats.weight.set(token);
-      token = strtok(nullptr, "\t");   //Lebensraum
-      devStatus.bats.habitat.set(token);
-    }
-  }
-}
-
-
-
-thPanel panFont;
-thPanel panTime;        ///< panel to display time diagram
-thPanel panHisto;
-thPanel panGeo;
-thPanel panInfo;
-
-// ***************************************************
-// main panel
-thPanel fkeyMainPan;    ///< f-key panel for main screen
-thPanel f2pan;
-thPanel f3pan;
-thPanel f4MainPan;
-thPanel hdrMainPanel;
-cParEnum f1MainItems(0);
-cParEnum f4MainItems(0);
-thPanel panParams;      ///< panel for parameter settings
-thPanel panBats;        ///< panel for bat infos
-thPanel panDateTime;    ///< panel to set time and date
-
-// *******************************************
-// drop down panel F1 for main panel
-
-void f1DropFunc(cMenuesystem* pThis, tKey key) {
-  switch (pThis->getFocusItem()) {
-    case 0:
-      pThis->setMainPanel(panGeo);
-      pThis->setHdrPanel(hdrMainPanel);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 1:
-      devStatus.graph.initPlot(true);
-      pThis->setMainPanel(panTime);
-      pThis->setHdrPanel(hdrPanWaterfall);;
-      pThis->setFkeyPanel(fkeyWaterPan);
-      break;
-    case 2:
-      devStatus.waterf.initPlot(true);
-      pThis->setMainPanel(panWaterfall);
-      pThis->setHdrPanel(hdrPanWaterfall);
-      pThis->setFkeyPanel(fkeyWaterPan);
-      break;
-    case 3:
-      pThis->setMainPanel(panHisto);
-      pThis->setHdrPanel(hdrPanWaterfall);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 4:
-      pThis->setMainPanel(panBats);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 5:
-      pThis->setMainPanel(panFont);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 6:
-      pThis->setMainPanel(panInfo);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-  }
-}
-
-void f4LoadFunc(cMenuesystem* pThis, tKey key) {
-  switch (key) {
-    case DEV_KEY_YES:
-      pThis->load();
-      break;
-    case DEV_KEY_NO:
-      break;
-  }
-}
-
-void f4SaveFunc(cMenuesystem* pThis, tKey key) {
-  switch (key) {
-    case DEV_KEY_YES:
-      pThis->save();
-      break;
-    case DEV_KEY_NO:
-      break;
-  }
-}
-
-void f4DropFunc(cMenuesystem* pThis, tKey key) {
-  switch (pThis->getFocusItem()) {
-    case 0:
-      pThis->showMsg(MSG_YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
-      break;
-    case 1:
-      pThis->showMsg(MSG_YESNO, f4SaveFunc, Txt::get(1005), Txt::get(1025));
-      break;
-    case 2:
-      pThis->setMainPanel(panParams);
-      pThis->setHdrPanel(hdrMainPanel);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 3:
-      devStatus.year.set(devStatus.date.getYear());
-      devStatus.month.set(devStatus.date.getMonth());
-      devStatus.day.set(devStatus.date.getDay());
-      devStatus.hour.set(devStatus.time.getHour());
-      devStatus.minute.set(devStatus.time.getMin());
-      pThis->setMainPanel(panDateTime);
-      pThis->setHdrPanel(hdrMainPanel);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-  }
-}
-
-void f1Func(cMenuesystem* pThis, tKey key) {
-  stPanelItem item;
-  item.type = ITEM_ENUM;
-  item.p = &f1MainItems;
-  item.f = NULL;
-  pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFunc);
-
-}
-
-void f2Func(cMenuesystem* pThis, tKey key) {
-  if ((devStatus.opMode.get() == OPMODE_HEAR_HET) ||
-      (devStatus.opMode.get() == OPMODE_REC_AUTO)) {
-    if (devStatus.playStatus.get() == 0)
-      devStatus.playStatus.set(2);
-    else
-      devStatus.playStatus.set(0);
-  }
-  else {
-    if (devStatus.playStatus.get() == 0)
-      devStatus.playStatus.set(1);
-    else
-      devStatus.playStatus.set(0);
-  }
-}
-
-void f4Func(cMenuesystem* pThis, tKey key) {
-  stPanelItem item;
-  item.type = ITEM_ENUM;
-  item.p = &f4MainItems;
-  pThis->createDropDown(item, DISP_WIDTH - 120 - 1, DISP_HEIGHT - f4MainItems.size() * LINE_HEIGHT - 15, 120, f4DropFunc);
-}
-
-
-void graphFunc(cMenuesystem* pThis, tKey key) {
-}
 
 
 void languageFunc(cMenuesystem* pThis, tKey key) {
@@ -475,20 +41,6 @@ void languageFunc(cMenuesystem* pThis, tKey key) {
   }
 }
 
-void btnMeasFunc(cMenuesystem* pThis, tKey key) {
-  int32_t level = devPars.threshHold.get() * MAX_ADC / 100;
-  if(devStatus.graph.isMinMax()) {
-    float t = devStatus.graph.measure(level) * 1000;
-    devStatus.pulseWidth.set(t);
-    devStatus.measUnit.set("ms");
-  }
-  else {
-    float f = devStatus.graph.measure(level) / 1000;
-    devStatus.pulseWidth.set(f);
-    devStatus.measUnit.set("kHz");
-  }
-}
-
 
 void btnAudioFunc(cMenuesystem* pThis, tKey key) {
 #ifndef SIMU_DISPLAY
@@ -496,10 +48,6 @@ void btnAudioFunc(cMenuesystem* pThis, tKey key) {
 #endif
 }
 
-void fftLevelFunc(cMenuesystem* pThis, tKey key) {
-  devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
-  devStatus.waterf.initPlot(true);
-}
 
 void setTimeFunc(cMenuesystem* pThis, tKey key) {
 #ifndef SIMU_DISPLAY
@@ -563,18 +111,7 @@ void cMenue::initPars() {
 
   initBats();
 
-  f1MainItems.addItem(100);
-  f1MainItems.addItem(101);
-  f1MainItems.addItem(102);
-  f1MainItems.addItem(103);
-  f1MainItems.addItem(104);
-  f1MainItems.addItem(105);
-  f1MainItems.addItem(106);
-
-  f4MainItems.addItem(1001);
-  f4MainItems.addItem(1021);
-  f4MainItems.addItem(1030);
-  f4MainItems.addItem(1031);
+  initFunctionItems();
 
 
   for(int t = 1300; t <= 1316; t++)
@@ -636,12 +173,8 @@ void cMenue::initDialogs() {
   int err;
   // F-KEYs for main panel
   fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
-  // Serial.println("initDialogs2");
   setFkeyPanel(fkeyMainPan);
-  err  = getPan(fkeyMainPan)->addTextItem(1,   0, 227, 80, lf, true, f1Func);
-  err |= getPan(fkeyMainPan)->addTextItem(2,  81, 227, 79, lf, true, f2Func);
-  err |= getPan(fkeyMainPan)->addTextItem(3, 161, 227, 79, lf, false);
-  err |= getPan(fkeyMainPan)->addTextItem(4, 241, 227, 79, lf, true, f4Func);
+  err |= initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
@@ -650,78 +183,22 @@ void cMenue::initDialogs() {
 
   // main panel
   panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH,   DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
-  err |= getPan(panGeo)->addTextItem(202,                     3, 30,           80, lf);
-  err |= getPan(panGeo)->addEnumItem(&devStatus.opMode,     100, 30,          140, lf, true, dispModeFunc);
-  err |= getPan(panGeo)->addNumItem(&devStatus.recCount,    260, 30,           40, lf, false);
-  err |= getPan(panGeo)->itemList[2].isVisible = false;
-  err |= getPan(panGeo)->addEnumItem(&devStatus.playStatus, 100, 30 + lf,     120, lf, false);
-  err |= getPan(panGeo)->addTextItem(206,                     3, 40 + 2 * lf,  80, lf);
-  err |= getPan(panGeo)->addListItem(&devPars.dirSel,       100, 40 + 2 * lf, 210, lf, true, dirFunc);
-  err |= getPan(panGeo)->addTextItem(205,                     3, 40 + 3 * lf,  80, lf);
-  err |= getPan(panGeo)->addListItem(&devPars.fileSel,      100, 40 + 3 * lf, 210, lf, true, fileFunc);
-  err |= getPan(panGeo)->addTextItem(208,                     3, 40 + 4 * lf,  80, lf);
-  err |= getPan(panGeo)->addStrItem(&devPars.fileName,      100, 40 + 4 * lf, 210, lf);
-  err |= getPan(panGeo)->addTextItem(203,                     3, 50 + 5 * lf,  80, lf);
-  err |= getPan(panGeo)->addNumItem(&devPars.mixFreq,       100, 50 + 5 * lf,  15, lf, true);
-  err |= getPan(panGeo)->addTextItem(300,                   115, 50 + 5 * lf,  30, lf);
-  err |= getPan(panGeo)->addTextItem(204,                     3, 50 + 6 * lf,  80, lf);
-  err |= getPan(panGeo)->addNumItem(&devPars.volume,        100, 50 + 6 * lf,  20, lf, true);
-  err |= getPan(panGeo)->addTextItem(1320,                    3, 50 + 7 * lf,  80, lf);
-  err |= getPan(panGeo)->addEnumItem(&devPars.preAmpType,   100, 50 + 7 * lf, 120, lf, true);
-  err |= getPan(panGeo)->addTextItem(1325,                    3, 50 + 8 * lf,  80, lf);
-  err |= getPan(panGeo)->addEnumItem(&devPars.preAmpGain,   100, 50 + 8 * lf, 120, lf, true);
-
-  //err |= getPan(panGeo)->addTextItem(200,                     3, 200,          80, lf);
-  //err |= getPan(panGeo)->addGeoItem(&devStatus.geoPos,      100, 200,         150, lf);
-  err |= getPan(panGeo)->addTextItem(201,                     3, 200 + lf,     70, lf);
-  err |= getPan(panGeo)->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);
-  err |= getPan(panGeo)->addTimeItem(&devStatus.time,       180, 200 + lf,     70, lf);
+  err |= initMainPanel(getPan(panGeo), lf);
   setMainPanel(panGeo);
 
   // F-KEYs for waterfall panel
   fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
-  err  = getPan(fkeyWaterPan)->addTextItem(  1,   3, 229, 75, lf - 1, true, f1Func);
-  err |= getPan(fkeyWaterPan)->addTextItem(310,  83, 229, 75, lf - 1, true, f2WaterFunc);
-  err |= getPan(fkeyWaterPan)->addTextItem(311, 163, 229, 75, lf - 1, true, f3WaterFunc);
-  err |= getPan(fkeyWaterPan)->addTextItem(  4, 243, 229, 75, lf - 1, true, f4Func);
+  err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
   hdrPanWaterfall = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
   err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
   err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
 
   panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panWaterfall)->addTextItem(300,                15, 80,            25, lf);
-  err |= getPan(panWaterfall)->addNumItem(&devPars.freqMax,    20, 20,            25, lf, false);
-  err |= getPan(panWaterfall)->addNumItem(&devPars.freqMin,    20, 148,           25, lf, false);
-  err |= getPan(panWaterfall)->addNumItem(&devPars.fftLevelMin,50,153+COLMAP_DIST,35,lf, true, fftLevelFunc);
-  err |= getPan(panWaterfall)->addNumItem(&devPars.fftLevelMax,270,153+COLMAP_DIST,35, lf, true, fftLevelFunc);
-  err |= getPan(panWaterfall)->addNumItem(&devStatus.timMin,  30, 213,           53, lf, true, panWaterZoomFunc);
-  err |= getPan(panWaterfall)->addTextItem(301,               85, 213,           25, lf, false);
-  err |= getPan(panWaterfall)->addNumItem(&devStatus.timStep,128, 213,           52, lf, true, timeStepFunc);
-  err |= getPan(panWaterfall)->addTextItem(305,              182, 213,           35, lf, false);
-  err |= getPan(panWaterfall)->addNumItem(&devStatus.timMax, 255, 213,           53, lf, false);
-  err |= getPan(panWaterfall)->addTextItem(301,              310, 213,           25, lf, false);
-  err |= getPan(panWaterfall)->addGraphItem(&devStatus.waterf,40,  25,          261, 128, graphFunc);
-
+  err |= initWaterPan(getPan(panWaterfall), lf);
   // x-t-diagram panel
   panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panTime)->addNumItem(&devStatus.amplMax,       5,  20,           20, lf, true, amplitudeFunc);
-  err |= getPan(panTime)->addTextItem(302,                    25,  20,            5, lf);
-  err |= getPan(panTime)->addTextItem(306,                     1,  20 +  2 * lf, 23, lf);
-  err |= getPan(panTime)->addNumItem(&devPars.threshHold,      1,  20 +  3 * lf, 18, lf, true);
-  err |= getPan(panTime)->addTextItem(307,                    19,  20 +  3 * lf,  8, lf);
-  err |= getPan(panTime)->addBtnItem(devStatus.btnMeas,        1,  20 +  5 * lf, 30, lf, btnMeasFunc);
-  err |= getPan(panTime)->addNumItem(&devStatus.pulseWidth,    1,  20 +  7 * lf, 30, lf, false);
-  err |= getPan(panTime)->addStrItem(&devStatus.measUnit,      1,  20 +  8 * lf, 30, lf, false);
-  err |= getPan(panTime)->addNumItem(&devStatus.amplMin,       1, 205,           24, lf, false);
-  err |= getPan(panTime)->addTextItem(302,                    25, 205,            5, lf);
-  err |= getPan(panTime)->addNumItem(&devStatus.timMin,       30, 213,           53, lf, true, panWaterZoomFunc);
-  err |= getPan(panTime)->addTextItem(301,                    85, 213,           25, lf, false);
-  err |= getPan(panTime)->addNumItem(&devStatus.timStep,     128, 213,           52, lf, true, timeStepFunc);
-  err |= getPan(panTime)->addTextItem(305,                   182, 213,           35, lf, false);
-  err |= getPan(panTime)->addNumItem(&devStatus.timMax,      255, 213,           53, lf, false);
-  err |= getPan(panTime)->addTextItem(301,                   310, 213,           25, lf, false);
-  err |= getPan(panTime)->addGraphItem(&devStatus.graph,      33,  25, 285, 185, graphFunc);
+  err |= initTimePan(getPan(panTime), lf);
 
   panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= getPan(panFont)->addTextItem(12000,                  15, 20,           200, lf);
@@ -771,28 +248,7 @@ void cMenue::initDialogs() {
   err |= getPan(panParams)->addEnumItem(&devPars.dispOrient,  170, 20 + 10 * lf,  80, lf, true);
 
   panBats =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panBats)->addTextItem(1200,                        5,  20,           60, lf);
-  err |= getPan(panBats)->addListItem(&devStatus.bats.name,      120,  20,          120, lf, true, batFunc);
-  err |= getPan(panBats)->addTextItem(1202,                        5,  20 + 1 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.nameLat,    120,  20 + 1 * lf, 120, lf);
-  err |= getPan(panBats)->addTextItem(1204,                        5,  20 + 2 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.freq,       120,  20 + 2 * lf,  70, lf);
-  err |= getPan(panBats)->addTextItem(1210,                        5,  20 + 3 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.callLen,    120,  20 + 3 * lf,  70, lf);
-  err |= getPan(panBats)->addTextItem(1212,                        5,  20 + 4 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.callDist,   120,  20 + 4 * lf,  70, lf);
-  err |= getPan(panBats)->addTextItem(1215,                        5,  20 + 5 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.characteristic,120,  20 + 5 * lf, 200, lf);
-  err |= getPan(panBats)->addTextItem(1217,                        5,  20 + 6 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.occurrence, 120,  20 + 6 * lf, 200, lf);
-  err |= getPan(panBats)->addTextItem(1220,                        5,  20 + 7 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.wingSpan,   120,  20 + 7 * lf, 200, lf);
-  err |= getPan(panBats)->addTextItem(1225,                        5,  20 + 8 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.weight,     120,  20 + 8 * lf, 200, lf);
-  err |= getPan(panBats)->addTextItem(1230,                        5,  20 + 9 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.habitat,    120,  20 + 9 * lf, 200, lf);
-  err |= getPan(panBats)->addTextItem(1235,                        5,  20 + 11 * lf,  60, lf);
-  err |= getPan(panBats)->addStrItem(&devStatus.bats.comment,    120,  20 + 11 * lf, 200, lf);
+  err |= initBatPan(getPan(panBats), lf);
 
   panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
   err |= getPan(panDateTime)->addTextItem(1142,                 120, 20 + 4 * lf,  80, lf);
@@ -985,33 +441,3 @@ void cMenue::printStatus() {
 #endif //#ifndef SIMU_DISPLAY
 }
 
-void cMenue::initBats() {
-  char line[512];
-  char line2[512];
-  size_t byteCount;
-  cSdCard& sd = cSdCard::inst();
-  tFILE file;
-  enSdRes res = sd.openFile("/info/bat_info.tsv", file, READ);
-  if(res == 0)
-  {
-    devStatus.bats.name.clear();
-    // read and forget first two header
-    res = sd.readLine(file, line, sizeof(line), byteCount);
-    if(res == 0) {
-      for(;;) {
-        line[0] = 0;
-        res = sd.readLine(file, line, sizeof(line), byteCount);        
-        if(res == 0) {
-          line[byteCount] = 0;
-          cUtils::replaceUTF8withInternalCoding(line, line2, sizeof(line2));             
-          char* token = strtok(line2, "\t");
-          DPRINTF1("token: %s", token);
-          devStatus.bats.name.addItem(token);
-        }
-        else
-          break;
-      }
-    }
-    sd.closeFile(file);
-  }
-}
