@@ -1,19 +1,30 @@
 #ifndef PANMAIN_H
 #define PANMAIN_H
 #include "cmenue.h"
-
-extern thPanel fkeyMainPan;
-extern thPanel panGeo;
+#ifdef OWN_H
+#define extern
+#endif
+extern thPanel fkeyMainPan;    ///< f-key panel for main screen
+extern thPanel f2pan;
+extern thPanel f3pan;
+extern thPanel f4MainPan;
 extern thPanel hdrMainPanel;
-extern thPanel fkeyWaterPan;
+extern thPanel panFont;
+extern thPanel panTime;        ///< panel to display time diagram
+extern thPanel panHisto;
+extern thPanel panGeo;
+extern thPanel panInfo;
+extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 extern thPanel panWaterfall;
 extern thPanel hdrPanWaterfall;
-extern thPanel panTime;
-extern thPanel panFont;
-extern thPanel panInfo;
-extern thPanel panParams;
-extern thPanel panBats;
-extern thPanel panDateTime;
+
+extern thPanel panParams;      ///< panel for parameter settings
+extern thPanel panPosition;    ///< panel for setting of position
+extern thPanel panBats;        ///< panel for bat infos
+extern thPanel panDateTime;    ///< panel to set time and date
+#ifdef OWN_H
+#undef extern
+#endif
 
 void setFileToDisplay(const char* buf);
 void initFunctionItems();

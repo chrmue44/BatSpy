@@ -15,6 +15,7 @@ typedef  std::size_t size_t;
 #define CH_OEs  "\x84"
 #define CH_UEs  "\x85"
 #define CH_SS   "\x86"
+#define CH_DEG  "\x09"
 
 enum enLang {
     LANG_GER = 1,

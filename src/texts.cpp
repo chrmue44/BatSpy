@@ -73,6 +73,7 @@ struct stTxtList Texts[] =
   {  1030, "Parameter"                 ,"Parameter"},
   {  1031, "Datum/Uhrzeit"             ,"Time/Date"},
   {  1032, "Stellen"                   ,"Set"},
+  {  1033, "Position"                  ,0},
   {  1100, "Anzeigesprache:"           ,"Language:"},
   {  1101, "Deutsch"                   ,0},
   {  1102, "English"                   ,0},
@@ -131,7 +132,14 @@ struct stTxtList Texts[] =
   {  1327, "mittel",                    "medium"},
   {  1328, "hoch",                      "high"},
   {  1330, "Pre Trigger [ms]",          0},
-  
+
+  {  1340, "°",                         0},
+  {  1341, "N",                         0},
+  {  1342, "S",                         0},
+  {  1343, "E",                         0},
+  {  1344, "W",                         0},
+  {  1345, ".",                         0},
+
   { 12000, TGE_ASC_0           ,0},
   { 12001, TGE_ASC_1           ,0},
   { 12002, TGE_ASC_2           ,0},

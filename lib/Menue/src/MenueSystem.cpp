@@ -48,7 +48,7 @@ thPanel cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord width
 
 void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId, enPanel panType) {
     char str[32];
-    char fmt[6];
+    char fmt[12];
     char lon, lat;
     uint16_t colTxt, colTxtBack;
     if(!item.isVisible)
@@ -118,9 +118,12 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
       case ITEM_NR: {
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
           if(p->getDecimals() < 10) {
-            snprintf(fmt, sizeof(fmt), "%%.%luf",p->getDecimals());
+            if(p->getLeadingZeros() == 0)
+              snprintf(fmt, sizeof(fmt), "%%.%luf",p->getDecimals());
+            else
+              snprintf(fmt, sizeof(fmt), "%%0%lu.%luf",p->getLeadingZeros(), p->getDecimals());
             snprintf(str, sizeof(str), fmt,p->get());
-            printText(str);
+            printText(str);              
           }
         }
         break;
@@ -132,14 +135,14 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
             y -= 2000;
           if(y > 100)
             y-= 100;
-          snprintf(str, sizeof(str), "%02u.%02u.%02u", p->getDay(), p->getMonth() + 1, y);
+          snprintf(str, sizeof(str), "%02lu.%02lu.%02u", p->getDay(), p->getMonth() + 1, y);
           printText(str);
         }
         break;
 
      case ITEM_TIME: {
           cParTime* p = reinterpret_cast<cParTime*>(item.p);
-          snprintf(str, sizeof(str), "%02u:%02u:%02u", p->getHour(), p->getMin(), p->getSec());
+          snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
           printText(str);
         }
         break;
@@ -150,13 +153,13 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
             lat = 'N';
           else
             lat = 'S';
-          if(p->getDegLong() >= 0)
+          if(p->getDegLon() >= 0)
             lon = 'E';
           else
             lon = 'W';
           snprintf(str, sizeof(str), "%c %02i\xf7 %.3f  %c %03i\xf7 %.3f",
                    lat, p->getDegLat(), p->getMinLat(),
-                   lon, p->getDegLong(), p->getMinLong());
+                   lon, p->getDegLon(), p->getMinLon());
           printText(str);
         }
         break;

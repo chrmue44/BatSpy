@@ -1,31 +1,15 @@
-#include "pnlmain.h"
 #include "cutils.h"
 #include "debug.h"
 #include "cAudio.h"
 #include "cfileinfo.h"
+#define OWN_H
+#include "pnlmain.h"
+#undef OWN_H
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
 
-// ***************************************************
-// main panel
-thPanel fkeyMainPan;    ///< f-key panel for main screen
-thPanel f2pan;
-thPanel f3pan;
-thPanel f4MainPan;
-thPanel hdrMainPanel;
-thPanel panFont;
-thPanel panTime;        ///< panel to display time diagram
-thPanel panHisto;
-thPanel panGeo;
-thPanel panInfo;
-thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
-thPanel panWaterfall;
-thPanel hdrPanWaterfall;
 
-thPanel panParams;      ///< panel for parameter settings
-thPanel panBats;        ///< panel for bat infos
-thPanel panDateTime;    ///< panel to set time and date
 
 // *******************************************
 // drop down panel F1 for main panel
@@ -84,6 +68,7 @@ void initFunctionItems()
   f4MainItems.addItem(1021);
   f4MainItems.addItem(1030);
   f4MainItems.addItem(1031);
+  f4MainItems.addItem(1033);
 }
 
 
@@ -137,14 +122,17 @@ void f4DropFunc(cMenuesystem* pThis, tKey key) {
     case 0:
       pThis->showMsg(MSG_YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
       break;
+    
     case 1:
       pThis->showMsg(MSG_YESNO, f4SaveFunc, Txt::get(1005), Txt::get(1025));
       break;
+    
     case 2:
       pThis->setMainPanel(panParams);
       pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
+
     case 3:
       devStatus.year.set(devStatus.date.getYear());
       devStatus.month.set(devStatus.date.getMonth());
@@ -152,6 +140,25 @@ void f4DropFunc(cMenuesystem* pThis, tKey key) {
       devStatus.hour.set(devStatus.time.getHour());
       devStatus.minute.set(devStatus.time.getMin());
       pThis->setMainPanel(panDateTime);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+
+  case 4:
+      devStatus.latDeg.set(devStatus.geoPos.getDegLat());
+      devStatus.latMin.set(devStatus.geoPos.getMinLat());
+      devStatus.latSec.set(devStatus.geoPos.getSecLat());
+      if(devStatus.latDeg.get() > 0)
+        devStatus.latSign.set(0);
+      else
+        devStatus.latSign.set(1);
+      devStatus.lonDeg.set(devStatus.geoPos.getDegLon());
+      devStatus.lonMin.set(devStatus.geoPos.getMinLon());
+      devStatus.lonSec.set(devStatus.geoPos.getSecLon());
+      if(devStatus.lonDeg.get() > 0)
+        devStatus.lonSign.set(0);
+      else
+        devStatus.lonSign.set(1);
+      pThis->setMainPanel(panPosition);
       pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
@@ -216,7 +223,7 @@ void fileFunc(cMenuesystem* pThis, tKey key) {
   }
   //
   else {
-    if ((state == FST_SELECT) && (key = DEV_KEY_OK)) {
+    if ((state == FST_SELECT) && (key == DEV_KEY_OK)) {
       tDirInfo p;
       rc = sd.dir(p);
       devPars.fileSel.clear();

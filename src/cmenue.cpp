@@ -11,6 +11,7 @@
 #include "pnlmain.h"
 #include "pnlwaterfall.h"
 #include "pnlbats.h"
+#include "pnlparams.h"
 
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
@@ -30,35 +31,12 @@ extern cRtc rtc;
 
 
 
-void languageFunc(cMenuesystem* pThis, tKey key) {
-  switch(devPars.lang.get()) {
-    case 0:
-      Txt::setLang(LANG_GER);
-      break;
-    case 1:
-      Txt::setLang(LANG_EN);
-      break;
-  }
-}
-
-
 void btnAudioFunc(cMenuesystem* pThis, tKey key) {
 #ifndef SIMU_DISPLAY
   AudioProcessorUsageMaxReset();
 #endif
 }
 
-
-void setTimeFunc(cMenuesystem* pThis, tKey key) {
-#ifndef SIMU_DISPLAY
-    rtc.setTime(
-    devStatus.year.get(), devStatus.month.get(), devStatus.day.get(),
-    devStatus.hour.get(), devStatus.minute.get(), 0
-    );
-#endif
-}
-
-// *********************************************
 
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
   cMenuesystem(width, height, pDisplay) {
@@ -159,6 +137,18 @@ void cMenue::initPars() {
   devPars.preTrigger.init(0.0, 50.0, 1.0, 0);
   devPars.freqMax.init(1, 300, 1, 0);
 
+  devStatus.latSign.addItem(1341);
+  devStatus.latSign.addItem(1342);
+  devStatus.latDeg.init(0,59,1,0,2);
+  devStatus.latMin.init(0, 59, 1, 0,2);
+  devStatus.latSec.init(0,999,5,0,3);
+  devStatus.lonSign.addItem(1343);
+  devStatus.lonSign.addItem(1344);
+  devStatus.lonDeg.init(0,59,1,0,3);
+  devStatus.lonMin.init(0, 59, 1, 0,2);
+  devStatus.lonSec.init(0,999,5,0,3);
+  devStatus.geoPos.setLat(49.1234);
+  devStatus.geoPos.setLon(8.2345);
   devStatus.btnAudio = new cParBtn(Txt::get(309));
   load();
 #ifndef SIMU_DISPLAY
@@ -224,41 +214,16 @@ void cMenue::initDialogs() {
 
   // parameter panel
   panParams =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panParams)->addTextItem(1100,                  15, 20,            80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
-  err |= getPan(panParams)->addTextItem(1110,                  15, 20 +      lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.sampleRate,  170, 20 +      lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem(1120,                  15, 20 +  2 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.recTime,      170, 20 +  2 * lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem(1140,                  15, 20 +  3 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.recThreshhold,170, 20 +  3 * lf,  30, lf, true);
-  err |= getPan(panParams)->addTextItem(1330,                  15, 20 +  4 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.preTrigger,   170, 20 +  4 * lf,  80, lf, true);
-  err |= getPan(panParams)->addTextItem(1144,                  15, 20 +  5 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.deafTime,     170, 20 +  5 * lf,  20, lf, true);
-  err |= getPan(panParams)->addTextItem(1145,                  15, 20 +  6 * lf,  80, lf);
-  err |= getPan(panParams)->addNumItem(&devPars.backLightTime,170, 20 +  6 * lf,  20, lf, true);
-  err |= getPan(panParams)->addTextItem(1320,                  15, 20 +  7 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.preAmpType,  170, 20 +  7 * lf,  80, lf, true);
-  err |= getPan(panParams)->addTextItem(1325,                  15, 20 +  8 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.preAmpGain,  170, 20 +  8 * lf,  80, lf, true);
-  err |= getPan(panParams)->addTextItem(1150,                  15, 20 +  9 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.knobRotation,170, 20 +  9 * lf, 100, lf, true);
-  err |= getPan(panParams)->addTextItem(1160,                  15, 20 + 10 * lf,  80, lf);
-  err |= getPan(panParams)->addEnumItem(&devPars.dispOrient,  170, 20 + 10 * lf,  80, lf, true);
+  err |= initParPan(getPan(panParams), lf);
+
+  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initPositionPan(getPan(panPosition), lf);
 
   panBats =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initBatPan(getPan(panBats), lf);
 
   panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
-  err |= getPan(panDateTime)->addTextItem(1142,                 120, 20 + 4 * lf,  80, lf);
-  err |= getPan(panDateTime)->addNumItem(&devStatus.day,        155, 20 + 4 * lf,  20, lf, true);
-  err |= getPan(panDateTime)->addNumItem(&devStatus.month,      180, 20 + 4 * lf,  20, lf, true);
-  err |= getPan(panDateTime)->addNumItem(&devStatus.year,       205, 20 + 4 * lf,  30, lf, true);
-  err |= getPan(panDateTime)->addTextItem(1143,                 120, 20 + 5 * lf,  80, lf);
-  err |= getPan(panDateTime)->addNumItem(&devStatus.hour,       155, 20 + 5 * lf,  20, lf, true);
-  err |= getPan(panDateTime)->addNumItem(&devStatus.minute,     180, 20 + 5 * lf,  20, lf, true);
-  err |= getPan(panDateTime)->addBtnItem(devStatus.btnSetTime,  120, 20 + 7 * lf,  50, lf, setTimeFunc);
+  err |= initDateTimePan(getPan(panDateTime), lf);
 }
 
 void writeFloatToEep(int32_t addr, float val) {
@@ -347,6 +312,8 @@ void cMenue::save() {
   writeFloatToEep(0x003E, devPars.backLightTime.get());
   writeInt16ToEep(0x0042, devPars.lang.get());
   writeInt16ToEep(0x0044, devPars.preAmpType.get());
+  writeFloatToEep(0x0046, devStatus.geoPos.getLat());
+  writeFloatToEep(0x004A, devStatus.geoPos.getLon());
   int16_t maxAddr = 0x0045;
   writeInt16ToEep(0, maxAddr);
 
@@ -382,6 +349,8 @@ void cMenue::load() {
     devPars.backLightTime.set(readFloatFromEep(0x003E));
     devPars.lang.set(readInt16FromEep(0x0042));
     devPars.preAmpType.set(readInt16FromEep(0x0044));
+    devStatus.geoPos.setLat(readFloatFromEep(0x0046));
+    devStatus.geoPos.setLon(readFloatFromEep(0x004A));
   }
 #endif //#ifndef SIMU_DISPLAY
 }

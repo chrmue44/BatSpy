@@ -3,7 +3,7 @@
 #include "cutils.h"
 #include <cstring>
 
-int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile)
+int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile, float lat, float lon)
 {
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
   if(ret == 0) {
@@ -12,6 +12,9 @@ int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, c
     writeTag("DateTime", date);
     writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
     writeTag("Duration", duration, "Sec");
+    writeLine("<GPS>");
+    writeTag("Position", lat, lon);
+    writeLine("</GPS>");
     writeLine("</BatRecord>");
     cSdCard::inst().closeFile(m_file);
   }
@@ -30,13 +33,7 @@ int cFileInfo::writeLine(const char* text)
 int cFileInfo::writeTag(const char* tag, const char* text)
 {
   char buf[128];
-  strcpy(buf, "<");
-  strcat(buf,tag);
-  strcat(buf,">");
-  strcat(buf,text);
-  strcat(buf,"</");
-  strcat(buf,tag);
-  strcat(buf,">");
+  snprintf(buf,sizeof(buf),"<%s>%s</%s>", tag, text, tag);
   return writeLine(buf);
 }
 
@@ -44,42 +41,33 @@ int cFileInfo::writeTag(const char* tag, const char* text)
 int cFileInfo::writeTag(const char* tag, float val, const char* unit)
 {
   char buf[128];
-  char valbuf[32];
-  strcpy(buf,"<");
-  strcat(buf,tag);
-  strcat(buf,">");
-  snprintf(valbuf,sizeof(valbuf),"%f %s", val, unit); 
-  strcat(buf,valbuf);
-  strcat(buf,"</");
-  strcat(buf,tag);
-  strcat(buf,">");
+  snprintf(buf,sizeof(buf),"<%s>%f %s</%s>", tag, val, unit, tag);
+  return writeLine(buf);
+}
+
+int cFileInfo::writeTag(const char* tag, float val1, float val2)
+{
+  char buf[128];
+  snprintf(buf,sizeof(buf),"<%s>%f %f</%s>", tag, val1, val2, tag);
   return writeLine(buf);
 }
 
 int cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
 {
   char buf[128];
-  char valbuf[32];
-  strcpy(buf,"<");
-  strcat(buf,tag);
-  strcat(buf,">");
-  snprintf(valbuf,sizeof(valbuf),"%i %s", val, unit);
-  strcat(buf,valbuf);
-  strcat(buf,"</");
-  strcat(buf,tag);
-  strcat(buf,">");
+  snprintf(buf,sizeof(buf),"<%s>%i %s</%s>", tag, val, unit, tag);
   return writeLine(buf);
 }
 
 int cFileInfo::getNextChar()
 {
-    char c;
-    size_t bytesRead;
-    enSdRes ret = cSdCard::inst().readFile(m_file, &c, bytesRead, 1);
-    if((bytesRead == 0) || (ret != enSdRes::OK))
-      return -1;
-    else
-      return c;
+  char c;
+  size_t bytesRead;
+  enSdRes ret = cSdCard::inst().readFile(m_file, &c, bytesRead, 1);
+  if((bytesRead == 0) || (ret != enSdRes::OK))
+    return -1;
+  else
+    return c;
 }
 
 void cFileInfo::putBack()

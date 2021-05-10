@@ -78,6 +78,14 @@ struct stStatus {
   cParNum day = 22;
   cParNum hour = 22;
   cParNum minute = 0;
+  cParEnum lonSign = 0;
+  cParNum lonDeg = 8;
+  cParNum lonMin = 34;
+  cParNum lonSec = 0;
+  cParEnum latSign = 0;
+  cParNum latDeg = 49;
+  cParNum latMin = 0;
+  cParNum latSec = 0;
 };
 
 

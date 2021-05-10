@@ -17,13 +17,15 @@ enum enToken {
 class cFileInfo {
 
  public:
-  int write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile);
+  int write(const char* fileName, float duration, int32_t sampleRate, const char* date,
+            const char* wavFile, float lat, float lon);
   int readParameter(const char* fileName, uint32_t& sampleRate);
 
  private:
   int writeLine(const char* text);
   int writeTag(const char* tag, const char* text);
   int writeTag(const char* tag, float val, const char* unit);
+  int writeTag(const char* tag, float val1, float val2);
   int writeTag(const char* tag, int32_t val, const char* unit);
   enToken getToken();
   int getNextChar();

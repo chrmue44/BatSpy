@@ -30,17 +30,18 @@ class cParNum : public cParBase {
   }
 
   float get() { return m_val; }
-  uint32_t getDecimals() { return m_decimals; }
+  uint32_t getDecimals() { return static_cast<uint32_t>(m_decimals); }
+  uint32_t getLeadingZeros() { return static_cast<uint32_t>(m_leadZeros); }
   float getMin() { return m_min; }
   float getMax() { return m_max; }
   float getStep() {return m_step; }
-  void init(float min, float max, float step, uint32_t dec) { m_min = min; m_max = max; m_step = step; m_decimals = dec; }
+  void init(float min, float max, float step, uint16_t dec, uint16_t leadZeros = 0) { m_min = min; m_max = max; m_step = step; m_decimals = dec; m_leadZeros = leadZeros; }
 
   float m_min;          ///< minimal allowed value
   float m_max;          ///< maximum allowed value
   float m_step;         ///< step for one click on wheel in edit mode
-  uint32_t m_decimals;  ///< number of decimals
-
+  uint16_t m_decimals;  ///< number of decimals
+  uint16_t m_leadZeros; ///< field width for leading zeros (0 no leading zeros)
 private:
   float m_val;          ///< actual value
 };
@@ -65,18 +66,18 @@ typedef void (* fuFocus)(cMenuesystem*, tKey);
  */
 class cParDate : public cParBase{
  public:
-  uint getDay() { return m_day; }
-  uint getMonth() { return m_month; }
-  uint getYear() { return m_year; }
-  void set(uint y, uint m, uint d) { m_day = d; m_month = m; m_year = y; update(true);}
+  uint32_t getDay() { return m_day; }
+  uint32_t getMonth() { return m_month; }
+  uint32_t getYear() { return m_year; }
+  void set(uint32_t y, uint32_t m, uint32_t d) { m_day = d; m_month = m; m_year = y; update(true);}
   void set(time_t t) {
      struct tm* tmp = gmtime(&t);
      m_day = tmp->tm_mday; m_month = tmp->tm_mon; m_year = tmp->tm_year; update(true);
   }
  private:
-  uint m_day = 1;
-  uint m_month = 1;
-  uint m_year = 19;
+  uint32_t m_day = 1;
+  uint32_t m_month = 1;
+  uint32_t m_year = 19;
 };
 
 /**
@@ -84,18 +85,18 @@ class cParDate : public cParBase{
  */
 class cParTime : public cParBase{
  public:
-  uint getHour() { return m_hour; }
-  uint getMin() { return m_min; }
-  uint getSec() { return m_sec; }
+  uint32_t getHour() { return m_hour; }
+  uint32_t getMin() { return m_min; }
+  uint32_t getSec() { return m_sec; }
   void set(int h, int m, int s) { m_hour = h; m_min = m; m_sec = s; update(true);}
   void set(time_t t) {
      struct tm* tmp = gmtime(&t);
      m_hour = tmp->tm_hour; m_min = tmp->tm_min; m_sec = tmp->tm_sec; update(true);
   }
  private:
-  uint m_hour = 0;
-  uint m_min = 0;
-  uint m_sec = 0;
+  uint32_t m_hour = 0;
+  uint32_t m_min = 0;
+  uint32_t m_sec = 0;
 };
 
 /**
@@ -104,13 +105,19 @@ class cParTime : public cParBase{
 class cParGeoPos : public cParBase {
 
  public:
+  float getLat() {return m_lat;}
+  float getLon() {return m_lon;}
   int getDegLat() { return (int)m_lat; }
-  int getDegLong() { return (int)m_long; }
-  float getMinLat() { return m_lat - (int)m_lat; }
-  float getMinLong() { return m_long - (int)m_long; }
+  int getDegLon() { return (int)m_lon; }
+  int getMinLat() { return static_cast<int>((m_lat - (int)m_lat) * 60.0); }
+  int getMinLon() { return static_cast<int>((m_lon - (int)m_lon) * 60.0); }
+  int getSecLat() { return static_cast<int>((m_lat - (int)m_lat - (float)getMinLat()/60.0) * 60000.0); }
+  int getSecLon() { return static_cast<int>((m_lon - (int)m_lon - (float)getMinLon()/60.0) * 60000.0); }
+  void setLat(float lat) {m_lat = lat;}
+  void setLon(float lon) {m_lon = lon;}
  private:
   float m_lat = 0;
-  float m_long = 0;
+  float m_lon = 0;
 };
 
 

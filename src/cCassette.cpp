@@ -1,8 +1,8 @@
 #include "cCassette.h"
-//#include <ff_utils.h>
 #include "cfileinfo.h"
 #include "cutils.h"
 #include <cstring>
+#include "cmenue.h"
 #include "cRtc.h"
 //#define DEBUG_LEVEL 1
 #include "debug.h"
@@ -205,7 +205,8 @@ void cCassette::writeInfoFile()
   cUtils::replace(m_fileName, ".raw", ".xml", infoFile, sizeof(infoFile));
   
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_day, m_month, m_year, m_hour, m_min, m_sec);
-  info.write(infoFile, m_recordingTime, m_sampleRate, date, cUtils::getFileName(m_fileName)); 
+  info.write(infoFile, m_recordingTime, m_sampleRate, date, cUtils::getFileName(m_fileName), 
+              devStatus.geoPos.getLat(), devStatus.geoPos.getLon()); 
 }
 
 enSdRes cCassette::createRecordingDir()
