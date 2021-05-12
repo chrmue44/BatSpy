@@ -115,6 +115,7 @@ struct stParams {
   cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
   cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
   cParNum preTrigger = 20;        ///< pre trigger time [ms]
+  cParEnum recFmt = 0;            ///< recording format
 };
 
 

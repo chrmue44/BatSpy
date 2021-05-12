@@ -31,9 +31,9 @@
 
 class cCassette {
   public:
-    int startRec(float recTime);
-    int startRec(const char* name, float recTime);
-    int startRec();
+    int startRec(float recTime, enRecFmt recFmt);
+    int startRec(const char* name, float recTime, enRecFmt recFmt);
+    int startRec(enRecFmt recFmt);
     int stop();
     void startPlay();
     int operate();
@@ -86,6 +86,7 @@ class cCassette {
     int m_hour;
     int m_min;
     int m_sec;
+    enRecFmt m_recFmt;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

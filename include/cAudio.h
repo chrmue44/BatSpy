@@ -85,7 +85,6 @@ class cAudio
  public:
   cAudio();
   void init();
-  void volume(float vol);
   void setSampleRate(enSampleRate sr);
   void setPreAmpType(enPreAmp type);
   void setPreAmpGain(enGain gain);

@@ -46,6 +46,13 @@ enum enGain
   GAIN_HI                = 2,  // 22/1.5 * 33/1.5   = 322
 };
 
+// recording format on SD card
+enum enRecFmt
+{
+  RAW = 0,
+  WAV = 1
+};
+
 // display orientation
 enum enDispOrient
 {

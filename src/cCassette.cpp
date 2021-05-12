@@ -16,7 +16,7 @@ void cCassette::setSamplingRate(uint32_t s) {
   m_player.setSampleRate(s);
 }
 
-int cCassette::startRec(float recTime) {
+int cCassette::startRec(float recTime, enRecFmt recFmt) {
   DPRINTLN1("cCassette::startRecording()");
   m_recordingTime = recTime;
   if (m_isRecFileOpen)
@@ -33,20 +33,20 @@ int cCassette::startRec(float recTime) {
       char buf[16];
       snprintf(buf,sizeof(buf),"/%02i%02i.raw",m_min, m_sec);
       strcat(m_fileName, buf);
-      return startRec();
+      return startRec(recFmt);
     }
   }
   return 0;
 }
 
 
-int cCassette::startRec(const char* name, float recTime) {
+int cCassette::startRec(const char* name, float recTime, enRecFmt recFmt) {
   m_recordingTime = recTime;
   strcpy(m_fileName, name);
-  return startRec();
+  return startRec(recFmt);
 }
 
-int cCassette::startRec() {
+int cCassette::startRec(enRecFmt recFmt) {
   m_mode = CAS_REC;
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
@@ -57,9 +57,10 @@ int cCassette::startRec() {
   }
   else
     m_isRecFileOpen = true;
-#ifdef WAV
-  writeWavHeader();
-#endif
+  m_recFmt = recFmt;
+  if(recFmt == enRecFmt::WAV)
+    writeWavHeader();
+
   m_timer.start();
   m_recorder.begin();
   return 0;
@@ -117,9 +118,9 @@ int cCassette::stop() {
       rc = sd.writeFile(m_fil, (byte*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
     }
-#ifdef WAV
-    finalizeWavFile();
-#endif
+    if(m_recFmt == enRecFmt::WAV)
+      finalizeWavFile();
+
     //close file
     rc = sd.closeFile(m_fil);
     writeInfoFile();
@@ -178,20 +179,19 @@ void cCassette::writeWord(uint32_t value, size_t size) {
 }
 
 void cCassette::finalizeWavFile() {
-  /* TODO
+  
    // (We'll need the final file size to fix the chunk sizes above)
   //size_t file_length = f.tellp();
-  size_t file_length = f_tell(&m_fil);
+  size_t file_length = cSdCard::inst().fileSize(m_fil);
   // Fix the data chunk header to contain the data size
 //  f.seekp( data_chunk_pos + 4 );
-  f_lseek(&m_fil, WAV_DATACHUNK_POS + 4);
+  cSdCard::inst().setFilePos(m_fil, WAV_DATACHUNK_POS + 4);
   writeWord(file_length - WAV_DATACHUNK_POS + 8 );
 
   // Fix the file header to contain the proper RIFF chunk size, which is (file size - 8) bytes
-  f_lseek(&m_fil, 0 + 4);
+  cSdCard::inst().setFilePos(m_fil, 0 + 4);
   //f.seekp( 0 + 4 );
   writeWord(file_length - 8, 4 ); 
-  */
 }
 
 

@@ -111,6 +111,9 @@ void cMenue::initPars() {
   devPars.recThreshhold.init(-24,0,1,0);
   devPars.recThreshhold.set(-12);
 
+  devPars.recFmt.addItem(1146);   //enRecFmt::RAW
+  devPars.recFmt.addItem(1147);   //enRecFmt::WAV
+
   devStatus.recCount.set(0);
   devStatus.recCount.init(0,99999,1,0);
 
@@ -164,7 +167,7 @@ void cMenue::initDialogs() {
   // F-KEYs for main panel
   fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
   setFkeyPanel(fkeyMainPan);
-  err |= initFkeyPanel(getPan(fkeyMainPan), lf);
+  err = initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
@@ -305,16 +308,14 @@ void cMenue::save() {
   writeInt16ToEep(0x0030, devPars.knobRotation.get());
   writeInt16ToEep(0x0032, devPars.dispOrient.get());
   writeFloatToEep(0x0034, devPars.preTrigger.get());
- /*
-   * some space left to fill here
-   */
+  writeInt16ToEep(0x0038, devPars.recFmt.get());
   writeFloatToEep(0x003A, devPars.deafTime.get());
   writeFloatToEep(0x003E, devPars.backLightTime.get());
   writeInt16ToEep(0x0042, devPars.lang.get());
   writeInt16ToEep(0x0044, devPars.preAmpType.get());
   writeFloatToEep(0x0046, devStatus.geoPos.getLat());
   writeFloatToEep(0x004A, devStatus.geoPos.getLon());
-  int16_t maxAddr = 0x0045;
+  int16_t maxAddr = 0x004D;
   writeInt16ToEep(0, maxAddr);
 
   int16_t chks = 0;
@@ -342,9 +343,7 @@ void cMenue::load() {
     devPars.knobRotation.set(readInt16FromEep(0x0030));
     devPars.dispOrient.set(readInt16FromEep(0x0032));
     devPars.preTrigger.set(readFloatFromEep(0x0034));
-    /*
-     * some space left to fill here
-     */
+    devPars.recFmt.set(readInt16FromEep(0x0038));
     devPars.deafTime.set(readFloatFromEep(0x003A));
     devPars.backLightTime.set(readFloatFromEep(0x003E));
     devPars.lang.set(readInt16FromEep(0x0042));

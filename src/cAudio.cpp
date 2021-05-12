@@ -139,12 +139,12 @@ void cAudio::setPreAmpType(enPreAmp type)
 {
   switch (type)
   {
-  case PRE_AMP_LINEAR:
+  case enPreAmp::PRE_AMP_LINEAR:
     digitalWrite(PIN_AMP_2, 1);
     digitalWrite(PIN_AMP_3, 0);
     break;
 
-  case PRE_AMP_HIGH_PASS:
+  case enPreAmp:: PRE_AMP_HIGH_PASS:
     digitalWrite(PIN_AMP_2, 0);
     digitalWrite(PIN_AMP_3, 1);
     break;
@@ -155,17 +155,17 @@ void cAudio::setPreAmpGain(enGain gain)
 {
   switch (gain)
   {
-  case GAIN_LO:
+  case enGain::GAIN_LO:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 1);
     break;
 
-  case GAIN_MED:
+  case enGain::GAIN_MED:
     digitalWrite(PIN_AMP_0, 1);
     digitalWrite(PIN_AMP_1, 0);
     break;
 
-  case GAIN_HI:
+  case enGain::GAIN_HI:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 0);
     break;
@@ -221,20 +221,20 @@ void cAudio::setup()
     setSampleRate((enSampleRate)devPars.sampleRate.get());
     switch (devStatus.opMode.get())
     {
-    case OPMODE_HEAR_DIRECT:
+    case enOpMode::OPMODE_HEAR_DIRECT:
       m_mixer.gain(MIX_CHAN_MIC, vol);
       m_mixer.gain(MIX_CHAN_PLAY, 0);
       setMixOscFrequency(0);
       break;
 
-    case OPMODE_HEAR_HET:
-    case OPMODE_REC_AUTO:
+    case enOpMode::OPMODE_HEAR_HET:
+    case enOpMode::OPMODE_REC_AUTO:
       m_mixer.gain(MIX_CHAN_MIC, vol);
       m_mixer.gain(MIX_CHAN_PLAY, 0);
       setMixOscFrequency(freq);
       break;
 
-    case OPMODE_PLAY_STRETCHED:
+    case enOpMode::OPMODE_PLAY_STRETCHED:
     {
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
@@ -244,13 +244,13 @@ void cAudio::setup()
     }
     break;
 
-    case OPMODE_PLAY_DIRECT:
+    case enOpMode::OPMODE_PLAY_DIRECT:
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
       setMixOscFrequency(0);
       break;
 
-    case OPMODE_PLAY_HET:
+    case enOpMode::OPMODE_PLAY_HET:
       m_mixer.gain(MIX_CHAN_MIC, 0.0);
       m_mixer.gain(MIX_CHAN_PLAY, vol);
       setMixOscFrequency(freq);
@@ -297,7 +297,7 @@ void cAudio::updateCassMode()
     if (m_cass.getMode() != enCassMode::CAS_REC)
     {
       setAudioConnections(0);
-      m_cass.startRec(devPars.recTime.get());
+      m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
       devStatus.recCount.set(devStatus.recCount.get() + 1);
       delay(5);
     }
@@ -332,7 +332,7 @@ void cAudio::checkAutoRecording(cMenue &menue)
         if ((pv > m_recThresh) && (m_cass.getMode() != CAS_REC))
         {
           devStatus.recCount.set(devStatus.recCount.get() + 1);
-          m_cass.startRec(devPars.recTime.get());
+          m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
           devStatus.playStatus.set(2);
           delay(5);
         }
@@ -380,10 +380,5 @@ void cAudio::operateRecorder()
   }
 }
 
-void cAudio::volume(float vol)
-{
-#ifdef AUDIO_SGTL5000
-  m_audioShield.volume(vol);
-#endif
-}
+
 #endif  //#ifndef SIMU_DISPLAY
