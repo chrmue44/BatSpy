@@ -79,14 +79,14 @@ void setPosFunc(cMenuesystem* pThis, enKey key) {
 int initPositionPan(cPanel* pan, tCoord lf) {
   int err = pan->addEnumItem(&devStatus.latSign, 120, 20 + 4 * lf,  10, lf, true, setPosFunc);
   err |= pan->addNumItem(&devStatus.latDeg,      130, 20 + 4 * lf,  17, lf, true, setPosFunc);
-  err |= pan->addTextItem(1340,                  150, 20 + 4 * lf,  10, lf);
-  err |= pan->addNumItem(&devStatus.latMin,      160, 20 + 4 * lf,  17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                  155, 20 + 4 * lf,  10, lf);
+  err |= pan->addNumItem(&devStatus.latMin,      165, 20 + 4 * lf,  17, lf, true, setPosFunc);
   err |= pan->addTextItem(1345,                  180, 20 + 4 * lf,  10, lf);
   err |= pan->addNumItem(&devStatus.latSec,      190, 20 + 4 * lf,  25, lf, true, setPosFunc);
   err |= pan->addEnumItem(&devStatus.lonSign,    120, 20 + 5 * lf,  10, lf, true, setPosFunc);
-  err |= pan->addNumItem(&devStatus.lonDeg,      130, 20 + 5 * lf,  17, lf, true, setPosFunc);
-  err |= pan->addTextItem(1340,                  150, 20 + 5 * lf,  10, lf);
-  err |= pan->addNumItem(&devStatus.lonMin,      160, 20 + 5 * lf,  17, lf, true, setPosFunc);
+  err |= pan->addNumItem(&devStatus.lonDeg,      130, 20 + 5 * lf,  25, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                  155, 20 + 5 * lf,  10, lf);
+  err |= pan->addNumItem(&devStatus.lonMin,      165, 20 + 5 * lf,  17, lf, true, setPosFunc);
   err |= pan->addTextItem(1345,                  180, 20 + 5 * lf,  10, lf);
   err |= pan->addNumItem(&devStatus.lonSec,      190, 20 + 5 * lf,  25, lf, true, setPosFunc);
 

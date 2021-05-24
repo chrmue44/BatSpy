@@ -95,7 +95,14 @@ enKey cWheels::getKey() {
     m_rdIdx++;
     if(m_rdIdx == BUF_SIZE)
       m_rdIdx = 0;
-    DPRINTF1("Key: pressed %i\n", retVal);
+#if DEBUG_LEVEL == 1
+    if(retVal == enKey::DOWN)
+      DPRINTLN1("Key: pressed enKey::DOWN\n");
+    if(retVal == enKey::UP)
+      DPRINTLN1("Key: pressed enKey::UP\n");
+    if(retVal == enKey::KEY_OK)
+      DPRINTLN1("Key: pressed enKey::KEY_OK\n");
+#endif
     return retVal;
   }
   else

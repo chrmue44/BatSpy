@@ -99,7 +99,7 @@ void cMenue::initPars() {
   initFunctionItems();
 
 
-  for(int t = 1300; t <= 1316; t++)
+  for(int t = 1300; t <= 1317; t++)
     devPars.sampleRate.addItem(t);
   devPars.sampleRate.set(SR_352K);  
   devPars.recTime.init(3, 30, 1, 0);
@@ -160,7 +160,7 @@ void cMenue::initPars() {
   devStatus.geoPos.setLat(49.1234);
   devStatus.geoPos.setLon(8.2345);
   devStatus.btnAudio = new cParBtn(Txt::get(309));
- // load();
+  load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());

@@ -21,7 +21,7 @@ cMenuesystem::cMenuesystem(int width, int height, ILI9341_t3* pDisplay) :
  {
     m_focus.item = 0;
     m_focus.panel = 0;
-    m_focus.state = FST_DISP;
+    m_focus.state = enFocusState::DISP;
     gpDisplay = pDisplay;
 }
 
@@ -69,11 +69,11 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
     gpDisplay->setTextColor(colTxt, colTxtBack);
 
     if((m_focus.panel == hPanel) && (m_focus.item == itemId)) {
-      if (m_focus.state == FST_SELECT) {
+      if (m_focus.state == enFocusState::SELECT) {
         gpDisplay->setTextColor(COL_TEXTSEL, COL_TEXTSELBACK);
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTSELBACK);
       }
-      else if (m_focus.state == FST_EDIT) {
+      else if (m_focus.state == enFocusState::EDIT) {
         gpDisplay->setTextColor(COL_TEXTEDIT, COL_TEXTEDITBACK);
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTEDITBACK);
       }
@@ -295,12 +295,14 @@ void cMenuesystem::setFocus(thPanel pan, thItem item, enFocusState state) {
 void cMenuesystem::setMainPanel(thPanel pan) {
   m_mainPanel = pan;
   m_refreshMain = true;
-  setFocus(pan, 0, FST_DISP);
+  setFocus(pan, 0, enFocusState::DISP);
   m_focusSaveMsg = m_focus;
   m_focusSaveDrop = m_focus;
 }
 
 int32_t cMenuesystem::handleKey(enKey key) {
+  DPRINTF1("handleKey(%i)", key);
+
   int32_t retVal = 0;
   cPanel* pan;
   // check if F-Key was pressed
@@ -334,6 +336,9 @@ int32_t cMenuesystem::handleKey(enKey key) {
 
      case NOKEY:
        return 0;
+
+     default:
+       break;
     }
     if (pressed) {
 #ifndef SIMU_DISPLAY
@@ -392,28 +397,29 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
   if (pan.type == PNL_DROPDOWN)
     pEnum = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
 
+  DPRINTF1("handleEditMode(%i, %i)", pan, key);
   switch(key) {
-    case OK:
+    case enKey::KEY_OK:
       switch(m_focus.state) {
-        case FST_DISP:
+        case enFocusState::DISP:
           m_focus.item = pan.findFirstEditItem();
           if(m_focus.item < pan.itemList.size()) {
-            m_focus.state = FST_SELECT;
+            m_focus.state = enFocusState::SELECT;
             pan.itemList[m_focus.item].p->update(true);
           }
           break;
 
-        case FST_EDIT:
+        case enFocusState::EDIT:
           if((item.type == ITEM_BUTTON) && item.f)
             item.f(this, key);
-          m_focus.state = FST_DISP;
+          m_focus.state = enFocusState::DISP;
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
           if(pan.type == PNL_MESSAGE)
             destroyMsg();
           break;
 
-        case FST_SELECT:
+        case enFocusState::SELECT:
           if(pan.type == PNL_FKEYS) {
             refreshFkeyPanel();
             if(pan.itemList[m_focus.item].f)
@@ -439,26 +445,26 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
             createDropDown(item, item.x, item.y, item.width, setListDropDown);
           }
           else
-            m_focus.state = FST_EDIT;
+            m_focus.state = enFocusState::EDIT;
           pan.itemList[m_focus.item].p->update(true);
           break;
 
         default:
-          m_focus.state = FST_DISP;
+          m_focus.state = enFocusState::DISP;
           break;
       }
       break;
 
-    case UP:
+    case enKey::UP:
       DPRINTLN1("Key up\n");
       switch(m_focus.state) {
-        case FST_DISP:
-          DPRINTLN1("FST_DISP\n");
+        case enFocusState::DISP:
+          DPRINTLN1("enFocusState::FST_DISP\n");
 //          m_focus.item = pan.findFirstEditItem();
-          m_focus.state = FST_SELECT;
+          m_focus.state = enFocusState::SELECT;
           // fall through intended
 
-        case FST_SELECT:
+        case enFocusState::SELECT:
           DPRINTLN1("FST_SELECT\n");
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
@@ -499,21 +505,21 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
           DPRINTLN1("update done");
           break;
 
-      case FST_EDIT:
-          DPRINTLN1("FST_EDIT\n");
+      case enFocusState::EDIT:
+          DPRINTLN1("EDIT\n");
           editPar(item, key);
           break;
       }
       break;
 
-    case DOWN:
+    case enKey::DOWN:
       switch(m_focus.state) {
-        case FST_DISP:
+        case enFocusState::DISP:
        //   m_focus.item = pan.findFirstEditItem();
-          m_focus.state = FST_SELECT;
+          m_focus.state = enFocusState::SELECT;
           // fall through intended
 
-        case FST_SELECT:
+        case enFocusState::SELECT:
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
           if(pan.type != PNL_DROPDOWN) {
@@ -547,10 +553,13 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
           pan.itemList[m_focus.item].p->update(true);
           break;
 
-        case FST_EDIT:
+        case enFocusState::EDIT:
           editPar(item, key);
           break;
       }
+      break;
+
+    default:
       break;
   }
 }
@@ -665,18 +674,18 @@ void cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* s
   y += 20;
   thItem btn = m_panelList[m_MsgPan].itemList.size();
   switch (type) {
-  case MSG_INFO: {
+  case enMsg::INFO: {
       cParBtn* pMsgOkBtn = new cParBtn(Txt::get(10));
       m_panelList[m_MsgPan].addBtnItem(pMsgOkBtn, 130, y, 60, 14, msgFunc);
-      setFocus(m_MsgPan,btn,FST_EDIT);
+      setFocus(m_MsgPan,btn, enFocusState::EDIT);
       }
       break;
-  case MSG_YESNO: {
+  case enMsg::YESNO: {
       cParBtn* pMsgYesBtn = new cParBtn(Txt::get(15));
       cParBtn* pMsgNoBtn = new cParBtn(Txt::get(16));
       m_panelList[m_MsgPan].addBtnItem(pMsgYesBtn, 60, y, 60, 14, msgYesFunc);
       m_panelList[m_MsgPan].addBtnItem(pMsgNoBtn, 180, y, 60, 14, msgNoFunc);
-      setFocus(m_MsgPan,btn,FST_SELECT);
+      setFocus(m_MsgPan,btn, enFocusState::SELECT);
       }
       break;
   }
@@ -754,7 +763,7 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
     }
 
     m_focusSaveDrop = m_focus;
-    setFocus(m_dropDownPan,0,FST_SELECT);
+    setFocus(m_dropDownPan,0,enFocusState::SELECT);
     return m_dropDownPan;
   }
   else

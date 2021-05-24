@@ -87,6 +87,9 @@ void panWaterZoomFunc(cMenuesystem* pThis, enKey key) {
       devStatus.waterf.initPlot(true);
       pThis->refreshMainPanel();
       break;
+     
+    default:
+      break;
 
   }
 }
@@ -112,6 +115,9 @@ void timeStepFunc(cMenuesystem* pThis, enKey key) {
     case enKey::DOWN:
       if (i < (sizeof(stepTab)/sizeof(stepTab[0]) - 1))
         devStatus.timStep.set(stepTab[i + 1]);
+      break;
+
+    default:
       break;
   }
 
@@ -165,6 +171,9 @@ void amplitudeFunc(cMenuesystem* pThis, enKey key) {
     case enKey::DOWN:
       if (i < (sizeof(ampStepTab)/sizeof(ampStepTab[0]) - 1))
         devStatus.amplMax.set(ampStepTab[i + 1]);
+      break;
+
+    default:
       break;
   }
   devStatus.amplMin.set(devStatus.amplMax.get() * -1.0);

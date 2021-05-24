@@ -104,7 +104,7 @@ void loop() {
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {
-  //      setDispLight(0);
+        setDispLight(0);
         backLightOn = false;
       }
     } 
@@ -119,7 +119,7 @@ void loop() {
       key = wheels.getKey();
 
     //handle commands
-    if(key != NOKEY)
+    if(key != enKey::NOKEY)
     {
       // just update time and date here to minimize noise
       devStatus.time.set(rtc.getTime());

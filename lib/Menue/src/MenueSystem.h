@@ -20,14 +20,14 @@ enum enStatFocus {
 };
 
 enum enFocusState {
-  FST_DISP    = 1,
-  FST_SELECT  = 2,
-  FST_EDIT    = 3
+  DISP    = 1,
+  SELECT  = 2,
+  EDIT    = 3
 };
 
 enum enMsg {
-  MSG_INFO    = 1,
-  MSG_YESNO   = 2,
+  INFO    = 1,
+  YESNO   = 2,
 };
 
 typedef my_vector<cPanel, CNT_PANEL_LIST> tPanelList;
@@ -186,7 +186,7 @@ private:
   void drawSubPanel(cPanel* pan, thPanel hPanel);
 
   /**
-   * @brief draw a single item of a panel
+   * @brief draw a single item of a 
    * @param item reference to panel item
    * @param hPanel handle to the panel the item consists to
    * @param itemId id if the item

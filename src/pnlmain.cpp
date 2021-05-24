@@ -102,7 +102,9 @@ void f4LoadFunc(cMenuesystem* pThis, enKey key) {
     case YES:
       pThis->load();
       break;
+
     case enKey::NO:
+    default:
       break;
   }
 }
@@ -112,7 +114,9 @@ void f4SaveFunc(cMenuesystem* pThis, enKey key) {
     case YES:
       pThis->save();
       break;
+    
     case enKey::NO:
+    default:
       break;
   }
 }
@@ -120,11 +124,11 @@ void f4SaveFunc(cMenuesystem* pThis, enKey key) {
 void f4DropFunc(cMenuesystem* pThis, enKey key) {
   switch (pThis->getFocusItem()) {
     case 0:
-      pThis->showMsg(MSG_YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
+      pThis->showMsg(enMsg::YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
       break;
     
     case 1:
-      pThis->showMsg(MSG_YESNO, f4SaveFunc, Txt::get(1005), Txt::get(1025));
+      pThis->showMsg(enMsg::YESNO, f4SaveFunc, Txt::get(1005), Txt::get(1025));
       break;
     
     case 2:
@@ -223,7 +227,7 @@ void fileFunc(cMenuesystem* pThis, enKey key) {
   }
   //
   else {
-    if ((state == FST_SELECT) && (key == enKey::KEY_OK)) {
+    if ((state == SELECT) && (key == enKey::KEY_OK)) {
       tDirInfo p;
       rc = sd.dir(p);
       devPars.fileSel.clear();
@@ -258,7 +262,7 @@ void dirFunc(cMenuesystem* pThis, enKey key) {
   }
   // before opening dropdown
   else {
-    if ((state == FST_SELECT) && (key = enKey::KEY_OK)) {
+    if ((state == SELECT) && (key = enKey::KEY_OK)) {
       tDirInfo p;
       DPRINTLN1("dirFunc"); //@@@
       rc = sd.dir(p);
