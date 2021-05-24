@@ -10,7 +10,7 @@ class cTerminal {
   void showCommands();
   void parseControlCmd(const char* buf);
   void parseSetCmd(const char* buf);
-  tKey getKey() { tKey key = m_key; m_key = DEV_KEY_NOKEY; return key; }
+  enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
   
  private:
   void execCmd();
@@ -18,7 +18,7 @@ class cTerminal {
   char m_recbuf[256];
   int m_recIdx = 0;
   int m_sendIdx = 0;
-  tKey m_key = DEV_KEY_NOKEY;
+  enKey m_key = NOKEY;
 };
 
 #endif //#ifndef CTERMINAL_H

@@ -68,7 +68,7 @@ int cCassette::startRec(enRecFmt recFmt) {
 
 
 int cCassette::operate() {
-  enSdRes rc = OK;
+  enSdRes rc = enSdRes::OK;
   if (m_mode == enCassMode::CAS_STOP) {
     return 0;
   }
@@ -110,7 +110,7 @@ int cCassette::operate() {
 
 
 int cCassette::stop() {
-  enSdRes rc = OK;
+  enSdRes rc = enSdRes::OK;
   if (m_mode == enCassMode::CAS_REC) {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();

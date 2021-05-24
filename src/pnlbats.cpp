@@ -2,7 +2,7 @@
 #include "cutils.h"
 #include "debug.h"
 
-void batFunc(cMenuesystem* pThis, tKey key) {
+void batFunc(cMenuesystem* pThis, enKey key) {
   char line[512];
   char line2[512];
   size_t byteCount;

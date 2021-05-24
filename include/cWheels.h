@@ -14,7 +14,7 @@ class cWheels {
  public:
   cWheels(int la, int lb, int btnL, int ra, int rb, int btnR);
   void init();
-  tKey getKey();
+  enKey getKey();
   void setDirection(bool ccw) { m_ccw = ccw; }
    
  protected:
@@ -30,7 +30,7 @@ class cWheels {
   Bounce m_btnRight;
   bool m_ccw;
 
-  tKey m_keys[BUF_SIZE];
+  enKey m_keys[BUF_SIZE];
   int m_wrIdx = 0;
   int m_rdIdx = 0;
   int m_diffl = 0;

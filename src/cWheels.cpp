@@ -48,31 +48,31 @@ void cWheels::checkEncoders() {
   if(m_diffl <= -SENSITIVITY) {
     DPRINTF1("diff left: %i\n", m_diffl);
     while (m_diffl <= -SENSITIVITY) {
-      m_keys[m_wrIdx] = m_ccw ? DEV_KEY_DOWN : DEV_KEY_UP;
+      m_keys[m_wrIdx] = m_ccw ? enKey::DOWN : enKey::UP;
       increaseWrIdx();
       m_diffl += SENSITIVITY;
-      DPRINTF1("encoder left: DEV_KEY_UP, diff: %i, index %i\n", m_diffl, m_wrIdx); 
+      DPRINTF1("encoder left: enKey::UP, diff: %i, index %i\n", m_diffl, m_wrIdx); 
     }
   }
   else if(m_diffl >= SENSITIVITY) {
     DPRINTF1("diff left: %i\n", m_diffl);
     while (m_diffl >= SENSITIVITY) {
-      m_keys[m_wrIdx] = m_ccw ? DEV_KEY_UP : DEV_KEY_DOWN;
+      m_keys[m_wrIdx] = m_ccw ? enKey::UP : enKey::DOWN;
       increaseWrIdx();
       m_diffl -= SENSITIVITY;
     }
-    DPRINTF1("encoder left: DEV_KEY_DOWN, diff: %i, index %i\n", m_diffl, m_wrIdx); 
+    DPRINTF1("encoder left: enKey::DOWN, diff: %i, index %i\n", m_diffl, m_wrIdx); 
   }
   m_btnLeft.update();
   if(m_btnLeft.fallingEdge()) {
-    m_keys[m_wrIdx] = DEV_KEY_OK;
+    m_keys[m_wrIdx] = enKey::KEY_OK;
     increaseWrIdx();
-    DPRINTLN1("encoder left: DEV_KEY_OK");
+    DPRINTLN1("encoder left: enKey::KEY_OK");
   }
   /*
   if(diffr < 0) {
     for(int i = 0; i < -diffl; i++) {
-      m_keys[m_wrIdx] = DEV_KEY_LEFT;
+      m_keys[m_wrIdx] = LEFT;
       m_wrIdx++;
       if(m_wrIdx == BUF_SIZE)
         m_wrIdx = 0;
@@ -80,7 +80,7 @@ void cWheels::checkEncoders() {
   }
   if(diffr > 0) {
     for(int i = 0; i < diffl; i++) {
-      m_keys[m_wrIdx] = DEV_KEY_RIGHT;
+      m_keys[m_wrIdx] = RIGHT;
       m_wrIdx++;
       if(m_wrIdx == BUF_SIZE)
         m_wrIdx = 0;
@@ -88,10 +88,10 @@ void cWheels::checkEncoders() {
   }*/
 }
 
-tKey cWheels::getKey() {
+enKey cWheels::getKey() {
   checkEncoders();
   if(m_wrIdx != m_rdIdx) {
-    tKey retVal = m_keys[m_rdIdx];
+    enKey retVal = m_keys[m_rdIdx];
     m_rdIdx++;
     if(m_rdIdx == BUF_SIZE)
       m_rdIdx = 0;
@@ -99,5 +99,5 @@ tKey cWheels::getKey() {
     return retVal;
   }
   else
-    return DEV_KEY_NOKEY;
+    return enKey::NOKEY;
 }

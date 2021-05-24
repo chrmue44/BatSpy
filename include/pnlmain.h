@@ -30,7 +30,7 @@ void setFileToDisplay(const char* buf);
 void initFunctionItems();
 int initFkeyPanel(cPanel* pan, tCoord lf);
 int initMainPanel(cPanel* pan, tCoord lf);
-void f1Func(cMenuesystem* pThis, tKey key);
-void f4Func(cMenuesystem* pThis, tKey key);
+void f1Func(cMenuesystem* pThis, enKey key);
+void f4Func(cMenuesystem* pThis, enKey key);
 
 #endif // PANMAIN_H

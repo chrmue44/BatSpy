@@ -183,7 +183,7 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
           cParGraph* p = reinterpret_cast<cParGraph*>(item.p);
           p->initDiagram();
           if(item.f)
-            item.f(this, DEV_KEY_NO);
+            item.f(this, NO);
           p->plotGraph();
         }
         break;
@@ -300,7 +300,7 @@ void cMenuesystem::setMainPanel(thPanel pan) {
   m_focusSaveDrop = m_focus;
 }
 
-int32_t cMenuesystem::handleKey(tKey key) {
+int32_t cMenuesystem::handleKey(enKey key) {
   int32_t retVal = 0;
   cPanel* pan;
   // check if F-Key was pressed
@@ -308,31 +308,31 @@ int32_t cMenuesystem::handleKey(tKey key) {
     bool pressed = false;
     pan = &m_panelList[m_fKeyPanel];
     switch(key) {
-      case DEV_KEY_F1:
+      case enKey::F1:
         pressed = true;
         if(pan->itemList[0].f)
           pan->itemList[0].f(this, key);
         break;
 
-      case DEV_KEY_F2:
+      case enKey::F2:
         pressed = true;
         if(pan->itemList[1].f)
           pan->itemList[1].f(this, key);
         break;
 
-     case DEV_KEY_F3:
+     case enKey::F3:
         pressed = true;
        if(pan->itemList[2].f)
           pan->itemList[2].f(this, key);
         break;
 
-     case DEV_KEY_F4:
+     case enKey::F4:
         pressed = true;
        if(pan->itemList[3].f)
           pan->itemList[3].f(this, key);
        break;
 
-     case DEV_KEY_NOKEY:
+     case NOKEY:
        return 0;
     }
     if (pressed) {
@@ -346,7 +346,7 @@ int32_t cMenuesystem::handleKey(tKey key) {
 
   // check key strokes for focus panel
 #ifndef SIMU_DISPLAY
-  if(key != DEV_KEY_TICK)
+  if(key != TICK)
     m_lastKeyTime = millis();
 #endif
   if (m_focus.panel < m_panelList.size()) {
@@ -363,7 +363,7 @@ void cMenuesystem::resetTimer() {
 #endif
 }
 
-void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, tKey key) {
+void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, enKey key) {
   cParEnum* p = reinterpret_cast<cParEnum*>(pThis->m_pDropDownEnum.p);
   uint32_t val = pThis->getFocusItem() + pThis->m_firstDropDownItem;
   //  Serial.printf("set enum to %u\n",val);
@@ -374,7 +374,7 @@ void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, tKey key) {
 }
 
 
-void cMenuesystem::setListDropDown(cMenuesystem* pThis, tKey key) {
+void cMenuesystem::setListDropDown(cMenuesystem* pThis, enKey key) {
   cParList* p = reinterpret_cast<cParList*>(pThis->m_pDropDownEnum.p);
   uint32_t val = pThis->getFocusItem() + pThis->m_firstDropDownItem;
   //  Serial.printf("set enum to %u\n",val);
@@ -385,7 +385,7 @@ void cMenuesystem::setListDropDown(cMenuesystem* pThis, tKey key) {
 }
 
 
-void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
+void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
   stPanelItem& item = pan.itemList[m_focus.item];
 
   cParEnum* pEnum = nullptr;
@@ -393,7 +393,7 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
     pEnum = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
 
   switch(key) {
-    case DEV_KEY_OK:
+    case OK:
       switch(m_focus.state) {
         case FST_DISP:
           m_focus.item = pan.findFirstEditItem();
@@ -449,7 +449,7 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
       }
       break;
 
-    case DEV_KEY_UP:
+    case UP:
       DPRINTLN1("Key up\n");
       switch(m_focus.state) {
         case FST_DISP:
@@ -506,7 +506,7 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
       }
       break;
 
-    case DEV_KEY_DOWN:
+    case DOWN:
       switch(m_focus.state) {
         case FST_DISP:
        //   m_focus.item = pan.findFirstEditItem();
@@ -555,19 +555,19 @@ void cMenuesystem::handleEditMode(cPanel& pan, tKey key) {
   }
 }
 
-void cMenuesystem::editPar(stPanelItem &item, tKey key) {
+void cMenuesystem::editPar(stPanelItem &item, enKey key) {
     switch (item.type) {
       case ITEM_ENUM:
         break;
 
       case ITEM_NR: {
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
-          if(key == DEV_KEY_DOWN) {
+          if(key == DOWN) {
             p->set(p->get() + p->getStep());
             if(p->get() > p->getMax())
               p->set(p->getMax());
           }
-          if(key == DEV_KEY_UP) {
+          if(key == UP) {
             p->set(p->get() - p->getStep());
             if(p->get() < p->getMin())
               p->set(p->getMin());
@@ -620,20 +620,20 @@ void cMenuesystem::reInitDropDownItems() {
 }
 
 
-void msgFunc(cMenuesystem* pThis, tKey key) {
+void msgFunc(cMenuesystem* pThis, enKey key) {
    pThis->destroyMsg();
 }
 
 
-void cMenuesystem::msgYesFunc(cMenuesystem* pThis, tKey key) {
+void cMenuesystem::msgYesFunc(cMenuesystem* pThis, enKey key) {
   if(pThis->m_msgCallBack)
-    pThis->m_msgCallBack(pThis, DEV_KEY_YES);
+    pThis->m_msgCallBack(pThis, YES);
 }
 
 
-void cMenuesystem::msgNoFunc(cMenuesystem* pThis, tKey key) {
+void cMenuesystem::msgNoFunc(cMenuesystem* pThis, enKey key) {
     if(pThis->m_msgCallBack)
-      pThis->m_msgCallBack(pThis, DEV_KEY_YES);
+      pThis->m_msgCallBack(pThis, YES);
 }
 
 

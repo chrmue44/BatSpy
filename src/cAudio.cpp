@@ -140,13 +140,23 @@ void cAudio::setPreAmpType(enPreAmp type)
   switch (type)
   {
   case enPreAmp::PRE_AMP_LINEAR:
+#ifdef AMP_REV1
     digitalWrite(PIN_AMP_2, 1);
     digitalWrite(PIN_AMP_3, 0);
+#endif
+#ifdef AMP_REV2
+    digitalWrite(PIN_AMP_3, 1);
+#endif
     break;
 
   case enPreAmp:: PRE_AMP_HIGH_PASS:
+#ifdef AMP_REV1
     digitalWrite(PIN_AMP_2, 0);
     digitalWrite(PIN_AMP_3, 1);
+#endif
+#ifdef AMP_REV2
+    digitalWrite(PIN_AMP_3, 0);
+#endif
     break;
   }
 }
@@ -155,6 +165,7 @@ void cAudio::setPreAmpGain(enGain gain)
 {
   switch (gain)
   {
+ #ifdef AMP_REV1
   case enGain::GAIN_LO:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 1);
@@ -169,6 +180,34 @@ void cAudio::setPreAmpGain(enGain gain)
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 0);
     break;
+#endif
+#ifdef AMP_REV2
+  case enGain::GAIN_10:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 1);
+    digitalWrite(PIN_AMP_2, 1);
+    break;
+  case enGain::GAIN_30:
+    digitalWrite(PIN_AMP_0, 1);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 1);
+    break;
+  case enGain::GAIN_100:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 1);
+    break;
+  case enGain::GAIN_300:
+    digitalWrite(PIN_AMP_0, 1);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
+    break;
+  case enGain::GAIN_1000:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
+    break;
+#endif
   }
 }
 

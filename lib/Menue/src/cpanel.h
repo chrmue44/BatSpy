@@ -58,7 +58,7 @@ private:
 
 //typedef my_vector<stParStr> tStrList;
 class cMenuesystem;
-typedef void (* fuFocus)(cMenuesystem*, tKey);
+typedef void (* fuFocus)(cMenuesystem*, enKey);
 
 
 /**

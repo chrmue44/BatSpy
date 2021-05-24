@@ -11,7 +11,23 @@
 
 extern ILI9341_t3* gpDisplay;
 
-typedef uint16_t tKey;
+enum enKey {
+  NOKEY =      0x8000,
+  F1 =         0x8001,
+  F2 =         0x8002,
+  F3 =         0x8003,
+  F4 =         0x8004,
+  KEY_OK =     0x8010,
+  UP =         0x8011,
+  DOWN =       0x8012,
+  YES =        0x8013,
+  NO =         0x8014,
+  LEFT =       0x8015,
+  RIGHT =      0x8016,
+  TICK =       0x8020,
+  TER =        0x8030,
+};
+
 typedef uint32_t tCoord;
 typedef uint32_t thPanel;
 typedef uint32_t thItem;

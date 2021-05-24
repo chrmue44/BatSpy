@@ -101,10 +101,10 @@ void loop() {
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
-    menue.handleKey(DEV_KEY_TICK);
+    menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {
-        setDispLight(0);
+  //      setDispLight(0);
         backLightOn = false;
       }
     } 
@@ -114,12 +114,12 @@ void loop() {
     // get new commands
     if (!cSdCard::inst().isFileTransferActive())
       terminal.parseCmd();
-    tKey key = terminal.getKey();
-    if (key == DEV_KEY_NOKEY)
+    enKey key = terminal.getKey();
+    if (key == NOKEY)
       key = wheels.getKey();
 
     //handle commands
-    if(key != DEV_KEY_NOKEY)
+    if(key != NOKEY)
     {
       // just update time and date here to minimize noise
       devStatus.time.set(rtc.getTime());

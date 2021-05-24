@@ -1,4 +1,13 @@
-﻿#include "ctext.h"
+﻿/*****************************************************
+ *   project: Bat Sound Recorder
+ *    author: Christian Mueller
+ *      date: 2021-05-18
+ *****************************************************
+ * copyright: (c) 2021 Christian Mueller
+ *****************************************************/
+
+#include "config.h"
+#include "ctext.h"
 
 
 tText TGE_NOT_FOUND[] = "Textnummer unbekannt:";
@@ -126,16 +135,24 @@ struct stTxtList Texts[] =
   {  1315, "352",  0},
   {  1316, "384",  0},
   
-  {  1320, "Vorverstärker",             "Pre amplifier"},
-  {  1321, "linear",                    "linear"},
-  {  1322, "Hochpass",                  "high pass"},
+  {  1320, "Filter",                    0},
+  {  1321, "aus",                       "off"},
+  {  1322, "HP 16kHz",                  0},
   
   {  1325, "Verstärkung",               "Gain"},
+#ifdef AMP_REV1
   {  1326, "niedrig",                   "low"},
   {  1327, "mittel",                    "medium"},
   {  1328, "hoch",                      "high"},
+#endif
   {  1330, "Pre Trigger [ms]",          0},
-
+#ifdef AMP_REV2
+  {  1331, "10",                        0},
+  {  1332, "30",                        0},
+  {  1333, "100",                       0},
+  {  1334, "300",                       0},
+  {  1335, "1000",                      0},
+#endif
   {  1340, "°",                         0},
   {  1341, "N",                         0},
   {  1342, "S",                         0},

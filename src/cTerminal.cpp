@@ -110,8 +110,8 @@ void cTerminal::execCmd() {
       break;
 
     case 'O':
-      m_key = DEV_KEY_OK;
-      Serial.println("DEV_KEY_OK");
+      m_key = enKey::KEY_OK;
+      Serial.println("enKey::KEY_OK");
       break;
       
     case 'p':
@@ -133,13 +133,13 @@ void cTerminal::execCmd() {
       break;
 
     case 'u':
-      m_key = DEV_KEY_UP;
-      Serial.println("DEV_KEY_UP");
+      m_key = enKey::UP;
+      Serial.println("enKey::UP");
       break;
 
     case 'W':
-      m_key = DEV_KEY_DOWN;
-      Serial.println("DEV_KEY_DOWN");
+      m_key = enKey::DOWN;
+      Serial.println("enKey::DOWN");
       break;
       
     case 'w':
@@ -164,7 +164,7 @@ void cTerminal::execCmd() {
 }
 
 void cTerminal::parseControlCmd(const char* buf) {
-  m_key = DEV_KEY_TER;
+  m_key = enKey::TER;
   bool replyOk = true;
   switch(buf[0]) {
     case 'p':
@@ -184,7 +184,7 @@ void cTerminal::parseControlCmd(const char* buf) {
       Serial.println(devStatus.opMode.getActText());
       break;
     default:
-      m_key = DEV_KEY_NOKEY;
+      m_key = enKey::NOKEY;
       replyOk = false;
       break;
   }
@@ -196,7 +196,7 @@ void cTerminal::parseControlCmd(const char* buf) {
 }
 
 void cTerminal::parseSetCmd(const char* buf) {
-  m_key = DEV_KEY_TER;
+  m_key = enKey::TER;
   bool replyOk = true;
   int val = 0;
   switch(buf[0]) {
@@ -215,7 +215,7 @@ void cTerminal::parseSetCmd(const char* buf) {
         replyOk = false;
       break;
     default:
-      m_key = DEV_KEY_NOKEY;
+      m_key = enKey::NOKEY;
       replyOk = false;
       break;
   }

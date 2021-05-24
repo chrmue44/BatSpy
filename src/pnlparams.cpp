@@ -3,7 +3,7 @@
 
 extern cRtc rtc;
 
-void languageFunc(cMenuesystem* pThis, tKey key) {
+void languageFunc(cMenuesystem* pThis, enKey key) {
   switch(devPars.lang.get()) {
     case 0:
       Txt::setLang(LANG_GER);
@@ -44,7 +44,7 @@ int initParPan(cPanel* pan, tCoord lf) {
 
 
 
-void setTimeFunc(cMenuesystem* pThis, tKey key) {
+void setTimeFunc(cMenuesystem* pThis, enKey key) {
 #ifndef SIMU_DISPLAY
     rtc.setTime(
     devStatus.year.get(), devStatus.month.get(), devStatus.day.get(),
@@ -65,7 +65,7 @@ int initDateTimePan(cPanel* pan, tCoord lf) {
   return err;
 }
 
-void setPosFunc(cMenuesystem* pThis, tKey key) {
+void setPosFunc(cMenuesystem* pThis, enKey key) {
     float lat = devStatus.latDeg.get() + devStatus.latMin.get()/60.0 + devStatus.latSec.get()/60000.0;
     if(devStatus.latSign.get() == 1)
       lat = -lat;

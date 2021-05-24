@@ -12,21 +12,6 @@
 #define CNT_PANEL_LIST   20    ///< max. number of panels in list
 class ILI9341_t3;
 
-#define DEV_KEY_NOKEY       0x8000
-#define DEV_KEY_F1          0x8001
-#define DEV_KEY_F2          0x8002
-#define DEV_KEY_F3          0x8003
-#define DEV_KEY_F4          0x8004
-#define DEV_KEY_OK          0x8010
-#define DEV_KEY_UP          0x8011
-#define DEV_KEY_DOWN        0x8012
-#define DEV_KEY_YES         0x8013
-#define DEV_KEY_NO          0x8014
-#define DEV_KEY_LEFT        0x8015
-#define DEV_KEY_RIGHT       0x8016
-#define DEV_KEY_TICK        0x8020
-#define DEV_KEY_TER         0x8030
-
 
 enum enStatFocus {
   FOC_DISPLAY = 1,           ///< item in focus is displayed
@@ -82,7 +67,7 @@ public:
    * @param key
    * @return
    */
-  int32_t handleKey(tKey key);
+  int32_t handleKey(enKey key);
 
   /**
    * @brief create a panel
@@ -167,7 +152,7 @@ protected:
    * @param key
    * @return
    */
-  static void setEnumDropDown(cMenuesystem* pThis, tKey key);
+  static void setEnumDropDown(cMenuesystem* pThis, enKey key);
 
   /**
    * @brief callback function to set selected enum itm from PNL_DROPDOWN
@@ -175,7 +160,7 @@ protected:
    * @param key
    * @return
    */
-  static void setListDropDown(cMenuesystem* pThis, tKey key);
+  static void setListDropDown(cMenuesystem* pThis, enKey key);
   
   /**
    * draw grid for graph
@@ -185,8 +170,8 @@ protected:
   void printText(const char* txt);
 
 private:
-  static void msgYesFunc(cMenuesystem* pThis, tKey key);
-  static void msgNoFunc(cMenuesystem* pThis, tKey key);
+  static void msgYesFunc(cMenuesystem* pThis, enKey key);
+  static void msgNoFunc(cMenuesystem* pThis, enKey key);
 
   /**
    * @brief draw complete panel consisting of header main-panel and FKEY bar
@@ -208,8 +193,8 @@ private:
    */
   void drawItem( stPanelItem& item, thPanel hPanel, thItem itemId, enPanel panType);
 
-  void handleEditMode(cPanel& pan, tKey key);
-  void editPar(stPanelItem& item, tKey key);
+  void handleEditMode(cPanel& pan, enKey key);
+  void editPar(stPanelItem& item, enKey key);
   void reInitDropDownItems();
 
   stFocus m_focus;                 ///< focus for cursor

@@ -31,7 +31,7 @@ extern cRtc rtc;
 
 
 
-void btnAudioFunc(cMenuesystem* pThis, tKey key) {
+void btnAudioFunc(cMenuesystem* pThis, enKey key) {
 #ifndef SIMU_DISPLAY
   AudioProcessorUsageMaxReset();
 #endif
@@ -50,11 +50,18 @@ cMenue::~cMenue() {
 
 
 void cMenue::initPars() {
-
+#ifdef AMP_REV1
   devPars.preAmpGain.addItem(1326);
   devPars.preAmpGain.addItem(1327);
   devPars.preAmpGain.addItem(1328);
-
+#endif
+#ifdef AMP_REV2
+  devPars.preAmpGain.addItem(1331);
+  devPars.preAmpGain.addItem(1332);
+  devPars.preAmpGain.addItem(1333);
+  devPars.preAmpGain.addItem(1334);
+  devPars.preAmpGain.addItem(1335);
+#endif
   devPars.preAmpType.addItem(1321);
   devPars.preAmpType.addItem(1322);
   
@@ -153,7 +160,7 @@ void cMenue::initPars() {
   devStatus.geoPos.setLat(49.1234);
   devStatus.geoPos.setLon(8.2345);
   devStatus.btnAudio = new cParBtn(Txt::get(309));
-  load();
+ // load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
