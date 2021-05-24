@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <cstring>
 
+#define FFT_SIZE    256
+
 //https://it.wikipedia.org/wiki/Trasformata_di_Fourier_veloce
 
 /**
@@ -44,6 +46,8 @@ class complex {
         return atan(m_i / m_r);
       }
     }
+
+    float* getAddr() { return &m_r;}
 
   complex operator+(complex& c) {
     complex retVal(this->m_r + c.m_r, this->m_i + c.m_i);
@@ -96,7 +100,7 @@ class complex {
 /**
  * calculate FFT and IFFT (Supported FFT Lengths are 16, 64, 256, 1024) 
  */
-template  <size_t NN> class cRfft {
+class cRfft {
  public:
   cRfft()  {
   }  
@@ -109,7 +113,7 @@ template  <size_t NN> class cRfft {
     m_input[i] = c;
   }
 
-  float* getInputBuf() { return m_input; }
+  float* getInputBuf() { return m_input[0].getAddr(); }
 
   /**
    * get amplitude at specified index
@@ -121,7 +125,7 @@ template  <size_t NN> class cRfft {
   /**
    * get frequency at specified index
    */
-  float getFrequency(size_t i) { return (float)i/ NN * m_sampleRate; }
+  float getFrequency(size_t i) { return (float)i/ FFT_SIZE * m_sampleRate; }
 
   /**
    * set sampling rate (for frequency calculation)
@@ -132,7 +136,7 @@ template  <size_t NN> class cRfft {
    * do the calculation
    */
   void process() {
-     FFT(m_input, NN, 1.0);
+     FFT(m_input, FFT_SIZE, 1.0);
   }
   
 
@@ -164,7 +168,7 @@ template  <size_t NN> class cRfft {
 
    void ordina(complex* f1, int N)     //dispone gli elementi del vettore ordinandoli per reverse order
    {
-     complex f2[NN];
+     complex f2[FFT_SIZE];
      for(int i = 0; i < N; i++)
        f2[i] = f1[reverse(N, i)];
      for(int j = 0; j < N; j++)
@@ -207,7 +211,7 @@ template  <size_t NN> class cRfft {
    }
 
  private:
-  complex m_input[NN];
+  complex m_input[FFT_SIZE];
   float m_maxValue;
   uint32_t m_maxIndex;
   float m_sampleRate;

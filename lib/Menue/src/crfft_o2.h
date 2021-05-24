@@ -10,6 +10,7 @@
 #include "arm_math.h"
 #include "utility/sqrt_integer.h"
 #include "utility/dspinst.h"
+#include "debug.h"
 
 extern "C" {
 extern const int16_t AudioWindowHanning256[];
@@ -22,7 +23,7 @@ extern const int16_t AudioWindowHanning256[];
 class cRfft {
  public:
   cRfft() :
-    m_window(AudioWindowHanning256),
+    m_window(AudioWindowHanning256),    
     m_naverage(1),
     m_count(0)
   {
@@ -52,8 +53,9 @@ class cRfft {
   void setSampleRate(float rate) { m_sampleRate = rate; }
 
   static void apply_window_to_fft_buffer(void *buffer, const void *window) {
+    DPRINTF1("apply_window_to_fft_buffer(%i,%i)", (int32_t)buffer, (int32_t)window);
     int16_t *buf = (int16_t *)buffer;
-    const int16_t *win = (int16_t *)window;;
+    const int16_t *win = (int16_t *)window;
 
     for (uint32_t i=0; i < FFT_SIZE; i++) {
       int32_t val = *buf * *win++;
@@ -69,11 +71,14 @@ class cRfft {
   void process() {
 
     if(m_status == ARM_MATH_SUCCESS) {
+      DPRINTLN1("apply window");
       apply_window_to_fft_buffer(m_input, m_window);
+      DPRINTLN1("perform arm_fft");
       arm_cfft_radix4_q15(&m_fft_inst, m_input);
 	// G. Heinzel's paper says we're supposed to average the magnitude
 	// squared, then do the square root at the end.
-      if (m_count == 0) {
+
+/*      if (m_count == 0) {
         for (uint32_t i=0; i < FFT_SIZE/2; i++) {
           uint32_t tmp = *((uint32_t *)m_input + i);
           uint32_t magsq = multiply_16tx16t_add_16bx16b(tmp, tmp);
@@ -92,6 +97,12 @@ class cRfft {
           m_output[i] = sqrt_uint32_approx(m_sum[i]);
         }
         m_outputflag = true;
+      }*/
+      for (uint32_t i=0; i < FFT_SIZE/2; i++) {
+        uint32_t tmp = *((uint32_t *)m_input + i);
+        uint32_t magsq = multiply_16tx16t_add_16bx16b(tmp, tmp);
+        uint32_t sum = magsq / m_naverage;
+        m_output[i] = sqrt_uint32_approx(sum);
       }
     }
     else
@@ -104,7 +115,7 @@ class cRfft {
   arm_status m_status;
   int16_t m_input[2*FFT_SIZE] __attribute__ ((aligned (4)));;
   int16_t m_output[FFT_SIZE/2] __attribute__ ((aligned (4)));
-	uint32_t m_sum[FFT_SIZE/2] __attribute__ ((aligned (4)));
+	//uint32_t m_sum[FFT_SIZE/2] __attribute__ ((aligned (4)));
 	uint8_t m_naverage;
   float m_maxValue;
   uint32_t m_maxIndex;

@@ -24,6 +24,9 @@ struct stTime {
 };
 
 struct stFft {
+  stFft() :
+  fft() {}
+  
   cRfft fft;
   float levelMin;
   float levelMax;
@@ -31,8 +34,10 @@ struct stFft {
   int16_t scratch[FFT_SIZE];
 };
 
-union uData {
-  uData() {}
+struct uData {
+  uData() :
+  t(),
+  f() {}
   stTime t;
   stFft f;
 };

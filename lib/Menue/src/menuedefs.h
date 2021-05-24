@@ -55,7 +55,7 @@ enum enItemType {
 };
 
 #define GRAPH_DIVX_COUNT     5     ///< number of divs in x direction
-#define GRAPH_PIXEL_PER_TICK 40    ///< pixel plotted per tick
+#define GRAPH_PIXEL_PER_TICK 160    ///< pixel plotted per tick
 
 #define COL_TEXT            0xFFFF
 #define COL_TEXTBACK        0x0000
