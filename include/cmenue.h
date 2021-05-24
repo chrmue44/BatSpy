@@ -80,12 +80,12 @@ struct stStatus {
   cParNum minute = 0;
   cParEnum lonSign = 0;
   cParNum lonDeg = 8;
-  cParNum lonMin = 34;
-  cParNum lonSec = 0;
+  cParNum lonMin = 37;
+  cParNum lonSec = 925;
   cParEnum latSign = 0;
   cParNum latDeg = 49;
-  cParNum latMin = 0;
-  cParNum latSec = 0;
+  cParNum latMin = 45;
+  cParNum latSec = 236;
 };
 
 
@@ -110,7 +110,7 @@ struct stParams {
   cParNum recThreshhold = -18;    ///< auto recording threshhold
   cParNum deafTime = 0;           ///< timeout after one recording
   cParNum backLightTime = 120;    ///< time for backlight
-  cParEnum preAmpGain = GAIN_MED; ///< gain of pre amplifier
+  cParEnum preAmpGain = 1;        ///< gain of pre amplifier
   cParEnum preAmpType = PRE_AMP_HIGH_PASS;  ///< type of pre amplifier
   cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
   cParEnum knobRotation = CLOCKWISE;        ///< knob rotation

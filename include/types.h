@@ -1,6 +1,8 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
+#include "config.h"
+
 // operation modes of recorder
 enum enCassMode {
   CAS_STOP = 1,
@@ -41,9 +43,18 @@ enum enPreAmp
 // available hardware gain settings for pre amp
 enum enGain
 {
+#ifdef AMP_REV1
   GAIN_LO                = 0,  // 22/1.5 * 7.8/1.5  = 40
   GAIN_MED               = 1,  // 22/1.5 * 7.8/1.5  = 112
   GAIN_HI                = 2,  // 22/1.5 * 33/1.5   = 322
+#endif
+#ifdef AMP_REV2
+  GAIN_10                = 0,
+  GAIN_30                = 1,
+  GAIN_100               = 2,
+  GAIN_300               = 3,
+  GAIN_1000              = 4
+#endif
 };
 
 // recording format on SD card

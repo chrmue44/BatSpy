@@ -6,6 +6,9 @@
 // Teensy version
 //#define TEENSY36
 
+//pre amplifier type
+//#define AMP_REV1               // 1st prototype
+#define AMP_REV2                 // 2nd version with more amplification
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
@@ -67,4 +70,4 @@
 
 
 #endif  //#ifndef _CONFIG_H
-// 
+
