@@ -397,7 +397,7 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
   if (pan.type == PNL_DROPDOWN)
     pEnum = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
 
-  DPRINTF1("handleEditMode(%i, %i)", pan, key);
+ // DPRINTF1("handleEditMode(%i, %i)", pan., key);
   switch(key) {
     case enKey::KEY_OK:
       switch(m_focus.state) {

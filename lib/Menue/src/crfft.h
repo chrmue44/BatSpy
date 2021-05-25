@@ -17,7 +17,7 @@
  */
 
 typedef float tComplexBase;
-
+#define M_PI 3.14159265
 
 class complex {
  public:
@@ -46,8 +46,6 @@ class complex {
         return atan(m_i / m_r);
       }
     }
-
-    float* getAddr() { return &m_r;}
 
   complex operator+(complex& c) {
     complex retVal(this->m_r + c.m_r, this->m_i + c.m_i);
@@ -112,8 +110,6 @@ class cRfft {
     complex c(v, 0);
     m_input[i] = c;
   }
-
-  float* getInputBuf() { return m_input[0].getAddr(); }
 
   /**
    * get amplitude at specified index

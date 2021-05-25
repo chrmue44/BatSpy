@@ -47,7 +47,7 @@ int cCassette::startRec(const char* name, float recTime, enRecFmt recFmt) {
 }
 
 int cCassette::startRec(enRecFmt recFmt) {
-  m_mode = CAS_REC;
+  m_mode = enCassMode::REC;
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
     // check if file is Good
@@ -69,10 +69,10 @@ int cCassette::startRec(enRecFmt recFmt) {
 
 int cCassette::operate() {
   enSdRes rc = enSdRes::OK;
-  if (m_mode == enCassMode::CAS_STOP) {
+  if (m_mode == enCassMode::STOP) {
     return 0;
   }
-  else if (m_mode == enCassMode::CAS_REC) {
+  else if (m_mode == enCassMode::REC) {
     size_t av = m_recorder.available();
     if (av >= N_BUFFER  ) {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
       if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
@@ -88,7 +88,7 @@ int cCassette::operate() {
       rc = sd.writeFile (m_fil, m_buffern, m_wr, cnt);
       DPRINTF1("wr buf %i\n", cnt);
       if (rc != OK) { // IO error
-        m_mode = CAS_STOP;
+        m_mode = enCassMode::STOP;
         return 1;
       }
     }
@@ -98,11 +98,11 @@ int cCassette::operate() {
     return 0;
   }
 
-  else if(m_mode == enCassMode::CAS_PLAY) {
+  else if(m_mode == enCassMode::PLAY) {
     if (!m_player.isPlaying()) {
       m_player.stop();
       DPRINTLN1("File is over");
-      m_mode = enCassMode::CAS_STOP;
+      m_mode = enCassMode::STOP;
     }
   } 
   return 0;
@@ -111,7 +111,7 @@ int cCassette::operate() {
 
 int cCassette::stop() {
   enSdRes rc = enSdRes::OK;
-  if (m_mode == enCassMode::CAS_REC) {
+  if (m_mode == enCassMode::REC) {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
     while (m_recorder.available() > 0) {
@@ -131,11 +131,11 @@ int cCassette::stop() {
     DPRINTLN1(" Recording stopped!");
   }
   
-  else if(m_mode == CAS_PLAY) {
+  else if(m_mode == enCassMode::PLAY) {
     DPRINTLN1("stopPlaying");
     m_player.stop();
   }
-  m_mode = CAS_STOP;
+  m_mode = enCassMode::STOP;
   return 0;
 }
 
@@ -145,7 +145,7 @@ void cCassette::startPlay() {
   DPRINTF1("Playfile: %s\n", m_fileName);
   delay(100);
   m_player.play(m_fileName);
-  m_mode = CAS_PLAY;
+  m_mode = enCassMode::PLAY;
 }
 
 void cCassette::writeWavHeader() {

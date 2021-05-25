@@ -408,7 +408,7 @@ void cMenue::printPars() {
 
 
 void cMenue::printStatus() {
- // enCassMode cassMode = CAS_STOP; ///< mode of operation of cassette player
+ // enCassMode cassMode = STOP; ///< mode of operation of cassette player
 #ifndef SIMU_DISPLAY
   Serial.printf("avg. audio CPU usage: %.0f\n", devStatus.cpuAudioAvg.get());
   Serial.printf("max. audio CPU usage: %.0f\n", devStatus.cpuAudioMax.get());

@@ -66,7 +66,7 @@ class cCassette {
     enSdRes createRecordingDir();
 
   private:
-    enCassMode m_mode = CAS_STOP;
+    enCassMode m_mode = STOP;
     AudioRecordQueue m_recorder;
     bool m_isRecFileOpen = false;
     bool m_isPlayFileOpen = false;

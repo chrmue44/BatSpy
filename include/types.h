@@ -5,9 +5,9 @@
 
 // operation modes of recorder
 enum enCassMode {
-  CAS_STOP = 1,
-  CAS_PLAY = 2,
-  CAS_REC  = 3
+  STOP = 1,
+  PLAY = 2,
+  REC  = 3
 };
 
 // selection of available sample rates
@@ -36,8 +36,8 @@ enum enSampleRate
 // available pre amp selections
 enum enPreAmp
 {
-  PRE_AMP_LINEAR         = 0,
-  PRE_AMP_HIGH_PASS      = 1
+  LINEAR         = 0,
+  HIGH_PASS      = 1
 };
 
 // available hardware gain settings for pre amp
@@ -80,12 +80,12 @@ enum enKnobRot
 
 // available operation modes
 enum enOpMode {
-  OPMODE_HEAR_DIRECT     = 0,
-  OPMODE_HEAR_HET        = 1,
-  OPMODE_PLAY_DIRECT     = 2,
-  OPMODE_PLAY_STRETCHED  = 3,
-  OPMODE_PLAY_HET        = 4,
-  OPMODE_REC_AUTO        = 5,
+  HEAR_DIRECT     = 0,
+  HEAR_HET        = 1,
+  PLAY_DIRECT     = 2,
+  PLAY_STRETCHED  = 3,
+  PLAY_HET        = 4,
+  REC_AUTO        = 5,
 };
 
 

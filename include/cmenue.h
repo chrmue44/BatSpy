@@ -111,7 +111,7 @@ struct stParams {
   cParNum deafTime = 0;           ///< timeout after one recording
   cParNum backLightTime = 120;    ///< time for backlight
   cParEnum preAmpGain = 1;        ///< gain of pre amplifier
-  cParEnum preAmpType = PRE_AMP_HIGH_PASS;  ///< type of pre amplifier
+  cParEnum preAmpType = HIGH_PASS;  ///< type of pre amplifier
   cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
   cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
   cParNum preTrigger = 20;        ///< pre trigger time [ms]
