@@ -85,6 +85,7 @@ void setup() {
   Serial.printf("free memory on SD card: %u of %u [kB]\n", freeMem, totMem);
   delay(500);  
   menue.init();
+  tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.printPars();
   audio.setup();
   wheels.setDirection(true);  
@@ -97,7 +98,6 @@ void setup() {
 void loop() {
   static bool backLightOn = true;
   if (tick.check()) {
-    //static int m_old, d_old;
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());

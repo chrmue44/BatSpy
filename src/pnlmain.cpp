@@ -82,8 +82,8 @@ void f1Func(cMenuesystem* pThis, enKey key) {
 }
 
 void f2Func(cMenuesystem* pThis, enKey key) {
-  if ((devStatus.opMode.get() == OPMODE_HEAR_HET) ||
-      (devStatus.opMode.get() == OPMODE_REC_AUTO)) {
+  if ((devStatus.opMode.get() == HEAR_HET) ||
+      (devStatus.opMode.get() == REC_AUTO)) {
     if (devStatus.playStatus.get() == 0)
       devStatus.playStatus.set(2);
     else
@@ -146,6 +146,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
       pThis->setMainPanel(panDateTime);
       pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
+      break;
 
   case 4:
       devStatus.latDeg.set(devStatus.geoPos.getDegLat());
@@ -192,7 +193,7 @@ int initFkeyPanel(cPanel* pan, tCoord lf)
 void dispModeFunc(cMenuesystem* pThis, enKey key) {
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
-  if(devStatus.opMode.get() == OPMODE_REC_AUTO)
+  if(devStatus.opMode.get() == REC_AUTO)
     p->itemList[2].isVisible = true;
   else
     p->itemList[2].isVisible = false;
