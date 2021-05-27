@@ -86,6 +86,7 @@ void setup() {
   delay(500);  
   menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
+  menue.refreshAll();
   menue.printPars();
   audio.setup();
   wheels.setDirection(true);  

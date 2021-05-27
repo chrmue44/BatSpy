@@ -88,5 +88,12 @@ enum enOpMode {
   REC_AUTO        = 5,
 };
 
+//filter type
+enum enFiltType
+{
+  HIGHPASS  = 0,
+  LOWPASS   = 1,
+  BANDPASS  = 2
+};
 
 #endif    //#ifndef _TYPES_H

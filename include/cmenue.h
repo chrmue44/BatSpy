@@ -116,6 +116,8 @@ struct stParams {
   cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
   cParNum preTrigger = 20;        ///< pre trigger time [ms]
   cParEnum recFmt = 0;            ///< recording format
+  cParNum filtFreq = 16;            ///< hight pass freq for recording trigger
+  cParEnum filtType = 0;  ///< filter type for recording trigger
 };
 
 

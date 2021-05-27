@@ -57,7 +57,7 @@ class cAudio
   AudioEffectMultiply      m_mult1;     // multiplier for heterodyne
   AudioMixer4              m_mixer;     // selector for input: player or mic
   AudioAnalyzePeak         m_peak;      // peak detector
-  AudioFilterStateVariable m_filter;    // filter before peak detection
+  AudioFilterBiquad        m_filter;    // filter before peak detection
   AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
 
@@ -95,6 +95,7 @@ class cAudio
 
  private:
   void setMixOscFrequency(float freq);
+  void setTrigFilter(float freq, enFiltType type);
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
 #endif //#ifndef SIMU_DISPLAY

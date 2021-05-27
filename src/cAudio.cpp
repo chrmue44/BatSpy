@@ -39,19 +39,18 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
 }
 
 #ifndef SIMU_DISPLAY
-cAudio::cAudio() : m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
-                   m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
-                   m_cMx2Mu(m_mixer, 0, m_mult1, 0),
-                   m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
-                   m_cMi2Fi(m_audioIn, 0, m_filter, 0),
-                   m_cFi2Pk(m_filter, 0, m_peak, 0),
-//                   m_cMi2Ol(m_audioIn, 0, m_audioOut, 0),  //test direct out
-//                   m_cMi2Or(m_audioIn, 0, m_audioOut, 1),  //test direct out
-                   m_cMi2Ol(m_mixer, 0, m_audioOut, 0),
-                   m_cMi2Or(m_mixer, 0, m_audioOut, 1),
-                   m_cMi2De(m_audioIn, 0, m_delay, 0),
-                   m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
-                   m_input(AUDIO_INPUT_LINEIN)
+cAudio::cAudio() : 
+m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
+m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
+m_cMx2Mu(m_mixer, 0, m_mult1, 0),
+m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
+m_cMi2Fi(m_audioIn, 0, m_filter, 0),
+m_cFi2Pk(m_filter, 0, m_peak, 0),
+m_cMi2Ol(m_mixer, 0, m_audioOut, 0),
+m_cMi2Or(m_mixer, 0, m_audioOut, 1),
+m_cMi2De(m_audioIn, 0, m_delay, 0),
+m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
+m_input(AUDIO_INPUT_LINEIN)
 {
 }
 
@@ -211,6 +210,27 @@ void cAudio::setPreAmpGain(enGain gain)
   }
 }
 
+void cAudio::setTrigFilter(float freq, enFiltType type)
+{
+  float maxFreq = m_sampleRate/2;
+  float f = freq * m_sampleRate / AUDIO_SAMPLE_RATE_EXACT;
+  devPars.filtFreq.init(5,maxFreq, 1, 0);
+  switch (type)
+  {
+    case enFiltType::HIGHPASS:
+      m_filter.setHighpass(0, f, 0.7);
+      break;
+    case enFiltType::LOWPASS:
+      m_filter.setLowpass(0, f, 0.7);
+      break;
+    case enFiltType::BANDPASS:
+      m_filter.setBandpass(0, f, 0.7);
+      break;  
+    default:
+      break;
+  }
+}
+
 bool cAudio::isSetupNeeded()
 {
   bool retVal = false;
@@ -244,75 +264,70 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
-  float vol = pow(10, (devPars.volume.get() / 10));
-  if (vol > 32)
-    vol = 32;
-  float freq = devPars.mixFreq.get() * 1000.0;
-
   setPreAmpType((enPreAmp)devPars.preAmpType.get());
   setPreAmpGain((enGain)devPars.preAmpGain.get());
 
   if (isSetupNeeded())
   {
+    float vol = pow(10, (devPars.volume.get() / 10));
+    if (vol > 32)
+      vol = 32;
     m_old.volume = devPars.volume.get();
-    AudioNoInterrupts();
-    delay(200);
+//    AudioNoInterrupts();
+//    delay(200);
     setSampleRate((enSampleRate)devPars.sampleRate.get());
-    switch (devStatus.opMode.get())
-    {
-    case enOpMode::HEAR_DIRECT:
-      m_mixer.gain(MIX_CHAN_MIC, vol);
-      m_mixer.gain(MIX_CHAN_PLAY, 0);
-      setMixOscFrequency(0);
-      break;
+    bool mic = false;
+    float freq = 0;
+    switch (devStatus.opMode.get()) {
+      case enOpMode::HEAR_DIRECT:
+      case enOpMode::REC_AUTO:
+        mic = true;
+        break;
 
-    case enOpMode::HEAR_HET:
-    case enOpMode::REC_AUTO:
-      m_mixer.gain(MIX_CHAN_MIC, vol);
-      m_mixer.gain(MIX_CHAN_PLAY, 0);
-      setMixOscFrequency(freq);
-      break;
+      case enOpMode::HEAR_HET:
+        mic = true;
+        freq = devPars.mixFreq.get();
+        break;
 
-    case enOpMode::PLAY_STRETCHED:
-    {
-      m_mixer.gain(MIX_CHAN_MIC, 0.0);
-      m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setMixOscFrequency(0);
-      enSampleRate srStretch = SR[devPars.sampleRate.get()].stretched;
-      setSampleRate(srStretch);
+      case enOpMode::PLAY_STRETCHED:
+        setSampleRate((enSampleRate)SR[devPars.sampleRate.get()].stretched);
+        break;
+
+      case enOpMode::PLAY_DIRECT:
+        break;
+
+      case enOpMode::PLAY_HET:
+        freq = devPars.mixFreq.get();
+        break;
     }
-    break;
+    m_mixer.gain(MIX_CHAN_MIC, mic ? vol : 0);
+    m_mixer.gain(MIX_CHAN_PLAY, mic ? 0 : vol);
+    m_mixer.gain(MIX_CHAN2, 0);
+    m_mixer.gain(MIX_CHAN3, 0);
 
-    case enOpMode::PLAY_DIRECT:
-      m_mixer.gain(MIX_CHAN_MIC, 0.0);
-      m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setMixOscFrequency(0);
-      break;
-
-    case enOpMode::PLAY_HET:
-      m_mixer.gain(MIX_CHAN_MIC, 0.0);
-      m_mixer.gain(MIX_CHAN_PLAY, vol);
-      setMixOscFrequency(freq);
-      break;
-    }
+    setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
     m_recThresh = pow(10, (devPars.recThreshhold.get() / 10));
-    m_delay.delay(7, 20.0 * m_sampleRate / 44100);
-    delay(200);
-    AudioInterrupts();
+    m_delay.delay(7, devPars.preTrigger.get() * 44100/ m_sampleRate);
+    setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
+//    delay(200);
+//    AudioInterrupts();
     delay(20);
 
     DPRINTLN4("\n[***** AUDIO SETTINGS ******]\n");
     DPRINTF4("       op mode: %i %s\n", devStatus.opMode.get(), devStatus.opMode.getActText());
-    DPRINTF4("   sample rate: %s  index: %i   value: %i\n", devPars.sampleRate.getActText(), devPars.sampleRate.get(), m_sampleRate);
-    DPRINTF4("      mix freq: %f  setup freq: %f\n", freq, m_freq_oscillator);
-    DPRINTF4("rec threshhold: %f\n", devPars.recThreshhold.get());
-    DPRINTF4("        volume: %f\n", vol);
+    DPRINTF4("   sample rate: %s  index: %i   value: %i Hz\n", devPars.sampleRate.getActText(), devPars.sampleRate.get(), m_sampleRate);
+    DPRINTF4("      mix freq: %.1f kHz; real osc freq: %.1f Hz\n", freq, m_freq_oscillator);
+    DPRINTF4("rec threshhold: %.1f dB\n", devPars.recThreshhold.get());
+    DPRINTF4("  trig. filter: %.1f kHz\n", devPars.filtFreq.get())
+    DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger.get());
+    DPRINTF4("         mixer: %s\n", mic ? "mic" : "play");
+    DPRINTF4("        volume: %.1f\n", vol);
   }
   else
     DPRINTLN2("no setup needed");
-  DPRINTF4("    pre amp type: %s\n", devPars.preAmpType.getActText());
-  DPRINTF4("    pre amp gain: %s\n", devPars.preAmpGain.getActText());
+  DPRINTF4("  pre amp type: %s\n", devPars.preAmpType.getActText());
+  DPRINTF4("  pre amp gain: %s\n", devPars.preAmpGain.getActText());
 }
 
 void cAudio::updateCassMode()
@@ -368,6 +383,7 @@ void cAudio::checkAutoRecording(cMenue &menue)
       if (m_peak.available())
       {
          pv = m_peak.read();
+         DPRINTF2("peak: %f   threshhold: %f\n", pv, m_recThresh);
         if ((pv > m_recThresh) && (m_cass.getMode() != enCassMode::REC))
         {
           devStatus.recCount.set(devStatus.recCount.get() + 1);

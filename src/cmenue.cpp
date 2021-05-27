@@ -29,25 +29,18 @@ stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
 extern cRtc rtc;
 
-
-
 void btnAudioFunc(cMenuesystem* pThis, enKey key) {
 #ifndef SIMU_DISPLAY
   AudioProcessorUsageMaxReset();
 #endif
 }
 
-
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
   cMenuesystem(width, height, pDisplay) {
 }
 
-
 cMenue::~cMenue() {
 }
-
-
-
 
 void cMenue::initPars() {
 #ifdef AMP_REV1
@@ -111,6 +104,12 @@ void cMenue::initPars() {
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
   devStatus.graph.setAmplitudeRaw(MAX_ADC);
   devStatus.graph.setPlotBorders(0.0, 2.5);
+
+  devPars.filtFreq.init(5,70, 1, 0);
+
+  devPars.filtType.addItem(1171);
+  devPars.filtType.addItem(1172);
+  devPars.filtType.addItem(1173);
 
   devStatus.btnMeas = new cParBtn(Txt::get(308));
   devStatus.pulseWidth.init(0, 9999, 0, 1);
@@ -322,7 +321,15 @@ void cMenue::save() {
   writeInt16ToEep(0x0044, devPars.preAmpType.get());
   writeFloatToEep(0x0046, devStatus.geoPos.getLat());
   writeFloatToEep(0x004A, devStatus.geoPos.getLon());
-  int16_t maxAddr = 0x004D;
+  writeFloatToEep(0x004E, devPars.filtFreq.get());
+  writeInt16ToEep(0x0052, devPars.filtType.get());
+  writeInt16ToEep(0x0054, 0);
+  writeInt16ToEep(0x0056, 0);
+  writeInt16ToEep(0x0058, 0);
+  writeInt16ToEep(0x005A, 0);
+  writeInt16ToEep(0x005C, 0);
+  writeInt16ToEep(0x005E, 0);
+  int16_t maxAddr = 0x005F;
   writeInt16ToEep(0, maxAddr);
 
   int16_t chks = 0;
@@ -357,6 +364,8 @@ void cMenue::load() {
     devPars.preAmpType.set(readInt16FromEep(0x0044));
     devStatus.geoPos.setLat(readFloatFromEep(0x0046));
     devStatus.geoPos.setLon(readFloatFromEep(0x004A));
+    devPars.filtFreq.set(readFloatFromEep(0x004E));
+    devPars.filtType.set(readInt16FromEep(0x0052));
   }
 #endif //#ifndef SIMU_DISPLAY
 }
