@@ -45,13 +45,13 @@ m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
 m_cMx2Mu(m_mixer, 0, m_mult1, 0),
 m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
 m_cMi2Fi(m_audioIn, 0, m_filter, 0),
-m_cFi2Pk(m_filter, 0, m_peak, 0),
-m_cMi2Ol(m_mixer, 0, m_audioOut, 0),
-m_cMi2Or(m_mixer, 0, m_audioOut, 1),
+m_cFi2Pk(m_filter, m_peak),
+m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
+m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
-m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
-m_input(AUDIO_INPUT_LINEIN)
+m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0) 
 {
+  DPRINTLN4("Audio connections initialized");
 }
 
 void cAudio::init()
@@ -60,10 +60,17 @@ void cAudio::init()
   pinMode(PIN_AMP_1, OUTPUT);
   pinMode(PIN_AMP_2, OUTPUT);
   pinMode(PIN_AMP_3, OUTPUT);
+  //pinMode(PIN_MQS, OUTPUT);
+
+  // set pre amp to the lowest posible amplification
+  digitalWrite(PIN_AMP_0, 1);
+  digitalWrite(PIN_AMP_1, 1);
+  digitalWrite(PIN_AMP_2, 1);
+  digitalWrite(PIN_AMP_3, 0);
 
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
-  AudioMemory(300);
+  AudioMemory(600);
   // Enable the audio shield and set the output volume.
 #ifdef AUDIO_SGTL5000
   m_audioShield.enable();
@@ -273,8 +280,8 @@ void cAudio::setup()
     if (vol > 32)
       vol = 32;
     m_old.volume = devPars.volume.get();
-//    AudioNoInterrupts();
-//    delay(200);
+    AudioNoInterrupts();
+    delay(100);
     setSampleRate((enSampleRate)devPars.sampleRate.get());
     bool mic = false;
     float freq = 0;
@@ -307,11 +314,11 @@ void cAudio::setup()
 
     setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
-    m_recThresh = pow(10, (devPars.recThreshhold.get() / 10));
+    m_recThresh = pow(10, (devPars.recThreshhold.get() / 10.0));
     m_delay.delay(7, devPars.preTrigger.get() * 44100/ m_sampleRate);
     setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
-//    delay(200);
-//    AudioInterrupts();
+    delay(100);
+    AudioInterrupts();
     delay(20);
 
     DPRINTLN4("\n[***** AUDIO SETTINGS ******]\n");
@@ -322,7 +329,7 @@ void cAudio::setup()
     DPRINTF4("  trig. filter: %.1f kHz\n", devPars.filtFreq.get())
     DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger.get());
     DPRINTF4("         mixer: %s\n", mic ? "mic" : "play");
-    DPRINTF4("        volume: %.1f\n", vol);
+    DPRINTF4("        volume: %.4f\n", vol);
   }
   else
     DPRINTLN2("no setup needed");
@@ -361,8 +368,6 @@ void cAudio::updateCassMode()
 
 void cAudio::setMixOscFrequency(float freq)
 {
-  if (freq < 0.1)
-    m_sineHet.phase(90);
   m_sineHet.amplitude(1.0);
   float maxF = m_sampleRate / 1000.0 / 2;
   devPars.mixFreq.init(10, maxF, 1, 0);
@@ -370,6 +375,8 @@ void cAudio::setMixOscFrequency(float freq)
     devPars.mixFreq.set(devPars.mixFreq.getMax());
   m_freq_oscillator = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
   m_sineHet.frequency(m_freq_oscillator);
+  if (m_freq_oscillator < 0.1)
+    m_sineHet.phase(90);
   m_old.oscFrequency = devPars.mixFreq.get();
 }
 

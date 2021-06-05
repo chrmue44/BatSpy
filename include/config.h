@@ -49,6 +49,8 @@
 #endif //#ifdef TEENSY36
 
 #ifdef ARDUINO_TEENSY41
+#define PIN_MQS          10      // output for mono MQS signal
+
 // control TFT
 #define PIN_TFT_DC        6      // TFT D/C-Signal
 #define PIN_TFT_CS       14      // TFT CS

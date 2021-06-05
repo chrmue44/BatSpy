@@ -1,3 +1,5 @@
+//#define DEBUG_LEVEL 4
+#include "debug.h"
 #include "cAudio.h"
 #include "config.h"
 #include <ILI9341_t3.h>
@@ -100,8 +102,11 @@ void loop() {
   static bool backLightOn = true;
   if (tick.check()) {
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+    DPRINTF4("processorUage avg.: %f\n", AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+    DPRINTF4("processorUage max: %f\n", AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
+    DPRINTF4("memory usage: %i\n", AudioMemoryUsage());
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {

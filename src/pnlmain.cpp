@@ -207,7 +207,7 @@ void setFileToDisplay(const char* buf) {
   int ret = info.readParameter(infoFile, sampleRate);
   if(ret != 0)
     sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-  devPars.freqMax.set(sampleRate / 2000);
+  devStatus.freqMax.set(sampleRate / 2000);
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }

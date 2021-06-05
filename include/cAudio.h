@@ -51,6 +51,7 @@ class cAudio
 {
  private:
 #ifndef SIMU_DISPLAY
+
   AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
   AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
@@ -68,12 +69,11 @@ class cAudio
   AudioConnection m_cSi2Mu; // sine to multiplier
   AudioConnection m_cMi2Fi; // microphone to filter
   AudioConnection m_cFi2Pk; // filter to peak detector
-  AudioConnection m_cMi2Ol; // mixer to audio output left
-  AudioConnection m_cMi2Or; // mixer to audio output right
+  AudioConnection m_cMu2Ol; // multiplier to audio output left
+  AudioConnection m_cMu2Or; // multiplier to audio output right
   AudioConnection m_cMi2De; // microphone to delay
   AudioConnection m_cDe2Ca; // delay to recorder
 
-  int m_input;
   uint32_t m_sampleRate;                 // sample rate in Hz  
   uint32_t m_oscFreq = 45000;            // start heterodyne detecting at this frequency
   float m_freq_oscillator = 50000;  // oscillator frequency calculated for m_sine (depending on SR)

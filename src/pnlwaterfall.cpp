@@ -135,8 +135,8 @@ void timeStepFunc(cMenuesystem* pThis, enKey key) {
 
 int initWaterPan(cPanel* pan, tCoord lf) {
   int err = pan->addTextItem(300,                15, 80,            25, lf);
-  err |= pan->addNumItem(&devPars.freqMax,    20, 20,            25, lf, false);
-  err |= pan->addNumItem(&devPars.freqMin,    20, 148,           25, lf, false);
+  err |= pan->addNumItem(&devStatus.freqMax,    20, 20,            25, lf, false);
+  err |= pan->addNumItem(&devStatus.freqMin,    20, 148,           25, lf, false);
   err |= pan->addNumItem(&devPars.fftLevelMin,50,153+COLMAP_DIST,35,lf, true, fftLevelFunc);
   err |= pan->addNumItem(&devPars.fftLevelMax,270,153+COLMAP_DIST,35, lf, true, fftLevelFunc);
   err |= pan->addNumItem(&devStatus.timMin,  30, 213,           53, lf, true, panWaterZoomFunc);

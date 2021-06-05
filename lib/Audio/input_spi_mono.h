@@ -40,6 +40,7 @@ public:
 protected:	
 	AudioInputSpiMono(int dummy): AudioStream(0, NULL) {} // to be used only inside AudioInputI2Sslave !!
 	static bool update_responsibility;
+    void config_i2s(bool only_bclk = false);
 
 #if !defined(KINETISL)
 	static DMAChannel dma;
@@ -52,7 +53,7 @@ protected:
 
 private:
 	static audio_block_t *block_left;
-	static audio_block_t *block_right;
+//	static audio_block_t *block_right;
     static int16_t wLeft;
     static int16_t wRight;
 #if !defined(KINETISL)	

@@ -12,6 +12,7 @@
 #include "pnlwaterfall.h"
 #include "pnlbats.h"
 #include "pnlparams.h"
+#include "pnlinfo.h"
 
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
@@ -28,12 +29,6 @@ typedef std::size_t size_t;
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
 extern cRtc rtc;
-
-void btnAudioFunc(cMenuesystem* pThis, enKey key) {
-#ifndef SIMU_DISPLAY
-  AudioProcessorUsageMaxReset();
-#endif
-}
 
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
   cMenuesystem(width, height, pDisplay) {
@@ -87,6 +82,9 @@ void cMenue::initPars() {
 
   devStatus.amplMax.init(1,100,0.0,0);
 
+  devStatus.cpuAudioAvg.init(0,100,1,2);
+  devStatus.cpuAudioMax.init(0,100,1,2);
+  devStatus.audioMem.init(0,10000,1,0);
   initBats();
 
   initFunctionItems();
@@ -144,7 +142,8 @@ void cMenue::initPars() {
   devPars.dispOrient.addItem(1162);
 
   devPars.preTrigger.init(0.0, 50.0, 1.0, 0);
-  devPars.freqMax.init(1, 300, 1, 0);
+  devStatus.freqMax.init(1, 300, 1, 0);
+  devStatus.freqMin.init(1, 300, 1, 0);
 
   devStatus.latSign.addItem(1341);
   devStatus.latSign.addItem(1342);
@@ -211,15 +210,7 @@ void cMenue::initDialogs() {
   err |= getPan(panFont)->addTextItem(12010,                  15, 20 +  8 * lf, 200, 2 * lf, false, NULL, 2);
 
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panInfo)->addTextItem(400,                     3,  30,           80, lf);
-  err |= getPan(panInfo)->addNumItem(&devStatus.cpuAudioAvg, 140,  30,           20, lf, false);
-  err |= getPan(panInfo)->addTextItem(401,                   162,  30,           80, lf);
-  err |= getPan(panInfo)->addTextItem(405,                     3,  30     + lf,  80, lf);
-  err |= getPan(panInfo)->addNumItem(&devStatus.cpuAudioMax, 140,  30     + lf,  20, lf, false);
-  err |= getPan(panInfo)->addTextItem(401,                   162,  30     + lf,  80, lf);
-  err |= getPan(panInfo)->addTextItem(410,                     3,  30 + 2 * lf,  80, lf);
-  err |= getPan(panInfo)->addNumItem(&devStatus.audioMem,    140,  30 + 2 * lf,  80, lf, false);
-  err |= getPan(panInfo)->addBtnItem(devStatus.btnAudio,     140,  30 + 4 * lf,  90, lf, btnAudioFunc);
+  err |= initInfoPan(getPan(panInfo), lf);
 
   // parameter panel
   panParams =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
@@ -302,8 +293,8 @@ void cMenue::save() {
 #ifndef SIMU_DISPLAY
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
-  writeFloatToEep(0x000C, devPars.freqMin.get());
-  writeFloatToEep(0x0010, devPars.freqMax.get());
+  // 4 bytes free here
+  // 4 bytes free here
   writeFloatToEep(0x0014, devPars.recTime.get());
   writeInt16ToEep(0x0018, devPars.sampleRate.get());
   writeInt16ToEep(0x001A, devPars.preAmpGain.get());
@@ -345,8 +336,8 @@ void cMenue::load() {
   if(checkCRC()) {
     devPars.volume.set(readFloatFromEep(0x0004));
     devPars.mixFreq.set(readFloatFromEep(0x0008));
-    devPars.freqMin.set(readFloatFromEep(0x000C));
-    devPars.freqMax.set(readFloatFromEep(0x0010));
+    // 4 bytes free here
+    // 4 bytes free here 
     devPars.recTime.set(readFloatFromEep(0x0014));
     devPars.sampleRate.set(readInt16FromEep(0x0018));
     devPars.preAmpGain.set(readInt16FromEep(0x001A));
@@ -406,10 +397,10 @@ void cMenue::printPars() {
 #ifndef SIMU_DISPLAY
   Serial.printf("volume             [dB]: %.0f\n", devPars.volume.get());
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
-  Serial.printf("min freq. diagram [kHz]: %.0f\n", devPars.freqMin.get());
-  Serial.printf("max freq. diagram [kHz]: %.0f\n", devPars.freqMax.get());
   Serial.printf("recording time      [s]: %.1f\n", devPars.recTime.get());
   Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate.getActText());
+  Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger.get());
+  Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold.get() * 100);
   Serial.printf("pre amp type           : %s\n", devPars.preAmpType.getActText());
   Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain.getActText());
 #endif //#ifndef SIMU_DISPLAY
@@ -419,8 +410,8 @@ void cMenue::printPars() {
 void cMenue::printStatus() {
  // enCassMode cassMode = STOP; ///< mode of operation of cassette player
 #ifndef SIMU_DISPLAY
-  Serial.printf("avg. audio CPU usage: %.0f\n", devStatus.cpuAudioAvg.get());
-  Serial.printf("max. audio CPU usage: %.0f\n", devStatus.cpuAudioMax.get());
+  Serial.printf("avg. audio CPU usage: %.2f\n", devStatus.cpuAudioAvg.get());
+  Serial.printf("max. audio CPU usage: %.2f\n", devStatus.cpuAudioMax.get());
   Serial.printf("audio memory usage:   %.0f\n", devStatus.audioMem.get());
 #endif //#ifndef SIMU_DISPLAY
 }

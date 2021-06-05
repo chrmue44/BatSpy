@@ -86,6 +86,8 @@ struct stStatus {
   cParNum latDeg = 49;
   cParNum latMin = 45;
   cParNum latSec = 236;
+  cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
+  cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
 };
 
 
@@ -95,8 +97,6 @@ struct stStatus {
 struct stParams {
   cParNum volume =   6;           ///< volume setting
   cParNum mixFreq = 40;           ///< mixer frequency
-  cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
-  cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum recTime = 3;            ///< recording time
   cParEnum sampleRate = SR_352K;  ///< sample rate
   cParEnum lang   = LANG_GER;     ///< display language
