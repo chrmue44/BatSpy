@@ -32,7 +32,7 @@ int initParPan(cPanel* pan, tCoord lf) {
   err |= pan->addTextItem(1144,                  15, 20 +  7 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.deafTime,     170, 20 +  7 * lf,  20, lf, true);
   err |= pan->addTextItem(1145,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFmt,      170, 20 +  8 * lf,  20, lf, true);
+  err |= pan->addEnumItem(&devPars.recFmt,      170, 20 +  8 * lf,  40, lf, true);
   err |= pan->addTextItem(1148,                  15, 20 +  9 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  9 * lf,  20, lf, true);
   err |= pan->addTextItem(1320,                  15, 20 + 10 * lf,  80, lf);

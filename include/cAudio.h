@@ -81,6 +81,7 @@ class cAudio
   float m_recThresh;                // recording thresh hold
   cTimer m_timeout;
   int m_oldCassMode = -1;
+  float m_peakVal;                  // last measured peak value
   
  public:
   cAudio();
@@ -92,6 +93,7 @@ class cAudio
   void updateCassMode();
   void checkAutoRecording(cMenue& menue);
   void operateRecorder();
+  float getLastPeakVal() { return m_peakVal;}
 
  private:
   void setMixOscFrequency(float freq);

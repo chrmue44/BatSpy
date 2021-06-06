@@ -1,6 +1,6 @@
 #include "cAudio.h"
 #include "config.h"
-#define DEBUG_LEVEL 4
+#define DEBUG_LEVEL 2
 #include "debug.h"
 #include "cmenue.h"
 #ifdef ARDUINO_TEENSY41
@@ -10,24 +10,24 @@
 // SRtext and position for the FFT spectrum display scale
 const stSrDesc SR[] =
     { //SR_CODE   SR_FREQ, MUL_Fs, DIV_Fs, FFT_N
-        {SR_17K, 17640, 70, 2800, SR_17K, 1},
-        {SR_19K, 19200, 70, 2573, SR_19K, 1},
-        {SR_23K, 23400, 70, 2111, SR_23K, 1},
-        {SR_28K, 28100, 98, 2461, SR_28K, 1},
-        {SR_32K, 32000, 183, 4021, SR_32K, 1},
-        {SR_35K, 35300, 170, 3399, SR_35K, 1},
-        {SR_38K, 38400, 170, 3123, SR_38K, 1},
-        {SR_44K, 44100, 196, 3125, SR_44K, 1}, //F: 43940.0 1 16
-        {SR_48K, 48000, 128, 1875, SR_48K, 1}, //F: 47940.0 3 44
-        {SR_88K, 88200, 107, 853, SR_88K, 2},  //F: 87910.0 1  8
-        {SR_96K, 96000, 219, 1604, SR_96K, 2}, //F: 95880.0 3 22
-        {SR_176K, 176400, 1, 4, SR_17K, 3},
-        {SR_192K, 192000, 219, 802, SR_19K, 3}, //F: 191790.0 3 11
-        {SR_234K, 234000, 1,  3, SR_23K, 4},
-        {SR_281K, 281000, 2,  5, SR_28K, 5},
-        {SR_352K, 352800, 1,  2, SR_35K, 6},
-        {SR_384K, 383500, 6, 11, SR_38K, 7},
-        {SR_480K, 480000, 6,  9, SR_48K, 7}
+        {SR_17K,   17640,  70, 2800, SR_17K, 1},
+        {SR_19K,   19200,  70, 2573, SR_19K, 1},
+        {SR_23K,   23400,  70, 2111, SR_23K, 1},
+        {SR_28K,   28100,  98, 2461, SR_28K, 1},
+        {SR_32K,   32000, 183, 4021, SR_32K, 1},
+        {SR_35K,   35300, 170, 3399, SR_35K, 1},
+        {SR_38K,   38400, 170, 3123, SR_38K, 1},
+        {SR_44K,   44100, 196, 3125, SR_44K, 1}, //F: 43940.0 1 16
+        {SR_48K,   48000, 128, 1875, SR_48K, 1}, //F: 47940.0 3 44
+        {SR_88K,   88200, 107,  853, SR_88K, 2},  //F: 87910.0 1  8
+        {SR_96K,   96000, 219, 1604, SR_96K, 2}, //F: 95880.0 3 22
+        {SR_176K, 176400, 1,      4, SR_17K, 3},
+        {SR_192K, 192000, 219,  802, SR_19K, 3}, //F: 191790.0 3 11
+        {SR_234K, 234000, 1,      3, SR_23K, 4},
+        {SR_281K, 281000, 2,      5, SR_28K, 5},
+        {SR_352K, 352800, 1,      2, SR_35K, 6},
+        {SR_384K, 383500, 6,     11, SR_38K, 7},
+        {SR_480K, 480000, 6,      9, SR_48K, 7}
       };
 
 int32_t cAudio::getSampleRateHz(enSampleRate sr)
@@ -220,7 +220,7 @@ void cAudio::setPreAmpGain(enGain gain)
 void cAudio::setTrigFilter(float freq, enFiltType type)
 {
   float maxFreq = m_sampleRate/2;
-  float f = freq * m_sampleRate / AUDIO_SAMPLE_RATE_EXACT;
+  float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
   devPars.filtFreq.init(5,maxFreq, 1, 0);
   switch (type)
   {
@@ -382,22 +382,21 @@ void cAudio::setMixOscFrequency(float freq)
 
 void cAudio::checkAutoRecording(cMenue &menue)
 {
-  float pv;
+  if (m_peak.available())
+  {
+    m_peakVal = m_peak.read();
+    DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
+  }
   if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == REC_AUTO))
   {
     if (devStatus.playStatus.get() == 0)
     {
-      if (m_peak.available())
+      if ((m_peakVal > m_recThresh) && (m_cass.getMode() != enCassMode::REC))
       {
-         pv = m_peak.read();
-         DPRINTF2("peak: %f   threshhold: %f\n", pv, m_recThresh);
-        if ((pv > m_recThresh) && (m_cass.getMode() != enCassMode::REC))
-        {
-          devStatus.recCount.set(devStatus.recCount.get() + 1);
-          m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
-          devStatus.playStatus.set(2);
-          delay(5);
-        }
+        devStatus.recCount.set(devStatus.recCount.get() + 1);
+        m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
+        devStatus.playStatus.set(2);
+        delay(5);
       }
     }
   }
@@ -437,6 +436,7 @@ void cAudio::operateRecorder()
     if (m_timeout.runTime() > devPars.deafTime.get())
     {
       devStatus.playStatus.set(0);
+      m_peak.read();
       DPRINTF1("timeout over, timeout %f,  timer %f\n", devPars.deafTime.get(), m_timeout.runTime());
     }
   }

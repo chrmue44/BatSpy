@@ -88,6 +88,7 @@ struct stStatus {
   cParNum latSec = 236;
   cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
+  cParNum peakVal = 0;
 };
 
 

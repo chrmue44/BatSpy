@@ -102,11 +102,9 @@ void loop() {
   static bool backLightOn = true;
   if (tick.check()) {
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-    DPRINTF4("processorUage avg.: %f\n", AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-    DPRINTF4("processorUage max: %f\n", AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
-    DPRINTF4("memory usage: %i\n", AudioMemoryUsage());
+    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
       if(backLightOn) {

@@ -158,6 +158,9 @@ void cMenue::initPars() {
   devStatus.geoPos.setLat(49.1234);
   devStatus.geoPos.setLon(8.2345);
   devStatus.btnAudio = new cParBtn(Txt::get(309));
+  
+  devStatus.peakVal.init(0, 20, 0.1, 2);
+
   load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
