@@ -188,30 +188,17 @@ void cAudio::setPreAmpGain(enGain gain)
     break;
 #endif
 #ifdef AMP_REV2
-  case enGain::GAIN_10:
+  case enGain::GAIN_15:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 1);
-    digitalWrite(PIN_AMP_2, 1);
     break;
-  case enGain::GAIN_30:
+  case enGain::GAIN_70:
     digitalWrite(PIN_AMP_0, 1);
     digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 1);
-    break;
-  case enGain::GAIN_100:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 1);
     break;
   case enGain::GAIN_300:
-    digitalWrite(PIN_AMP_0, 1);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
-    break;
-  case enGain::GAIN_1000:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
     break;
 #endif
   }

@@ -47,8 +47,6 @@ void cMenue::initPars() {
   devPars.preAmpGain.addItem(1331);
   devPars.preAmpGain.addItem(1332);
   devPars.preAmpGain.addItem(1333);
-  devPars.preAmpGain.addItem(1334);
-  devPars.preAmpGain.addItem(1335);
 #endif
   devPars.preAmpType.addItem(1321);
   devPars.preAmpType.addItem(1322);

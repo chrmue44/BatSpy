@@ -49,11 +49,9 @@ enum enGain
   GAIN_HI                = 2,  // 22/1.5 * 33/1.5   = 322
 #endif
 #ifdef AMP_REV2
-  GAIN_10                = 0,
-  GAIN_30                = 1,
-  GAIN_100               = 2,
-  GAIN_300               = 3,
-  GAIN_1000              = 4
+  GAIN_15                = 0,
+  GAIN_70                = 1,
+  GAIN_300               = 2,
 #endif
 };
 
