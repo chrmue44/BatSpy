@@ -89,6 +89,7 @@ struct stStatus {
   cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
+  cParStr version = __DATE__  "/"  __TIME__;
 };
 
 

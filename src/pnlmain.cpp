@@ -197,14 +197,20 @@ int initFkeyPanel(cPanel* pan, tCoord lf)
 }
 
 
-void dispModeFunc(cMenuesystem* pThis, enKey key) {
+void setVisibilityRecCount(cMenuesystem* pThis)
+{
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
-  if(devStatus.opMode.get() == REC_AUTO)
+  if(devStatus.opMode.get() == enOpMode::REC_AUTO)
     p->itemList[2].isVisible = true;
   else
     p->itemList[2].isVisible = false;
 }
+
+void dispModeFunc(cMenuesystem* pThis, enKey key) {
+  setVisibilityRecCount(pThis);
+}
+
 
 void setFileToDisplay(const char* buf) {
   char infoFile[FILENAME_LEN];

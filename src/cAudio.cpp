@@ -375,28 +375,32 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
     DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
   }
   if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == enOpMode::REC_AUTO))
-  {
-    devStatus.time.set(rtc.getTime());
-    bool actTime = false;
-    if(devPars.startH.get() > devPars.stopH.get())
+  {      
+    if ((devStatus.playStatus.get() == 0))
     {
-      actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
-                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
-    }
-    else
-    {
-      actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
-                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
-    }
-      
-    if ((devStatus.playStatus.get() == 0) && actTime)
-    {
-      if ((m_peakVal > m_recThresh) && (m_cass.getMode() != enCassMode::REC))
+      if(m_cass.getMode() != enCassMode::REC)
       {
-        devStatus.recCount.set(devStatus.recCount.get() + 1);
-        m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
-        devStatus.playStatus.set(2);
-        delay(5);
+        devStatus.time.set(rtc.getTime());
+        devStatus.time.update(false);
+        bool actTime = false;
+        if(devPars.startH.get() > devPars.stopH.get())
+        {
+           actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+        }
+        else
+        {
+           actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+                     (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+        }
+
+        if ((m_peakVal > m_recThresh) && actTime)
+        {
+          devStatus.recCount.set(devStatus.recCount.get() + 1);
+          m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
+          devStatus.playStatus.set(2);
+          delay(5);
+        }
       }
     }
   }

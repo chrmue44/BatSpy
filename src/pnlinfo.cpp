@@ -20,5 +20,7 @@ int initInfoPan(cPanel* pan, tCoord lf) {
   err |= pan->addNumItem(&devStatus.peakVal,     140,  30 + 3 * lf,  30, lf, false);
   err |= pan->addTextItem(401,                   172,  30 + 3 * lf,  80, lf);
   err |= pan->addBtnItem(devStatus.btnAudio,     140,  30 + 5 * lf,  90, lf, btnAudioFunc);
+  err |= pan->addTextItem(430,                     3,  30 + 7 * lf,  80, lf);
+  err |= pan->addStrItem(&devStatus.version,     140,  30 + 7 * lf,  80, lf);
   return err;
 }

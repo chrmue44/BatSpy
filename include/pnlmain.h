@@ -33,5 +33,7 @@ int initFkeyPanel(cPanel* pan, tCoord lf);
 int initMainPanel(cPanel* pan, tCoord lf);
 void f1Func(cMenuesystem* pThis, enKey key);
 void f4Func(cMenuesystem* pThis, enKey key);
+void setVisibilityRecCount(cMenuesystem* pThis);
+
 
 #endif // PANMAIN_H

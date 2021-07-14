@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "cTerminal.h"
 #include "clFixMemPool.h"
+#include "pnlmain.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -94,6 +95,7 @@ void setup() {
   wheels.setDirection(true);  
   setDispLight(255);
   devStatus.opMode.set(enOpMode::REC_AUTO);
+  setVisibilityRecCount(&menue);
 }
 
 
