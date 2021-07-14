@@ -14,35 +14,49 @@ void languageFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
+int initParRec(cPanel* pan, tCoord lf) {
+  int  err = 0;
+  err |= pan->addTextItem(1110,                  15, 20          ,  80, lf);
+  err |= pan->addEnumItem(&devPars.sampleRate,  190, 20          ,  30, lf, true);
+  err |= pan->addTextItem(1120,                  15, 20 +  1 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  1 * lf,  30, lf, true);
+  err |= pan->addTextItem(1140,                  15, 20 +  2 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  2 * lf,  30, lf, true);
+  err |= pan->addTextItem(1170,                  15, 20 +  3 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  3 * lf,  30, lf, true);
+  err |= pan->addTextItem(1175,                  15, 20 +  4 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  4 * lf,  70, lf, true);
+  err |= pan->addTextItem(1330,                  15, 20 +  5 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  5 * lf,  80, lf, true);
+  err |= pan->addTextItem(1144,                  15, 20 +  6 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  6 * lf,  20, lf, true);
+  err |= pan->addTextItem(1145,                  15, 20 +  7 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  7 * lf,  40, lf, true);
+  err |= pan->addTextItem(1180,                  15, 20 +  8 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.startH,       190, 20 +  8 * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 +  8 * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  8 * lf,  15, lf, true);
+  err |= pan->addTextItem(1181,                  15, 20 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  9 * lf,  15, lf, true);
+  return err;
+}
+
 int initParPan(cPanel* pan, tCoord lf) {
-  int  err = pan->addTextItem(1100,                  15, 20,            80, lf);
+  int  err = 0;
+  err |= pan->addTextItem(1100,                  15, 20,            80, lf);
   err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
-  err |= pan->addTextItem(1110,                  15, 20 +      lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.sampleRate,  170, 20 +      lf,  30, lf, true);
-  err |= pan->addTextItem(1120,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,      170, 20 +  2 * lf,  30, lf, true);
-  err |= pan->addTextItem(1140,                  15, 20 +  3 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold,170, 20 +  3 * lf,  30, lf, true);
-  err |= pan->addTextItem(1170,                  15, 20 +  4 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.filtFreq,     170, 20 +  4 * lf,  30, lf, true);
-  err |= pan->addTextItem(1175,                  15, 20 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.filtType,    170, 20 +  5 * lf,  70, lf, true);
-  err |= pan->addTextItem(1330,                  15, 20 +  6 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,   170, 20 +  6 * lf,  80, lf, true);
-  err |= pan->addTextItem(1144,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deafTime,     170, 20 +  7 * lf,  20, lf, true);
-  err |= pan->addTextItem(1145,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFmt,      170, 20 +  8 * lf,  40, lf, true);
-  err |= pan->addTextItem(1148,                  15, 20 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  9 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                  15, 20 + 10 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 + 10 * lf,  80, lf, true);
-  err |= pan->addTextItem(1325,                  15, 20 + 11 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,  170, 20 + 11 * lf,  80, lf, true);
-  err |= pan->addTextItem(1150,                  15, 20 + 12 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.knobRotation,170, 20 + 12 * lf, 100, lf, true);
-  err |= pan->addTextItem(1160,                  15, 20 + 13 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 + 13 * lf,  80, lf, true);
+  err |= pan->addTextItem(1148,                  15, 20 +  1 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  1 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                  15, 20 +  2 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 +  2 * lf,  80, lf, true);
+  err |= pan->addTextItem(1325,                  15, 20 +  3 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,  170, 20 +  3 * lf,  80, lf, true);
+  err |= pan->addTextItem(1150,                  15, 20 +  4 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.knobRotation,170, 20 +  4 * lf, 100, lf, true);
+  err |= pan->addTextItem(1160,                  15, 20 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  5 * lf,  80, lf, true);
   return err;
 }
 

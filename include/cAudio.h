@@ -5,6 +5,7 @@
 #include <Audio.h>
 #include "cCassette.h"
 #include "ctimer.h"
+#include "cRtc.h"
 #endif
 #include "types.h"
 #include "config.h"
@@ -74,8 +75,8 @@ class cAudio
   AudioConnection m_cMi2De; // microphone to delay
   AudioConnection m_cDe2Ca; // delay to recorder
 
-  uint32_t m_sampleRate;                 // sample rate in Hz  
-  uint32_t m_oscFreq = 45000;            // start heterodyne detecting at this frequency
+  uint32_t m_sampleRate;            // sample rate in Hz  
+  uint32_t m_oscFreq = 45000;       // start heterodyne detecting at this frequency
   float m_freq_oscillator = 50000;  // oscillator frequency calculated for m_sine (depending on SR)
   stAudioSettings m_old;            // old settings
   float m_recThresh;                // recording thresh hold
@@ -91,7 +92,7 @@ class cAudio
   void setPreAmpGain(enGain gain);
   void setup();
   void updateCassMode();
-  void checkAutoRecording(cMenue& menue);
+  void checkAutoRecording(cMenue& menue, cRtc& rtc);
   void operateRecorder();
   float getLastPeakVal() { return m_peakVal;}
 

@@ -45,7 +45,7 @@ struct stBatInfo {
 struct stStatus {
   stStatus() : graph(GRAPH_XT), waterf(GRAPH_FFT) {}
 
-  cParEnum opMode = 0;            ///< display mode
+  cParEnum opMode = enOpMode::REC_AUTO; ///< display mode
   cParNum recCount = 0;           ///< nr of recordings
   cParGeoPos geoPos;              ///< actual geographic position
   cParStr fPlayName = "";         ///< name of file to play
@@ -73,9 +73,9 @@ struct stStatus {
   size_t fileIndex;               ///< index of file in dir
   size_t startIndex;              ///< start index of directory
   cParBtn* btnSetTime;
-  cParNum year = 2020;
-  cParNum month = 5;
-  cParNum day = 22;
+  cParNum year = 2021;
+  cParNum month = 7;
+  cParNum day = 13;
   cParNum hour = 22;
   cParNum minute = 0;
   cParEnum lonSign = 0;
@@ -99,7 +99,7 @@ struct stParams {
   cParNum volume =   6;           ///< volume setting
   cParNum mixFreq = 40;           ///< mixer frequency
   cParNum recTime = 3;            ///< recording time
-  cParEnum sampleRate = SR_352K;  ///< sample rate
+  cParEnum sampleRate = enSampleRate::SR_384K;   ///< sample rate
   cParEnum lang   = LANG_GER;     ///< display language
   cParList dirSel = 0;            ///< select directory
   cParList fileSel = 0;           ///< select file
@@ -109,16 +109,20 @@ struct stParams {
   cParNum fftLevelMin = 3500;     ///< low (threshhold) level for FFT display
   cParNum fftLevelMax = 70000;    ///< high level for FFT display
   cParNum recThreshhold = -18;    ///< auto recording threshhold
-  cParNum deafTime = 0;           ///< timeout after one recording
+  cParNum deafTime = 3;           ///< timeout after one recording
   cParNum backLightTime = 120;    ///< time for backlight
   cParEnum preAmpGain = 1;        ///< gain of pre amplifier
   cParEnum preAmpType = HIGH_PASS;  ///< type of pre amplifier
-  cParEnum dispOrient = RIGHT_HAND;         ///< display orientation
-  cParEnum knobRotation = CLOCKWISE;        ///< knob rotation
-  cParNum preTrigger = 20;        ///< pre trigger time [ms]
-  cParEnum recFmt = 0;            ///< recording format
+  cParEnum dispOrient = RIGHT_HAND; ///< display orientation
+  cParEnum knobRotation = CLOCKWISE;///< knob rotation
+  cParNum preTrigger = 20;          ///< pre trigger time [ms]
+  cParEnum recFmt = 0;              ///< recording format
   cParNum filtFreq = 16;            ///< hight pass freq for recording trigger
-  cParEnum filtType = 0;  ///< filter type for recording trigger
+  cParEnum filtType = 0;            ///< filter type for recording trigger
+  cParNum startH = 21;              ///< hour of start time
+  cParNum startMin = 0;             ///< minute of start time
+  cParNum stopH = 6;                ///< hour of start time
+  cParNum stopMin = 0;              ///< minute of start time
 };
 
 

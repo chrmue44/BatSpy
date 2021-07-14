@@ -93,6 +93,7 @@ void setup() {
   audio.setup();
   wheels.setDirection(true);  
   setDispLight(255);
+  devStatus.opMode.set(enOpMode::REC_AUTO);
 }
 
 
@@ -147,7 +148,7 @@ void loop() {
     }
 
     //handle audio processing
-    audio.checkAutoRecording(menue);
+    audio.checkAutoRecording(menue, rtc);
   }
   audio.operateRecorder();
 }

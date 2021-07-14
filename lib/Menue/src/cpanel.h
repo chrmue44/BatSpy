@@ -87,6 +87,7 @@ class cParTime : public cParBase{
  public:
   uint32_t getHour() { return m_hour; }
   uint32_t getMin() { return m_min; }
+  uint32_t getMinOfDay() { return m_hour * 60 + m_min;}
   uint32_t getSec() { return m_sec; }
   void set(int h, int m, int s) { m_hour = h; m_min = m; m_sec = s; update(true);}
   void set(time_t t) {

@@ -18,7 +18,8 @@ extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 extern thPanel panWaterfall;
 extern thPanel hdrPanWaterfall;
 
-extern thPanel panParams;      ///< panel for parameter settings
+extern thPanel panParams;      ///< panel for general parameter settings
+extern thPanel panParRec;      ///< panel for recording settings
 extern thPanel panPosition;    ///< panel for setting of position
 extern thPanel panBats;        ///< panel for bat infos
 extern thPanel panDateTime;    ///< panel to set time and date

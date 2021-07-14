@@ -367,16 +367,29 @@ void cAudio::setMixOscFrequency(float freq)
   m_old.oscFrequency = devPars.mixFreq.get();
 }
 
-void cAudio::checkAutoRecording(cMenue &menue)
+void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 {
   if (m_peak.available())
   {
     m_peakVal = m_peak.read();
     DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
   }
-  if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == REC_AUTO))
+  if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == enOpMode::REC_AUTO))
   {
-    if (devStatus.playStatus.get() == 0)
+    devStatus.time.set(rtc.getTime());
+    bool actTime = false;
+    if(devPars.startH.get() > devPars.stopH.get())
+    {
+      actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+    }
+    else
+    {
+      actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+    }
+      
+    if ((devStatus.playStatus.get() == 0) && actTime)
     {
       if ((m_peakVal > m_recThresh) && (m_cass.getMode() != enCassMode::REC))
       {

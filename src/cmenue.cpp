@@ -159,6 +159,10 @@ void cMenue::initPars() {
   
   devStatus.peakVal.init(0, 20, 0.1, 2);
 
+  devPars.startH.init(0, 23, 1, 0, 2);
+  devPars.startMin.init(0, 59, 10, 0, 2);
+  devPars.stopH.init(0, 23, 1, 0, 2);
+  devPars.stopMin.init(0, 59, 10, 0, 2);
   load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
@@ -216,6 +220,9 @@ void cMenue::initDialogs() {
   // parameter panel
   panParams =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
+
+  panParRec =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initParRec(getPan(panParRec), lf);
 
   panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
@@ -315,10 +322,10 @@ void cMenue::save() {
   writeFloatToEep(0x004A, devStatus.geoPos.getLon());
   writeFloatToEep(0x004E, devPars.filtFreq.get());
   writeInt16ToEep(0x0052, devPars.filtType.get());
-  writeInt16ToEep(0x0054, 0);
-  writeInt16ToEep(0x0056, 0);
-  writeInt16ToEep(0x0058, 0);
-  writeInt16ToEep(0x005A, 0);
+  writeInt16ToEep(0x0054, devPars.startH.get());
+  writeInt16ToEep(0x0056, devPars.startMin.get());
+  writeInt16ToEep(0x0058, devPars.stopH.get());
+  writeInt16ToEep(0x005A, devPars.stopMin.get());
   writeInt16ToEep(0x005C, 0);
   writeInt16ToEep(0x005E, 0);
   int16_t maxAddr = 0x005F;
@@ -358,6 +365,10 @@ void cMenue::load() {
     devStatus.geoPos.setLon(readFloatFromEep(0x004A));
     devPars.filtFreq.set(readFloatFromEep(0x004E));
     devPars.filtType.set(readInt16FromEep(0x0052));
+    devPars.startH.set(readInt16FromEep(0x0054));
+    devPars.startMin.set(readInt16FromEep(0x0056));
+    devPars.stopH.set(readInt16FromEep(0x0058));
+    devPars.stopMin.set(readInt16FromEep(0x005A));
   }
 #endif //#ifndef SIMU_DISPLAY
 }

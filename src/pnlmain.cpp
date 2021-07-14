@@ -67,6 +67,7 @@ void initFunctionItems()
   f4MainItems.addItem(1001);
   f4MainItems.addItem(1021);
   f4MainItems.addItem(1030);
+  f4MainItems.addItem(1034);
   f4MainItems.addItem(1031);
   f4MainItems.addItem(1033);
 }
@@ -138,6 +139,12 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
       break;
 
     case 3:
+      pThis->setMainPanel(panParRec);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
+
+    case 4:
       devStatus.year.set(devStatus.date.getYear());
       devStatus.month.set(devStatus.date.getMonth());
       devStatus.day.set(devStatus.date.getDay());
@@ -148,7 +155,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
-  case 4:
+    case 5:
       devStatus.latDeg.set(devStatus.geoPos.getDegLat());
       devStatus.latMin.set(devStatus.geoPos.getMinLat());
       devStatus.latSec.set(devStatus.geoPos.getSecLat());
