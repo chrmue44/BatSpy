@@ -40,6 +40,8 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
 
 #ifndef SIMU_DISPLAY
 cAudio::cAudio() : 
+m_peak(),
+m_cass(m_peak),
 m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
 m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
 m_cMx2Mu(m_mixer, 0, m_mult1, 0),
@@ -49,7 +51,7 @@ m_cFi2Pk(m_filter, m_peak),
 m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
-m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0) 
+m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0)
 {
   DPRINTLN4("Audio connections initialized");
 }
@@ -369,16 +371,16 @@ void cAudio::setMixOscFrequency(float freq)
 
 void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 {
-  if (m_peak.available())
+  if(m_cass.getMode() != enCassMode::REC)
   {
-    m_peakVal = m_peak.read();
-    DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
-  }
-  if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == enOpMode::REC_AUTO))
-  {      
-    if ((devStatus.playStatus.get() == 0))
+    if (m_peak.available())
     {
-      if(m_cass.getMode() != enCassMode::REC)
+      m_peakVal = m_peak.read();
+      DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
+    }
+    if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == enOpMode::REC_AUTO))
+    {      
+      if ((devStatus.playStatus.get() == 0))
       {
         devStatus.time.set(rtc.getTime());
         devStatus.time.update(false);

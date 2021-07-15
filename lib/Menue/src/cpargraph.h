@@ -4,8 +4,8 @@
 #ifdef SIMU_DISPLAY
 #include "simulation/crfft.h"
 #else
-//#include "crfft.h"
-#include "crfft_o2.h"
+#include "crfft.h"
+//#include "crfft_o2.h"  internal fft (doesn't work...)
 #endif
 
 #include "menuedefs.h"

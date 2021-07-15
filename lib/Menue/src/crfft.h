@@ -1,8 +1,6 @@
 #ifndef _CRFFT_H_
 #define _CRFFT_H_
 
-
-
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -17,7 +15,7 @@
  */
 
 typedef float tComplexBase;
-#define M_PI 3.14159265
+//#define M_PI 3.14159265
 
 class complex {
  public:

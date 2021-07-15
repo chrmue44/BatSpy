@@ -31,6 +31,7 @@
 
 class cCassette {
   public:
+    cCassette(AudioAnalyzePeak& peak);
     int startRec(float recTime, enRecFmt recFmt);
     int startRec(const char* name, float recTime, enRecFmt recFmt);
     int startRec(enRecFmt recFmt);
@@ -57,10 +58,12 @@ class cCassette {
      */
     float getTitleTime() { return m_player.getTitleTime(); }
 
+  protected:
+    cCassette();
 
   private:
     void writeWavHeader();
-    void writeInfoFile();
+    void writeInfoFile(float peakVal);
     void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
     void finalizeWavFile();
     enSdRes createRecordingDir();
@@ -87,6 +90,7 @@ class cCassette {
     int m_min;
     int m_sec;
     enRecFmt m_recFmt;
+    AudioAnalyzePeak& m_peak;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

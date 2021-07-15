@@ -11,6 +11,12 @@
 extern "C" uint32_t usd_getError(void);
 #endif   //#ifndef ARDUINO_TEENSY41
 
+cCassette::cCassette(AudioAnalyzePeak& peak) :
+m_peak(peak)
+{
+
+}
+
 void cCassette::setSamplingRate(uint32_t s) {
   m_sampleRate = s;
   m_player.setSampleRate(s);
@@ -111,6 +117,7 @@ int cCassette::operate() {
 
 int cCassette::stop() {
   enSdRes rc = enSdRes::OK;
+  float peakVal = -1;
   if (m_mode == enCassMode::REC) {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
@@ -123,7 +130,10 @@ int cCassette::stop() {
 
     //close file
     rc = sd.closeFile(m_fil);
-    writeInfoFile();
+    if (m_peak.available())
+      peakVal = m_peak.read();
+    
+    writeInfoFile(peakVal);
     if (rc)
       return 1;
     //
@@ -195,7 +205,7 @@ void cCassette::finalizeWavFile() {
 }
 
 
-void cCassette::writeInfoFile()
+void cCassette::writeInfoFile(float peakVal)
 {
   cFileInfo info;
   char date [32];
@@ -206,7 +216,7 @@ void cCassette::writeInfoFile()
   
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_day, m_month, m_year, m_hour, m_min, m_sec);
   info.write(infoFile, m_recordingTime, m_sampleRate, date, cUtils::getFileName(m_fileName), 
-              devStatus.geoPos.getLat(), devStatus.geoPos.getLon()); 
+              devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal); 
 }
 
 enSdRes cCassette::createRecordingDir()

@@ -3,17 +3,19 @@
 #include "cutils.h"
 #include <cstring>
 
-int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, const char* date, const char* wavFile, float lat, float lon)
+int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, 
+                    const char* date, const char* wavFile, float lat, float lon, float peakVal)
 {
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
   if(ret == 0) {
     writeLine("<BatRecord>");
-    writeTag("FileName", wavFile);
-    writeTag("DateTime", date);
+    writeTag(TAG_FILE_NAME, wavFile);
+    writeTag(TAG_DATE_TIME, date);
     writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
-    writeTag("Duration", duration, "Sec");
+    writeTag(TAG_DURATION, duration, "Sec");
+    writeTag(TAG_PEAK_VAL, peakVal, "%");
     writeLine("<GPS>");
-    writeTag("Position", lat, lon);
+    writeTag(TAG_POSITION, lat, lon);
     writeLine("</GPS>");
     writeLine("</BatRecord>");
     cSdCard::inst().closeFile(m_file);
