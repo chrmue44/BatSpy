@@ -297,7 +297,7 @@ void dirFunc(cMenuesystem* pThis, enKey key) {
 
 int initMainPanel(cPanel* pan, tCoord lf)
 {
-  int err = pan->addTextItem(202,                     3, 30,           80, lf);
+  int err = pan->addTextItem(202,                  3, 30,           80, lf);
   err |= pan->addEnumItem(&devStatus.opMode,     100, 30,          140, lf, true, dispModeFunc);
   err |= pan->addNumItem(&devStatus.recCount,    260, 30,           40, lf, false);
   err |= pan->itemList[2].isVisible = false;
@@ -318,8 +318,6 @@ int initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1325,                    3, 50 + 8 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   100, 50 + 8 * lf, 120, lf, true);
 
-//err |= pan->addTextItem(200,                     3, 200,          80, lf);
-//err |= pan->addGeoItem(&devStatus.geoPos,      100, 200,         150, lf);
   err |= pan->addTextItem(201,                     3, 200 + lf,     70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,     70, lf);

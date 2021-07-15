@@ -22,7 +22,8 @@
 /**
  * @brief The stBatInfo struct
  */
-struct stBatInfo {
+struct stBatInfo
+{
   stBatInfo() {}
   cParList name = 0;
   cParStr nameLat = "";
@@ -42,7 +43,8 @@ struct stBatInfo {
 /**
  * @brief device status
  */
-struct stStatus {
+struct stStatus
+{
   stStatus() : graph(GRAPH_XT), waterf(GRAPH_FFT) {}
 
   cParEnum opMode = enOpMode::REC_AUTO; ///< display mode
@@ -90,49 +92,52 @@ struct stStatus {
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
   cParStr version = __DATE__  "/"  __TIME__;
+  cParNum freeSpace = 0;
 };
 
 
 /**
  * @brief device parameters
  */
-struct stParams {
-  cParNum volume =   6;           ///< volume setting
-  cParNum mixFreq = 40;           ///< mixer frequency
-  cParNum recTime = 3;            ///< recording time
-  cParEnum sampleRate = enSampleRate::SR_384K;   ///< sample rate
-  cParEnum lang   = LANG_GER;     ///< display language
-  cParList dirSel = 0;            ///< select directory
-  cParList fileSel = 0;           ///< select file
-  cParStr dir = "";               ///< actual directory on SD card
-  cParStr fileName = "";          ///< actual file name
-  cParNum threshHold = 10;        ///< threshhold level graph, waterfall
-  cParNum fftLevelMin = 3500;     ///< low (threshhold) level for FFT display
-  cParNum fftLevelMax = 70000;    ///< high level for FFT display
-  cParNum recThreshhold = -18;    ///< auto recording threshhold
-  cParNum deafTime = 3;           ///< timeout after one recording
-  cParNum backLightTime = 120;    ///< time for backlight
-  cParEnum preAmpGain = 1;        ///< gain of pre amplifier
-  cParEnum preAmpType = HIGH_PASS;  ///< type of pre amplifier
-  cParEnum dispOrient = RIGHT_HAND; ///< display orientation
-  cParEnum knobRotation = CLOCKWISE;///< knob rotation
-  cParNum preTrigger = 20;          ///< pre trigger time [ms]
-  cParEnum recFmt = 0;              ///< recording format
-  cParNum filtFreq = 16;            ///< hight pass freq for recording trigger
-  cParEnum filtType = 0;            ///< filter type for recording trigger
-  cParNum startH = 21;              ///< hour of start time
-  cParNum startMin = 0;             ///< minute of start time
-  cParNum stopH = 6;                ///< hour of start time
-  cParNum stopMin = 0;              ///< minute of start time
+struct stParams
+{
+  cParNum volume =   6;              ///< volume setting
+  cParNum mixFreq = 40;              ///< mixer frequency
+  cParNum recTime = 3;               ///< recording time
+  cParEnum sampleRate = enSampleRate::SR_384K;  ///< sample rate
+  cParEnum lang   = LANG_GER;        ///< display language
+  cParList dirSel = 0;               ///< select directory
+  cParList fileSel = 0;              ///< select file
+  cParStr dir = "";                  ///< actual directory on SD card
+  cParStr fileName = "";             ///< actual file name
+  cParNum threshHold = 10;           ///< threshhold level graph, waterfall
+  cParNum fftLevelMin = 3500;        ///< low (threshhold) level for FFT display
+  cParNum fftLevelMax = 70000;       ///< high level for FFT display
+  cParNum recThreshhold = -18;       ///< auto recording threshhold
+  cParNum deafTime = 3;              ///< timeout after one recording
+  cParNum backLightTime = 120;       ///< time for backlight
+  cParEnum preAmpGain = 1;           ///< gain of pre amplifier
+  cParEnum preAmpType = HIGH_PASS;   ///< type of pre amplifier
+  cParEnum dispOrient = RIGHT_HAND;  ///< display orientation
+  cParEnum knobRotation = CLOCKWISE; ///< knob rotation
+  cParNum preTrigger = 20;           ///< pre trigger time [ms]
+  cParEnum recFmt = 0;               ///< recording format
+  cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
+  cParEnum filtType = 0;             ///< filter type for recording trigger
+  cParNum startH = 21;               ///< hour of start time
+  cParNum startMin = 0;              ///< minute of start time
+  cParNum stopH = 6;                 ///< hour of start time
+  cParNum stopMin = 0;               ///< minute of start time
 };
 
 
 
-extern stStatus devStatus;        ///< status of the device
-extern stParams devPars;          ///< parameters of the device
+extern stStatus devStatus;           ///< status of the device
+extern stParams devPars;             ///< parameters of the device
 
-class cMenue : public cMenuesystem  {
-public:
+class cMenue : public cMenuesystem
+{
+ public:
   cMenue(int width, int height, ILI9341_t3* pDisplay);
   virtual ~cMenue();
   virtual void initDialogs();

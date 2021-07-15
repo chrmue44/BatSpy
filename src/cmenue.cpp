@@ -158,16 +158,19 @@ void cMenue::initPars() {
   devStatus.btnAudio = new cParBtn(Txt::get(309));
   
   devStatus.peakVal.init(0, 20, 0.1, 2);
+  devStatus.freeSpace.init(0, 100, 1, 0);
 
   devPars.startH.init(0, 23, 1, 0, 2);
   devPars.startMin.init(0, 59, 10, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
   devPars.stopMin.init(0, 59, 10, 0, 2);
+
   load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
 #endif
+
 }
 
 void cMenue::initDialogs() {

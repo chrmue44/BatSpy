@@ -76,6 +76,7 @@ struct stTxtList Texts[] =
   {   410, "MEM blocks audio"          ,0},
   {   415, "Spitzenwert"               ,"Peak Value"},
   {   430, "Software-Version"          ,"Software Version"},
+  {   440, "Freier Speicher [%]"       ,"Free Disk Space [%]"},
   {  1001, "Laden ..."                 ,"Load ..."},
   {  1005, "Sollen die Parametereinstellungen"," "},
   {  1006, "geladen werden?"           ,"Load settings?"},

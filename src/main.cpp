@@ -12,6 +12,7 @@
 #include "cTerminal.h"
 #include "clFixMemPool.h"
 #include "pnlmain.h"
+#include "cSdCard.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -51,7 +52,8 @@ cTerminal terminal;
   }
 
 // *********************** initialization **************************
-void initTft() {
+void initTft()
+{
   tft.begin();
   tft.setRotation(3);
   tft.fillScreen(ILI9341_BLACK);
@@ -73,7 +75,8 @@ void waitForSerial()
   }
 }
 
-void setup() {
+void setup()
+{
   size_t freeMem, totMem;
   audio.init();
   Serial.begin(9600);
@@ -101,16 +104,26 @@ void setup() {
 
 // *********************** main loop **************************
 
-void loop() {
+void loop() 
+{
   static bool backLightOn = true;
-  if (tick.check()) {
-    devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-    devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-    devStatus.audioMem.set(AudioMemoryUsage());
-    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+  if (tick.check())
+  {
+    if(menue.getMainPanel() == panInfo)
+    {
+      devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+      devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+      devStatus.audioMem.set(AudioMemoryUsage());
+      devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+      size_t freeSpace;  size_t totSpace;
+      cSdCard::inst().getFreeMem(freeSpace, totSpace);
+      devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+    }
     menue.handleKey(enKey::TICK);
-    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) {
-      if(backLightOn) {
+    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) 
+    {
+      if(backLightOn)
+      {
         setDispLight(0);
         backLightOn = false;
       }
@@ -154,4 +167,3 @@ void loop() {
   }
   audio.operateRecorder();
 }
-
