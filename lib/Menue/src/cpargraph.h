@@ -14,6 +14,7 @@
 #define SCALE_WIDTH   5
 #define COLMAP_DIST   3    ///< distance FFT to color map in pixel
 #define COLMAP_HEGHT  15
+#define Y_TICK_CNT    10 //number of ticks in waterfall diagram
 
 struct stTime {
   int16_t yMin[DISP_WIDTH];

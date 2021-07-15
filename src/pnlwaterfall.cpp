@@ -134,18 +134,20 @@ void timeStepFunc(cMenuesystem* pThis, enKey key) {
 
 
 int initWaterPan(cPanel* pan, tCoord lf) {
-  int err = pan->addTextItem(300,                15, 80,            25, lf);
-  err |= pan->addNumItem(&devStatus.freqMax,    20, 20,            25, lf, false);
-  err |= pan->addNumItem(&devStatus.freqMin,    20, 148,           25, lf, false);
-  err |= pan->addNumItem(&devPars.fftLevelMin,50,153+COLMAP_DIST,35,lf, true, fftLevelFunc);
-  err |= pan->addNumItem(&devPars.fftLevelMax,270,153+COLMAP_DIST,35, lf, true, fftLevelFunc);
-  err |= pan->addNumItem(&devStatus.timMin,  30, 213,           53, lf, true, panWaterZoomFunc);
-  err |= pan->addTextItem(301,               85, 213,           25, lf, false);
-  err |= pan->addNumItem(&devStatus.timStep,128, 213,           52, lf, true, timeStepFunc);
-  err |= pan->addTextItem(305,              182, 213,           35, lf, false);
-  err |= pan->addNumItem(&devStatus.timMax, 255, 213,           53, lf, false);
-  err |= pan->addTextItem(301,              310, 213,           25, lf, false);
-  err |= pan->addGraphItem(&devStatus.waterf,40,  25,          261, 128);
+  int height = 128;
+  int err = pan->addTextItem(300,               15, 80,            25, lf);
+  err |= pan->addNumItem(&devStatus.freqMax,    10, 20,            25, lf, false);
+  err |= pan->addNumItem(&devStatus.freqMin,    10, 148,           25, lf, false);
+  err |= pan->addNumItem(&devPars.fftLevelMin,  50,153+COLMAP_DIST,35,lf, true, fftLevelFunc);
+  err |= pan->addNumItem(&devPars.fftLevelMax, 270,153+COLMAP_DIST,35, lf, true, fftLevelFunc);
+  err |= pan->addNumItem(&devStatus.timMin,     30, 213,           53, lf, true, panWaterZoomFunc);
+  err |= pan->addTextItem(301,                  85, 213,           25, lf, false);
+  err |= pan->addNumItem(&devStatus.timStep,   128, 213,           52, lf, true, timeStepFunc);
+  err |= pan->addTextItem(305,                 182, 213,           35, lf, false);
+  err |= pan->addNumItem(&devStatus.timMax,    255, 213,           53, lf, false);
+  err |= pan->addTextItem(301,                 310, 213,           25, lf, false);
+  err |= pan->addNumItem(&devStatus.freq1Tick,  10, 148 - height/Y_TICK_CNT, 25, lf, false);
+  err |= pan->addGraphItem(&devStatus.waterf,   40,  25,          261, height);
   return err;
 }
 

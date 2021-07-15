@@ -89,6 +89,7 @@ struct stStatus
   cParNum latMin = 45;
   cParNum latSec = 236;
   cParNum freqMin = FREQ_MIN;     ///< min freq for waterfall diagram
+  cParNum freq1Tick = (FREQ_MAX - FREQ_MIN)/Y_TICK_CNT;
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
   cParStr version = __DATE__  "/"  __TIME__;

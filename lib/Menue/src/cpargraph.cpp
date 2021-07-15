@@ -213,7 +213,9 @@ void cParGraph::initDiagram() {
 }
 
 void cParGraph::drawYscale() {
-  for( int y = m_y0 - m_height /2; y <= m_y0 + m_height/2; y+=16) {
+//  for( int y = m_y0 - m_height /2; y <= m_y0 + m_height/2; y+=16) {
+  float y = m_y0 - m_height /2;
+  for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) {
     gpDisplay->drawLine(m_x, y, m_x + SCALE_WIDTH, y, COL_GRID);
   }
 }
