@@ -43,16 +43,10 @@ enum enPreAmp
 // available hardware gain settings for pre amp
 enum enGain
 {
-#ifdef AMP_REV1
-  GAIN_LO                = 0,  // 22/1.5 * 7.8/1.5  = 40
-  GAIN_MED               = 1,  // 22/1.5 * 7.8/1.5  = 112
-  GAIN_HI                = 2,  // 22/1.5 * 33/1.5   = 322
-#endif
-#ifdef AMP_REV2
-  GAIN_15                = 0,
-  GAIN_70                = 1,
-  GAIN_300               = 2,
-#endif
+  GAIN_27DB            = 0,
+  GAIN_36DB            = 1,
+  GAIN_45DB            = 2,
+  GAIN_54DB            = 3,
 };
 
 // recording format on SD card

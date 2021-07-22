@@ -24,5 +24,8 @@ int initInfoPan(cPanel* pan, tCoord lf) {
   err |= pan->addStrItem(&devStatus.version,     140,  30 + 7 * lf,  80, lf);
   err |= pan->addTextItem(440,                     3,  30 + 8 * lf,  80, lf);
   err |= pan->addNumItem(&devStatus.freeSpace,   140,  30 + 8 * lf,  80, lf, false);
+  err |= pan->addTextItem(450,                     3,  30 + 9 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,     140,  30 + 9 * lf,  40, lf, false);
+  err |= pan->addNumItem(&devStatus.digits,      240,  30 + 9 * lf,  40, lf, false);
   return err;
 }

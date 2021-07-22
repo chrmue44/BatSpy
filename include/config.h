@@ -6,9 +6,8 @@
 // Teensy version
 //#define TEENSY36
 
-//pre amplifier type
-//#define AMP_REV1               // 1st prototype
-#define AMP_REV2                 // 2nd version with more amplification
+// voltage loss D1
+#define U_DIODE        0.29
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
@@ -17,7 +16,7 @@
 //control pre amplifier
 #define PIN_AMP_0        15      // enable feedback resistor
 #define PIN_AMP_1        29      // enable feedback resistor
-#define PIN_AMP_2        16      // enable pre amp linear
+#define PIN_AMP_2        16      // enable feedback resistor
 #define PIN_AMP_3        30      // enable pre amp with high pass
 
 //encoder
@@ -27,6 +26,8 @@
 #define PIN_ROT_RIGHT_A  55
 #define PIN_ROT_RIGHT_B  56
 #define PIN_ROT_RIGHT_S  57
+
+#define PIN_SUPPLY_VOLT  A16
 
 #ifdef TEENSY36
 // control TFT

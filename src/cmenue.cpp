@@ -38,16 +38,10 @@ cMenue::~cMenue() {
 }
 
 void cMenue::initPars() {
-#ifdef AMP_REV1
-  devPars.preAmpGain.addItem(1326);
-  devPars.preAmpGain.addItem(1327);
-  devPars.preAmpGain.addItem(1328);
-#endif
-#ifdef AMP_REV2
   devPars.preAmpGain.addItem(1331);
   devPars.preAmpGain.addItem(1332);
   devPars.preAmpGain.addItem(1333);
-#endif
+  devPars.preAmpGain.addItem(1334);
   devPars.preAmpType.addItem(1321);
   devPars.preAmpType.addItem(1322);
   
@@ -83,6 +77,7 @@ void cMenue::initPars() {
   devStatus.cpuAudioAvg.init(0,100,1,2);
   devStatus.cpuAudioMax.init(0,100,1,2);
   devStatus.audioMem.init(0,10000,1,0);
+  
   initBats();
 
   initFunctionItems();
@@ -159,11 +154,15 @@ void cMenue::initPars() {
   
   devStatus.peakVal.init(0, 20, 0.1, 2);
   devStatus.freeSpace.init(0, 100, 1, 0);
+  devStatus.voltage.init(0, 20, 0.05, 2);
+  devStatus.digits.init(0, 10000, 1, 0);
 
   devPars.startH.init(0, 23, 1, 0, 2);
   devPars.startMin.init(0, 59, 10, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
   devPars.stopMin.init(0, 59, 10, 0, 2);
+  devPars.voltFactor.init(0, 1, 0.0000001, 5);
+  
 
   load();
 #ifndef SIMU_DISPLAY
@@ -329,8 +328,7 @@ void cMenue::save() {
   writeInt16ToEep(0x0056, devPars.startMin.get());
   writeInt16ToEep(0x0058, devPars.stopH.get());
   writeInt16ToEep(0x005A, devPars.stopMin.get());
-  writeInt16ToEep(0x005C, 0);
-  writeInt16ToEep(0x005E, 0);
+  writeFloatToEep(0x005C, devPars.voltFactor.get());
   int16_t maxAddr = 0x005F;
   writeInt16ToEep(0, maxAddr);
 
@@ -372,6 +370,7 @@ void cMenue::load() {
     devPars.startMin.set(readInt16FromEep(0x0056));
     devPars.stopH.set(readInt16FromEep(0x0058));
     devPars.stopMin.set(readInt16FromEep(0x005A));
+    devPars.voltFactor.set(readFloatFromEep(0x005C));
   }
 #endif //#ifndef SIMU_DISPLAY
 }

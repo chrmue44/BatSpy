@@ -1,6 +1,6 @@
 #include "cAudio.h"
 #include "config.h"
-#define DEBUG_LEVEL 2
+//#define DEBUG_LEVEL 2
 #include "debug.h"
 #include "cmenue.h"
 #ifdef ARDUINO_TEENSY41
@@ -148,23 +148,11 @@ void cAudio::setPreAmpType(enPreAmp type)
   switch (type)
   {
   case enPreAmp::LINEAR:
-#ifdef AMP_REV1
-    digitalWrite(PIN_AMP_2, 1);
-    digitalWrite(PIN_AMP_3, 0);
-#endif
-#ifdef AMP_REV2
     digitalWrite(PIN_AMP_3, 1);
-#endif
     break;
 
   case enPreAmp:: HIGH_PASS:
-#ifdef AMP_REV1
-    digitalWrite(PIN_AMP_2, 0);
-    digitalWrite(PIN_AMP_3, 1);
-#endif
-#ifdef AMP_REV2
     digitalWrite(PIN_AMP_3, 0);
-#endif
     break;
   }
 }
@@ -173,36 +161,26 @@ void cAudio::setPreAmpGain(enGain gain)
 {
   switch (gain)
   {
- #ifdef AMP_REV1
-  case enGain::GAIN_LO:
+  case enGain::GAIN_27DB:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 1);
+    digitalWrite(PIN_AMP_2, 0);
     break;
-
-  case enGain::GAIN_MED:
-    digitalWrite(PIN_AMP_0, 1);
-    digitalWrite(PIN_AMP_1, 0);
-    break;
-
-  case enGain::GAIN_HI:
+  case enGain::GAIN_36DB:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 1);
     break;
-#endif
-#ifdef AMP_REV2
-  case enGain::GAIN_15:
+  case enGain::GAIN_45DB:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 1);
+    digitalWrite(PIN_AMP_2, 0);
     break;
-  case enGain::GAIN_70:
-    digitalWrite(PIN_AMP_0, 1);
-    digitalWrite(PIN_AMP_1, 0);
-    break;
-  case enGain::GAIN_300:
+  case enGain::GAIN_54DB:
     digitalWrite(PIN_AMP_0, 0);
     digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
     break;
-#endif
   }
 }
 

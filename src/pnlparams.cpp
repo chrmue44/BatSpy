@@ -1,5 +1,6 @@
 #include "pnlparams.h"
 #include "cRtc.h"
+#include "debug.h"
 
 extern cRtc rtc;
 
@@ -12,6 +13,14 @@ void languageFunc(cMenuesystem* pThis, enKey key) {
       Txt::setLang(LANG_EN);
       break;
   }
+}
+
+void voltageFunc(cMenuesystem* pThis, enKey key) {
+  float fact;
+  int digits = analogRead(PIN_SUPPLY_VOLT);
+  fact = (devStatus.voltage.get() - U_DIODE) / digits;
+  DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
+  devPars.voltFactor.set(fact);
 }
 
 int initParRec(cPanel* pan, tCoord lf) {
@@ -57,6 +66,8 @@ int initParPan(cPanel* pan, tCoord lf) {
   err |= pan->addEnumItem(&devPars.knobRotation,170, 20 +  4 * lf, 100, lf, true);
   err |= pan->addTextItem(1160,                  15, 20 +  5 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  5 * lf,  80, lf, true);
+  err |= pan->addTextItem(1165,                  15, 20 +  6 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,    170, 20 +  6 * lf,  80, lf, true, voltageFunc);
   return err;
 }
 

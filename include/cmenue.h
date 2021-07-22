@@ -94,6 +94,8 @@ struct stStatus
   cParNum peakVal = 0;
   cParStr version = __DATE__  "/"  __TIME__;
   cParNum freeSpace = 0;
+  cParNum voltage = 0;
+  cParNum digits = 0;
 };
 
 
@@ -129,6 +131,7 @@ struct stParams
   cParNum startMin = 0;              ///< minute of start time
   cParNum stopH = 6;                 ///< hour of start time
   cParNum stopMin = 0;               ///< minute of start time
+  cParNum voltFactor = 1;            ///< factor digits to voltage
 };
 
 

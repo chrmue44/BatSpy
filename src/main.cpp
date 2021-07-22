@@ -107,17 +107,28 @@ void setup()
 void loop() 
 {
   static bool backLightOn = true;
+  static uint32_t cnt;
   if (tick.check())
   {
     if(menue.getMainPanel() == panInfo)
     {
-      devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-      devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-      devStatus.audioMem.set(AudioMemoryUsage());
-      devStatus.peakVal.set(audio.getLastPeakVal() * 100);
-      size_t freeSpace;  size_t totSpace;
-      cSdCard::inst().getFreeMem(freeSpace, totSpace);
-      devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+      cnt++;
+      if(cnt > 3)
+      {
+        devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+        devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+        devStatus.audioMem.set(AudioMemoryUsage());
+        devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+        size_t freeSpace;  size_t totSpace;
+        cSdCard::inst().getFreeMem(freeSpace, totSpace);
+        int digits = analogRead(PIN_SUPPLY_VOLT);
+        devStatus.digits.set((float)digits);
+        float volt = (float)digits * devPars.voltFactor.get() + U_DIODE;
+        DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digits, volt,devPars. voltFactor.get());
+        devStatus.voltage.set(volt);
+        devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+        cnt = 0;
+      }
     }
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) 
