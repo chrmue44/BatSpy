@@ -17,7 +17,11 @@ void languageFunc(cMenuesystem* pThis, enKey key) {
 
 void voltageFunc(cMenuesystem* pThis, enKey key) {
   float fact;
+#ifndef SIMU_DISPLAY
   int digits = analogRead(PIN_SUPPLY_VOLT);
+#else
+  int digits = 556;
+#endif
   fact = (devStatus.voltage.get() - U_DIODE) / digits;
   DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
   devPars.voltFactor.set(fact);
@@ -27,28 +31,30 @@ int initParRec(cPanel* pan, tCoord lf) {
   int  err = 0;
   err |= pan->addTextItem(1110,                  15, 20          ,  80, lf);
   err |= pan->addEnumItem(&devPars.sampleRate,  190, 20          ,  30, lf, true);
-  err |= pan->addTextItem(1120,                  15, 20 +  1 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  1 * lf,  30, lf, true);
-  err |= pan->addTextItem(1140,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  2 * lf,  30, lf, true);
-  err |= pan->addTextItem(1170,                  15, 20 +  3 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  3 * lf,  30, lf, true);
-  err |= pan->addTextItem(1175,                  15, 20 +  4 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  4 * lf,  70, lf, true);
-  err |= pan->addTextItem(1330,                  15, 20 +  5 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  5 * lf,  80, lf, true);
-  err |= pan->addTextItem(1144,                  15, 20 +  6 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  6 * lf,  20, lf, true);
-  err |= pan->addTextItem(1145,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  7 * lf,  40, lf, true);
-  err |= pan->addTextItem(1180,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.startH,       190, 20 +  8 * lf,  15, lf, true);
-  err |= pan->addTextItem(1182,                 206, 20 +  8 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  8 * lf,  15, lf, true);
-  err |= pan->addTextItem(1181,                  15, 20 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addTextItem(25,                    15, 20 +  1 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  1 * lf,  25, lf, true);
+  err |= pan->addTextItem(1120,                  15, 20 +  2 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  2 * lf,  30, lf, true);
+  err |= pan->addTextItem(1140,                  15, 20 +  3 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  3 * lf,  30, lf, true);
+  err |= pan->addTextItem(1170,                  15, 20 +  4 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  4 * lf,  30, lf, true);
+  err |= pan->addTextItem(1175,                  15, 20 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  5 * lf,  70, lf, true);
+  err |= pan->addTextItem(1330,                  15, 20 +  6 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  6 * lf,  80, lf, true);
+  err |= pan->addTextItem(1144,                  15, 20 +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  7 * lf,  20, lf, true);
+  err |= pan->addTextItem(1145,                  15, 20 +  8 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  8 * lf,  40, lf, true);
+  err |= pan->addTextItem(1180,                  15, 20 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.startH,       190, 20 +  9 * lf,  15, lf, true);
   err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addTextItem(1181,                  15, 20 + 10 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.stopH,        190, 20 + 10 * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 + 10 * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,      215, 20 + 10 * lf,  15, lf, true);
   return err;
 }
 
