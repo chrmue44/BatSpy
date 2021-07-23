@@ -55,7 +55,6 @@ void cMenue::initPars() {
   devStatus.opMode.addItem(22);
   devStatus.opMode.addItem(23);
   devStatus.opMode.addItem(24);
-  devStatus.opMode.addItem(25);
 
   devPars.mixFreq.init(1,20, 1, 0);
 
@@ -90,36 +89,19 @@ void cMenue::initPars() {
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
-  devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devStatus.graph.setAmplitudeRaw(MAX_ADC);
-  devStatus.graph.setPlotBorders(0.0, 2.5);
-
   devPars.filtFreq.init(5,70, 1, 0);
 
   devPars.filtType.addItem(1171);
   devPars.filtType.addItem(1172);
   devPars.filtType.addItem(1173);
 
-  devStatus.btnMeas = new cParBtn(Txt::get(308));
-  devStatus.pulseWidth.init(0, 9999, 0, 1);
-
   devPars.recThreshhold.init(-24,0,1,0);
   devPars.recThreshhold.set(-12);
 
   devPars.recFmt.addItem(1146);   //enRecFmt::RAW
   devPars.recFmt.addItem(1147);   //enRecFmt::WAV
-
-  devStatus.recCount.set(0);
-  devStatus.recCount.init(0,99999,1,0);
-
-  devStatus.btnSetTime = new cParBtn(Txt::get(1032));
-  devStatus.year.init(2020, 2030, 1, 0);
-  devStatus.month.init(1,12,1,0);
-  devStatus.day.init(1,31,1,0);
-  devStatus.hour.init(0,23,1,0);
-  devStatus.minute.init(0,59,1,0);
 
   devPars.deafTime.set(0);
   devPars.deafTime.init(0,30,1,0);
@@ -134,7 +116,33 @@ void cMenue::initPars() {
   devPars.dispOrient.addItem(1161);
   devPars.dispOrient.addItem(1162);
 
-  devPars.preTrigger.init(0.0, 50.0, 1.0, 0);
+  devPars.preTrigger.init(0.0, 150.0, 1.0, 0);
+  devPars.startH.init(0, 23, 1, 0, 2);
+  devPars.startMin.init(0, 59, 10, 0, 2);
+  devPars.stopH.init(0, 23, 1, 0, 2);
+  devPars.stopMin.init(0, 59, 10, 0, 2);
+  devPars.voltFactor.init(0, 1, 0.0000001, 5);
+
+  devPars.recAuto.addItem(1400),
+  devPars.recAuto.addItem(1401),
+
+  devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
+  devStatus.graph.setAmplitudeRaw(MAX_ADC);
+  devStatus.graph.setPlotBorders(0.0, 2.5);
+
+  devStatus.btnMeas = new cParBtn(Txt::get(308));
+  devStatus.pulseWidth.init(0, 9999, 0, 1);
+
+  devStatus.recCount.set(0);
+  devStatus.recCount.init(0,99999,1,0);
+
+  devStatus.btnSetTime = new cParBtn(Txt::get(1032));
+  devStatus.year.init(2020, 2030, 1, 0);
+  devStatus.month.init(1,12,1,0);
+  devStatus.day.init(1,31,1,0);
+  devStatus.hour.init(0,23,1,0);
+  devStatus.minute.init(0,59,1,0);
+
   devStatus.freqMax.init(1, 300, 1, 0);
   devStatus.freqMin.init(1, 300, 1, 0);
 
@@ -155,14 +163,7 @@ void cMenue::initPars() {
   devStatus.peakVal.init(0, 20, 0.1, 2);
   devStatus.freeSpace.init(0, 100, 1, 0);
   devStatus.voltage.init(0, 20, 0.05, 2);
-  devStatus.digits.init(0, 10000, 1, 0);
-
-  devPars.startH.init(0, 23, 1, 0, 2);
-  devPars.startMin.init(0, 59, 10, 0, 2);
-  devPars.stopH.init(0, 23, 1, 0, 2);
-  devPars.stopMin.init(0, 59, 10, 0, 2);
-  devPars.voltFactor.init(0, 1, 0.0000001, 5);
-  
+  devStatus.digits.init(0, 10000, 1, 0);  
 
   load();
 #ifndef SIMU_DISPLAY
@@ -303,7 +304,8 @@ void cMenue::save() {
 #ifndef SIMU_DISPLAY
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
-  // 4 bytes free here
+  writeInt16ToEep(0x000C, devPars.recAuto.get());
+  // 2 bytes free here
   // 4 bytes free here
   writeFloatToEep(0x0014, devPars.recTime.get());
   writeInt16ToEep(0x0018, devPars.sampleRate.get());
@@ -329,7 +331,15 @@ void cMenue::save() {
   writeInt16ToEep(0x0058, devPars.stopH.get());
   writeInt16ToEep(0x005A, devPars.stopMin.get());
   writeFloatToEep(0x005C, devPars.voltFactor.get());
-  int16_t maxAddr = 0x005F;
+  writeInt16ToEep(0x0060, 0);
+  writeInt16ToEep(0x0062, 0);
+  writeInt16ToEep(0x0064, 0);
+  writeInt16ToEep(0x0066, 0);
+  writeInt16ToEep(0x0068, 0);
+  writeInt16ToEep(0x006A, 0);
+  writeInt16ToEep(0x006C, 0);
+  writeInt16ToEep(0x006E, 0);
+  int16_t maxAddr = 0x006F;
   writeInt16ToEep(0, maxAddr);
 
   int16_t chks = 0;
@@ -345,7 +355,8 @@ void cMenue::load() {
   if(checkCRC()) {
     devPars.volume.set(readFloatFromEep(0x0004));
     devPars.mixFreq.set(readFloatFromEep(0x0008));
-    // 4 bytes free here
+    devPars.recAuto.set(readInt16FromEep(0x000C));
+    // 2 bytes free here
     // 4 bytes free here 
     devPars.recTime.set(readFloatFromEep(0x0014));
     devPars.sampleRate.set(readInt16FromEep(0x0018));

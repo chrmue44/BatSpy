@@ -77,7 +77,6 @@ enum enOpMode {
   PLAY_DIRECT     = 2,
   PLAY_STRETCHED  = 3,
   PLAY_HET        = 4,
-  REC_AUTO        = 5,
 };
 
 //filter type

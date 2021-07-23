@@ -97,7 +97,7 @@ void setup()
   audio.setup();
   wheels.setDirection(true);  
   setDispLight(255);
-  devStatus.opMode.set(enOpMode::REC_AUTO);
+  devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
 }
 

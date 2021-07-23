@@ -83,8 +83,8 @@ void f1Func(cMenuesystem* pThis, enKey key) {
 }
 
 void f2Func(cMenuesystem* pThis, enKey key) {
-  if ((devStatus.opMode.get() == HEAR_HET) ||
-      (devStatus.opMode.get() == REC_AUTO)) {
+  if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
+      (devStatus.opMode.get() == enOpMode::HEAR_DIRECT)) {
     if (devStatus.playStatus.get() == 0)
       devStatus.playStatus.set(2);
     else
@@ -201,7 +201,7 @@ void setVisibilityRecCount(cMenuesystem* pThis)
 {
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
-  if(devStatus.opMode.get() == enOpMode::REC_AUTO)
+  if(devPars.recAuto.get() == 1)
     p->itemList[2].isVisible = true;
   else
     p->itemList[2].isVisible = false;
@@ -297,26 +297,29 @@ void dirFunc(cMenuesystem* pThis, enKey key) {
 
 int initMainPanel(cPanel* pan, tCoord lf)
 {
-  int err = pan->addTextItem(202,                  3, 30,           80, lf);
-  err |= pan->addEnumItem(&devStatus.opMode,     100, 30,          140, lf, true, dispModeFunc);
-  err |= pan->addNumItem(&devStatus.recCount,    260, 30,           40, lf, false);
+  int err = pan->addTextItem(202,                  3, 30,            80, lf);
+  err |= pan->addEnumItem(&devStatus.opMode,     150, 30,           140, lf, true);
+  err |= pan->addNumItem(&devStatus.recCount,    260, 30 +  2 * lf,  40, lf, false);
   err |= pan->itemList[2].isVisible = false;
-  err |= pan->addEnumItem(&devStatus.playStatus, 100, 30 + lf,     120, lf, false);
-  err |= pan->addTextItem(206,                     3, 40 + 2 * lf,  80, lf);
-  err |= pan->addListItem(&devPars.dirSel,       100, 40 + 2 * lf, 210, lf, true, dirFunc);
-  err |= pan->addTextItem(205,                     3, 40 + 3 * lf,  80, lf);
-  err |= pan->addListItem(&devPars.fileSel,      100, 40 + 3 * lf, 210, lf, true, fileFunc);
-  err |= pan->addTextItem(208,                     3, 40 + 4 * lf,  80, lf);
-  err |= pan->addStrItem(&devPars.fileName,      100, 40 + 4 * lf, 210, lf);
-  err |= pan->addTextItem(203,                     3, 50 + 5 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.mixFreq,       100, 50 + 5 * lf,  15, lf, true);
-  err |= pan->addTextItem(300,                   115, 50 + 5 * lf,  30, lf);
-  err |= pan->addTextItem(204,                     3, 50 + 6 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.volume,        100, 50 + 6 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                    3, 50 + 7 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,   100, 50 + 7 * lf, 120, lf, true);
-  err |= pan->addTextItem(1325,                    3, 50 + 8 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   100, 50 + 8 * lf, 120, lf, true);
+  err |= pan->addTextItem(30,                      3, 30 +      lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
+  err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  25, lf, true, dispModeFunc);
+  err |= pan->addTextItem(206,                     3, 30 +  3 * lf,  80, lf);
+  err |= pan->addListItem(&devPars.dirSel,       100, 30 +  3 * lf, 210, lf, true, dirFunc);
+  err |= pan->addTextItem(205,                     3, 30 +  4 * lf,  80, lf);
+  err |= pan->addListItem(&devPars.fileSel,      100, 30 +  4 * lf, 210, lf, true, fileFunc);
+  err |= pan->addTextItem(208,                     3, 30 +  5 * lf,  80, lf);
+  err |= pan->addStrItem(&devPars.fileName,      100, 30 +  5 * lf, 210, lf);
+  err |= pan->addTextItem(203,                     3, 30 +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  7 * lf,  15, lf, true);
+  err |= pan->addTextItem(300,                   175, 30 +  7 * lf,  30, lf);
+  err |= pan->addTextItem(204,                     3, 30 +  8 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.volume,        150, 30 +  8 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                    3, 30 +  9 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,   150, 30 +  9 * lf, 120, lf, true);
+  err |= pan->addTextItem(1325,                    3, 30 + 10 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   150, 30 + 10 * lf, 120, lf, true);
 
   err |= pan->addTextItem(201,                     3, 200 + lf,     70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);

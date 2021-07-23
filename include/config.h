@@ -26,9 +26,9 @@
 #define PIN_ROT_RIGHT_A  55
 #define PIN_ROT_RIGHT_B  56
 #define PIN_ROT_RIGHT_S  57
-
+#ifndef SIMU_DISPLAY
 #define PIN_SUPPLY_VOLT  A16
-
+#endif
 #ifdef TEENSY36
 // control TFT
 #define PIN_TFT_DC        6      // TFT D/C-Signal

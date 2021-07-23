@@ -58,6 +58,7 @@ enum enItemType {
 #define GRAPH_PIXEL_PER_TICK 160    ///< pixel plotted per tick
 
 #define COL_TEXT            0xFFFF
+#define COL_TEXT_PAR        0xFFC0
 #define COL_TEXTBACK        0x0000
 #define COL_TEXTSEL         0x0000
 #define COL_TEXTSELBACK     0xFFFF
@@ -66,6 +67,7 @@ enum enItemType {
 #define COL_MSGSHADOW       0x8410
 #define COL_TEXTHDR         0xFFFF
 #define COL_TEXTHDRBACK     0x000F
+#define COL_TEXTDROPBACK    0x0004
 //0011 1000 1110 0111
 #define COL_GRID            0x79E7
 #define COL_GRAPH           0xFFC0

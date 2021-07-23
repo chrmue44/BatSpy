@@ -47,7 +47,7 @@ struct stStatus
 {
   stStatus() : graph(GRAPH_XT), waterf(GRAPH_FFT) {}
 
-  cParEnum opMode = enOpMode::REC_AUTO; ///< display mode
+  cParEnum opMode = enOpMode::HEAR_HET; ///< display mode
   cParNum recCount = 0;           ///< nr of recordings
   cParGeoPos geoPos;              ///< actual geographic position
   cParStr fPlayName = "";         ///< name of file to play
@@ -132,6 +132,7 @@ struct stParams
   cParNum stopH = 6;                 ///< hour of start time
   cParNum stopMin = 0;               ///< minute of start time
   cParNum voltFactor = 1;            ///< factor digits to voltage
+  cParEnum recAuto = 0;
 };
 
 

@@ -173,8 +173,8 @@ void cAudio::setPreAmpGain(enGain gain)
     break;
   case enGain::GAIN_45DB:
     digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 1);
-    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 1);
     break;
   case enGain::GAIN_54DB:
     digitalWrite(PIN_AMP_0, 0);
@@ -254,7 +254,6 @@ void cAudio::setup()
     float freq = 0;
     switch (devStatus.opMode.get()) {
       case enOpMode::HEAR_DIRECT:
-      case enOpMode::REC_AUTO:
         mic = true;
         break;
 
@@ -356,8 +355,8 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       m_peakVal = m_peak.read();
       DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
     }
-    if (menue.keyPauseLongEnough(300) && (devStatus.opMode.get() == enOpMode::REC_AUTO))
-    {      
+    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() == 1))
+    {
       if ((devStatus.playStatus.get() == 0))
       {
         devStatus.time.set(rtc.getTime());

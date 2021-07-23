@@ -61,8 +61,15 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         colTxt =COL_TEXTHDR;
         colTxtBack = COL_TEXTHDRBACK;
         break;
+    case PNL_DROPDOWN:
+        colTxt = COL_TEXT;
+        colTxtBack = COL_TEXTDROPBACK;
+        break;
       default:
-        colTxt =COL_TEXT;
+        if(item.isEdit)
+          colTxt = COL_TEXT_PAR;
+        else
+          colTxt = COL_TEXT;
         colTxtBack = COL_TEXTBACK;
         break;
     }
