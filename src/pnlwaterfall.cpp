@@ -2,7 +2,8 @@
 #include "cutils.h"
 
 void f2WaterFunc(cMenuesystem* pThis, enKey key) {
-  devStatus.fileIndex--;
+  if(devStatus.fileIndex > 0)
+    devStatus.fileIndex--;
   while(devStatus.fileIndex >= 0 )
   {
     char ext[8];
@@ -26,7 +27,10 @@ void f2WaterFunc(cMenuesystem* pThis, enKey key) {
         break;
       }
     }
-    devStatus.fileIndex--;
+    if(devStatus.fileIndex > 0)
+      devStatus.fileIndex--;
+    else
+      break;
   }
 }
 

@@ -1,6 +1,8 @@
 #include "pnlbats.h"
 #include "cutils.h"
 #include "debug.h"
+#include "pnlmain.h"
+#include "cmenue.h"
 
 void batFunc(cMenuesystem* pThis, enKey key) {
   char line[512];
@@ -54,6 +56,7 @@ void batFunc(cMenuesystem* pThis, enKey key) {
       devStatus.bats.weight.set(token);
       token = strtok(nullptr, "\t");   //Lebensraum
       devStatus.bats.habitat.set(token);
+      menue.refreshHdrPanel();
     }
   }
 }
@@ -61,9 +64,9 @@ void batFunc(cMenuesystem* pThis, enKey key) {
 
 int initBatPan(cPanel* pan, tCoord lf){
   int err = pan->addTextItem(1200,                        5,  20,           60, lf);
-  err |= pan->addListItem(&devStatus.bats.name,      120,  20,          120, lf, true, batFunc);
+  err |= pan->addListItem(&devStatus.bats.name,      120,  20,          180, lf, true, batFunc);
   err |= pan->addTextItem(1202,                        5,  20 + 1 * lf,  60, lf);
-  err |= pan->addStrItem(&devStatus.bats.nameLat,    120,  20 + 1 * lf, 120, lf);
+  err |= pan->addStrItem(&devStatus.bats.nameLat,    120,  20 + 1 * lf, 180, lf);
   err |= pan->addTextItem(1204,                        5,  20 + 2 * lf,  60, lf);
   err |= pan->addStrItem(&devStatus.bats.freq,       120,  20 + 2 * lf,  70, lf);
   err |= pan->addTextItem(1210,                        5,  20 + 3 * lf,  60, lf);

@@ -1,6 +1,7 @@
 #include "pnlparams.h"
 #include "cRtc.h"
 #include "debug.h"
+#include "config.h"
 
 extern cRtc rtc;
 
@@ -16,7 +17,7 @@ void languageFunc(cMenuesystem* pThis, enKey key) {
 }
 
 void voltageFunc(cMenuesystem* pThis, enKey key) {
-  float fact = calcVotageFactor(devStatus.voltage.get());
+  float fact = calcVoltageFactor(devStatus.voltage.get());
   devPars.voltFactor.set(fact);
 }
 

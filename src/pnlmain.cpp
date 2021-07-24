@@ -40,6 +40,7 @@ void f1DropFunc(cMenuesystem* pThis, enKey key) {
       break;
     case 4:
       pThis->setMainPanel(panBats);
+      pThis->setHdrPanel(hdrBatInfo);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
     case 5:
@@ -134,13 +135,13 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
     
     case 2:
       pThis->setMainPanel(panParams);
-      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
     case 3:
       pThis->setMainPanel(panParRec);
-      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
@@ -151,7 +152,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
       devStatus.hour.set(devStatus.time.getHour());
       devStatus.minute.set(devStatus.time.getMin());
       pThis->setMainPanel(panDateTime);
-      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
@@ -171,7 +172,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
       else
         devStatus.lonSign.set(1);
       pThis->setMainPanel(panPosition);
-      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
   }

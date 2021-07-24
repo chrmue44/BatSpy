@@ -30,7 +30,7 @@ float readSupplyVoltage()
   return volt;
 }
 
-float calcVotageFactor(float volt)
+float calcVoltageFactor(float volt)
 {
   float fact = 1.0;
   int digits = analogRead(PIN_SUPPLY_VOLT);

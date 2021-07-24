@@ -217,6 +217,13 @@ void cMenue::initDialogs() {
   err |= getPan(panFont)->addTextItem(12007,                  15, 20 +  7 * lf, 200, lf);
   err |= getPan(panFont)->addTextItem(12010,                  15, 20 +  8 * lf, 200, 2 * lf, false, NULL, 2);
 
+  hdrBatInfo = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
+  err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
+  err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
+
+  hdrParams = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
+  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
+
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initInfoPan(getPan(panInfo), lf);
 

@@ -53,7 +53,7 @@
 
 float readSupplyVoltage();
 void initPins();
-float calcVotageFactor(float volt);
+float calcVoltageFactor(float volt);
 
 
 #endif  //#ifndef _CONFIG_H

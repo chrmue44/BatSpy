@@ -1,6 +1,7 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <SPI.h>
+#include <TimeLib.h>
 //#define DEBUG_LEVEL 1
 
 #include "debug.h"
@@ -598,6 +599,8 @@ enSdRes cSdCard::closeFile(tFILE& file) {
   retVal = rc == FR_OK ? OK : CLOSE_ERR;
 
   #elif defined(CARDLIB_SDFAT)
+  
+  file.timestamp(T_WRITE,year(), month(), day(), hour(), minute(), second());
   bool ok = file.close();
   retVal = ok ? OK : CLOSE_ERR;
   #endif

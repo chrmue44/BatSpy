@@ -72,8 +72,8 @@ struct stStatus
   stBatInfo bats;                 ///< struct to store bat informations
   cParBtn* btnAudio;              ///< button to clear audio performance measurement
   tDirInfo dir;                   ///< content of current dir
-  size_t fileIndex;               ///< index of file in dir
-  size_t startIndex;              ///< start index of directory
+  size_t fileIndex = 0;           ///< index of file in dir
+  size_t startIndex = 0;          ///< start index of directory
   cParBtn* btnSetTime;
   cParNum year = 2021;
   cParNum month = 7;
@@ -136,10 +136,6 @@ struct stParams
 };
 
 
-
-extern stStatus devStatus;           ///< status of the device
-extern stParams devPars;             ///< parameters of the device
-
 class cMenue : public cMenuesystem
 {
  public:
@@ -158,5 +154,10 @@ private:
   bool checkCRC();
   void loadLanguage();
 };
+
+
+extern stStatus devStatus;           ///< status of the device
+extern stParams devPars;             ///< parameters of the device
+extern cMenue menue;                 ///< menue system of the device
 
 #endif // CMENUE_H

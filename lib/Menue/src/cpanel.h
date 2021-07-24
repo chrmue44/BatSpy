@@ -142,7 +142,7 @@ class cListItem : public cParBase {
   uint16_t getId() { return m_id;  }
   void setId(uint16_t id) { m_id = id; }
   tText*  getpText() { return m_text; }
-  void setText(tText* p) { strncpy(m_text, p, sizeof(m_text)); m_text[CNT_ENUM_ITEM - 1] = 0; }
+  void setText(tText* p) { strncpy(m_text, p, sizeof(m_text)); m_text[LIST_ITEM_LEN - 1] = 0; }
  private:
   uint16_t m_id;       ///< enum id
   char m_text[LIST_ITEM_LEN];      ///< list text

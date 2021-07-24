@@ -9,6 +9,7 @@ time_t getTeensy3Time()
 
 cRtc::cRtc() {
   setSyncProvider(getTeensy3Time);
+  ::setTime(Teensy3Clock.get());
 }
 
 void cRtc::setTime(int y, int mo, int d, int h, int m, int s) {

@@ -169,6 +169,8 @@ struct stTxtList Texts[] =
   {  1345, ".",                         0},
   {  1400, "Aus",                       "Off"},
   {  1401, "Ein",                       "On"},
+  {  1500, "Fledermausart",             "Bat Species"},
+  {  1510, "Parameter einstellen",      "Setup Parameters"},
 
   { 12000, TGE_ASC_0           ,0},
   { 12001, TGE_ASC_1           ,0},

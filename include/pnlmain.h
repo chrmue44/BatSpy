@@ -17,6 +17,8 @@ extern thPanel panInfo;
 extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 extern thPanel panWaterfall;
 extern thPanel hdrPanWaterfall;
+extern thPanel hdrBatInfo;
+extern thPanel hdrParams;
 
 extern thPanel panParams;      ///< panel for general parameter settings
 extern thPanel panParRec;      ///< panel for recording settings
