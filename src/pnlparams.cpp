@@ -16,10 +16,7 @@ void languageFunc(cMenuesystem* pThis, enKey key) {
 }
 
 void voltageFunc(cMenuesystem* pThis, enKey key) {
-  float fact;
-  int digits = analogRead(PIN_SUPPLY_VOLT);
-  fact = (devStatus.voltage.get() - U_DIODE) / digits;
-  DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
+  float fact = calcVotageFactor(devStatus.voltage.get());
   devPars.voltFactor.set(fact);
 }
 

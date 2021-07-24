@@ -1,11 +1,6 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-// debug level: 1(lowest) .. 4(highest) or undefine for no messages
-//#define DEBUG_LEVEL   2
-// Teensy version
-//#define TEENSY36
-
 // voltage loss D1
 #define U_DIODE        0.29
 
@@ -13,6 +8,10 @@
 #define AUDIO_OUT_TEENSY
 
 // *****   pin definitions *****
+
+// identification
+#define PIN_ID_12V        4      // low level == 12V supply
+
 //control pre amplifier
 #define PIN_AMP_0        15      // enable feedback resistor
 #define PIN_AMP_1        29      // enable feedback resistor
@@ -26,30 +25,12 @@
 #define PIN_ROT_RIGHT_A  55
 #define PIN_ROT_RIGHT_B  56
 #define PIN_ROT_RIGHT_S  57
+
 #ifndef SIMU_DISPLAY
 #define PIN_SUPPLY_VOLT  A16
 #endif
-#ifdef TEENSY36
-// control TFT
-#define PIN_TFT_DC        6      // TFT D/C-Signal
-#define PIN_TFT_CS       14      // TFT CS
-#define PIN_TFT_RST      24      // TFT Reset
-#define PIN_TFT_MOSI      7      // TFT MOSI
-#define PIN_TFT_SCLK     27      // TFT SCLK
-#define PIN_TFT_MISO     12      // TFT MISO
-#define PIN_TFT_LED     A12      // TFT backlight control
 
-// control SGTL5000
-#define PIN_DIN          22
-#define PIN_DOUT         13
-#define PIN_LRCLK        23
-#define PIN_SCL          19
-#define PIN_SDA          18
-#define PIN_BCLK          9
-#define PIN_MCLK         11
-#endif //#ifdef TEENSY36
 
-#ifdef ARDUINO_TEENSY41
 #define PIN_MQS          10      // output for mono MQS signal
 
 // control TFT
@@ -69,7 +50,10 @@
 #define PIN_SDA          18
 #define PIN_BCLK         21
 #define PIN_MCLK         23
-#endif //#ifdef ARDUINO_TEENSY41
+
+float readSupplyVoltage();
+void initPins();
+float calcVotageFactor(float volt);
 
 
 #endif  //#ifndef _CONFIG_H

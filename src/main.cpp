@@ -60,7 +60,6 @@ void initTft()
   tft.setTextColor(ILI9341_YELLOW);
   tft.setTextSize(3);
   tft.setFont(fnt8x11);  
-  pinMode(PIN_TFT_LED, OUTPUT);
   setDispLight(255);
 }
 
@@ -78,6 +77,7 @@ void waitForSerial()
 void setup()
 {
   size_t freeMem, totMem;
+  initPins();
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
@@ -121,10 +121,7 @@ void loop()
         devStatus.peakVal.set(audio.getLastPeakVal() * 100);
         size_t freeSpace;  size_t totSpace;
         cSdCard::inst().getFreeMem(freeSpace, totSpace);
-        int digits = analogRead(PIN_SUPPLY_VOLT);
-        devStatus.digits.set((float)digits);
-        float volt = (float)digits * devPars.voltFactor.get() + U_DIODE;
-        DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digits, volt,devPars. voltFactor.get());
+        float volt = readSupplyVoltage();
         devStatus.voltage.set(volt);
         devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
         cnt = 0;

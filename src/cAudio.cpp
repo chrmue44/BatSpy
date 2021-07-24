@@ -58,12 +58,6 @@ m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0)
 
 void cAudio::init()
 {
-  pinMode(PIN_AMP_0, OUTPUT);
-  pinMode(PIN_AMP_1, OUTPUT);
-  pinMode(PIN_AMP_2, OUTPUT);
-  pinMode(PIN_AMP_3, OUTPUT);
-  //pinMode(PIN_MQS, OUTPUT);
-
   // set pre amp to the lowest posible amplification
   digitalWrite(PIN_AMP_0, 1);
   digitalWrite(PIN_AMP_1, 1);
@@ -281,7 +275,7 @@ void cAudio::setup()
     setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
     m_recThresh = pow(10, (devPars.recThreshhold.get() / 10.0));
-    m_delay.delay(7, devPars.preTrigger.get() * 44100/ m_sampleRate);
+    m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
     setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
     delay(100);
     AudioInterrupts();
