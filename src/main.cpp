@@ -35,6 +35,7 @@ cAudio audio;  // audio control
 cRtc rtc;
 cMenue menue(320, 240, &tft);
 Metro tick(300);
+Metro tickInfo(1000);
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
                PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 cTerminal terminal;
@@ -107,26 +108,8 @@ void setup()
 void loop() 
 {
   static bool backLightOn = true;
-  static uint32_t cnt;
   if (tick.check())
   {
-    if(menue.getMainPanel() == panInfo)
-    {
-      cnt++;
-      if(cnt > 3)
-      {
-        devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-        devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-        devStatus.audioMem.set(AudioMemoryUsage());
-        devStatus.peakVal.set(audio.getLastPeakVal() * 100);
-        size_t freeSpace;  size_t totSpace;
-        cSdCard::inst().getFreeMem(freeSpace, totSpace);
-        float volt = readSupplyVoltage();
-        devStatus.voltage.set(volt);
-        devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
-        cnt = 0;
-      }
-    }
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) 
     {
@@ -172,6 +155,19 @@ void loop()
 
     //handle audio processing
     audio.checkAutoRecording(menue, rtc);
+
+    if(tickInfo.check())
+    {
+        devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+        devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+        devStatus.audioMem.set(AudioMemoryUsage());
+        devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+        size_t freeSpace;  size_t totSpace;
+        cSdCard::inst().getFreeMem(freeSpace, totSpace);
+        float volt = readSupplyVoltage();
+        devStatus.voltage.set(volt);
+        devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+    }
   }
   audio.operateRecorder();
 }

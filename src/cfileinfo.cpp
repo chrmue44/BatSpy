@@ -57,7 +57,7 @@ int cFileInfo::writeTag(const char* tag, float val1, float val2)
 int cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
 {
   char buf[128];
-  snprintf(buf,sizeof(buf),"<%s>%i %s</%s>", tag, val, unit, tag);
+  snprintf(buf,sizeof(buf),"<%s>%li %s</%s>", tag, val, unit, tag);
   return writeLine(buf);
 }
 

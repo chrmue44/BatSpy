@@ -1,7 +1,11 @@
+
 #include "config.h"
 #include <Arduino.h>
 #include "debug.h"
 #include "cmenue.h"
+#include "cMeanCalc.h"
+
+cMeanCalc<int16_t,10> digits;
 
 void initPins()
 {
@@ -15,18 +19,19 @@ void initPins()
   pinMode(PIN_TFT_LED, OUTPUT);
 }
 
+
 float readSupplyVoltage()
 {
   float volt = 0;
-  int digits = analogRead(PIN_SUPPLY_VOLT);
-  devStatus.digits.set((float)digits);
+  int digs = digits.get(analogRead(PIN_SUPPLY_VOLT));
+  devStatus.digits.set((float)digs);
 
   if(digitalRead(PIN_ID_12V) == 1)
-    volt = (float)digits * devPars.voltFactor.get() + U_DIODE;
+    volt = (float)digs * devPars.voltFactor.get() + U_DIODE;
   else
-    volt = (float)digits * devPars.voltFactor.get();
+    volt = (float)digs * devPars.voltFactor.get();
 
-  DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digits, volt,devPars. voltFactor.get());
+  DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digs, volt,devPars.voltFactor.get());
   return volt;
 }
 

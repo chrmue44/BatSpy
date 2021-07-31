@@ -1,6 +1,5 @@
 #ifndef MY_VECTOR_H
 #define MY_VECTOR_H
-//#include <cstdlib>
 #include <Arduino.h>
 template  <class T, size_t NN> class  my_vector {
  public:
@@ -21,7 +20,7 @@ template  <class T, size_t NN> class  my_vector {
     }
     return m_arr[i];
   }
-  
+
   int push_back(T p) {
     if(m_size < NN) {
       m_arr[m_size] = p;
