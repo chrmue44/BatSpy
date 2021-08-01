@@ -91,6 +91,7 @@ class cCassette {
     int m_sec;
     enRecFmt m_recFmt;
     AudioAnalyzePeak& m_peak;
+    uint32_t m_sampleCnt;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

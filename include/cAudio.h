@@ -95,6 +95,7 @@ class cAudio
   void checkAutoRecording(cMenue& menue, cRtc& rtc);
   void operateRecorder();
   float getLastPeakVal() { return m_peakVal;}
+  bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
 
  private:
   void setMixOscFrequency(float freq);

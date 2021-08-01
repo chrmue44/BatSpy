@@ -63,6 +63,7 @@ int cCassette::startRec(enRecFmt recFmt) {
   }
   else
     m_isRecFileOpen = true;
+  m_sampleCnt = 0;
   m_recFmt = recFmt;
   if(recFmt == enRecFmt::WAV)
     writeWavHeader();
@@ -88,6 +89,7 @@ int cCassette::operate() {
                m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
         m_recorder.freeBuffer();
       }
+      m_sampleCnt += av * AUDIO_BLOCK_SAMPLES;
 
       cSdCard& sd = cSdCard::inst();
       size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
@@ -124,6 +126,7 @@ int cCassette::stop() {
     while (m_recorder.available() > 0) {
       rc = sd.writeFile(m_fil, (byte*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
+      m_sampleCnt += AUDIO_BLOCK_SAMPLES;
     }
     if(m_recFmt == enRecFmt::WAV)
       finalizeWavFile();
@@ -215,7 +218,8 @@ void cCassette::writeInfoFile(float peakVal)
   cUtils::replace(m_fileName, ".raw", ".xml", infoFile, sizeof(infoFile));
   
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_day, m_month, m_year, m_hour, m_min, m_sec);
-  info.write(infoFile, m_recordingTime, m_sampleRate, date, cUtils::getFileName(m_fileName), 
+  float duration = (float)m_sampleCnt/ m_sampleRate;
+  info.write(infoFile, duration, m_sampleRate, date, cUtils::getFileName(m_fileName), 
               devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal); 
 }
 

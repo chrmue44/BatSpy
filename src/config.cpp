@@ -17,8 +17,24 @@ void initPins()
   pinMode(PIN_ID_12V, INPUT_PULLUP);
 
   pinMode(PIN_TFT_LED, OUTPUT);
+  pinMode(PIN_POWER_OFF, OUTPUT);
+  digitalWrite(PIN_POWER_OFF, 1);
 }
 
+void checkSupplyVoltage()
+{
+  float volt =readSupplyVoltage();
+  bool ok = false;
+  if(digitalRead(PIN_ID_12V) == 1)
+    ok = volt >= SUPPLY_4V_MIN;
+  else 
+    ok = volt >= SUPPLY_12V_MIN;
+  if(!ok)
+  {
+    digitalWrite(PIN_POWER_OFF, 0);
+    delay(1000);
+  }    
+}
 
 float readSupplyVoltage()
 {

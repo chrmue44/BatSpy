@@ -2,12 +2,16 @@
 #define _CONFIG_H
 
 // voltage loss D1
-#define U_DIODE        0.29
+#define U_DIODE           0.29
+#define SUPPLY_12V_MIN   11.5     //min. required supply voltage lead 
+#define SUPPLY_4V_MIN     3.0     //min. required supply voltage LiIon 
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
 
 // *****   pin definitions *****
+
+#define PIN_POWER_OFF    38      // power off if voltage too low
 
 // identification
 #define PIN_ID_12V        4      // low level == 12V supply
@@ -30,7 +34,7 @@
 #define PIN_SUPPLY_VOLT  A16
 #endif
 
-
+// audio out
 #define PIN_MQS          10      // output for mono MQS signal
 
 // control TFT
@@ -54,7 +58,7 @@
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
-
+void checkSupplyVoltage();
 
 #endif  //#ifndef _CONFIG_H
 
