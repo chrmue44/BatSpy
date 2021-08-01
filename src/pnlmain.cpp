@@ -14,6 +14,20 @@ cParEnum f4MainItems(0);
 // *******************************************
 // drop down panel F1 for main panel
 
+void powerOffFunc(cMenuesystem* pThis, enKey key) {
+  switch (key) 
+  {
+    case enKey::YES:
+      digitalWrite(PIN_POWER_OFF, 0);
+      delay(1000);
+      break;
+      
+    default:
+    case enKey::NO:
+      break;
+  }
+}
+
 void f1DropFunc(cMenuesystem* pThis, enKey key) {
   switch (pThis->getFocusItem()) {
     case 0:
@@ -51,6 +65,9 @@ void f1DropFunc(cMenuesystem* pThis, enKey key) {
       pThis->setMainPanel(panInfo);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
+    case 7:
+      pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+      break;
   }
 }
 
@@ -64,6 +81,7 @@ void initFunctionItems()
   f1MainItems.addItem(104);
   f1MainItems.addItem(105);
   f1MainItems.addItem(106);
+  f1MainItems.addItem(110);
 
   f4MainItems.addItem(1001);
   f4MainItems.addItem(1021);
@@ -113,7 +131,7 @@ void f4LoadFunc(cMenuesystem* pThis, enKey key) {
 
 void f4SaveFunc(cMenuesystem* pThis, enKey key) {
   switch (key) {
-    case YES:
+    case enKey::YES:
       pThis->save();
       break;
     
