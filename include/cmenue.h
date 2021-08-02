@@ -96,6 +96,7 @@ struct stStatus
   cParNum freeSpace = 0;
   cParNum voltage = 0;
   cParNum digits = 0;
+  cParNum temperature = 0;
 };
 
 

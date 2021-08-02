@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "cmenue.h"
 #include "cMeanCalc.h"
+#include "InternalTemperature.h"
 
 cMeanCalc<int16_t,10> digits;
 
@@ -64,4 +65,12 @@ float calcVoltageFactor(float volt)
   }
   DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
   return fact;
+}
+
+float readTemperature()
+{
+  if(digitalRead(PIN_ID_12V) == 1)
+    return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
+  else
+    return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
 }

@@ -163,7 +163,8 @@ void cMenue::initPars() {
   devStatus.peakVal.init(0, 20, 0.1, 2);
   devStatus.freeSpace.init(0, 100, 1, 0);
   devStatus.voltage.init(0, 20, 0.05, 2);
-  devStatus.digits.init(0, 10000, 1, 0);  
+  devStatus.digits.init(0, 10000, 1, 0);
+  devStatus.temperature.init(-50,100,0.1,1);
 
   load();
 #ifndef SIMU_DISPLAY

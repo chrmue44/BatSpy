@@ -167,6 +167,8 @@ void loop()
         float volt = readSupplyVoltage();
         devStatus.voltage.set(volt);
         devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+        float temp = readTemperature();
+        devStatus.temperature.set(temp);
     }
   }
   audio.operateRecorder();

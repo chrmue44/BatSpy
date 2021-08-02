@@ -132,7 +132,7 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
   retVal = replaceAll(str, "\xc3\xbc", CH_UEs, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "°", CH_DEG, result, resultSize);
+  retVal = replaceAll(str, "\xc2\xb0", CH_DEG, result, resultSize);
   if(retVal == 0)
     found = true;
   if(!found)

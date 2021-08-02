@@ -80,6 +80,7 @@ struct stTxtList Texts[] =
   {   430, "Software-Version"          ,"Software Version"},
   {   440, "Freier Speicher [%]"       ,"Free Disk Space [%]"},
   {   450, "Versorgungsspannung [V]"   ,"Supply Voltage [V]"},
+  {   455, "Temperatur [°C]"           ,"Temperature [°C]"},
   {  1001, "Laden ..."                 ,"Load ..."},
   {  1005, "Sollen die Parametereinstellungen"," "},
   {  1006, "geladen werden?"           ,"Load settings?"},
