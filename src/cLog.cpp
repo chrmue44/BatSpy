@@ -29,7 +29,7 @@ void cLog::timeStamp()
              year() % 100, month(), day(), hour(), minute(), second());
 }
 
-void cLog::log(char* msg)
+void cLog::log(const char* msg)
 {
   inst()->timeStamp();
   cSdCard& sd = cSdCard::inst();
@@ -42,7 +42,7 @@ void cLog::log(char* msg)
   sd.closeFile(f);  
 }
 
-void cLog::logf(char* fmt, ...)
+void cLog::logf(const char* fmt, ...)
 {
   char buf[256];
   va_list args;

@@ -67,6 +67,7 @@ class cCassette {
     void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
     void finalizeWavFile();
     enSdRes createRecordingDir();
+    uint32_t calcRecSamples(float time) { return (uint32_t)(time * (float)m_sampleRate); }
 
   private:
     enCassMode m_mode = STOP;
@@ -81,8 +82,6 @@ class cCassette {
     uint32_t m_nj = 0;
     size_t m_wr;
     uint32_t m_sampleRate;
-    cTimer m_timer;
-    float m_recordingTime;
     int m_year;
     int m_month;
     int m_day;
@@ -92,6 +91,7 @@ class cCassette {
     enRecFmt m_recFmt;
     AudioAnalyzePeak& m_peak;
     uint32_t m_sampleCnt;
+    uint32_t m_maxRecSamples;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

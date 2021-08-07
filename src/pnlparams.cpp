@@ -48,7 +48,7 @@ int initParRec(cPanel* pan, tCoord lf) {
   err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
   err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  9 * lf,  15, lf, true);
   err |= pan->addTextItem(25,                    15, 20 + 10 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 10 * lf,  25, lf, true);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 10 * lf,  80, lf, true);
   return err;
 }
 

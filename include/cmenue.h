@@ -92,7 +92,7 @@ struct stStatus
   cParNum freq1Tick = (FREQ_MAX - FREQ_MIN)/Y_TICK_CNT;
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
-  cParStr version = "BatSpy V " __DATE__  "/"  __TIME__;
+  cParStr version = "BatSpy " __DATE__  "/"  __TIME__;
   cParNum freeSpace = 0;
   cParNum voltage = 0;
   cParNum digits = 0;

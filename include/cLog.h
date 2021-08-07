@@ -4,8 +4,8 @@
 class cLog
 {
  public:
-  static void log(char* msg);
-  static void logf(char* fmt, ...);
+  static void log(const char* msg);
+  static void logf(const char* fmt, ...);
 
  protected:
   cLog();

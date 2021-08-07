@@ -125,6 +125,7 @@ void cMenue::initPars() {
 
   devPars.recAuto.addItem(1400),
   devPars.recAuto.addItem(1401),
+  devPars.recAuto.addItem(1402),
 
   devPars.sendDelay.init(0, 20, 1, 0);
 

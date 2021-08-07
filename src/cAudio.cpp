@@ -349,25 +349,30 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       m_peakVal = m_peak.read();
       DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
     }
-    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() == 1))
+    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() > 0))
     {
       if ((devStatus.playStatus.get() == 0))
       {
         devStatus.time.set(rtc.getTime());
         devStatus.time.update(false);
-        bool actTime = false;
-        if(devPars.startH.get() > devPars.stopH.get())
-        {
-           actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
-                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
-        }
+        bool startRecording = false;
+        if (devPars.recAuto.get() == 1)
+          startRecording = true;
         else
         {
-           actTime = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+          if(devPars.startH.get() > devPars.stopH.get())
+          {
+             startRecording = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+                       (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+          }
+          else
+          {
+             startRecording = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
                      (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+          }
         }
 
-        if ((m_peakVal > m_recThresh) && actTime)
+        if ((m_peakVal > m_recThresh) && startRecording)
         {
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));

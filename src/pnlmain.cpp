@@ -220,7 +220,7 @@ void setVisibilityRecCount(cMenuesystem* pThis)
 {
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
-  if(devPars.recAuto.get() == 1)
+  if(devPars.recAuto.get() > 0)
     p->itemList[2].isVisible = true;
   else
     p->itemList[2].isVisible = false;
@@ -323,7 +323,7 @@ int initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(30,                      3, 30 +      lf,  80, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
   err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  25, lf, true, dispModeFunc);
+  err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  80, lf, true, dispModeFunc);
   err |= pan->addTextItem(206,                     3, 30 +  3 * lf,  80, lf);
   err |= pan->addListItem(&devPars.dirSel,       100, 30 +  3 * lf, 210, lf, true, dirFunc);
   err |= pan->addTextItem(205,                     3, 30 +  4 * lf,  80, lf);
