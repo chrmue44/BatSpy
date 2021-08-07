@@ -86,7 +86,7 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
       {
         char Buf[300];
         snprintf(Buf, sizeof(Buf),
-                 "MEMPOOL: Chunks %ui; alloc %s Addr %0x reqSize %ui  chunkSize %ul\n",
+                 "MEMPOOL: Chunks %u; alloc %s Addr %0x reqSize %u  chunkSize %u\n",
                  m_ChunkCount, ClassName, (unsigned)p, size,pPool->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
@@ -169,7 +169,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
       {
         char Buf[200];
         snprintf(Buf, sizeof(Buf),
-        "MEMPOOL: Chunks %ui; free %s; Addr %ui; ChunkSize ",
+        "MEMPOOL: Chunks %ul; free %s; Addr %ul; ChunkSize%ul ",
         m_ChunkCount, ClassName, reinterpret_cast<unsigned>(p), (*i)->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
@@ -414,7 +414,7 @@ void clFixMemPool::showLeaks()
     if ((*i)->getAllocCount() != 0)
     {
       char buf[100];
-      snprintf(buf, sizeof(buf), "ChunkSize: %ui;  Count: %ui",(*i)->getChunkSize(),(*i)->getAllocCount());
+      snprintf(buf, sizeof(buf), "ChunkSize: %ul;  Count: %ul",(*i)->getChunkSize(),(*i)->getAllocCount());
       clDebugLog::add(DBGSRC_MEMFIXALLOC, buf);
       (*i)->findAllocatedChunks();
     }

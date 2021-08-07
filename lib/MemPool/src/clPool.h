@@ -63,7 +63,7 @@ public:
   }
 
   // Anzahl der allokierten Bloecke ausgeben
-  inline uint32_t getAllocCount(void)
+  inline size_t getAllocCount(void)
   {
     return m_AllocCount;
   }
@@ -124,10 +124,10 @@ private:
   size_t m_PoolSize;
 
   // Anzahl der momentan allokierten Chunks
-  uint32_t m_AllocCount;
+  size_t m_AllocCount;
 
   // Anzahl der momentan allokierten Chunks
-  uint32_t m_AllocCountMax;
+  size_t m_AllocCountMax;
 
   // Groesse der Memory-Chunks in Byte
   size_t m_ChunkSize;
@@ -136,7 +136,7 @@ private:
   size_t m_BrtChunkSize;
 
   // Anzahl der Memory-Chunks in diesem Pool
-  uint32_t m_ChunkCnt;
+  size_t m_ChunkCnt;
 
   // Zeiger auf den Anfang des Pools
   int8_t *m_pBuf;

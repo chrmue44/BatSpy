@@ -114,6 +114,7 @@ struct stTxtList Texts[] =
   {  1161, "Linkshänder"               ,"left handed"},
   {  1162, "Rechtshänder"              ,"right handed"},
   {  1165, "Kal. Spannung [V]"         ,"Cal. Voltage [V]"},
+  {  1167, "Verzögerung Tx USB [ms]"   ," Delay Tx USB [ms]"},
   {  1170, "Trig. Filter [kHz]"        ,0},
   {  1171, "Hochpass"                  ,"High pass"},
   {  1172, "Tiefpass"                  ,"Low pass"},
@@ -174,6 +175,7 @@ struct stTxtList Texts[] =
   {  1401, "Ein",                       "On"},
   {  1500, "Fledermausart",             "Bat Species"},
   {  1510, "Parameter einstellen",      "Setup Parameters"},
+
 
   { 12000, TGE_ASC_0           ,0},
   { 12001, TGE_ASC_1           ,0},

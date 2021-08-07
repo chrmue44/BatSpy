@@ -500,11 +500,17 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
   transformPathName(buf, PATH_LEN, name);
   DPRINTF1("full path: %s\n", buf);
   bool ok;
-  if (mode == READ)
-    ok = file.open(buf, O_RDONLY);
-  else
-    ok = file.open(buf, FILE_WRITE);
-  retVal = ok ? OK : OPEN_FILE_ERR;
+  switch(mode)
+  {
+    case enMode::READ:
+      ok = file.open(buf, O_RDONLY);
+      break;
+    case enMode::WRITE:
+    case enMode::APPEND:
+      ok = file.open(buf, FILE_WRITE);
+      break;
+  }
+  retVal = ok ? enSdRes::OK : enSdRes::OPEN_FILE_ERR;
 #endif
   DPRINTF1("returns %i\n", retVal);  
   return retVal;
@@ -644,7 +650,7 @@ void cSdCard::transformPathName(TCHAR* buf, UINT bufsize, const char* name) {
 
 #define BUFLEN  64
 
-enSdRes cSdCard::sendFileToTerminal(char* name) {
+enSdRes cSdCard::sendFileToTerminal(char* name, int delayTime) {
   tFILE file;
   char buf[BUFLEN + 2];
   size_t bytesRead = 0;
@@ -652,9 +658,16 @@ enSdRes cSdCard::sendFileToTerminal(char* name) {
   if(rc == OK) {  
     size_t size = fileSize(file);
     Serial.printf("%09u:",size);
+    int cnt = 0;
     while(! eof(file)) {
       rc = readFile(file, &buf, bytesRead, BUFLEN);
       Serial.write(&buf[0],bytesRead);
+      cnt++;
+      if(cnt >= 32)
+      {
+        cnt = 0;
+        delay(delayTime);
+      }
     }
   }
   return rc;

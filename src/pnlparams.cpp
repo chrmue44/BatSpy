@@ -68,6 +68,9 @@ int initParPan(cPanel* pan, tCoord lf) {
   err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  5 * lf,  80, lf, true);
   err |= pan->addTextItem(1165,                  15, 20 +  6 * lf,  80, lf);
   err |= pan->addNumItem(&devStatus.voltage,    170, 20 +  6 * lf,  80, lf, true, voltageFunc);
+  err |= pan->addTextItem(1167,                  15, 20 +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.sendDelay,    170, 20 +  7 * lf,  80, lf, true);
+
   return err;
 }
 

@@ -63,7 +63,8 @@ enum enSdRes
 
 enum enMode {
   READ,
-  WRITE
+  WRITE,
+  APPEND,
 };
 
 struct stDirEntry {
@@ -156,7 +157,7 @@ class cSdCard {
     * format length 9 digit decimal as ASCII followed by ':'
     * then file content in binary format
     */
-   enSdRes sendFileToTerminal(char* name);
+   enSdRes sendFileToTerminal(char* name, int delayTime);
 
    /*
     * read file with given name from serial interface

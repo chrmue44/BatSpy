@@ -124,7 +124,7 @@ void cTerminal::execCmd() {
       break;
     
     case 'r':
-      cSdCard::inst().sendFileToTerminal(&m_recbuf[1]);
+      cSdCard::inst().sendFileToTerminal(&m_recbuf[1], devPars.sendDelay.get());
       break;
     
 
@@ -145,7 +145,11 @@ void cTerminal::execCmd() {
     case 'w':
       cSdCard::inst().readFileFromTerminal(&m_recbuf[1]);      
       break;
-    
+    case 'v':
+      Serial.write(devStatus.version.get());      
+      Serial.write(0x04);
+      break;
+
     case 'x':
     case 'X':
       ret = (char)cSdCard::inst().del(&m_recbuf[1]);
@@ -248,5 +252,6 @@ void cTerminal::showCommands() {
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 
   Serial.println("W        key cursor down"); 
+  Serial.println("v        display software version"); 
   Serial.println("x<name>  delete file/dir <name>");
 }

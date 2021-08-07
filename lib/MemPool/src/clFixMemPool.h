@@ -167,10 +167,10 @@ private:
   tPoolTab m_PoolTab;
 
   //Anzahl der angelegten Sub-Pools
-  uint32_t m_PoolCount;
+  size_t m_PoolCount;
  
   // Anzahl der allokierten Speicherbloecke
-  uint32_t m_ChunkCount;
+  size_t m_ChunkCount;
 
   // gesamte Menge des zur Verfuegung stehenden Speichers
   size_t m_totalPoolSize;

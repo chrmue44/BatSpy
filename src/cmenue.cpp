@@ -126,6 +126,8 @@ void cMenue::initPars() {
   devPars.recAuto.addItem(1400),
   devPars.recAuto.addItem(1401),
 
+  devPars.sendDelay.init(0, 20, 1, 0);
+
   devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
   devStatus.graph.setAmplitudeRaw(MAX_ADC);
   devStatus.graph.setPlotBorders(0.0, 2.5);
@@ -160,7 +162,7 @@ void cMenue::initPars() {
   devStatus.geoPos.setLon(8.2345);
   devStatus.btnAudio = new cParBtn(Txt::get(309));
   
-  devStatus.peakVal.init(0, 20, 0.1, 2);
+  devStatus.peakVal.init(0, 100, 0.1, 2);
   devStatus.freeSpace.init(0, 100, 1, 0);
   devStatus.voltage.init(0, 20, 0.05, 2);
   devStatus.digits.init(0, 10000, 1, 0);
@@ -313,7 +315,7 @@ void cMenue::save() {
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
   writeInt16ToEep(0x000C, devPars.recAuto.get());
-  // 2 bytes free here
+  writeInt16ToEep(0x000E, devPars.sendDelay.get());
   // 4 bytes free here
   writeFloatToEep(0x0014, devPars.recTime.get());
   writeInt16ToEep(0x0018, devPars.sampleRate.get());
@@ -364,7 +366,7 @@ void cMenue::load() {
     devPars.volume.set(readFloatFromEep(0x0004));
     devPars.mixFreq.set(readFloatFromEep(0x0008));
     devPars.recAuto.set(readInt16FromEep(0x000C));
-    // 2 bytes free here
+    devPars.sendDelay.set(readInt16FromEep(0x000E));
     // 4 bytes free here 
     devPars.recTime.set(readFloatFromEep(0x0014));
     devPars.sampleRate.set(readInt16FromEep(0x0018));

@@ -13,6 +13,7 @@
 #include "clFixMemPool.h"
 #include "pnlmain.h"
 #include "cSdCard.h"
+#include "cLog.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -34,8 +35,10 @@ ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST,
 cAudio audio;  // audio control
 cRtc rtc;
 cMenue menue(320, 240, &tft);
-Metro tick(300);
-Metro tickInfo(1000);
+Metro tick300ms(300);
+Metro tick1s(1000);
+Metro tick15Min(1000 * 60 * 15);
+
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
                PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 cTerminal terminal;
@@ -90,6 +93,7 @@ void setup()
   cSdCard::inst().mount();
   cSdCard::inst().getFreeMem(freeMem, totMem);
   Serial.printf("free memory on SD card: %u of %u [kB]\n", freeMem, totMem);
+  cLog::log("power on");
   delay(500);  
   menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
@@ -108,7 +112,7 @@ void setup()
 void loop() 
 {
   static bool backLightOn = true;
-  if (tick.check())
+  if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) 
@@ -156,7 +160,7 @@ void loop()
     //handle audio processing
     audio.checkAutoRecording(menue, rtc);
 
-    if(tickInfo.check())
+    if(tick1s.check())
     {
         devStatus.cpuAudioAvg.set(AudioProcessorUsage());
         devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
@@ -169,6 +173,12 @@ void loop()
         devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
         float temp = readTemperature();
         devStatus.temperature.set(temp);
+    }
+
+    if(tick15Min.check())
+    {
+      cLog::logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
+                 devStatus.voltage.get(), devStatus.temperature.get());
     }
   }
   audio.operateRecorder();

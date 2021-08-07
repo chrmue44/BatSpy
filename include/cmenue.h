@@ -92,7 +92,7 @@ struct stStatus
   cParNum freq1Tick = (FREQ_MAX - FREQ_MIN)/Y_TICK_CNT;
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
-  cParStr version = __DATE__  "/"  __TIME__;
+  cParStr version = "BatSpy V " __DATE__  "/"  __TIME__;
   cParNum freeSpace = 0;
   cParNum voltage = 0;
   cParNum digits = 0;
@@ -134,6 +134,7 @@ struct stParams
   cParNum stopMin = 0;               ///< minute of start time
   cParNum voltFactor = 1;            ///< factor digits to voltage
   cParEnum recAuto = 0;
+  cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
 };
 
 
