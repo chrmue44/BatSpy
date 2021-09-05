@@ -202,12 +202,15 @@ void cParGraph::plotAsBand(size_t samplesPerPixel, int16_t xMax) {
 
 void cParGraph::initDiagram() {
   switch (m_mode) {
-    case GRAPH_XT:
+    case enGraphMode::GRAPH_XT:
       drawGrid();
       break;
-    case GRAPH_FFT:
+    case enGraphMode::GRAPH_FFT:
       drawYscale();   
       drawColorMap();  
+      break;
+  case enGraphMode::LIVE_FFT:
+      drawYscale();
       break;
   }
 }
@@ -249,6 +252,8 @@ void cParGraph::initPlot(bool b) {
   }
   if(m_mode == GRAPH_FFT)
     m_dat.f.firstFft = true;
+  if(m_mode == enGraphMode::LIVE_FFT)
+    m_dat.rf.count = m_x + SCALE_WIDTH;
   m_plotState = 0;
   update(true);
 }
@@ -443,4 +448,83 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
  
   m_actPixel = xMax;
   update(true);
+}
+
+void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
+{
+  int max = maxAmpl * m_dat.rf.squeeze;
+  switch (m_dat.rf.squeeze)
+  {
+    case 1:
+      for (int i = 0; i < m_height; i++)
+      {
+        int j = m_height - i - 1;
+        m_dat.rf.line_buffer[j] = getColor(data[i], 0, max);
+      }
+      break;
+    case 2:
+      for (int i = 0; i < m_height; i++)
+      {
+        int j = m_height - i - 1;
+        int k = 2 * i;
+        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1], 0, max);
+      }
+      break;
+    case 3:
+      for (int i = 0; i < m_height; i++)
+      {
+        int j = m_height - i - 1;
+        int k = 3 * i;
+        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2], 0, max);
+      }
+      break;
+    case 4:
+      for (int i = 0; i < m_height; i++)
+      {
+        int j = m_height - i - 1;
+        int k = 4 * i;
+        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2] +  data[k + 4], 0, max);
+      }
+      break;
+   }
+   float y = 0;
+   for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) 
+    m_dat.rf.line_buffer[(int)y] = COL_GRID;
+
+   gpDisplay->writeRect(m_dat.rf.count , m_y, 1, m_height, m_dat.rf.line_buffer);
+   m_dat.rf.count++;
+   if(m_dat.rf.count > m_width + m_x)
+     m_dat.rf.count = m_x + SCALE_WIDTH;;
+}
+
+void cParGraph::setSqueeze(uint16_t s, size_t sizeFft)
+{
+  if(m_mode == enGraphMode::LIVE_FFT)
+  {
+    int max = sizeFft / m_height;
+    m_dat.rf.squeeze = s;
+    if(m_dat.rf.squeeze > max)
+      m_dat.rf.squeeze = max;
+    if(m_dat.rf.squeeze < 1)
+      m_dat.rf.squeeze = 1;
+  }
+}
+
+uint16_t cParGraph::getSqueeze()
+{
+  if(m_mode == enGraphMode::LIVE_FFT)
+    return m_dat.rf.squeeze;
+  else
+    return 1;
+}
+
+float cParGraph::getMaxFreq(size_t sizeFft)
+{
+  if(m_mode == enGraphMode::LIVE_FFT)
+  {
+    float f =  (float)m_sampleRate / 2 * m_height * m_dat.rf.squeeze / sizeFft;
+    return f;
+  }
+  else
+    return m_sampleRate / 2;
 }

@@ -13,6 +13,7 @@
 #include "pnlbats.h"
 #include "pnlparams.h"
 #include "pnlinfo.h"
+#include "pnllive.h"
 
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
@@ -128,6 +129,8 @@ void cMenue::initPars() {
   devPars.recAuto.addItem(1402),
 
   devPars.sendDelay.init(0, 20, 1, 0);
+  devPars.sweepSpeed.init(2, 10, 1, 0);
+  devPars.liveAmplitude.init(10,150, 2, 0);
 
   devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
   devStatus.graph.setAmplitudeRaw(MAX_ADC);
@@ -169,6 +172,8 @@ void cMenue::initPars() {
   devStatus.digits.init(0, 10000, 1, 0);
   devStatus.temperature.init(-50,100,0.1,1);
 
+  devStatus.freq1Tick.init(0,300,0.1,1);
+
   load();
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
@@ -206,9 +211,13 @@ void cMenue::initDialogs() {
 
   panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initWaterPan(getPan(panWaterfall), lf);
+
   // x-t-diagram panel
   panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initTimePan(getPan(panTime), lf);
+
+  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initLivePan(getPan(pnlLive), lf);
 
   panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= getPan(panFont)->addTextItem(12000,                  15, 20,           200, lf);
@@ -342,8 +351,8 @@ void cMenue::save() {
   writeInt16ToEep(0x0058, devPars.stopH.get());
   writeInt16ToEep(0x005A, devPars.stopMin.get());
   writeFloatToEep(0x005C, devPars.voltFactor.get());
-  writeInt16ToEep(0x0060, 0);
-  writeInt16ToEep(0x0062, 0);
+  writeInt16ToEep(0x0060, devPars.sweepSpeed.get());
+  writeInt16ToEep(0x0062, devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, 0);
   writeInt16ToEep(0x0066, 0);
   writeInt16ToEep(0x0068, 0);
@@ -393,6 +402,8 @@ void cMenue::load() {
     devPars.stopH.set(readInt16FromEep(0x0058));
     devPars.stopMin.set(readInt16FromEep(0x005A));
     devPars.voltFactor.set(readFloatFromEep(0x005C));
+    devPars.sweepSpeed.set(readInt16FromEep(0x0060));
+    devPars.liveAmplitude.set(readInt16FromEep(0x0062));
   }
 #endif //#ifndef SIMU_DISPLAY
 }

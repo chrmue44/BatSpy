@@ -14,6 +14,7 @@
 #include "pnlmain.h"
 #include "cSdCard.h"
 #include "cLog.h"
+#include "pnllive.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -179,7 +180,8 @@ void loop()
     {
       cLog::logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
                  devStatus.voltage.get(), devStatus.temperature.get());
+      checkSupplyVoltage();
     }
   }
-  audio.operateRecorder();
+  audio.operate(menue.getFocusPanel() == pnlLive);
 }

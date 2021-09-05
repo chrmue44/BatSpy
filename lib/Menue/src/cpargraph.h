@@ -14,7 +14,7 @@
 #define SCALE_WIDTH   5
 #define COLMAP_DIST   3    ///< distance FFT to color map in pixel
 #define COLMAP_HEGHT  15
-#define Y_TICK_CNT    10 //number of ticks in waterfall diagram
+#define Y_TICK_CNT     5 //number of ticks in waterfall diagram
 
 struct stTime {
   int16_t yMin[DISP_WIDTH];
@@ -35,17 +35,29 @@ struct stFft {
   int16_t scratch[FFT_SIZE];
 };
 
+struct stRtFft
+{
+  uint16_t line_buffer[DISP_HEIGHT];
+  float scale = 10.0;
+  uint16_t count = SCALE_WIDTH;
+  uint16_t squeeze = 1;    ///< factor to display: 1: each freq of fft, 2: each 3nd freq, ...
+};
+
 struct uData {
   uData() :
   t(),
-  f() {}
+  f(),
+  rf()
+  {}
   stTime t;
   stFft f;
+  stRtFft rf;
 };
 
 enum enGraphMode {
   GRAPH_XT = 1,
   GRAPH_FFT = 2,
+  LIVE_FFT = 3,
 };
 
 /**
@@ -68,8 +80,10 @@ class cParGraph : public cParBase {
     strncpy(m_plotFileName, pName, sizeof(m_plotFileName));
     m_sampleRate = sampleRate;
   }
+  void setSampleRate(uint32_t sampleRate) { m_sampleRate = sampleRate;}
   void setFftLevels(float min, float max) { m_dat.f.levelMin = min; m_dat.f.levelMax = max; }
   void initDiagram();
+  void updateLiveData(uint16_t* data, int16_t maxAmpl);
 
   /**
    * @brief measure width of a bat call
@@ -78,6 +92,13 @@ class cParGraph : public cParBase {
    */
   float measure(int16_t levelRaw);
   void plotGraph();
+  /**
+   * @brief getMaxFreq get maximum frequency displayed in live graph
+   * @return
+   */
+  float getMaxFreq(size_t sizeFft);
+  void setSqueeze(u_int16_t s, size_t sizeFft);
+  uint16_t getSqueeze();
 
  protected:
   cParGraph();
@@ -114,7 +135,7 @@ class cParGraph : public cParBase {
   float m_tMax = 2.0;      ///< max x value of graph in physical units
   int m_plotState = 0;     ///< state of plotting
   char m_plotFileName[PAR_STR_LEN]; ///< name of plotted file
-  uint32_t m_sampleRate;   ///< sample rate of actual file
+  uint32_t m_sampleRate;    ///< sample rate of actual file
   uint16_t m_x;
   uint16_t m_y;
   uint16_t m_yMax;

@@ -9,7 +9,9 @@
 #endif
 #include "types.h"
 #include "config.h"
+
 #include <cstdint>
+#include <cstddef>
 
 class cMenue;
 
@@ -50,8 +52,13 @@ struct stSrDesc
  */
 class cAudio
 {
- private:
-#ifndef SIMU_DISPLAY
+#ifdef SIMU_DISPLAY
+ public:
+    static int32_t getSampleRateHz(enSampleRate sr);
+    static size_t getFftOutputSize() { return 512; }
+#else
+private:
+
 
   AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
   AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
@@ -62,7 +69,7 @@ class cAudio
   AudioFilterBiquad        m_filter;    // filter before peak detection
   AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
-
+  AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
 
   AudioConnection m_cMi2Mx; // mic to mixer
   AudioConnection m_cCa2Mx; // player to mixer
@@ -74,6 +81,7 @@ class cAudio
   AudioConnection m_cMu2Or; // multiplier to audio output right
   AudioConnection m_cMi2De; // microphone to delay
   AudioConnection m_cDe2Ca; // delay to recorder
+  AudioConnection m_cMi2Ff; // microphone to FFT
 
   uint32_t m_sampleRate;            // sample rate in Hz  
   uint32_t m_oscFreq = 45000;       // start heterodyne detecting at this frequency
@@ -83,17 +91,20 @@ class cAudio
   cTimer m_timeout;
   int m_oldCassMode = -1;
   float m_peakVal;                  // last measured peak value
+  uint32_t m_lastFft;
   
  public:
   cAudio();
   void init();
+  static int32_t getSampleRateHz(enSampleRate sr);
+  static size_t getFftOutputSize() { return sizeof(AudioAnalyzeFFT1024::output) / sizeof(AudioAnalyzeFFT1024::output[0]); }
   void setSampleRate(enSampleRate sr);
   void setPreAmpType(enPreAmp type);
   void setPreAmpGain(enGain gain);
   void setup();
   void updateCassMode();
   void checkAutoRecording(cMenue& menue, cRtc& rtc);
-  void operateRecorder();
+  void operate(bool liveFft);
   float getLastPeakVal() { return m_peakVal;}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
 
@@ -102,8 +113,8 @@ class cAudio
   void setTrigFilter(float freq, enFiltType type);
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
+  void calcLiveFft();
 #endif //#ifndef SIMU_DISPLAY
-public:
-  static int32_t getSampleRateHz(enSampleRate sr);
+
 };
 #endif   //#ifndef _CAUDIO_H

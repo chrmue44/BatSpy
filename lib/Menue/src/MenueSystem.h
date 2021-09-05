@@ -135,6 +135,7 @@ public:
   thPanel getFkeyPanel() { return m_fKeyPanel; }
   void setHdrPanel(thPanel pan) { m_hHeadrPanel = pan; refreshHdrPanel(); }
   thPanel getHdrPanel() { return m_hHeadrPanel; }
+  thPanel getFocusPanel() {return m_focus.panel; }
   thItem getFocusItem() { return m_focus.item; }
   enFocusState getFocusState() { return m_focus.state; }
   bool isDropDownInFocus() { return m_dropDownPan == m_focus.panel; }

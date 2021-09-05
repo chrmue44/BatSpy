@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "cutils.h"
 #include "debug.h"
 #include "cAudio.h"
@@ -5,6 +6,7 @@
 #define OWN_H
 #include "pnlmain.h"
 #undef OWN_H
+#include "pnllive.h"
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
@@ -48,7 +50,9 @@ void f1DropFunc(cMenuesystem* pThis, enKey key) {
       pThis->setFkeyPanel(fkeyWaterPan);
       break;
     case 3:
-      pThis->setMainPanel(panHisto);
+      devStatus.grafLive.initPlot(true);
+      setSampleRateLivePan();
+      pThis->setMainPanel(pnlLive);
       pThis->setHdrPanel(hdrPanWaterfall);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
@@ -332,7 +336,6 @@ int initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addStrItem(&devPars.fileName,      100, 30 +  5 * lf, 210, lf);
   err |= pan->addTextItem(203,                     3, 30 +  7 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  7 * lf,  15, lf, true);
-  err |= pan->addTextItem(300,                   175, 30 +  7 * lf,  30, lf);
   err |= pan->addTextItem(204,                     3, 30 +  8 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.volume,        150, 30 +  8 * lf,  20, lf, true);
   err |= pan->addTextItem(1320,                    3, 30 +  9 * lf,  80, lf);

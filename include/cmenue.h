@@ -45,7 +45,12 @@ struct stBatInfo
  */
 struct stStatus
 {
-  stStatus() : graph(GRAPH_XT), waterf(GRAPH_FFT) {}
+  stStatus() :
+  graph(enGraphMode::GRAPH_XT),
+  waterf(enGraphMode::GRAPH_FFT),
+  grafLive(enGraphMode::LIVE_FFT)
+  {
+  }
 
   cParEnum opMode = enOpMode::HEAR_HET; ///< display mode
   cParNum recCount = 0;           ///< nr of recordings
@@ -97,6 +102,7 @@ struct stStatus
   cParNum voltage = 0;
   cParNum digits = 0;
   cParNum temperature = 0;
+  cParGraph grafLive;
 };
 
 
@@ -135,6 +141,8 @@ struct stParams
   cParNum voltFactor = 1;            ///< factor digits to voltage
   cParEnum recAuto = 0;
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
+  cParNum liveAmplitude = 50;        ///< max. amplitude for live display
+  cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
 };
 
 

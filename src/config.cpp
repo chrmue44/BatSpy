@@ -1,10 +1,12 @@
 
 #include "config.h"
 #include <Arduino.h>
+
 #include "debug.h"
 #include "cmenue.h"
 #include "cMeanCalc.h"
 #include "InternalTemperature.h"
+#include "cLog.h"
 
 cMeanCalc<int16_t,10> digits;
 
@@ -33,6 +35,7 @@ void checkSupplyVoltage()
   if(!ok)
   {
     digitalWrite(PIN_POWER_OFF, 0);
+    cLog::logf("power down voltage too low : %f \n ", volt);
     delay(1000);
   }    
 }

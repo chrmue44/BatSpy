@@ -3,6 +3,8 @@
 //#define DEBUG_LEVEL 2
 #include "debug.h"
 #include "cmenue.h"
+#include "pnllive.h"
+
 #ifdef ARDUINO_TEENSY41
 #include <utility/imxrt_hw.h>
 #endif
@@ -51,7 +53,8 @@ m_cFi2Pk(m_filter, m_peak),
 m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
-m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0)
+m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
+m_cMi2Ff(m_audioIn, m_fft)
 {
   DPRINTLN4("Audio connections initialized");
 }
@@ -67,18 +70,7 @@ void cAudio::init()
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
   AudioMemory(600);
-  // Enable the audio shield and set the output volume.
-#ifdef AUDIO_SGTL5000
-  m_audioShield.enable();
-  m_audioShield.inputSelect(m_input);
-  m_audioShield.lineInLevel(0);
-  m_audioShield.volume(0.5);
-  m_audioShield.audioPreProcessorEnable();
-  // here are some settings for AVC that have a fairly obvious effect
-  m_audioShield.autoVolumeControl(2, 1, 0, -5, 0.5, 0.5); // see comments starting line #699 of control_sgtl5000.cpp in ./libraries/audio/
-#endif
-  // AVC has its own enable/disable bit
-  // you can use audioShield.autoVolumeEnable(0); to turn off AVC
+
   m_old.oscFrequency = 999;
 }
 
@@ -384,10 +376,11 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
   }
 }
 
-void cAudio::operateRecorder()
+void cAudio::operate(bool liveFft)
 {
-  m_cass.operate();
-
+  m_cass.operate();  
+  if(liveFft)
+    calcLiveFft();
   if (m_oldCassMode != m_cass.getMode())
   {
     if (m_cass.getMode() == enCassMode::STOP)
@@ -424,5 +417,14 @@ void cAudio::operateRecorder()
   }
 }
 
+void cAudio::calcLiveFft()
+{
+  if(m_fft.available() && millis() > (m_lastFft + devPars.sweepSpeed.get()))
+  {
+    m_lastFft = millis();
+    cParGraph* graph = getLiveFft();
+    graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+  }
+}
 
 #endif  //#ifndef SIMU_DISPLAY

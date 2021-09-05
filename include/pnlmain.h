@@ -11,7 +11,7 @@ extern thPanel f4MainPan;
 extern thPanel hdrMainPanel;
 extern thPanel panFont;
 extern thPanel panTime;        ///< panel to display time diagram
-extern thPanel panHisto;
+extern thPanel pnlLive;
 extern thPanel panGeo;
 extern thPanel panInfo;
 extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen

@@ -748,13 +748,26 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
     m_dropDownMaxSize = (m_height - FKEYPAN_HEIGHT - y) / LINE_HEIGHT;
     m_firstDropDownItem = 0;
     bool shorted = false;
-    if(m_dropDownMaxSize < s) {
-      shorted = true;
-      s = m_dropDownMaxSize - 1;
-      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, (s + 1) * LINE_HEIGHT + 2);
+    if(m_dropDownMaxSize < s)
+    {
+      if(y > (tCoord)(m_height / 2))
+      {
+        if(y > ((s - m_dropDownMaxSize) * LINE_HEIGHT))
+          y -= (s - m_dropDownMaxSize) * LINE_HEIGHT;
+        else
+          shorted = true;
+      }
+      else
+        shorted = true;
+    }
+    if(shorted)
+    {
+      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, m_dropDownMaxSize * LINE_HEIGHT + 2);
+      s = m_dropDownMaxSize -1;
     }
     else
       m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, s * LINE_HEIGHT + 2);
+
     tCoord yi = y;
 
     for(size_t i = 0; i < s; i++) {
