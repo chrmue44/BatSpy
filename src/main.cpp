@@ -183,5 +183,7 @@ void loop()
       checkSupplyVoltage();
     }
   }
-  audio.operate(menue.getFocusPanel() == pnlLive);
+  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
+              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
+  audio.operate( rtFft );
 }
