@@ -54,7 +54,8 @@ m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
 m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
-m_cMi2Ff(m_audioIn, m_fft)
+m_cMi2Hp(m_audioIn, m_filtDisp),
+m_cHp2Ft(m_filtDisp, m_fft)
 {
   DPRINTLN4("Audio connections initialized");
 }
@@ -72,6 +73,7 @@ void cAudio::init()
   AudioMemory(600);
 
   m_old.oscFrequency = 999;
+  m_filtDisp.setHighpass(0, 50);
 }
 
 #ifdef ARDUINO_TEENSY41

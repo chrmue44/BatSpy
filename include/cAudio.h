@@ -70,6 +70,7 @@ private:
   AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
   AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
+  AudioFilterBiquad        m_filtDisp;  // high pass filter for live display
 
   AudioConnection m_cMi2Mx; // mic to mixer
   AudioConnection m_cCa2Mx; // player to mixer
@@ -81,7 +82,8 @@ private:
   AudioConnection m_cMu2Or; // multiplier to audio output right
   AudioConnection m_cMi2De; // microphone to delay
   AudioConnection m_cDe2Ca; // delay to recorder
-  AudioConnection m_cMi2Ff; // microphone to FFT
+  AudioConnection m_cMi2Hp; // microphone to high pass
+  AudioConnection m_cHp2Ft; // high pass to fft
 
   uint32_t m_sampleRate;            // sample rate in Hz  
   uint32_t m_oscFreq = 45000;       // start heterodyne detecting at this frequency
