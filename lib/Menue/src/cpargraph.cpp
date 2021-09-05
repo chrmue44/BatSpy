@@ -253,7 +253,11 @@ void cParGraph::initPlot(bool b) {
   if(m_mode == GRAPH_FFT)
     m_dat.f.firstFft = true;
   if(m_mode == enGraphMode::LIVE_FFT)
+  {
     m_dat.rf.count = m_x + SCALE_WIDTH;
+    for(int i = 0; i < X_TICK_CNT; i++)
+      m_dat.rf.x_tick[i] = m_x + (m_width - SCALE_WIDTH)/(X_TICK_CNT) * i + SCALE_WIDTH;
+  }
   m_plotState = 0;
   update(true);
 }
@@ -453,43 +457,67 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
 void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
 {
   int max = maxAmpl * m_dat.rf.squeeze;
-  switch (m_dat.rf.squeeze)
+  if(m_dat.rf.squeeze == 0)
+    max = maxAmpl;
+  bool xTick = false;
+  for(int i = 0; i < X_TICK_CNT; i++)
   {
-    case 1:
-      for (int i = 0; i < m_height; i++)
-      {
-        int j = m_height - i - 1;
-        m_dat.rf.line_buffer[j] = getColor(data[i], 0, max);
-      }
-      break;
-    case 2:
-      for (int i = 0; i < m_height; i++)
-      {
-        int j = m_height - i - 1;
-        int k = 2 * i;
-        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1], 0, max);
-      }
-      break;
-    case 3:
-      for (int i = 0; i < m_height; i++)
-      {
-        int j = m_height - i - 1;
-        int k = 3 * i;
-        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2], 0, max);
-      }
-      break;
-    case 4:
-      for (int i = 0; i < m_height; i++)
-      {
-        int j = m_height - i - 1;
-        int k = 4 * i;
-        m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2] +  data[k + 4], 0, max);
-      }
-      break;
+    if (m_dat.rf.x_tick[i] == m_dat.rf.count)
+      xTick = true;
+  }
+  if(xTick)
+  {
+    for (int i = 0; i < m_height; i++)
+      m_dat.rf.line_buffer[i] = COL_GRID;
+  }
+  else
+  {
+    switch (m_dat.rf.squeeze)
+    {
+      case 0:
+        for (int i = 0; i < m_height; i++)
+        {
+          int j = m_height - i - 1;
+          int k = i/2;
+          m_dat.rf.line_buffer[j] = getColor(data[k], 0, max);
+        }
+        break;
+      case 1:
+        for (int i = 0; i < m_height; i++)
+        {
+          int j = m_height - i - 1;
+          m_dat.rf.line_buffer[j] = getColor(data[i], 0, max);
+        }
+        break;
+      case 2:
+        for (int i = 0; i < m_height; i++)
+        {
+          int j = m_height - i - 1;
+          int k = 2 * i;
+          m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1], 0, max);
+        }
+        break;
+      case 3:
+        for (int i = 0; i < m_height; i++)
+        {
+          int j = m_height - i - 1;
+          int k = 3 * i;
+          m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2], 0, max);
+        }
+        break;
+      case 4:
+        for (int i = 0; i < m_height; i++)
+        {
+          int j = m_height - i - 1;
+          int k = 4 * i;
+          m_dat.rf.line_buffer[j] = getColor(data[k] + data[k + 1] +  data[k + 2] +  data[k + 4], 0, max);
+        }
+        break;
+     }
+     float y = 0;
+     for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) 
+      m_dat.rf.line_buffer[(int)y] = COL_GRID;
    }
-   float y = 0;
-   for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) 
-    m_dat.rf.line_buffer[(int)y] = COL_GRID;
 
    gpDisplay->writeRect(m_dat.rf.count , m_y, 1, m_height, m_dat.rf.line_buffer);
    m_dat.rf.count++;
@@ -497,7 +525,7 @@ void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
      m_dat.rf.count = m_x + SCALE_WIDTH;;
 }
 
-void cParGraph::setSqueeze(uint16_t s, size_t sizeFft)
+void cParGraph::setSqueeze(int16_t s, size_t sizeFft)
 {
   if(m_mode == enGraphMode::LIVE_FFT)
   {
@@ -505,8 +533,8 @@ void cParGraph::setSqueeze(uint16_t s, size_t sizeFft)
     m_dat.rf.squeeze = s;
     if(m_dat.rf.squeeze > max)
       m_dat.rf.squeeze = max;
-    if(m_dat.rf.squeeze < 1)
-      m_dat.rf.squeeze = 1;
+    if(m_dat.rf.squeeze < 0)
+      m_dat.rf.squeeze = 0;
   }
 }
 
@@ -522,7 +550,11 @@ float cParGraph::getMaxFreq(size_t sizeFft)
 {
   if(m_mode == enGraphMode::LIVE_FFT)
   {
-    float f =  (float)m_sampleRate / 2 * m_height * m_dat.rf.squeeze / sizeFft;
+    float f;
+    if(m_dat.rf.squeeze > 0)
+      f = (float)m_sampleRate / 2 * m_height * m_dat.rf.squeeze / sizeFft;
+    else
+      f = (float)m_sampleRate / 2 * m_height /2  / sizeFft;
     return f;
   }
   else

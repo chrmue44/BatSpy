@@ -112,17 +112,3 @@ void AudioPlayFatsRaw::update(void)
 	release(block);
 }
 
-//#define B2M (uint32_t)((double)4294967296000.0 / m_sampleRate / 2.0) // 97352592
-/*
-uint32_t AudioPlayFatsRaw::positionMillis(void)
-{
-	return ((uint64_t)m_file_offset * B2M) >> 32;
-}
-*/
-
-
-/*
-uint32_t AudioPlayFatsRaw::lengthMillis(void)
-{
-	return ((uint64_t)m_file_size * B2M) >> 32;
-} */

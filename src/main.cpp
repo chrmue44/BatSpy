@@ -109,9 +109,11 @@ void setup()
 
 
 // *********************** main loop **************************
-
+int loopCount = 0;
+int loopFreq;
 void loop() 
 {
+  loopCount++;
   static bool backLightOn = true;
   if (tick300ms.check())
   {
@@ -163,17 +165,19 @@ void loop()
 
     if(tick1s.check())
     {
-        devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-        devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-        devStatus.audioMem.set(AudioMemoryUsage());
-        devStatus.peakVal.set(audio.getLastPeakVal() * 100);
-        size_t freeSpace;  size_t totSpace;
-        cSdCard::inst().getFreeMem(freeSpace, totSpace);
-        float volt = readSupplyVoltage();
-        devStatus.voltage.set(volt);
-        devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
-        float temp = readTemperature();
-        devStatus.temperature.set(temp);
+      loopFreq = loopCount;
+      loopCount = 0;
+      devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+      devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+      devStatus.audioMem.set(AudioMemoryUsage());
+      devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+      size_t freeSpace;  size_t totSpace;
+      cSdCard::inst().getFreeMem(freeSpace, totSpace);
+      float volt = readSupplyVoltage();
+      devStatus.voltage.set(volt);
+      devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+      float temp = readTemperature();
+      devStatus.temperature.set(temp);
     }
 
     if(tick15Min.check())

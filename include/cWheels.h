@@ -1,6 +1,7 @@
 #ifndef CWHEELS_H_
 #define CWHEELS_H_
 
+#define ENCODER_DO_NOT_USE_INTERRUPTS
 #include <Encoder.h>
 #include <MenueSystem.h>
 #include <Bounce.h>

@@ -129,7 +129,7 @@ void cMenue::initPars() {
   devPars.recAuto.addItem(1402),
 
   devPars.sendDelay.init(0, 20, 1, 0);
-  devPars.sweepSpeed.init(2, 10, 1, 0);
+  devPars.sweepSpeed.init(0, 10, 1, 0);
   devPars.liveAmplitude.init(10,150, 2, 0);
 
   devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());

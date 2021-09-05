@@ -4,7 +4,7 @@
 
 cParGraph* getLiveFft()
 {
- return reinterpret_cast<cParGraph*>(menue.getPan(pnlLive)->itemList[3].p); 
+ return reinterpret_cast<cParGraph*>(menue.getPan(pnlLive)->itemList[4].p); 
 }
 
 
@@ -41,11 +41,12 @@ void funcFmax(cMenuesystem* pThis, enKey key)
 int initLivePan(cPanel* pan, tCoord lf)
 {
   int h = 128;
-  int p = 28;
-  int err = pan->addNumItem(&devStatus.freqMax,    10,  20,                25, lf, true, funcFmax);
-     err |= pan->addNumItem(&devStatus.freqMin,    10, 148,                25, lf, false);
-     err |= pan->addNumItem(&devStatus.freq1Tick,  10, 148 - h/Y_TICK_CNT, 25, lf, false);
-     err |= pan->addGraphItem(&devStatus.grafLive, 40,  25,               261, h);
+  int p = 30;
+  int err = pan->addNumItem(&devStatus.freqMax,     5,  20,                25, lf, true, funcFmax);
+     err |= pan->addTextItem(300,                   5,  20 + 1 * lf,       25, lf);
+     err |= pan->addNumItem(&devStatus.freqMin,     5, 148,                25, lf, false);
+     err |= pan->addNumItem(&devStatus.freq1Tick,   5, 148 - h/Y_TICK_CNT, 30, lf, false);
+     err |= pan->addGraphItem(&devStatus.grafLive, 38,  25,               280, h);
 
      err |= pan->addTextItem(470,                   5,  p + h + 1 * lf,   80, lf);
      err |= pan->addNumItem(&devPars.sweepSpeed,  125,  p + h + 1 * lf,   25, lf, true);

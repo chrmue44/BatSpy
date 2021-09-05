@@ -14,7 +14,8 @@
 #define SCALE_WIDTH   5
 #define COLMAP_DIST   3    ///< distance FFT to color map in pixel
 #define COLMAP_HEGHT  15
-#define Y_TICK_CNT     5 //number of ticks in waterfall diagram
+#define Y_TICK_CNT     5   ///< number of Y ticks in waterfall diagram
+#define X_TICK_CNT     4   ///< number of X ticks in live diagram 
 
 struct stTime {
   int16_t yMin[DISP_WIDTH];
@@ -40,7 +41,8 @@ struct stRtFft
   uint16_t line_buffer[DISP_HEIGHT];
   float scale = 10.0;
   uint16_t count = SCALE_WIDTH;
-  uint16_t squeeze = 1;    ///< factor to display: 1: each freq of fft, 2: each 3nd freq, ...
+  int16_t squeeze = 1;    ///< factor to display: 1: each freq of fft, 2: each 3nd freq, ...
+  uint16_t x_tick[X_TICK_CNT];
 };
 
 struct uData {
@@ -97,7 +99,7 @@ class cParGraph : public cParBase {
    * @return
    */
   float getMaxFreq(size_t sizeFft);
-  void setSqueeze(u_int16_t s, size_t sizeFft);
+  void setSqueeze(int16_t s, size_t sizeFft);
   uint16_t getSqueeze();
 
  protected:

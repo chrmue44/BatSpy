@@ -15,8 +15,6 @@
 
 class cMenue;
 
-// *********************************SAMPLING ****************************
-
 
 // channel numbers for audio mixer
 #define MIX_CHAN_MIC     0
