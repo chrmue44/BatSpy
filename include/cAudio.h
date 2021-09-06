@@ -2,7 +2,7 @@
  * BatSpy: Teensy 4.1 based recording device for bat sounds  *
  * ***********************************************************
  * Copyright (C) 2021 Christian Mueller                      *
- *                    chrmue44(AT)gmail{DOT}.com             *
+ *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
  * ***********************************************************
  * The cAudio class encapsulates the complete audio
