@@ -522,7 +522,11 @@ void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
    gpDisplay->writeRect(m_dat.rf.count , m_y, 1, m_height, m_dat.rf.line_buffer);
    m_dat.rf.count++;
    if(m_dat.rf.count > m_width + m_x)
-     m_dat.rf.count = m_x + SCALE_WIDTH;;
+   {
+     m_dat.rf.msPerDiv = (millis() - m_dat.rf.tStart) / X_TICK_CNT;
+     m_dat.rf.tStart = millis();
+     m_dat.rf.count = m_x + SCALE_WIDTH;
+   }
 }
 
 void cParGraph::setSqueeze(int16_t s, size_t sizeFft)

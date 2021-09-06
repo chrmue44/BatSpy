@@ -49,7 +49,7 @@ struct stStatus
   graph(enGraphMode::GRAPH_XT),
   waterf(enGraphMode::GRAPH_FFT),
   grafLive(enGraphMode::LIVE_FFT)
-  {
+  {  
   }
 
   cParEnum opMode = enOpMode::HEAR_HET; ///< display mode
@@ -103,6 +103,7 @@ struct stStatus
   cParNum digits = 0;
   cParNum temperature = 0;
   cParGraph grafLive;
+  cParNum msPerDiv = 150;
 };
 
 

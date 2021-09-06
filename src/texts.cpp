@@ -83,6 +83,7 @@ struct stTxtList Texts[] =
   {   455, "Temperatur [°C]"           ,"Temperature [°C]"},
   {   470, "Ablenkgeschw."             ,"Sweep Speed"},
   {   475, "Amplitude"                 ,"Amplitude"},
+  {   480, "ms/div"                    ,0},
 
   {  1001, "Laden ..."                 ,"Load ..."},  
   {  1005, "Sollen die Parametereinstellungen"," "},

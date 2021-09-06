@@ -38,8 +38,9 @@ struct stFft {
 
 struct stRtFft
 {
+  uint32_t tStart;
+  float msPerDiv;
   uint16_t line_buffer[DISP_HEIGHT];
-  float scale = 10.0;
   uint16_t count = SCALE_WIDTH;
   int16_t squeeze = 1;    ///< factor to display: 1: each freq of fft, 2: each 3nd freq, ...
   uint16_t x_tick[X_TICK_CNT];
@@ -101,6 +102,7 @@ class cParGraph : public cParBase {
   float getMaxFreq(size_t sizeFft);
   void setSqueeze(int16_t s, size_t sizeFft);
   uint16_t getSqueeze();
+  float getMsPerDiv() { return m_dat.rf.msPerDiv; }
 
  protected:
   cParGraph();

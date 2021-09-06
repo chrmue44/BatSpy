@@ -173,8 +173,9 @@ void cMenue::initPars() {
   devStatus.temperature.init(-50,100,0.1,1);
 
   devStatus.freq1Tick.init(0,300,0.1,1);
-
+  devStatus.msPerDiv.init(0,10000,1,0);
   load();
+  
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());

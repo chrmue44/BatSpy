@@ -178,6 +178,8 @@ void loop()
       devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
       float temp = readTemperature();
       devStatus.temperature.set(temp);
+      cParGraph* g = getLiveFft();
+      devStatus.msPerDiv.set(g->getMsPerDiv());
     }
 
     if(tick15Min.check())
