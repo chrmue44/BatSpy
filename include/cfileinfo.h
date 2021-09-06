@@ -1,3 +1,16 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The cFileInfo class provides functionality to create XML
+ * info files for recordings. The XML file contains
+ * additional information that is not included in the audio
+ * recording
+ * ***********************************************************/
+
 #ifndef C_FILE_INFO_H
 #define C_FILE_INFO_H
 

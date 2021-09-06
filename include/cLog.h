@@ -1,3 +1,13 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The cLog class provides functionality to create and write
+ * to log files
+ * ***********************************************************/
 #ifndef _CLOG_H_
 #define _CLOG_H_
 

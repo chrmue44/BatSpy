@@ -1,3 +1,14 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The cCassette class encapsulates the recording and play
+ * back functionality based on external SD-Card libraries
+ * and the Teensy Audio Library
+ * ***********************************************************/
 #ifndef CCASSETTE_H
 #define CCASSETTE_H
 

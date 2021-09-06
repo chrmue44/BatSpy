@@ -1,3 +1,12 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The main panel
+ * ***********************************************************/
 #ifndef PANMAIN_H
 #define PANMAIN_H
 #include "cmenue.h"

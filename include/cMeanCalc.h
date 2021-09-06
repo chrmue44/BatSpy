@@ -1,3 +1,16 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * A simple template class to calculate moving mean with
+ * minimum CPU usage
+ *************************************************************/
+#ifndef C_MEANCALC_H
+#define C_MEANCALC_H
+
 #include <stddef.h>
 
 template <class T, size_t N> class cMeanCalc
@@ -33,3 +46,5 @@ template <class T, size_t N> class cMeanCalc
   T m_sum;
   T m_list[N];
 };
+
+#endif  //#ifndef C_MEANCALC_H

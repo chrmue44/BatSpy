@@ -1,10 +1,10 @@
-﻿/*****************************************************
- *   project: Bat Sound Recorder
- *    author: Christian Mueller
- *      date: 2021-05-18
- *****************************************************
- * copyright: (c) 2021 Christian Mueller
- *****************************************************/
+﻿/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************/
 
 #include "config.h"
 #include "ctext.h"

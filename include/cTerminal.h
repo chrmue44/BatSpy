@@ -1,3 +1,13 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The terminal interface via the serial line to operate
+ * BatSpy via terminal
+ * ***********************************************************/
 #ifndef CTERMINAL_H
 #define CTERMINAL_H
 

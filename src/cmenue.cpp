@@ -1,3 +1,11 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************/
+
 #include <cstdlib>
 #include <cstring>
 #include "cmenue.h"
@@ -175,7 +183,7 @@ void cMenue::initPars() {
   devStatus.freq1Tick.init(0,300,0.1,1);
   devStatus.msPerDiv.init(0,10000,1,0);
   load();
-  
+
 #ifndef SIMU_DISPLAY
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
