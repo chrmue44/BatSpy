@@ -1,3 +1,11 @@
+/*************************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * A generic menue system 
+ * TODO: explantion 
+ * ***********************************************************/
 #ifndef CMENUEYSTEM_H
 #define CMENUEYSTEM_H
 

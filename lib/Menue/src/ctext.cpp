@@ -1,3 +1,8 @@
+/*************************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************/
 #include <cstdint>
 #include <cstdlib>
 #include "ctext.h"

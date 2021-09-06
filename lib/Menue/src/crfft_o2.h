@@ -1,3 +1,10 @@
+/*************************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * FFT class implementation
+ * ***********************************************************/
 #ifndef _CRFFT_H_
 #define _CRFFT_H_
 

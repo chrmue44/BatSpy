@@ -1,3 +1,11 @@
+/*************************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * The panel class and the basic objects that can be placed 
+ * on panels.
+ * ***********************************************************/
 #ifndef CPANEL_H
 #define CPANEL_H
 

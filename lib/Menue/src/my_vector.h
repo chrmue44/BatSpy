@@ -1,3 +1,10 @@
+/*************************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}.com             *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * A vector like container without dynamic memory allocation
+ * ***********************************************************/
 #ifndef MY_VECTOR_H
 #define MY_VECTOR_H
 #include <Arduino.h>
