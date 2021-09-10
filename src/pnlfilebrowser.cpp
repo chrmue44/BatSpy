@@ -1,32 +1,44 @@
 #include "pnlfilebrowser.h"
 #include "pnlmain.h"
 #include "debug.h"
+#include "cutils.h"
 
 int getItemIndexFile(int i) {  return FILE_OFFS + (i * (BTN_COUNT + 1)); }
 int getItemIndexSel(int i) {   return getItemIndexFile(i) + 1; }
 int getItemIndexDel(int i) {   return getItemIndexFile(i) + 2; }
 
+bool isDir(const char* name)
+{
+  bool retVal = false;
+  for(int i = 0; i < devStatus.dir.size(); i++)
+  {
+    if(strncmp(name, devStatus.dir[i].name, sizeof (devStatus.dir[i].name)) == 0)
+    {
+      retVal = devStatus.dir[i].isDir;
+      break;
+    }
+  }
+  return retVal;
+}
 
 void fillFileList(cPanel* pan)
 {
   size_t idxPnl = 0;
   size_t idxDir = devStatus.fileIndex;
-  pan->itemList[2].isVisible = devStatus.fileIndex > 1;
+  pan->itemList[2].isVisible = devStatus.fileIndex > 0;
 
   do
   {
     if(idxDir < devStatus.dir.size())
     {
-      if(strcmp(devStatus.dir[idxDir].name, "..") == 0)
+      const char* pFile = devStatus.dir[idxDir].name;
+      const char* pMatch = devStatus.dirFilter.getActText();
+      if(cUtils::match(pMatch, pFile) || devStatus.dir[idxDir].isDir)
       {
-        idxDir++;
-        continue;
-      }
-      else
-      {
-        devStatus.dirFiles[idxPnl].set(devStatus.dir[idxDir].name);
+        devStatus.dirFiles[idxPnl].set(pFile);
         pan->itemList[getItemIndexSel(idxPnl)].isVisible = true;
         pan->itemList[getItemIndexDel(idxPnl)].isVisible = true;
+        idxPnl++;
       }
     }
     else
@@ -34,10 +46,11 @@ void fillFileList(cPanel* pan)
       devStatus.dirFiles[idxPnl].set("");
       pan->itemList[getItemIndexSel(idxPnl)].isVisible = false;
       pan->itemList[getItemIndexDel(idxPnl)].isVisible = false;
+      idxPnl++;
     }
-    idxPnl++;
     idxDir++;
   } while(idxPnl < DIR_PAN_SIZE);
+  pan->itemList[getItemIndexFile(DIR_PAN_SIZE)].isVisible = idxDir < devStatus.dir.size();
   pan->refresh();
 }
 
@@ -47,56 +60,19 @@ void initFileBrowser(cPanel* pan, const char* dir)
   sd.chdir(dir);
   devPars.fileName.set(sd.getActDir());
   sd.dir(devStatus.dir);
-  devStatus.fileIndex = 1;
+  devStatus.fileIndex = 0;
   menue.refreshHdrPanel();
   fillFileList(pan);
   menue.initFocusOnPanel(pan);
 }
 
 
-void dirBrowseFunc(cMenuesystem* pThis, enKey key) {
-  enSdRes rc = enSdRes::OK;
-  cSdCard& sd = cSdCard::inst();
-  enFocusState state = pThis->getFocusState();
-  // leaving dropdown
-  if (pThis->isDropDownInFocus())
-  {
-    sd.chdir(devPars.dirSel.getActText());
-    devPars.fileName.set(sd.getActDir());
-    sd.dir(devStatus.dir);
-    devStatus.fileIndex = 1;
-    pThis->refreshHdrPanel();
-    fillFileList(pThis->getPan(panFileBrowser));
-  }
-  // before opening dropdown
-  else
-  {
-    if ((state == SELECT) && (key = enKey::KEY_OK))
-    {
-      tDirInfo p;
-      rc = sd.dir(p);
-      devPars.dirSel.clear();
-      if (rc == OK)
-      {
-        tDirInfo& dir = p;
-        for (size_t i = 0; i < dir.size(); i++)
-        {
-          if (dir[i].isDir)
-          {
-            devPars.dirSel.addItem(dir[i].name);
-            DPRINTF2("dir name: %s\n", dir[i].name);
-          }
-        }
-      }
-      DPRINTF2("devPars.dirSel.size: %u\n", devPars.dirSel.size());
-    }
-  }
-}
-
 void fuFilter(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-
+  cPanel* pnl = pThis->getPan(panFileBrowser);
+  initFileBrowser(pnl, cSdCard::inst().getActDir());
 }
+
 
 void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
@@ -104,16 +80,32 @@ void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
   int index = getItemIndexFile(p->getIndex());
   cPanel* pnl = pThis->getPan(panFileBrowser);
   cParStr* pStr = reinterpret_cast<cParStr*>(pnl->itemList[index].p);
-  initFileBrowser(pnl, pStr->get());
+  if(isDir(pStr->get()))
+    initFileBrowser(pnl, pStr->get());
+  else
+  {
+    char buf[FILENAME_LEN];
+    strncpy(buf, cSdCard::inst().getActDir(), sizeof (buf));
+    strcat(buf,"/");
+    strcat(buf,pStr->get());
+    devPars.fileName.set(buf);
+    pThis->refreshHdrPanel();
+  }
 }
 
 char buf[FILENAME_LEN];
 
 void fuDelete(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  cSdCard& sd = cSdCard::inst();
-  sd.del(buf);
-  initFileBrowser(pThis->getPan(panFileBrowser), sd.getActDir());
+  if(key == enKey::YES)
+  {
+    cSdCard& sd = cSdCard::inst();
+    if(isDir(buf))
+      sd.deldir(buf);
+    else
+      sd.del(buf);
+    initFileBrowser(pThis->getPan(panFileBrowser), sd.getActDir());
+  }
 }
 
 void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -128,7 +120,7 @@ void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void funcUp(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  if(devStatus.fileIndex > 1)
+  if(devStatus.fileIndex > 0)
     devStatus.fileIndex--;
   fillFileList(pThis->getPan(panFileBrowser));
 }
@@ -149,7 +141,7 @@ int initFileBrowserPan(cPanel* pan, tCoord lf)
   {
     err |= pan->addStrItem(&devStatus.dirFiles[i], 3, 33 + (i+1) * lf, 160, lf, false);
     err |= pan->addBtnItem(500, 190, 33 + (i+1) * lf, 35, lf , funcSel, i);
-    err |= pan->addBtnItem(510, 230, 33 + (i+1) * lf, 35, lf , funcDel);
+    err |= pan->addBtnItem(510, 230, 33 + (i+1) * lf, 35, lf , funcDel, i);
   }
   err |= pan->addBtnItem(235,   190, 40 + (DIR_PAN_SIZE + 1) * lf, 40, lf, funcDown);
   return err;

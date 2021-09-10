@@ -46,42 +46,42 @@ void f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
       pThis->setFkeyPanel(fkeyMainPan);
       break;
     case 1:
-      devStatus.graph.initPlot(true);
-      pThis->setMainPanel(panTime);
-      pThis->setHdrPanel(hdrPanWaterfall);;
-      pThis->setFkeyPanel(fkeyWaterPan);
-      break;
-    case 2:
-      devStatus.waterf.initPlot(true);
-      pThis->setMainPanel(panWaterfall);
-      pThis->setHdrPanel(hdrPanWaterfall);
-      pThis->setFkeyPanel(fkeyWaterPan);
-      break;
-    case 3:
       devStatus.grafLive.initPlot(true);
       setSampleRateLivePan();
       pThis->setMainPanel(pnlLive);
       pThis->setHdrPanel(hdrPanWaterfall);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
+    case 2:
+      pThis->setMainPanel(panFileBrowser);
+      pThis->setHdrPanel(hdrPanWaterfall);
+      pThis->setFkeyPanel(fkeyFilePan);
+     break;
+    case 3:
+      devStatus.graph.initPlot(true);
+      pThis->setMainPanel(panTime);
+      pThis->setHdrPanel(hdrPanWaterfall);;
+      pThis->setFkeyPanel(fkeyWaterPan);
+      break;
     case 4:
+      devStatus.waterf.initPlot(true);
+      pThis->setMainPanel(panWaterfall);
+      pThis->setHdrPanel(hdrPanWaterfall);
+      pThis->setFkeyPanel(fkeyWaterPan);
+      break;
+    case 5:
+      pThis->setMainPanel(panInfo);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
+    case 6:
       pThis->setMainPanel(panBats);
       pThis->setHdrPanel(hdrBatInfo);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
-    case 5:
+    case 7:
       pThis->setMainPanel(panFont);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
-    case 6:
-      pThis->setMainPanel(panInfo);
-      pThis->setFkeyPanel(fkeyMainPan);
-      break;
-    case 7:
-      pThis->setMainPanel(panFileBrowser);
-      pThis->setHdrPanel(hdrPanWaterfall);
-      pThis->setFkeyPanel(fkeyFilePan);
-    break;
     case 8:
       pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
       break;
@@ -98,8 +98,8 @@ void initFunctionItems()
   f1MainItems.addItem(104);
   f1MainItems.addItem(105);
   f1MainItems.addItem(106);
-  f1MainItems.addItem(112);
-  f1MainItems.addItem(110);
+  f1MainItems.addItem(107);
+  f1MainItems.addItem(108);
 
   f4MainItems.addItem(1001);
   f4MainItems.addItem(1021);
@@ -249,7 +249,8 @@ void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 }
 
 
-void setFileToDisplay(const char* buf) {
+void setFileToDisplay(const char* buf)
+{
   char infoFile[FILENAME_LEN];
   cUtils::replace(buf, ".raw", ".xml", infoFile, sizeof(infoFile));
   cFileInfo info;
@@ -261,7 +262,7 @@ void setFileToDisplay(const char* buf) {
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
-
+/*
 void fileFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   enSdRes rc = enSdRes::OK;
   cSdCard& sd = cSdCard::inst();
@@ -297,9 +298,9 @@ void fileFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
     }
   }
   setFileToDisplay(buf);
-}
+}*/
 
-
+/*
 void dirFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   enSdRes rc = enSdRes::OK;
   cSdCard& sd = cSdCard::inst();
@@ -330,7 +331,7 @@ void dirFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
       DPRINTF2("devPars.dirSel.size: %u\n", devPars.dirSel.size());
     }
   }
-}
+}*/
 
 int initMainPanel(cPanel* pan, tCoord lf)
 {
@@ -342,20 +343,20 @@ int initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
   err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  80, lf, true, dispModeFunc);
-  err |= pan->addTextItem(206,                     3, 30 +  3 * lf,  80, lf);
-  err |= pan->addListItem(&devPars.dirSel,       100, 30 +  3 * lf, 210, lf, true, dirFunc);
-  err |= pan->addTextItem(205,                     3, 30 +  4 * lf,  80, lf);
-  err |= pan->addListItem(&devPars.fileSel,      100, 30 +  4 * lf, 210, lf, true, fileFunc);
-  err |= pan->addTextItem(208,                     3, 30 +  5 * lf,  80, lf);
-  err |= pan->addStrItem(&devPars.fileName,      100, 30 +  5 * lf, 210, lf);
-  err |= pan->addTextItem(203,                     3, 30 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  7 * lf,  15, lf, true);
-  err |= pan->addTextItem(204,                     3, 30 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.volume,        150, 30 +  8 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                    3, 30 +  9 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,   150, 30 +  9 * lf, 120, lf, true);
-  err |= pan->addTextItem(1325,                    3, 30 + 10 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   150, 30 + 10 * lf, 120, lf, true);
+//  err |= pan->addTextItem(206,                     3, 30 +  3 * lf,  80, lf);
+//  err |= pan->addListItem(&devPars.dirSel,       100, 30 +  3 * lf, 210, lf, true, dirFunc);
+//  err |= pan->addTextItem(205,                     3, 30 +  4 * lf,  80, lf);
+//  err |= pan->addListItem(&devPars.fileSel,      100, 30 +  4 * lf, 210, lf, true, fileFunc);
+//  err |= pan->addTextItem(208,                     3, 30 +  5 * lf,  80, lf);
+//  err |= pan->addStrItem(&devPars.fileName,      100, 30 +  5 * lf, 210, lf);
+  err |= pan->addTextItem(203,                     3, 30 +  3 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  3 * lf,  15, lf, true);
+  err |= pan->addTextItem(204,                     3, 30 +  4 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.volume,        150, 30 +  4 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                    3, 30 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,   150, 30 +  5 * lf, 120, lf, true);
+  err |= pan->addTextItem(1325,                    3, 30 +  6 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   150, 30 +  6 * lf, 120, lf, true);
 
   err |= pan->addTextItem(201,                     3, 200 + lf,     70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);

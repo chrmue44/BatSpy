@@ -46,7 +46,8 @@ thPanel cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord width
 }
 
 
-void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId, enPanel panType) {
+void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId, enPanel panType)
+{
     char str[32];
     char fmt[12];
     char lon, lat;
@@ -138,7 +139,8 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         }
         break;
 
-      case ITEM_DATE: {
+      case ITEM_DATE:
+        {
           cParDate* p = reinterpret_cast<cParDate*>(item.p);
           unsigned int y = p->getYear();
           if(y > 2000)
@@ -150,14 +152,16 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         }
         break;
 
-     case ITEM_TIME: {
+     case ITEM_TIME:
+        {
           cParTime* p = reinterpret_cast<cParTime*>(item.p);
           snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
           printText(str);
         }
         break;
 
-     case ITEM_GEO: {
+     case ITEM_GEO:
+        {
           cParGeoPos* p = reinterpret_cast<cParGeoPos*>(item.p);
           if(p->getDegLat() >= 0)
             lat = 'N';
@@ -174,13 +178,15 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         }
         break;
 
-     case ITEM_STRING: {
+     case ITEM_STRING:
+        {
           cParStr* p = reinterpret_cast<cParStr*>(item.p);
           printText(p->get());
         }
         break;
 
-     case ITEM_BUTTON: {
+     case ITEM_BUTTON:
+        {
           cParBtn* p = reinterpret_cast<cParBtn*>(item.p);
           gpDisplay->setCursor(item.x + 2, item.y + 2);
           printText(p->getText());
@@ -190,7 +196,8 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         }
         break;
 
-     case ITEM_GRAPH: {
+     case ITEM_GRAPH:
+        {
           cParGraph* p = reinterpret_cast<cParGraph*>(item.p);
           p->initDiagram();
           if(item.f)
@@ -205,13 +212,17 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
 
 }
 
-void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel) {
+void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
+{
   size_t size = pan->itemList.size();
-  switch(pan->type) {
+  switch(pan->type)
+  {
     case PNL_FKEYS:
-      if(m_refreshFkey) {
+      if(m_refreshFkey)
+      {
         gpDisplay->drawLine(pan->x, pan->y, m_width - 1, pan->y, COL_TEXT);
-        for(uint32_t i = 1; i < 4; i++) {
+        for(uint32_t i = 1; i < 4; i++)
+        {
            int x = m_width * i / 4;
            gpDisplay->drawLine(x, pan->y, x, m_height - 1, COL_TEXT);
         }
@@ -222,7 +233,8 @@ void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel) {
       break;
 
     case PNL_DROPDOWN:
-      if(pan->isRefresh()) {
+      if(pan->isRefresh())
+      {
         pan->refresh();
         gpDisplay->fillRect(pan->x, pan->y, pan->width, pan->height, COL_TEXTBACK);
         gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
@@ -233,7 +245,8 @@ void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel) {
     case PNL_PARLIST:
       break;
     case PNL_MESSAGE:
-      if(pan->isRefresh()) {
+      if(pan->isRefresh())
+      {
         pan->refresh();
         gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, COL_TEXTHDRBACK);
         gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4);
@@ -246,26 +259,29 @@ void cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel) {
       }
       break;
   }
-  for(uint32_t i = 0; i < size; i++) {
+  for(uint32_t i = 0; i < size; i++)
      drawItem(pan->itemList[i], hPanel, i, pan->type);
-  }
 }
 
-void cMenuesystem::drawPanels() {
+void cMenuesystem::drawPanels()
+{
   // draw header panel
-  if(m_hHeadrPanel < m_panelList.size()) {
-    if(m_refreshHdr) {
+  if(m_hHeadrPanel < m_panelList.size())
+  {
+    if(m_refreshHdr)
+    {
       m_refreshHdr = false;
       cPanel* pan = &m_panelList[m_hHeadrPanel];
       gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
       drawSubPanel(pan, m_fKeyPanel);
-
     }
   }
 
   // draw fKey panel
-  if(m_fKeyPanel < m_panelList.size()) {
-    if(m_refreshFkey) {
+  if(m_fKeyPanel < m_panelList.size())
+  {
+    if(m_refreshFkey)
+    {
       cPanel* pan = &m_panelList[m_fKeyPanel];
       gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
       drawSubPanel(pan, m_fKeyPanel);
@@ -273,16 +289,19 @@ void cMenuesystem::drawPanels() {
     }
   }
   // draw main panel
-  if(m_refreshMain) {
+  if(m_refreshMain)
+  {
     m_refreshMain = false;
     cPanel& p = m_panelList[m_mainPanel];
     gpDisplay->fillRect(p.x, p.y, p.width, p.height, COL_TEXTBACK);
   }
 
-  drawSubPanel(&m_panelList[m_mainPanel], m_mainPanel);
+  if(!m_msgActive)
+    drawSubPanel(&m_panelList[m_mainPanel], m_mainPanel);
 
   // draw focus panel
-  if ((m_focus.panel < m_panelList.size() ) && (m_focus.panel != m_hHeadrPanel)){
+  if ((m_focus.panel < m_panelList.size() ) && (m_focus.panel != m_hHeadrPanel))
+  {
     cPanel* pan = &m_panelList[m_focus.panel];
     drawSubPanel(pan, m_focus.panel);
   }
@@ -290,20 +309,23 @@ void cMenuesystem::drawPanels() {
 }
 
 
-void cMenuesystem::init() {
+void cMenuesystem::init()
+{
   initPars();
   initDialogs();
   drawPanels();
   refreshAll();
 }
 
-void cMenuesystem::setFocus(thPanel pan, thItem item, enFocusState state) {
+void cMenuesystem::setFocus(thPanel pan, thItem item, enFocusState state)
+{
   m_focus.panel = pan;
   m_focus.item = item;
   m_focus.state = state;
 }
 
-void cMenuesystem::setMainPanel(thPanel pan) {
+void cMenuesystem::setMainPanel(thPanel pan)
+{
   m_mainPanel = pan;
   m_refreshMain = true;
   setFocus(pan, 0, enFocusState::DISP);
@@ -311,13 +333,15 @@ void cMenuesystem::setMainPanel(thPanel pan) {
   m_focusSaveDrop = m_focus;
 }
 
-int32_t cMenuesystem::handleKey(enKey key) {
+int32_t cMenuesystem::handleKey(enKey key)
+{
   DPRINTF1("handleKey(%i)", key);
 
   int32_t retVal = 0;
   cPanel* pan;
   // check if F-Key was pressed
-  if (m_fKeyPanel < m_panelList.size()) {
+  if (m_fKeyPanel < m_panelList.size())
+  {
     bool pressed = false;
     pan = &m_panelList[m_fKeyPanel];
     switch(key) {
@@ -351,10 +375,9 @@ int32_t cMenuesystem::handleKey(enKey key) {
      default:
        break;
     }
-    if (pressed) {
-#ifndef SIMU_DISPLAY
+    if (pressed)
+    {
       m_lastKeyTime = millis();
-#endif
       drawPanels();
       return retVal;
     }
@@ -363,7 +386,8 @@ int32_t cMenuesystem::handleKey(enKey key) {
   // check key strokes for focus panel
   if(key != TICK)
     m_lastKeyTime = millis();
-  if (m_focus.panel < m_panelList.size()) {
+  if (m_focus.panel < m_panelList.size())
+  {
     pan = &m_panelList[m_focus.panel];
     handleEditMode(*pan, key);
   }
@@ -371,11 +395,13 @@ int32_t cMenuesystem::handleKey(enKey key) {
   return retVal;
 }
 
-void cMenuesystem::resetTimer() {
+void cMenuesystem::resetTimer()
+{
   m_lastKeyTime = millis();
 }
 
-void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   cParEnum* p = reinterpret_cast<cParEnum*>(pThis->m_pDropDownEnum.p);
   uint32_t val = pThis->getFocusItem() + pThis->m_firstDropDownItem;
   //  Serial.printf("set enum to %u\n",val);
@@ -386,7 +412,8 @@ void cMenuesystem::setEnumDropDown(cMenuesystem* pThis, enKey key, cParBase* pIt
 }
 
 
-void cMenuesystem::setListDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void cMenuesystem::setListDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   cParList* p = reinterpret_cast<cParList*>(pThis->m_pDropDownEnum.p);
   uint32_t val = pThis->getFocusItem() + pThis->m_firstDropDownItem;
   //  Serial.printf("set enum to %u\n",val);
@@ -397,7 +424,8 @@ void cMenuesystem::setListDropDown(cMenuesystem* pThis, enKey key, cParBase* pIt
 }
 
 
-void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
+void cMenuesystem::handleEditMode(cPanel& pan, enKey key)
+{
   stPanelItem& item = pan.itemList[m_focus.item];
 
   cParEnum* pEnum = nullptr;
@@ -407,19 +435,18 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
  // DPRINTF1("handleEditMode(%i, %i)", pan., key);
   switch(key) {
     case enKey::KEY_OK:
-      switch(m_focus.state) {
+      switch(m_focus.state)
+      {
         case enFocusState::DISP:
           m_focus.item = pan.findFirstEditItem();
-          if(m_focus.item < pan.itemList.size()) {
+          if(m_focus.item < pan.itemList.size())
+          {
             m_focus.state = enFocusState::SELECT;
             pan.itemList[m_focus.item].p->update(true);
           }
           break;
 
         case enFocusState::EDIT:
-          if((item.type == ITEM_BUTTON) && item.f)
-            item.f(this, key, item.p);
-//          m_focus.state = enFocusState::DISP;
           m_focus.state = enFocusState::SELECT;
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
@@ -428,33 +455,40 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
           break;
 
         case enFocusState::SELECT:
-          if(pan.type == PNL_FKEYS) {
+          if(pan.type == PNL_FKEYS)
+          {
             refreshFkeyPanel();
             if(pan.itemList[m_focus.item].f)
               pan.itemList[m_focus.item].f(this, key, item.p);
           }
-          else if (pan.type == PNL_DROPDOWN) {
+          else if (pan.type == PNL_DROPDOWN)
+          {
             gpDisplay->fillRect(pan.x, pan.y, pan.width, pan.height, COL_TEXTBACK);
-            if(item.f) {
+            if(item.f)
               item.f(this, key, item.p);
-            } 
             destroyDropDown();
           }
-          else if (item.type == ITEM_ENUM) {
-            if(item.f) {
+          else if (item.type == ITEM_ENUM)
+          {
+            if(item.f)
               item.f(this, key, item.p);
-            }
             createDropDown(item, item.x, item.y, item.width, setEnumDropDown);
           }
-          else if (item.type == ITEM_LIST) {
-            if(item.f) {
+          else if (item.type == ITEM_LIST)
+          {
+            if(item.f)
               item.f(this, key, item.p);
-            }
             createDropDown(item, item.x, item.y, item.width, setListDropDown);
           }
-          else
-            m_focus.state = enFocusState::EDIT;
-          pan.itemList[m_focus.item].p->update(true);
+          else if(item.type == ITEM_BUTTON)
+          {
+            if(item.f)
+              item.f(this, key, item.p);
+            if(pan.type == PNL_MESSAGE)
+              destroyMsg();
+          }
+          if(pan.type != PNL_MESSAGE)
+            pan.itemList[m_focus.item].p->update(true);
           break;
 
         default:
@@ -465,7 +499,8 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
 
     case enKey::UP:
       DPRINTLN1("Key up\n");
-      switch(m_focus.state) {
+      switch(m_focus.state)
+      {
         case enFocusState::DISP:
           DPRINTLN1("enFocusState::FST_DISP\n");
 //          m_focus.item = pan.findFirstEditItem();
@@ -492,14 +527,18 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
               }
             }
           }
-          else {
-            if(m_focus.item <= 1) {
+          else
+          {
+            if(m_focus.item <= 1)
+            {
               if(m_firstDropDownItem > 0)
                 m_firstDropDownItem--;
-              else {
+              else
+              {
                 if(m_focus.item > 0)
                   m_focus.item--;
-                else {
+                else
+                {
                   m_firstDropDownItem = pEnum->size() - pan.itemList.size();
                   m_focus.item = pan.itemList.size() - 1;
                 }
@@ -521,7 +560,8 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
       break;
 
     case enKey::DOWN:
-      switch(m_focus.state) {
+      switch(m_focus.state)
+      {
         case enFocusState::DISP:
        //   m_focus.item = pan.findFirstEditItem();
           m_focus.state = enFocusState::SELECT;
@@ -530,9 +570,11 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
         case enFocusState::SELECT:
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           pan.itemList[m_focus.item].p->update(true);
-          if(pan.type != PNL_DROPDOWN) {
+          if(pan.type != PNL_DROPDOWN)
+          {
             m_focus.item = pan.findNextEditItem(m_focus.item);
-            if (m_focus.item > pan.itemList.size()) {
+            if (m_focus.item > pan.itemList.size())
+            {
               if(pan.type == PNL_MESSAGE)
                 m_focus.item = pan.findFirstEditItem();
               else {
@@ -546,12 +588,15 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
               }
             }
           }
-          else {
+          else
+          {
             if(m_focus.item < (pan.itemList.size() - 1))
               m_focus.item++;
-            else {
+            else
+            {
               m_firstDropDownItem++;
-              if(m_firstDropDownItem > (pEnum->size() - pan.itemList.size())) {
+              if(m_firstDropDownItem > (pEnum->size() - pan.itemList.size()))
+              {
                  m_firstDropDownItem = 0;
                  m_focus.item = 0;
               }
@@ -572,19 +617,24 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key) {
   }
 }
 
-void cMenuesystem::editPar(stPanelItem &item, enKey key) {
-    switch (item.type) {
+void cMenuesystem::editPar(stPanelItem &item, enKey key)
+{
+    switch (item.type)
+    {
       case ITEM_ENUM:
         break;
 
-      case ITEM_NR: {
+      case ITEM_NR:
+        {
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
-          if(key == DOWN) {
+          if(key == DOWN)
+          {
             p->set(p->get() + p->getStep());
             if(p->get() > p->getMax())
               p->set(p->getMax());
           }
-          if(key == UP) {
+          if(key == UP)
+          {
             p->set(p->get() - p->getStep());
             if(p->get() < p->getMin())
               p->set(p->getMin());
@@ -600,7 +650,8 @@ void cMenuesystem::editPar(stPanelItem &item, enKey key) {
       item.f(this, key, item.p);
 }
 
-void cMenuesystem::reInitDropDownItems() {
+void cMenuesystem::reInitDropDownItems()
+{
   cPanel& pan = m_panelList[m_dropDownPan];
   size_t s = pan.itemList.size() - 1;
   uint32_t firstItem = 0;
@@ -610,7 +661,8 @@ void cMenuesystem::reInitDropDownItems() {
     p->setText("    \x1E");
   }
 
-  if(m_pDropDownEnum.type == ITEM_ENUM) {
+  if(m_pDropDownEnum.type == ITEM_ENUM)
+  {
     cParEnum* pDr = reinterpret_cast<cParEnum*>(m_pDropDownEnum.p);
     for (uint32_t i = firstItem; i < s; i++) {
       cParText* p = reinterpret_cast<cParText*>(pan.itemList[i].p);
@@ -622,9 +674,11 @@ void cMenuesystem::reInitDropDownItems() {
     if((s + m_firstDropDownItem) == (pDr->size() - 1))
       p1->setText(pDr->getText(s + m_firstDropDownItem));
   }
-  else if (m_pDropDownEnum.type == ITEM_LIST) {
+  else if (m_pDropDownEnum.type == ITEM_LIST)
+  {
     cParList* pDr = reinterpret_cast<cParList*>(m_pDropDownEnum.p);
-    for (uint32_t i = firstItem; i < s; i++) {
+    for (uint32_t i = firstItem; i < s; i++)
+    {
       cParText* p = reinterpret_cast<cParText*>(pan.itemList[i].p);
       p->setText(pDr->getText(i + m_firstDropDownItem));
     }
@@ -637,25 +691,29 @@ void cMenuesystem::reInitDropDownItems() {
 }
 
 
-void msgFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void msgFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
    pThis->destroyMsg();
 }
 
 
-void cMenuesystem::msgYesFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void cMenuesystem::msgYesFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   if(pThis->m_msgCallBack)
     pThis->m_msgCallBack(pThis, YES, pItem);
 }
 
 
-void cMenuesystem::msgNoFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
-    if(pThis->m_msgCallBack)
-      pThis->m_msgCallBack(pThis, YES, pItem);
+void cMenuesystem::msgNoFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  if(pThis->m_msgCallBack)
+    pThis->m_msgCallBack(pThis, enKey::NO, pItem);
 }
 
 
 void cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* str2,
-                                                  const char* str3, const char* str4) {
+                                                  const char* str3, const char* str4)
+{
   m_MsgPan = createPanel(PNL_MESSAGE, 30, 30, 260, 50);
 
   cParStr* parStr = new cParStr(str);
@@ -681,9 +739,9 @@ void cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* s
   }
   y += 20;
   thItem btn = m_panelList[m_MsgPan].itemList.size();
+  m_focusSaveMsg = m_focus;
   if(getPan(m_focus.panel)->itemList[m_focus.item].type == enItemType::ITEM_BUTTON)
      setFocus(m_focus.panel, m_focus.item, enFocusState::SELECT);
-  m_focusSaveMsg = m_focus;
 
   switch (type)
   {
@@ -698,18 +756,23 @@ void cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* s
       break;
   }
   m_panelList[m_MsgPan].height = y - m_panelList[m_MsgPan].y + 14 + 10;
+  m_msgActive = true;
 }
 
 
-void cMenuesystem::destroyMsg() {
-  if (m_MsgPan < m_panelList.size()) {
+void cMenuesystem::destroyMsg()
+{
+  if (m_MsgPan < m_panelList.size())
+  {
     size_t s = m_panelList[m_MsgPan].itemList.size();
     for (size_t i = 0; i < s; i++) {
-      if(m_panelList[m_MsgPan].itemList[i].type == ITEM_STRING) {
+      if(m_panelList[m_MsgPan].itemList[i].type == ITEM_STRING)
+      {
          delete m_panelList[m_MsgPan].itemList[i].p;
          m_panelList[m_MsgPan].itemList[i].p = nullptr;
       }
-      if(m_panelList[m_MsgPan].itemList[i].type == ITEM_BUTTON) {
+      if(m_panelList[m_MsgPan].itemList[i].type == ITEM_BUTTON)
+      {
          delete m_panelList[m_MsgPan].itemList[i].p;
          m_panelList[m_MsgPan].itemList[i].p = nullptr;
       }
@@ -719,14 +782,15 @@ void cMenuesystem::destroyMsg() {
     m_MsgPan = 9999;
     m_focus = m_focusSaveMsg;
     m_msgCallBack = nullptr;
+    m_msgActive = false;
     refreshMainPanel();
   }
 }
 
 
 
-thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoord width, fuFocus f) {
-
+thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoord width, fuFocus f)
+{
   cParList* pL = nullptr;
   cParEnum* pE = nullptr;
   size_t s = 0;
@@ -770,7 +834,8 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
 
     tCoord yi = y;
 
-    for(size_t i = 0; i < s; i++) {
+    for(size_t i = 0; i < s; i++)
+    {
       if(item.type == ITEM_ENUM)
         m_panelList[m_dropDownPan].addTextItem(pE->getText(i), x,yi,width, LINE_HEIGHT, true, f);
       else if(item.type == ITEM_LIST)
@@ -778,9 +843,8 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
       yi += LINE_HEIGHT;
     }
 
-    if(shorted) {
+    if(shorted)
       m_panelList[m_dropDownPan].addTextItem("   \x1f", x,yi,width, LINE_HEIGHT, true, f);
-    }
 
     m_focusSaveDrop = m_focus;
     setFocus(m_dropDownPan,0,enFocusState::SELECT);
@@ -790,11 +854,14 @@ thPanel cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, tCoor
     return 9999;
 }
 
-void cMenuesystem::destroyDropDown() {
-  if (m_dropDownPan < m_panelList.size()) {
+void cMenuesystem::destroyDropDown()
+{
+  if (m_dropDownPan < m_panelList.size())
+  {
     m_panelList[m_dropDownPan].itemList.clear();
     m_panelList.erase(m_panelList.begin() + m_dropDownPan);
-    if((m_MsgPan <= m_panelList.size()) && (m_MsgPan > m_dropDownPan)) {
+    if((m_MsgPan <= m_panelList.size()) && (m_MsgPan > m_dropDownPan))
+    {
       m_MsgPan--;      
       m_focus.panel = m_MsgPan;
       m_focusSaveMsg = m_focusSaveDrop;
@@ -806,19 +873,22 @@ void cMenuesystem::destroyDropDown() {
   }
 }
 
-void cMenuesystem::refreshMainPanel() {
+void cMenuesystem::refreshMainPanel()
+{
   m_refreshMain = true;
   if(m_mainPanel < m_panelList.size())
     m_panelList[m_mainPanel].refresh();
 }
 
-void cMenuesystem::refreshFkeyPanel() {
+void cMenuesystem::refreshFkeyPanel()
+{
   m_refreshFkey = true;
   if(m_fKeyPanel < m_panelList.size())
     m_panelList[m_fKeyPanel].refresh();
 }
 
-void cMenuesystem::refreshHdrPanel() {
+void cMenuesystem::refreshHdrPanel()
+{
   m_refreshHdr = true;
   m_panelList[m_hHeadrPanel].refresh();
 }
@@ -830,7 +900,8 @@ void cMenuesystem::refreshAll() {
   drawPanels();
 }
 
-uint32_t cMenuesystem::getTimeAfterKeyPress() {
+uint32_t cMenuesystem::getTimeAfterKeyPress()
+{
   uint32_t actTim;
 #ifndef SIMU_DISPLAY
   actTim = millis();
@@ -845,12 +916,14 @@ uint32_t cMenuesystem::getTimeAfterKeyPress() {
   return delta;
 }
 
-bool cMenuesystem::keyPauseLongEnough(uint32_t ms) {
+bool cMenuesystem::keyPauseLongEnough(uint32_t ms)
+{
   return getTimeAfterKeyPress() > ms;
 }
 
 
-void cMenuesystem::printText(const char *txt) {
+void cMenuesystem::printText(const char *txt)
+{
   char buf[512];
 
   cUtils::replaceUTF8withInternalCoding(txt, buf, sizeof(buf));

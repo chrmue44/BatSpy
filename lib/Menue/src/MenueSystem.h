@@ -218,7 +218,7 @@ private:
   bool m_refreshMain = true;
   bool m_refreshFkey = true;
   bool m_refreshHdr = true;
-  bool m_MsgActive = false;
+  bool m_msgActive = false;
   cParBtn* m_pMsgOkBtn = NULL;
   fuFocus m_msgCallBack = NULL;
 

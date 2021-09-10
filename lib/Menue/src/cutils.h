@@ -22,6 +22,8 @@ class cUtils
   static int replaceAll(const char* str, const char* toSearch, const char* replaceStr, char* result, size_t resultSize);
   static int replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize);
   static bool isWhiteSpace(char c);
+  static bool match(const char *pattern, const char * str);
+
 };
 
 #endif  //#ifndef C_UTILS_H
