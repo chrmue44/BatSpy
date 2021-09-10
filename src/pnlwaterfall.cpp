@@ -223,7 +223,7 @@ int initTimePan(cPanel* pan, tCoord lf) {
   err |= pan->addTextItem(306,                     1,  20 +  2 * lf, 23, lf);
   err |= pan->addNumItem(&devPars.threshHold,      1,  20 +  3 * lf, 18, lf, true);
   err |= pan->addTextItem(307,                    19,  20 +  3 * lf,  8, lf);
-  err |= pan->addBtnItem(308,                      1,  20 +  5 * lf, 30, lf, btnMeasFunc);
+  err |= pan->addBtnItem(308,                      1,  20 +  5 * lf, 30, lf + 2, btnMeasFunc);
   err |= pan->addNumItem(&devStatus.pulseWidth,    1,  20 +  7 * lf, 30, lf, false);
   err |= pan->addStrItem(&devStatus.measUnit,      1,  20 +  8 * lf, 30, lf, false);
   err |= pan->addNumItem(&devStatus.amplMin,       1, 205,           24, lf, false);

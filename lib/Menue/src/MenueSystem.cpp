@@ -746,12 +746,12 @@ void cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* s
   switch (type)
   {
     case enMsg::INFO:
-      m_panelList[m_MsgPan].addBtnItem(10, 130, y, 60, 14, msgFunc);
+      m_panelList[m_MsgPan].addBtnItem(10, 130, y, 60, 16, msgFunc);
       setFocus(m_MsgPan,btn, enFocusState::EDIT);
       break;
     case enMsg::YESNO:
-      m_panelList[m_MsgPan].addBtnItem(15,  60, y, 60, 14, msgYesFunc);
-      m_panelList[m_MsgPan].addBtnItem(16, 180, y, 60, 14, msgNoFunc);
+      m_panelList[m_MsgPan].addBtnItem(15,  60, y, 60, 16, msgYesFunc);
+      m_panelList[m_MsgPan].addBtnItem(16, 180, y, 60, 16, msgNoFunc);
       setFocus(m_MsgPan,btn, enFocusState::SELECT);
       break;
   }

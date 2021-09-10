@@ -10,7 +10,7 @@ int getItemIndexDel(int i) {   return getItemIndexFile(i) + 2; }
 bool isDir(const char* name)
 {
   bool retVal = false;
-  for(int i = 0; i < devStatus.dir.size(); i++)
+  for(size_t i = 0; i < devStatus.dir.size(); i++)
   {
     if(strncmp(name, devStatus.dir[i].name, sizeof (devStatus.dir[i].name)) == 0)
     {
@@ -90,6 +90,7 @@ void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
     strcat(buf,pStr->get());
     devPars.fileName.set(buf);
     pThis->refreshHdrPanel();
+    setFileToDisplay(buf);
   }
 }
 
@@ -136,13 +137,14 @@ int initFileBrowserPan(cPanel* pan, tCoord lf)
   int err = 0;
   err |= pan->addTextItem(220,                     3, 20         ,  80, lf);
   err |= pan->addEnumItem(&devStatus.dirFilter,   90, 20         ,  50, lf, true, fuFilter);
-  err |= pan->addBtnItem(230,   190, 20,          40, lf, funcUp);
+  err |= pan->addBtnItem(230,   190, 20,          35, lf + 4, funcUp);
   for(int i = 0; i< DIR_PAN_SIZE; i++)
   {
-    err |= pan->addStrItem(&devStatus.dirFiles[i], 3, 33 + (i+1) * lf, 160, lf, false);
-    err |= pan->addBtnItem(500, 190, 33 + (i+1) * lf, 35, lf , funcSel, i);
-    err |= pan->addBtnItem(510, 230, 33 + (i+1) * lf, 35, lf , funcDel, i);
+    tCoord y = 31 + (i+1) * (lf + 2);
+    err |= pan->addStrItem(&devStatus.dirFiles[i], 3, y, 160, lf + 2, false);
+    err |= pan->addBtnItem(500, 190, y, 35, lf + 2 , funcSel, i);
+    err |= pan->addBtnItem(510, 230, y, 35, lf + 2 , funcDel, i);
   }
-  err |= pan->addBtnItem(235,   190, 40 + (DIR_PAN_SIZE + 1) * lf, 40, lf, funcDown);
+  err |= pan->addBtnItem(235,   190, 40 + (DIR_PAN_SIZE + 1) * (lf + 2), 35, lf + 4, funcDown);
   return err;
 }
