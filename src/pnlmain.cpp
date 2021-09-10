@@ -24,7 +24,7 @@ cParEnum f4MainItems(0);
 // *******************************************
 // drop down panel F1 for main panel
 
-void powerOffFunc(cMenuesystem* pThis, enKey key) {
+void powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   switch (key) 
   {
     case enKey::YES:
@@ -38,7 +38,7 @@ void powerOffFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f1DropFunc(cMenuesystem* pThis, enKey key) {
+void f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   switch (pThis->getFocusItem()) {
     case 0:
       pThis->setMainPanel(panGeo);
@@ -78,6 +78,11 @@ void f1DropFunc(cMenuesystem* pThis, enKey key) {
       pThis->setFkeyPanel(fkeyMainPan);
       break;
     case 7:
+      pThis->setMainPanel(panFileBrowser);
+      pThis->setHdrPanel(hdrPanWaterfall);
+      pThis->setFkeyPanel(fkeyFilePan);
+    break;
+    case 8:
       pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
       break;
   }
@@ -93,6 +98,7 @@ void initFunctionItems()
   f1MainItems.addItem(104);
   f1MainItems.addItem(105);
   f1MainItems.addItem(106);
+  f1MainItems.addItem(112);
   f1MainItems.addItem(110);
 
   f4MainItems.addItem(1001);
@@ -104,7 +110,7 @@ void initFunctionItems()
 }
 
 
-void f1Func(cMenuesystem* pThis, enKey key) {
+void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f1MainItems;
@@ -113,7 +119,7 @@ void f1Func(cMenuesystem* pThis, enKey key) {
 
 }
 
-void f2Func(cMenuesystem* pThis, enKey key) {
+void f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
       (devStatus.opMode.get() == enOpMode::HEAR_DIRECT)) {
     if (devStatus.playStatus.get() == 0)
@@ -129,7 +135,7 @@ void f2Func(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f4LoadFunc(cMenuesystem* pThis, enKey key) {
+void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   switch (key) {
     case YES:
       pThis->load();
@@ -141,7 +147,7 @@ void f4LoadFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f4SaveFunc(cMenuesystem* pThis, enKey key) {
+void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   switch (key) {
     case enKey::YES:
       pThis->save();
@@ -153,7 +159,7 @@ void f4SaveFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f4DropFunc(cMenuesystem* pThis, enKey key) {
+void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   switch (pThis->getFocusItem()) {
     case 0:
       pThis->showMsg(enMsg::YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
@@ -208,7 +214,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f4Func(cMenuesystem* pThis, enKey key) {
+void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f4MainItems;
@@ -238,7 +244,7 @@ void setVisibilityRecCount(cMenuesystem* pThis)
     p->itemList[2].isVisible = false;
 }
 
-void dispModeFunc(cMenuesystem* pThis, enKey key) {
+void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   setVisibilityRecCount(pThis);
 }
 
@@ -256,7 +262,7 @@ void setFileToDisplay(const char* buf) {
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
 
-void fileFunc(cMenuesystem* pThis, enKey key) {
+void fileFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   enSdRes rc = enSdRes::OK;
   cSdCard& sd = cSdCard::inst();
   enFocusState state = pThis->getFocusState();
@@ -294,7 +300,7 @@ void fileFunc(cMenuesystem* pThis, enKey key) {
 }
 
 
-void dirFunc(cMenuesystem* pThis, enKey key) {
+void dirFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   enSdRes rc = enSdRes::OK;
   cSdCard& sd = cSdCard::inst();
   enFocusState state = pThis->getFocusState();

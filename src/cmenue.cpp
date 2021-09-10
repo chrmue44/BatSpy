@@ -22,6 +22,7 @@
 #include "pnlparams.h"
 #include "pnlinfo.h"
 #include "pnllive.h"
+#include "pnlfilebrowser.h"
 
 #ifndef SIMU_DISPLAY
 #include "cSdCard.h"
@@ -47,48 +48,27 @@ cMenue::~cMenue() {
 }
 
 void cMenue::initPars() {
-  devPars.preAmpGain.addItem(1331);
-  devPars.preAmpGain.addItem(1332);
-  devPars.preAmpGain.addItem(1333);
-  devPars.preAmpGain.addItem(1334);
-  devPars.preAmpType.addItem(1321);
-  devPars.preAmpType.addItem(1322);
   
   devPars.lang.clear();
   devPars.lang.addItem(1101);
   devPars.lang.addItem(1102);
   loadLanguage();
-  devStatus.opMode.clear();
-  devStatus.opMode.addItem(20);
-  devStatus.opMode.addItem(21);
-  devStatus.opMode.addItem(22);
-  devStatus.opMode.addItem(23);
-  devStatus.opMode.addItem(24);
 
   devPars.mixFreq.init(1,20, 1, 0);
 
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
-  devStatus.playStatus.clear();
-  devStatus.playStatus.addItem(320);
-  devStatus.playStatus.addItem(325);
-  devStatus.playStatus.addItem(335);
-  devStatus.playStatus.addItem(337);
-
-  devStatus.timStep.init(0, 10, 0.0, DEC_TIM_MIN);
-  devStatus.timMin.init(0, 10, devStatus.timStep.get() * 2, DEC_TIM_MIN);
-  devStatus.timMax.init(0, 12, 0.4, DEC_TIM_MIN);
-
-  devStatus.amplMax.init(1,100,0.0,0);
-
-  devStatus.cpuAudioAvg.init(0,100,1,2);
-  devStatus.cpuAudioMax.init(0,100,1,2);
-  devStatus.audioMem.init(0,10000,1,0);
-  
   initBats();
 
   initFunctionItems();
+
+  devPars.preAmpGain.addItem(1331);
+  devPars.preAmpGain.addItem(1332);
+  devPars.preAmpGain.addItem(1333);
+  devPars.preAmpGain.addItem(1334);
+  devPars.preAmpType.addItem(1321);
+  devPars.preAmpType.addItem(1322);
 
 
   for(int t = 1300; t <= 1317; t++)
@@ -140,17 +120,46 @@ void cMenue::initPars() {
   devPars.sweepSpeed.init(0, 10, 1, 0);
   devPars.liveAmplitude.init(10,150, 2, 0);
 
+  devStatus.opMode.clear();
+  devStatus.opMode.addItem(20);
+  devStatus.opMode.addItem(21);
+  devStatus.opMode.addItem(22);
+  devStatus.opMode.addItem(23);
+  devStatus.opMode.addItem(24);
+
+  devStatus.playStatus.clear();
+  devStatus.playStatus.addItem(320);
+  devStatus.playStatus.addItem(325);
+  devStatus.playStatus.addItem(335);
+  devStatus.playStatus.addItem(337);
+
+  devStatus.timStep.init(0, 10, 0.0, DEC_TIM_MIN);
+  devStatus.timMin.init(0, 10, devStatus.timStep.get() * 2, DEC_TIM_MIN);
+  devStatus.timMax.init(0, 12, 0.4, DEC_TIM_MIN);
+
+  devStatus.amplMax.init(1,100,0.0,0);
+
+  devStatus.cpuAudioAvg.init(0,100,1,2);
+  devStatus.cpuAudioMax.init(0,100,1,2);
+  devStatus.audioMem.init(0,10000,1,0);
+  devStatus.dirFilter.addItem(221);
+  devStatus.dirFilter.addItem(222);
+  devStatus.dirFilter.addItem(223);
+  devStatus.dirFilter.addItem(224);
+  devStatus.dirFilter.addItem(225);
+
+  for(int i=0; i < DIR_PAN_SIZE; i++)
+    devStatus.dirFiles[i].set("--");
+
   devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
   devStatus.graph.setAmplitudeRaw(MAX_ADC);
   devStatus.graph.setPlotBorders(0.0, 2.5);
 
-  devStatus.btnMeas = new cParBtn(Txt::get(308));
   devStatus.pulseWidth.init(0, 9999, 0, 1);
 
   devStatus.recCount.set(0);
   devStatus.recCount.init(0,99999,1,0);
 
-  devStatus.btnSetTime = new cParBtn(Txt::get(1032));
   devStatus.year.init(2020, 2030, 1, 0);
   devStatus.month.init(1,12,1,0);
   devStatus.day.init(1,31,1,0);
@@ -172,7 +181,6 @@ void cMenue::initPars() {
   devStatus.lonSec.init(0,999,5,0,3);
   devStatus.geoPos.setLat(49.1234);
   devStatus.geoPos.setLon(8.2345);
-  devStatus.btnAudio = new cParBtn(Txt::get(309));
   
   devStatus.peakVal.init(0, 100, 0.1, 2);
   devStatus.freeSpace.init(0, 100, 1, 0);
@@ -182,6 +190,7 @@ void cMenue::initPars() {
 
   devStatus.freq1Tick.init(0,300,0.1,1);
   devStatus.msPerDiv.init(0,10000,1,0);
+
   load();
 
 #ifndef SIMU_DISPLAY
@@ -264,6 +273,10 @@ void cMenue::initDialogs() {
 
   panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
   err |= initDateTimePan(getPan(panDateTime), lf);
+
+  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
+  err |= initFileBrowserPan(getPan(panFileBrowser), lf);
+  initFileBrowser(getPan(panFileBrowser), "/");
 }
 
 void writeFloatToEep(int32_t addr, float val) {

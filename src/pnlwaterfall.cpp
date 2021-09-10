@@ -9,7 +9,7 @@
 #include "pnlmain.h"
 #include "cutils.h"
 
-void f2WaterFunc(cMenuesystem* pThis, enKey key) {
+void f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   if(devStatus.fileIndex > 0)
     devStatus.fileIndex--;
   while(devStatus.fileIndex >= 0 )
@@ -42,7 +42,7 @@ void f2WaterFunc(cMenuesystem* pThis, enKey key) {
   }
 }
 
-void f3WaterFunc(cMenuesystem* pThis, enKey key) {
+void f3WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   devStatus.fileIndex++;
   while(devStatus.fileIndex < devStatus.dir.size())
   {
@@ -81,12 +81,14 @@ int initFkeysWaterPan(cPanel* pan, tCoord lf) {
 }
 
 
-void fftLevelFunc(cMenuesystem* pThis, enKey key) {
+void fftLevelFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   devStatus.waterf.setFftLevels(devPars.fftLevelMin.get(), devPars.fftLevelMax.get());
   devStatus.waterf.initPlot(true);
 }
 
-void panWaterZoomFunc(cMenuesystem* pThis, enKey key) {
+void panWaterZoomFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   switch (key) {
     case enKey::UP:
     case enKey::DOWN:
@@ -108,17 +110,21 @@ void panWaterZoomFunc(cMenuesystem* pThis, enKey key) {
 
 const float stepTab[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2};
 
-void timeStepFunc(cMenuesystem* pThis, enKey key) {
+void timeStepFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   float step = devStatus.timStep.get();
   size_t i;
-  for(i = 0; i < (sizeof(stepTab)/sizeof(stepTab[0])); i++) {
+  for(i = 0; i < (sizeof(stepTab)/sizeof(stepTab[0])); i++)
+  {
     if(step == stepTab[i])
       break;
   }
 
-  switch (key) {
+  switch (key)
+  {
     case enKey::UP:
-      if (i > 0) {
+      if (i > 0)
+      {
         float val = stepTab[i - 1];
         devStatus.timStep.set(val);
       }
@@ -145,7 +151,8 @@ void timeStepFunc(cMenuesystem* pThis, enKey key) {
 
 
 
-int initWaterPan(cPanel* pan, tCoord lf) {
+int initWaterPan(cPanel* pan, tCoord lf)
+{
   int height = 128;
   int err = pan->addTextItem(300,               15, 80,            25, lf);
   err |= pan->addNumItem(&devStatus.freqMax,    10, 20,            25, lf, false);
@@ -166,7 +173,7 @@ int initWaterPan(cPanel* pan, tCoord lf) {
 
 const float ampStepTab[] = {1, 2, 5, 10, 20, 50, 100};
 
-void amplitudeFunc(cMenuesystem* pThis, enKey key) {
+void amplitudeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   float ampl = devStatus.amplMax.get();
   size_t i;
   for(i = 0; i < (sizeof(ampStepTab)/sizeof(ampStepTab[0])); i++) {
@@ -196,7 +203,7 @@ void amplitudeFunc(cMenuesystem* pThis, enKey key) {
   pThis->refreshMainPanel();
 }
 
-void btnMeasFunc(cMenuesystem* pThis, enKey key) {
+void btnMeasFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   int32_t level = devPars.threshHold.get() * MAX_ADC / 100;
   if(devStatus.graph.isMinMax()) {
     float t = devStatus.graph.measure(level) * 1000;
@@ -216,7 +223,7 @@ int initTimePan(cPanel* pan, tCoord lf) {
   err |= pan->addTextItem(306,                     1,  20 +  2 * lf, 23, lf);
   err |= pan->addNumItem(&devPars.threshHold,      1,  20 +  3 * lf, 18, lf, true);
   err |= pan->addTextItem(307,                    19,  20 +  3 * lf,  8, lf);
-  err |= pan->addBtnItem(devStatus.btnMeas,        1,  20 +  5 * lf, 30, lf, btnMeasFunc);
+  err |= pan->addBtnItem(308,                      1,  20 +  5 * lf, 30, lf, btnMeasFunc);
   err |= pan->addNumItem(&devStatus.pulseWidth,    1,  20 +  7 * lf, 30, lf, false);
   err |= pan->addStrItem(&devStatus.measUnit,      1,  20 +  8 * lf, 30, lf, false);
   err |= pan->addNumItem(&devStatus.amplMin,       1, 205,           24, lf, false);

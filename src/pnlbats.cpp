@@ -12,7 +12,7 @@
 #include "pnlmain.h"
 #include "cmenue.h"
 
-void batFunc(cMenuesystem* pThis, enKey key) {
+void batFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   char line[512];
   char line2[512];
   size_t byteCount;

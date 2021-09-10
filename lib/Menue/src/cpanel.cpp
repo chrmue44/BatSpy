@@ -21,6 +21,17 @@ int cPanel::addTextItem(const char *pText, tCoord x, tCoord y, tCoord w, tCoord 
   return addItem(item, x, y, w, h, isEdit, f);
 }
 
+int cPanel::addBtnItem(thText txt, tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f, int idx)
+{
+  stPanelItem item;
+  cParBtn* p = new cParBtn();
+  p->setText(Txt::get(txt));
+  p->setIndex(idx);
+  item.type = ITEM_BUTTON;
+  item.p = p;
+  return addItem(item, x, y, w, h,true, f);
+}
+
 int cPanel::addItem(stPanelItem& item, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
   item.x = x;
   item.y = y;
@@ -75,21 +86,16 @@ int cPanel::addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, 
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f)
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_STRING;
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addBtnItem(cParBtn* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f) {
-  stPanelItem item;
-  item.p = pPar;
-  item.type = ITEM_BUTTON;
-  return addItem(item, x, y, w, h,true, f);
-}
-
-int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f) {
+int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f)
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_GRAPH;

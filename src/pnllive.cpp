@@ -25,7 +25,7 @@ void setSampleRateLivePan()
   devStatus.freq1Tick.set(g->getMaxFreq(cAudio::getFftOutputSize())/ 1000 / Y_TICK_CNT);
 }
 
-void funcFmax(cMenuesystem* pThis, enKey key)
+void funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cParGraph* g = getLiveFft();
   int sq = g->getSqueeze();

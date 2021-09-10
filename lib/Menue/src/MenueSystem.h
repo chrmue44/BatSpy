@@ -15,9 +15,7 @@
 #include <cstring>
 
 #include "cpanel.h"
-#include "my_vector.h"
 
-#define CNT_PANEL_LIST   20    ///< max. number of panels in list
 class ILI9341_t3;
 
 
@@ -150,7 +148,7 @@ public:
   bool keyPauseLongEnough(uint32_t ms = 200);
   uint32_t getTimeAfterKeyPress();
   void resetTimer();
-
+  void initFocusOnPanel(cPanel* pan) {m_focus.item = pan->findFirstEditItem(); m_focus.state = enFocusState::DISP; };
 
 protected:
   virtual void initPars() = 0;
@@ -161,7 +159,7 @@ protected:
    * @param key
    * @return
    */
-  static void setEnumDropDown(cMenuesystem* pThis, enKey key);
+  static void setEnumDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem);
 
   /**
    * @brief callback function to set selected enum itm from PNL_DROPDOWN
@@ -169,7 +167,7 @@ protected:
    * @param key
    * @return
    */
-  static void setListDropDown(cMenuesystem* pThis, enKey key);
+  static void setListDropDown(cMenuesystem* pThis, enKey key, cParBase* pItem);
   
   /**
    * draw grid for graph
@@ -179,8 +177,8 @@ protected:
   void printText(const char* txt);
 
 private:
-  static void msgYesFunc(cMenuesystem* pThis, enKey key);
-  static void msgNoFunc(cMenuesystem* pThis, enKey key);
+  static void msgYesFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
+  static void msgNoFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
 
   /**
    * @brief draw complete panel consisting of header main-panel and FKEY bar

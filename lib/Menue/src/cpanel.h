@@ -56,6 +56,7 @@ private:
 
 class cParStr : public cParBase {
  public:
+    cParStr() {}
   cParStr(const char* p) { set(p); }
   char* get() {return val;}
   void set(const char* p) { strncpy(val, p, sizeof(val)); update(true); }
@@ -66,7 +67,7 @@ private:
 
 //typedef my_vector<stParStr> tStrList;
 class cMenuesystem;
-typedef void (* fuFocus)(cMenuesystem*, enKey);
+typedef void (* fuFocus)(cMenuesystem*, enKey, cParBase*);
 
 
 /**
@@ -135,10 +136,14 @@ class cParGeoPos : public cParBase {
  */
 class cParBtn : public cParBase {
  public:
-  cParBtn(const char* p) { m_text = p; }
+  cParBtn() {}
   const char* getText() { return m_text; }
+  void setText(const char* p) { m_text = p; }
+  void setIndex(int idx) { m_index = idx; }
+  int getIndex() {return m_index;}
  private:
-  const char* m_text;
+  const char* m_text = nullptr;
+  int m_index = 0;
 };
 
 
@@ -238,15 +243,16 @@ struct cPanel {
       return addTextItem(Txt::get(t), x, y, w, h, isEdit , f , textSize);
   }
 
-  int addEnumItem(cParEnum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = NULL);
-  int addListItem(cParList* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = NULL);
-  int addNumItem(cParNum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = NULL);
-  int addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = NULL);
-  int addTimeItem(cParTime* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = NULL);
-  int addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = NULL);
-  int addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = NULL);
-  int addBtnItem(cParBtn* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f);
-  int addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f  =NULL);
+  int addEnumItem(cParEnum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = nullptr);
+  int addListItem(cParList* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = nullptr);
+  int addNumItem(cParNum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f = nullptr);
+  int addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
+  int addTimeItem(cParTime* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
+  int addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
+  int addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
+  int addBtnItem(thText txt ,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f, int idx = 0);
+  int addcParBtnGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f  = nullptr);
+  int addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f = nullptr);
   void refresh();
   bool isRefresh();
 
@@ -279,6 +285,10 @@ struct cPanel {
  */
 class cParEnum : public cParBase {
  public:
+  cParEnum() :
+    m_enumeration(),
+    m_val(0)
+    {}
   cParEnum(uint32_t v) :
     m_enumeration(),
     m_val(v) {

@@ -84,6 +84,7 @@ enum enItemType {
 #define CNT_PANEL_ITEM      35      ///< max. count of panel items
 #define CNT_ENUM_ITEM       20      ///< max. number of enum items
 #define LIST_ITEM_LEN       25      ///< max. length of list item text
+#define CNT_PANEL_LIST      25      ///< max. number of panels in list
 
 #define DISP_WIDTH          320
 #define DISP_HEIGHT         240
