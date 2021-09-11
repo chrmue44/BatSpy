@@ -79,46 +79,54 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
     }
     gpDisplay->setTextColor(colTxt, colTxtBack);
 
-    if((m_focus.panel == hPanel) && (m_focus.item == itemId)) {
-      if (m_focus.state == enFocusState::SELECT) {
+    if((m_focus.panel == hPanel) && (m_focus.item == itemId))
+    {
+      if (m_focus.state == enFocusState::SELECT)
+      {
         gpDisplay->setTextColor(COL_TEXTSEL, COL_TEXTSELBACK);
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTSELBACK);
       }
-      else if (m_focus.state == enFocusState::EDIT) {
+      else if (m_focus.state == enFocusState::EDIT)
+      {
         gpDisplay->setTextColor(COL_TEXTEDIT, COL_TEXTEDITBACK);
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTEDITBACK);
       }
     }
-    else {
+    else
+    {
       if((item.type != ITEM_GRAPH))
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, colTxtBack);
-      else {
+      else
+      {
         cParGraph* p = reinterpret_cast<cParGraph*>(item.p);
         if (p->getInitPlot())
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, colTxtBack);
       }
-
     }
     gpDisplay->setCursor(item.x + 1, item.y + 1);
     gpDisplay->setTextSize(item.textSize);
 
     item.p->update(false);
-    switch (item.type) {
-      case ITEM_TEXT: {
+    switch (item.type)
+    {
+      case ITEM_TEXT:
+        {
           cParText* p = reinterpret_cast<cParText*>(item.p);
           if(p)
             printText(p->getText());
         }
         break;
 
-      case ITEM_ENUM: {
+      case ITEM_ENUM:
+        {
           cParEnum* p = reinterpret_cast<cParEnum*>(item.p);
-         // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
+       // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           printText(p->getActText());
         }
         break;
 
-      case ITEM_LIST: {
+      case ITEM_LIST:
+        {
           cParList* p = reinterpret_cast<cParList*>(item.p);
          // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           printText(p->getActText());
@@ -126,9 +134,11 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         break;
 
 
-      case ITEM_NR: {
+      case ITEM_NR:
+        {
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
-          if(p->getDecimals() < 10) {
+          if(p->getDecimals() < 10)
+          {
             if(p->getLeadingZeros() == 0)
               snprintf(fmt, sizeof(fmt), "%%.%luf",p->getDecimals());
             else
@@ -153,34 +163,35 @@ void cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId,
         break;
 
      case ITEM_TIME:
-        {
-          cParTime* p = reinterpret_cast<cParTime*>(item.p);
-          snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
-          printText(str);
-        }
-        break;
+       {
+         cParTime* p = reinterpret_cast<cParTime*>(item.p);
+         snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
+         printText(str);
+       }
+       break;
 
      case ITEM_GEO:
-        {
-          cParGeoPos* p = reinterpret_cast<cParGeoPos*>(item.p);
-          if(p->getDegLat() >= 0)
-            lat = 'N';
-          else
-            lat = 'S';
-          if(p->getDegLon() >= 0)
-            lon = 'E';
-          else
-            lon = 'W';
-          snprintf(str, sizeof(str), "%c %02i\xf7 %.3f  %c %03i\xf7 %.3f",
-                   lat, p->getDegLat(), p->getMinLat(),
-                   lon, p->getDegLon(), p->getMinLon());
-          printText(str);
-        }
-        break;
+       {
+         cParGeoPos* p = reinterpret_cast<cParGeoPos*>(item.p);
+         if(p->getDegLat() >= 0)
+           lat = 'N';
+         else
+           lat = 'S';
+         if(p->getDegLon() >= 0)
+           lon = 'E';
+         else
+           lon = 'W';
+         snprintf(str, sizeof(str), "%c %02i\xf7 %.3f  %c %03i\xf7 %.3f",
+                  lat, p->getDegLat(), p->getMinLat(),
+                  lon, p->getDegLon(), p->getMinLon());
+         printText(str);
+       }
+       break;
 
      case ITEM_STRING:
         {
           cParStr* p = reinterpret_cast<cParStr*>(item.p);
+          gpDisplay->setTextColor(p->getColor(), COL_TEXTBACK);
           printText(p->get());
         }
         break;
@@ -486,6 +497,10 @@ void cMenuesystem::handleEditMode(cPanel& pan, enKey key)
               item.f(this, key, item.p);
             if(pan.type == PNL_MESSAGE)
               destroyMsg();
+          }
+          else if(item.type == ITEM_NR)
+          {
+            m_focus.state = enFocusState::EDIT;
           }
           if(pan.type != PNL_MESSAGE)
             pan.itemList[m_focus.item].p->update(true);

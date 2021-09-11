@@ -86,11 +86,12 @@ int cPanel::addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, 
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f)
+int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, uint16_t color, fuFocus f)
 {
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_STRING;
+  pPar->setColor(color);
   return addItem(item, x, y, w, h,isEdit, f);
 }
 

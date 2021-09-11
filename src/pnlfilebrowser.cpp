@@ -38,6 +38,11 @@ void fillFileList(cPanel* pan)
         devStatus.dirFiles[idxPnl].set(pFile);
         pan->itemList[getItemIndexSel(idxPnl)].isVisible = true;
         pan->itemList[getItemIndexDel(idxPnl)].isVisible = true;
+        cParStr* p = static_cast<cParStr*>(pan->itemList[getItemIndexFile(idxPnl)].p);
+        if(devStatus.dir[idxDir].isDir)
+          p->setColor(COL_TEXT_DIR);
+        else
+          p->setColor(COL_TEXT);
         idxPnl++;
       }
     }

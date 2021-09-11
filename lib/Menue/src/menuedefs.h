@@ -66,6 +66,7 @@ enum enItemType {
 
 #define COL_TEXT            0xFFFF
 #define COL_TEXT_PAR        0xFFC0
+#define COL_TEXT_DIR        0x07E0
 #define COL_TEXTBACK        0x0000
 #define COL_TEXTSEL         0x0000
 #define COL_TEXTSELBACK     0xFFFF

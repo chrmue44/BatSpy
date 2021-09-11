@@ -60,9 +60,11 @@ class cParStr : public cParBase {
   cParStr(const char* p) { set(p); }
   char* get() {return val;}
   void set(const char* p) { strncpy(val, p, sizeof(val)); update(true); }
-
+  void setColor(uint16_t col) { m_color = col; }
+  uint16_t getColor() { return m_color; }
 private:
   char val[PAR_STR_LEN];
+  uint16_t m_color;
 };
 
 //typedef my_vector<stParStr> tStrList;
@@ -249,7 +251,7 @@ struct cPanel {
   int addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
   int addTimeItem(cParTime* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
   int addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
-  int addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, fuFocus f = nullptr);
+  int addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit= false, uint16_t color = COL_TEXT, fuFocus f = nullptr);
   int addBtnItem(thText txt ,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f, int idx = 0);
   int addcParBtnGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f  = nullptr);
   int addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f = nullptr);
