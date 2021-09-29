@@ -25,7 +25,7 @@
 #include "pnllive.h"
 
 extern struct stTxtList Texts[];
-/*
+
 const tChunkTab memChunks[] = {
   {1024, 10},
   {512, 10},
@@ -36,7 +36,8 @@ const tChunkTab memChunks[] = {
   {16, 20},
   {8, 20}
 };
-*/
+
+
 // ************************ global objects *************************
 //clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
 ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST, 

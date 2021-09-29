@@ -5,7 +5,7 @@
  * ***********************************************************
  * A vector like container without dynamic memory allocation
  * ***********************************************************/
-#ifndef MY_VECTOR_H
+/*#ifndef MY_VECTOR_H
 #define MY_VECTOR_H
 #include <Arduino.h>
 template  <class T, size_t NN> class  my_vector {
@@ -69,3 +69,4 @@ template  <class T, size_t NN> class  my_vector {
 
 
 #endif //#ifndef MY_VECTOR_H
+*/

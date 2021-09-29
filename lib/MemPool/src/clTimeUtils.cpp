@@ -19,12 +19,12 @@ double clTimeUtils::m_Frequency = 0;
 
 void clTimeUtils::sleep_ms(uint32_t Time)
 {
-  delayMicroseconds(Time * 1000);
+  delay(Time);
 }
 
 void clTimeUtils::sleep_s(uint32_t Time)
 {
-  delayMicroseconds(Time * 1000000);
+  delay(Time * 1000);
 }
 
 int32_t clTimeUtils::getSysTime(double& Time)

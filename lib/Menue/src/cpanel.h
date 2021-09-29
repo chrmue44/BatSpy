@@ -10,11 +10,11 @@
 #define CPANEL_H
 
 #include "menuedefs.h"
-#include "my_vector.h"
 #include <cstring>
 #include "ctext.h"
 #include "cpargraph.h"
 #include <ctime>
+#include "objhndlglib.h"
 
 
 /**
@@ -67,7 +67,6 @@ private:
   uint16_t m_color;
 };
 
-//typedef my_vector<stParStr> tStrList;
 class cMenuesystem;
 typedef void (* fuFocus)(cMenuesystem*, enKey, cParBase*);
 
@@ -163,7 +162,8 @@ class cListItem : public cParBase {
   char m_text[LIST_ITEM_LEN];      ///< list text
 };
 
-typedef my_vector<cListItem, CNT_ENUM_ITEM> tList;
+//typedef my_vector<cListItem, CNT_ENUM_ITEM> tList;
+typedef mpVector <cListItem> tList;
 
 
 
@@ -181,7 +181,8 @@ class cEnumItem : public cParBase {
   tText* m_text;        ///< enum text
 };
 
-typedef my_vector<cEnumItem, CNT_ENUM_ITEM> tEnum;
+//typedef my_vector<cEnumItem, CNT_ENUM_ITEM> tEnum;
+typedef mpVector<cEnumItem> tEnum;
 
 
 class cParEnum;
@@ -226,18 +227,19 @@ struct stPanelItem {
   bool isEdit = false;
 };
 
-typedef my_vector<stPanelItem, CNT_PANEL_ITEM> tItemList;
+//typedef my_vector<stPanelItem, CNT_PANEL_ITEM> tItemList;
+typedef mpVector<stPanelItem> tItemList;
 
 struct cPanel {
   cPanel();
-  virtual ~cPanel() {}
+  virtual ~cPanel();
 
   tCoord x;                  ///< x coordinate [px]
   tCoord y;                  ///< y coordinate [px]
   tCoord width;              ///< width [px]
   tCoord height;             ///< hegth [px]
   enPanel type;
-  tItemList itemList;
+  tItemList* itemList;
 
 //  static void setDisp(ILI9341_t3* pDisplay) { m_pDisp = pDisplay; }
   int addTextItem(const char* pText, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit = false, fuFocus f = NULL, tCoord textSize = 1);
@@ -288,81 +290,98 @@ struct cPanel {
 class cParEnum : public cParBase {
  public:
   cParEnum() :
-    m_enumeration(),
+    m_enumeration(new tEnum),
     m_val(0)
-    {}
+    {
+    }
+
+  virtual ~cParEnum()
+  {
+    delete m_enumeration;
+  }
+
   cParEnum(uint32_t v) :
-    m_enumeration(),
+    m_enumeration(new tEnum),
     m_val(v) {
 
   }
 
   int addItem(thText text) {
     cEnumItem item;
-    item.setId (m_enumeration.size());
+    item.setId (m_enumeration->size());
     item.setText(Txt::get(text));
-    return m_enumeration.push_back(item);
+    m_enumeration->push_back(item);
+    return 0;
   }
 
   int addItem(const char* text) {
     cEnumItem item;
-    item.setId(m_enumeration.size());
+    item.setId(m_enumeration->size());
     item.setText(text);
-    return m_enumeration.push_back(item);
+    m_enumeration->push_back(item);
+    return 0;
   }
 
-  size_t size() { return m_enumeration.size(); }
-  size_t maxSize() { return m_enumeration.maxSize(); }
-  tText* getActText() { if(m_val < m_enumeration.size()) return m_enumeration[m_val].getpText(); else return ""; }
-  tText* getText(uint32_t i) { if(i < m_enumeration.size()) return m_enumeration[i].getpText(); else return ""; }
-  size_t getSize() {return m_enumeration.size(); }
-  void clear() { m_enumeration.clear(); m_val = 0; }
+  size_t size() { return m_enumeration->size(); }
+//  size_t maxSize() { return m_enumeration.maxSize(); }
+  tText* getActText() { if(m_val < m_enumeration->size()) return (*m_enumeration)[m_val].getpText(); else return ""; }
+  tText* getText(uint32_t i) { if(i < m_enumeration->size()) return (*m_enumeration)[i].getpText(); else return ""; }
+  size_t getSize() {return m_enumeration->size(); }
+  void clear() { m_enumeration->clear(); m_val = 0; }
 
   uint32_t get() { return m_val; }
   void set(uint32_t v) { m_val = v; update(true); }
 
  private:
-  tEnum m_enumeration;  ///< enumeration values
+  tEnum* m_enumeration;  ///< enumeration values
   uint32_t m_val;       ///< actual value
 };
 
 /**
  * parameter type list
  */
-class cParList : public cParBase {
+class cParList : public cParBase
+{
  public:
   cParList(uint32_t v) :
-    m_enumeration(),
-    m_val(v) {
+    m_enumeration(NEW (tList, "tList"),
+    m_val(v)
+  {
+  }
 
+  virtual ~cParList()
+  {
+    DELETE(tList, m_enumeration, "tList");
   }
 
   int addItem(thText text) {
     cListItem item;
-    item.setId (m_enumeration.size());
+    item.setId (m_enumeration->size());
     item.setText(Txt::get(text));
-    return m_enumeration.push_back(item);
+    m_enumeration->push_back(item);
+    return 0;
   }
 
   int addItem(const char* text) {
     cListItem item;
-    item.setId(m_enumeration.size());
+    item.setId(m_enumeration->size());
     item.setText(text);
-    return m_enumeration.push_back(item);
+    m_enumeration->push_back(item);
+    return 0;
   }
 
-  size_t size() { return m_enumeration.size(); }
-  size_t maxSize() { return m_enumeration.maxSize(); }
-  tText* getActText() { if(m_val < m_enumeration.size()) return m_enumeration[m_val].getpText(); else return ""; }
-  tText* getText(uint32_t i) { if(i < m_enumeration.size()) return m_enumeration[i].getpText(); else return ""; }
-  size_t getSize() {return m_enumeration.size(); }
-  void clear() { m_enumeration.clear(); m_val = 0; }
+  size_t size() { return m_enumeration->size(); }
+//  size_t maxSize() { return m_enumerationmaxSize(); }
+  tText* getActText() { if(m_val < m_enumeration->size()) return (*m_enumeration)[m_val].getpText(); else return ""; }
+  tText* getText(uint32_t i) { if(i < m_enumeration->size()) return (*m_enumeration)[i].getpText(); else return ""; }
+  size_t getSize() {return m_enumeration->size(); }
+  void clear() { m_enumeration->clear(); m_val = 0; }
 
   uint32_t get() { return m_val; }
   void set(uint32_t v) { m_val = v; update(true); }
 
  private:
-  tList m_enumeration;  ///< list values
+  tList* m_enumeration;  ///< list values
   uint32_t m_val;       ///< actual value
 };
 

@@ -15,6 +15,17 @@
 
 clFixMemPool * clFixMemPool::m_pInstance = NULL;
 
+void* operator new(std::size_t sz)
+{
+  return clFixMemPool::allocate(sz, "mpVector");
+}
+
+void operator delete(void* ptr) noexcept
+{
+    clFixMemPool::deallocate(ptr, "mpVector");
+}
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -23,13 +34,13 @@ clFixMemPool * clFixMemPool::m_pInstance = NULL;
 // werden, da diese sich bereits aus dem Memorypool bedienen!
 clFixMemPool::clFixMemPool()
 :
-m_PoolTab(),
+m_PoolTab(new(malloc(sizeof (tPoolTab))) tPoolTab),
 m_PoolCount(0),
 m_ChunkCount(0),
 m_totalPoolSize(0),
 m_totalAllocatedSize(0),
 m_HeapMaxChunks(0),
-m_HeapTab()
+m_HeapTab(new(malloc(sizeof (tHeapTab))) tHeapTab)
 // hier gibts eine Lint-Meldung wegen m_MtxMemPool
 {
 #ifdef MULTITHREADING
@@ -46,11 +57,14 @@ clFixMemPool::~clFixMemPool()
 {
   tPoolTabItr i;
 
-  for(i=m_PoolTab.begin(); i<m_PoolTab.end(); i++)
+  for(i=m_PoolTab->begin(); i<m_PoolTab->end(); i++)
   {
     m_totalPoolSize -= (*i)->getChunkSize()*(*i)->getChunkCount();
-    delete *i;
+    (*i)->~clPool();
+    free(*i);
   }
+  m_PoolTab->~vector();
+  free(m_PoolTab);
 #ifdef MULTITHREADING
   int32_t Err;
   Err = pthread_mutex_destroy(&m_MtxMemPool);
@@ -87,7 +101,7 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
         char Buf[300];
         snprintf(Buf, sizeof(Buf),
                  "MEMPOOL: Chunks %u; alloc %s Addr %0x reqSize %u  chunkSize %u\n",
-                 m_ChunkCount, ClassName, (unsigned)p, size,pPool->getChunkSize());
+                 m_ChunkCount, ClassName, (unsigned long)p, size,pPool->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
       m_totalAllocatedSize += pPool->getChunkSize();
@@ -100,11 +114,11 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
     stHeapChunk Chunk;
   //  try
     {
-      p = new int8_t[size];
+      p = malloc(sizeof(int8_t) * size);
       Chunk.Size = size;
       Chunk.pChunk = p;
-      m_HeapTab.push_back(Chunk);
-      if(m_HeapMaxChunks < m_HeapTab.size())
+      m_HeapTab->push_back(Chunk);
+      if(m_HeapMaxChunks < m_HeapTab->size())
         m_HeapMaxChunks++;
     }
   /*  catch(const std::bad_alloc& xa)
@@ -122,7 +136,7 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
         char Buf[300];
         snprintf(Buf, sizeof(Buf),
                  "HEAP   : Chunks %ui; new %s; Addr %ui; reqSize %ui",
-                  m_HeapTab.size(), ClassName, reinterpret_cast<unsigned>(p), size);
+                  m_HeapTab->size(), ClassName, reinterpret_cast<unsigned long>(p), size);
         clDebugLog::add(DBGSRC_MEMDYNALLOC,Buf);
       }
       else
@@ -151,7 +165,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
 	int32_t Err = pthread_mutex_lock(&m_MtxMemPool);
   PM_ASSERT(Err == 0, "clFixmempool::deallocate: error locking mutex");
 #endif
-  for(i = m_PoolTab.begin(); i < m_PoolTab.end(); i++)
+  for(i = m_PoolTab->begin(); i < m_PoolTab->end(); i++)
   {
     found = (*i)->isInPool(p);
     if(found)
@@ -170,7 +184,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
         char Buf[200];
         snprintf(Buf, sizeof(Buf),
         "MEMPOOL: Chunks %ul; free %s; Addr %ul; ChunkSize%ul ",
-        m_ChunkCount, ClassName, reinterpret_cast<unsigned>(p), (*i)->getChunkSize());
+        m_ChunkCount, ClassName, reinterpret_cast<unsigned long>(p), (*i)->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
     }
@@ -182,18 +196,18 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
     if(p != NULL)
     {
       tHeapTabIter Iter = findHeapChunk(p);
-      if(Iter != m_HeapTab.end())
-      {
-        delete[] reinterpret_cast<int8_t*>(p);
+      if(Iter != m_HeapTab->end())
+      {        
+        free(p);
         //lint -e{534} ignoring return value
-        m_HeapTab.erase(Iter);
+        m_HeapTab->erase(Iter);
         //lint -e{534} (Warning -- Ignoring return value of function
         if(clDebugLog::checkLogSource(DBGSRC_MEMDYNALLOC))
         {
           char Buf[200];
           snprintf(Buf, sizeof(Buf),
                  "HEAP   : Chunks %ul; delete %s; Addr %0x\n",
-                 m_HeapTab.size(), ClassName, reinterpret_cast<unsigned>(p));
+                 m_HeapTab->size(), ClassName, reinterpret_cast<unsigned long>(p));
           clDebugLog::add(DBGSRC_MEMDYNALLOC,Buf);
         }
       }
@@ -204,7 +218,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
           char Buf[200];
           snprintf(Buf, sizeof(Buf),
           "HEAP   : ERROR delete %s; Addr %0x\n",
-          ClassName, reinterpret_cast<unsigned>(p));
+          ClassName, reinterpret_cast<unsigned long>(p));
           clDebugLog::add(DBGSRC_MEMFIXALLOC,Buf);
         }
       }
@@ -246,7 +260,7 @@ int32_t clFixMemPool::addMemPool(uint32_t ChunkSize, uint32_t ChunkCnt)
   {
   //  try
     {
-  	  pPool = new clPool(ChunkSize,ChunkCnt);
+      pPool = new(malloc(sizeof(clPool))) clPool(ChunkSize,ChunkCnt);
     }
   /*  catch (const std::bad_alloc &xa)
     {
@@ -255,18 +269,18 @@ int32_t clFixMemPool::addMemPool(uint32_t ChunkSize, uint32_t ChunkCnt)
     }*/
     if (pPool != NULL)
     {
-      for(i=m_PoolTab.begin(); i<m_PoolTab.end(); i++)
+      for(i=m_PoolTab->begin(); i<m_PoolTab->end(); i++)
       {
         if ((*i)->getChunkSize() > ChunkSize)
         {
           //lint -e{534} (Warning -- Ignoring return value of function
-          m_PoolTab.insert(i,pPool);
+          m_PoolTab->insert(i,pPool);
           found = true;
           break;
         }
       }
       if (!found)
-        m_PoolTab.push_back(pPool);
+        m_PoolTab->push_back(pPool);
       m_PoolCount++;
       m_totalPoolSize += pPool->getTotalPoolSize();
       RetVal = 0;
@@ -291,7 +305,7 @@ clPool* clFixMemPool::findBestFit(size_t size)
 
 	//if(m_PoolTab == NULL)
 //		return NULL;
-  for(i = m_PoolTab.begin(); i < m_PoolTab.end(); i++)
+  for(i = m_PoolTab->begin(); i != m_PoolTab->end(); i++)
   {
     if ((*i)->getChunkSize() >= size)
     {
@@ -311,7 +325,7 @@ void clFixMemPool::showPoolUsage()
   PM_ASSERT(Err == 0, "clFixmempool::showPoolUsage: error locking mutex");
   #endif
   std::cout << "FixMemPoolSize: " << m_totalAllocatedSize << std::endl;
-  for(i = m_PoolTab.begin(); i < m_PoolTab.end(); i++)
+  for(i = m_PoolTab->begin(); i < m_PoolTab->end(); i++)
   {
     std::cout << "Chunksize: " << (*i)->getChunkSize();
     std::cout << " allocated Blocks: " << (*i)->getAllocCount() << std::endl;
@@ -334,7 +348,7 @@ void clFixMemPool::showPoolStatistics()
   PM_ASSERT(Err == 0, "clFixmempool::showPoolStatistics: error locking mutex");
   #endif
   std::cout << "------ Statistics Memory Pool -----------------" << std::endl;
-  for(i = m_pInstance->m_PoolTab.begin(); i < m_pInstance->m_PoolTab.end(); i++)
+  for(i = m_pInstance->m_PoolTab->begin(); i < m_pInstance->m_PoolTab->end(); i++)
   {
     std::cout << "Chunksize: " << (*i)->getChunkSize();
     float MaxBlocks = (float)(*i)->getAllocCountMax();
@@ -361,7 +375,7 @@ int32_t clFixMemPool::getAllocBlocks(size_t size)
 {
   tPoolTabItr i;
 
-  for(i = m_PoolTab.begin(); i < m_PoolTab.end(); i++)
+  for(i = m_PoolTab->begin(); i < m_PoolTab->end(); i++)
   {
     if ((*i)->getChunkSize() == size)
     {
@@ -371,22 +385,24 @@ int32_t clFixMemPool::getAllocBlocks(size_t size)
   return -1;
 }
 
-clFixMemPool* clFixMemPool::getInstance(const tChunkTab* Tab, size_t TabSize)
+extern const tChunkTab memChunks[];
+extern const size_t TabSize;
+clFixMemPool* clFixMemPool::getInstance()
 {
   if(m_pInstance == NULL)
   {
-    m_pInstance = new clFixMemPool;
+    m_pInstance = new(malloc(sizeof(clFixMemPool))) clFixMemPool;
   // Speicher einrichten
     uint32_t i;
-    PM_ASSERT(Tab != NULL, "clFixMemPool: NULL pointer for chunk tab");
+//    PM_ASSERT(&Tab != NULL, "clFixMemPool: NULL pointer for chunk tab");
     uint32_t Size = 0;
 
     for(i = 0; i < TabSize; i++)
     //lint -e{613} Warning -- Possible use of null pointer 'Tab'
     {
       int32_t Err;
-      PM_ASSERT(Tab[i].Size > Size, "clFixMemPool: chunk table not ordered");
-      Err = m_pInstance->addMemPool(Tab[i].Size,Tab[i].Count);
+      PM_ASSERT(memChunks[i].Size > Size, "clFixMemPool: chunk table not ordered");
+      Err = m_pInstance->addMemPool(memChunks[i].Size,memChunks[i].Count);
       PM_ASSERT(Err == 0, "clFixMemPool:: getInstance: error creating pool");
     }
 
@@ -398,7 +414,8 @@ void clFixMemPool::destroyInstance()
 {
   if(m_pInstance != NULL)
   {
-    delete m_pInstance;
+    m_pInstance->~clFixMemPool();
+    free(m_pInstance);
     m_pInstance = NULL;
   }
 }
@@ -409,7 +426,7 @@ void clFixMemPool::showLeaks()
   tPoolTabItr i;
 
   clDebugLog::add(DBGSRC_MEMFIXALLOC, "Memory Leaks:");
-  for(i = m_PoolTab.begin(); i < m_PoolTab.end(); i++)
+  for(i = m_PoolTab->begin(); i < m_PoolTab->end(); i++)
   {
     if ((*i)->getAllocCount() != 0)
     {
@@ -429,7 +446,7 @@ size_t clFixMemPool::getAllocatePoolSize()
   tPoolTabItr i;
   size_t Size = 0;
   
-  for(i = m_pInstance->m_PoolTab.begin(); i < m_pInstance->m_PoolTab.end(); i++)
+  for(i = m_pInstance->m_PoolTab->begin(); i < m_pInstance->m_PoolTab->end(); i++)
   {
     Size += (*i)->getTotalPoolSize();
   }
@@ -439,10 +456,10 @@ size_t clFixMemPool::getAllocatePoolSize()
 tHeapTabIter clFixMemPool::findHeapChunk(const void* p)
 {
   tHeapTabIter i;
-  for(i = m_HeapTab.begin(); i != m_HeapTab.end(); i++)
+  for(i = m_HeapTab->begin(); i != m_HeapTab->end(); i++)
   {
     if((*i).pChunk == p)
       return i;
   }
-  return m_HeapTab.end();
+  return m_HeapTab->end();
 }

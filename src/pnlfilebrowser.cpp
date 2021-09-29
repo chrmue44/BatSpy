@@ -25,7 +25,7 @@ void fillFileList(cPanel* pan)
 {
   size_t idxPnl = 0;
   size_t idxDir = devStatus.fileIndex;
-  pan->itemList[2].isVisible = devStatus.fileIndex > 0;
+  (*pan->itemList)[2].isVisible = devStatus.fileIndex > 0;
 
   do
   {
@@ -36,9 +36,9 @@ void fillFileList(cPanel* pan)
       if(cUtils::match(pMatch, pFile) || devStatus.dir[idxDir].isDir)
       {
         devStatus.dirFiles[idxPnl].set(pFile);
-        pan->itemList[getItemIndexSel(idxPnl)].isVisible = true;
-        pan->itemList[getItemIndexDel(idxPnl)].isVisible = true;
-        cParStr* p = static_cast<cParStr*>(pan->itemList[getItemIndexFile(idxPnl)].p);
+        (*pan->itemList)[getItemIndexSel(idxPnl)].isVisible = true;
+        (*pan->itemList)[getItemIndexDel(idxPnl)].isVisible = true;
+        cParStr* p = static_cast<cParStr*>((*pan->itemList)[getItemIndexFile(idxPnl)].p);
         if(devStatus.dir[idxDir].isDir)
           p->setColor(COL_TEXT_DIR);
         else
@@ -49,13 +49,13 @@ void fillFileList(cPanel* pan)
     else
     {
       devStatus.dirFiles[idxPnl].set("");
-      pan->itemList[getItemIndexSel(idxPnl)].isVisible = false;
-      pan->itemList[getItemIndexDel(idxPnl)].isVisible = false;
+      (*pan->itemList)[getItemIndexSel(idxPnl)].isVisible = false;
+      (*pan->itemList)[getItemIndexDel(idxPnl)].isVisible = false;
       idxPnl++;
     }
     idxDir++;
   } while(idxPnl < DIR_PAN_SIZE);
-  pan->itemList[getItemIndexFile(DIR_PAN_SIZE)].isVisible = idxDir < devStatus.dir.size();
+  (*pan->itemList)[getItemIndexFile(DIR_PAN_SIZE)].isVisible = idxDir < devStatus.dir.size();
   pan->refresh();
 }
 
@@ -84,7 +84,7 @@ void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
   cParBtn* p = reinterpret_cast<cParBtn*>(pItem);
   int index = getItemIndexFile(p->getIndex());
   cPanel* pnl = pThis->getPan(panFileBrowser);
-  cParStr* pStr = reinterpret_cast<cParStr*>(pnl->itemList[index].p);
+  cParStr* pStr = reinterpret_cast<cParStr*>((*pnl->itemList)[index].p);
   if(isDir(pStr->get()))
     initFileBrowser(pnl, pStr->get());
   else
@@ -119,7 +119,7 @@ void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
   cParBtn* p = reinterpret_cast<cParBtn*>(pItem);
   int index = getItemIndexFile(p->getIndex());
   cPanel* pnl = pThis->getPan(panFileBrowser);
-  cParStr* pStr = reinterpret_cast<cParStr*>(pnl->itemList[index].p);
+  cParStr* pStr = reinterpret_cast<cParStr*>((*pnl->itemList)[index].p);
   strncpy(buf, pStr->get(), sizeof (buf));
   pThis->showMsg(enMsg::YESNO, fuDelete, Txt::get(1600), pStr->get());
 }

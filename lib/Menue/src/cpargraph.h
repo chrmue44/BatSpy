@@ -16,7 +16,6 @@
 #endif
 
 #include "menuedefs.h"
-#include "my_vector.h"
 
 #define SCALE_WIDTH   5
 #define COLMAP_DIST   3    ///< distance FFT to color map in pixel

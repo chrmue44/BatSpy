@@ -48,5 +48,7 @@ void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);
 
+extern cParEnum f1MainItems;
+extern cParEnum f4MainItems;
 
 #endif // PANMAIN_H

@@ -11,6 +11,8 @@
 
 #include <Arduino.h>
 #include <cstdint>
+#include <iostream>
+
 using namespace std;
 
 
@@ -127,10 +129,17 @@ enum tDbgLogSrc
   DBGSRC_TIMESYNC   =  0x00002000
 };
 
+#ifndef SIMU_DISPLAY
 #define PM_ASSERT(condition, message){ \
   if(!(condition)) {\
   Serial.printf("assert line : %i, %s\n",  __LINE__  , message);;\
   /*TBD*/}\
 }
+#else
+#define PM_ASSERT(condition, message){ \
+  if(!(condition)) {\
+  std::cout << "assert line :" <<  __LINE__  << message << std::endl;}\
+}
+#endif
 
 #endif //#ifndef TYPEDEF_H

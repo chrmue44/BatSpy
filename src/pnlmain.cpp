@@ -16,10 +16,6 @@
 #undef OWN_H
 #include "pnllive.h"
 
-cParEnum f1MainItems(0);
-cParEnum f4MainItems(0);
-
-
 
 // *******************************************
 // drop down panel F1 for main panel
@@ -239,9 +235,9 @@ void setVisibilityRecCount(cMenuesystem* pThis)
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
   if(devPars.recAuto.get() > 0)
-    p->itemList[2].isVisible = true;
+    (*p->itemList)[2].isVisible = true;
   else
-    p->itemList[2].isVisible = false;
+    (*p->itemList)[2].isVisible = false;
 }
 
 void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
@@ -268,7 +264,7 @@ int initMainPanel(cPanel* pan, tCoord lf)
   int err = pan->addTextItem(202,                  3, 30,            80, lf);
   err |= pan->addEnumItem(&devStatus.opMode,     150, 30,           140, lf, true);
   err |= pan->addNumItem(&devStatus.recCount,    260, 30 +  2 * lf,  40, lf, false);
-  err |= pan->itemList[2].isVisible = false;
+  err |= (*pan->itemList)[2].isVisible = false;
   err |= pan->addTextItem(30,                      3, 30 +      lf,  80, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
   err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);

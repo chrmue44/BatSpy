@@ -6,7 +6,14 @@
 #include "cpanel.h"
 
 cPanel::cPanel() :
-  itemList() {
+itemList(new tItemList)
+{
+}
+
+cPanel::~cPanel()
+{
+  itemList->clear();
+  delete itemList;
 }
 
 int cPanel::addTextItem(const char *pText, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f, tCoord textSize) {
@@ -40,7 +47,8 @@ int cPanel::addItem(stPanelItem& item, tCoord x, tCoord y, tCoord w, tCoord h, b
   item.f = f;
   item.isEdit = isEdit;
   item.isVisible = true;
-  return itemList.push_back(item);
+  itemList->push_back(item);
+  return  0;
 }
 
 int cPanel::addEnumItem(cParEnum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
@@ -108,8 +116,8 @@ int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h,
 
 thItem cPanel::findFirstEditItem() {
   thItem retVal = 9999;
-  for(uint32_t i  = 0; i < itemList.size(); i++) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+  for(uint32_t i  = 0; i < itemList->size(); i++) {
+    if((*itemList)[i].isEdit && (*itemList)[i].isVisible) {
        retVal = i;
        break;
     }
@@ -118,11 +126,14 @@ thItem cPanel::findFirstEditItem() {
 }
 
 
-thItem cPanel::findLastEditItem() {
+thItem cPanel::findLastEditItem()
+{
   thItem retVal = 9999;
-  thItem i = itemList.size() - 1;
-  for(;;i--) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+  thItem i = itemList->size() - 1;
+  for(;;i--)
+  {
+    if((*itemList)[i].isEdit && (*itemList)[i].isVisible)
+    {
       retVal = i;
       break;
     }
@@ -133,10 +144,12 @@ thItem cPanel::findLastEditItem() {
 }
 
 
-thItem cPanel::findNextEditItem(thItem it) {
+thItem cPanel::findNextEditItem(thItem it)
+{
   thItem retVal = 9999;
-  for(uint32_t i  = it + 1; i < itemList.size(); i++) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+  for(uint32_t i  = it + 1; i < itemList->size(); i++)
+  {
+    if((*itemList)[i].isEdit && (*itemList)[i].isVisible) {
        retVal = i;
        break;
     }
@@ -148,8 +161,9 @@ thItem cPanel::findPrevEditItem(thItem it) {
   thItem retVal = 9999;
   if ( it > 0) {
     thItem i = it - 1;
-    for(;;i--) {
-      if(itemList[i].isEdit && itemList[i].isVisible) {
+    for(;;i--)
+    {
+      if((*itemList)[i].isEdit && (*itemList)[i].isVisible) {
         retVal = i;
         break;
       }
@@ -160,11 +174,14 @@ thItem cPanel::findPrevEditItem(thItem it) {
   return retVal;
 }
 
-void cPanel::refresh() {
-  for(size_t i = 0; i < itemList.size(); i++) {
-    itemList[i].p->update(true);
-    if (itemList[i].type == ITEM_GRAPH) {
-      cParGraph* p = reinterpret_cast<cParGraph*>(itemList[i].p);
+void cPanel::refresh()
+{
+  for(size_t i = 0; i < itemList->size(); i++)
+  {
+    (*itemList)[i].p->update(true);
+    if ((*itemList)[i].type == ITEM_GRAPH)
+    {
+      cParGraph* p = reinterpret_cast<cParGraph*>((*itemList)[i].p);
       p->initPlot(true);
     }
   }
@@ -172,8 +189,10 @@ void cPanel::refresh() {
 
 bool cPanel::isRefresh() {
   bool retVal = false;
-  for(size_t i = 0; i < itemList.size(); i++) {
-    if (itemList[i].p->isUpdate()) {
+  for(size_t i = 0; i < itemList->size(); i++)
+  {
+    if ((*itemList)[i].p->isUpdate())
+    {
       retVal = true;
       break;
     }

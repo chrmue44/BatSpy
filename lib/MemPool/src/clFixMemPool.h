@@ -94,9 +94,9 @@ public:
     // Name des Objekttyps (dient ausschliesslich zu Debug-Zwecken)
     const char *ClassName,
     // Quelle der Allokierung 
-    enAllocSrc LogSrc)
+    enAllocSrc LogSrc = enAllocSrc::ALLOC_OBJ)
   {
-    return m_pInstance->allocate_impl(size,ClassName,LogSrc);
+    return getInstance()->allocate_impl(size,ClassName,LogSrc);
   }
 
   //Speicher wieder freigeben
@@ -106,13 +106,13 @@ public:
     // Name des Objekttyps (dient ausschliesslich zu Debug-Zwecken)
     const char *ClassName,
     // Quelle der Allokierung 
-    enAllocSrc LogSrc)
+    enAllocSrc LogSrc = enAllocSrc::ALLOC_OBJ)
   {
     m_pInstance->deallocate_impl(p,ClassName, LogSrc);
   }
 
   // liefert den Zeiger auf die Instanz
-  static clFixMemPool* getInstance(const tChunkTab* Tab, size_t TabSize);
+  static clFixMemPool* getInstance();
   
   // zerstoert die Instanz, wenn sie vorhanden ist
   static void destroyInstance();
@@ -126,7 +126,7 @@ public:
   // Liefert die Gesamtzahl der allokierten Bloecke aus dem Heap
   inline size_t getHeapChunkCount()
   {
-    return m_HeapTab.size();
+    return m_HeapTab->size();
   }
   
   // liefert die Brutto-Groesse des allokierten Memory-Pools
@@ -164,7 +164,7 @@ private:
   void deallocate_impl(void* p, const char* ClassName, enAllocSrc Src);
 
   //Liste der verfuegbaren Sub-Pools
-  tPoolTab m_PoolTab;
+  tPoolTab* m_PoolTab;
 
   //Anzahl der angelegten Sub-Pools
   size_t m_PoolCount;
@@ -188,7 +188,7 @@ private:
   pthread_mutex_t m_MtxMemPool;
 #endif
   // Tabelle aller Chunks auf dem heap
-  tHeapTab m_HeapTab;
+  tHeapTab* m_HeapTab;
 
   // Zeiger auf die einzige Instanz
   static clFixMemPool *m_pInstance;

@@ -12,7 +12,7 @@
 
 cParGraph* getLiveFft()
 {
- return reinterpret_cast<cParGraph*>(menue.getPan(pnlLive)->itemList[4].p); 
+ return reinterpret_cast<cParGraph*>((*menue.getPan(pnlLive)->itemList)[4].p);
 }
 
 

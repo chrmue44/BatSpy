@@ -36,8 +36,8 @@ typedef std::size_t size_t;
 
 #define DEBUG_LEVEL  1
 
-stStatus devStatus;          ///< status of the device
-stParams devPars;            ///< parameters of the device
+extern stStatus devStatus;          ///< status of the device
+extern stParams devPars;            ///< parameters of the device
 extern cRtc rtc;
 
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :

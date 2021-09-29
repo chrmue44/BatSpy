@@ -36,7 +36,11 @@ enum enMsg {
   YESNO   = 2,
 };
 
+#ifdef MEMPOOL
+typedef mpVector<cPanel> tPanelList;
+#else
 typedef my_vector<cPanel, CNT_PANEL_LIST> tPanelList;
+#endif
 
 struct stFocus {
   thPanel panel;
