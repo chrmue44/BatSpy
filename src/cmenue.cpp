@@ -274,6 +274,9 @@ void cMenue::initDialogs() {
   panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
   err |= initDateTimePan(getPan(panDateTime), lf);
 
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
+
   panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");

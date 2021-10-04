@@ -107,6 +107,8 @@ enSdRes cSdCard::unmount() {
   enSdRes retVal = OK;
   #if defined(CARDLIB_SD)
    ;
+   #elif defined(CARDLIB_SDFAT)
+   m_sd.begin(1);
 #elif defined(CARDLID_USDFS)
   TCHAR tdir[FILENAME_LEN];
   char2tchar(m_actDir, sizeof(m_actDir), tdir);
@@ -120,8 +122,8 @@ enSdRes cSdCard::unmount() {
 #if defined(CARDLIB_SDFAT)
 enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) {
   enSdRes retVal = OK;
-  File32 dir;
-  File32 file;
+  tFILE dir;
+  tFILE file;
  
   if (!dir.open(m_actDir))
     return OPEN_DIR;
@@ -451,7 +453,7 @@ enSdRes cSdCard::chdir(const char* name) {
   retVal = rc == FR_OK ? OK : OPEN_DIR;
 
 #elif defined(CARDLIB_SDFAT)
-  File32 dirI;
+  tFILE dirI;
   if(!dirI.open(dir))
     retVal = OPEN_DIR;
   dirI.close();
@@ -759,9 +761,41 @@ enSdRes cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
 //           tot_sect / 2, fre_sect / 2);
   }
 #elif defined(CARDLIB_SDFAT)
-  freeSpaceKb = m_sd.freeClusterCount() *32;
-  totSpaceKb = m_sd.clusterCount() * 32;
+  size_t kbPerCluster = m_sd.bytesPerCluster() / 1024;
+  freeSpaceKb = m_sd.freeClusterCount() * kbPerCluster;
+  totSpaceKb = m_sd.clusterCount() * kbPerCluster;
 #endif
   return retVal;
 }
 
+
+enSdRes cSdCard::format()
+{
+  enSdRes retVal = enSdRes::OK; 
+#if SD_FAT_TYPE == 2 
+//  SdExFat sd;
+  if (!m_sd.cardBegin(SD_CONFIG)) 
+  {
+    DPRINTLN1("cardBegin failed\n");
+    retVal = enSdRes::FORMAT_ERR;
+  }
+  delay(100);
+  if (!m_sd.volumeBegin()) 
+  {
+    DPRINTLN1("volumeBegin failed\n");
+    retVal = enSdRes::FORMAT_ERR;
+  }
+  if(!m_sd.format(&Serial))
+  {
+    Serial.printf("format failed\n");
+  }
+  if (!m_sd.volumeBegin()) 
+  {
+    DPRINTLN1("volumeBegin failed\n");
+  }
+  DPRINTF1("Bytes per cluster: %l\n",m_sd.bytesPerCluster());
+  chdir("/");
+  DPRINTLN1("Done");
+#endif
+  return retVal;
+}

@@ -103,7 +103,7 @@ void initBats() {
   cSdCard& sd = cSdCard::inst();
   tFILE file;
   enSdRes res = sd.openFile("/info/bat_info.tsv", file, READ);
-  if(res == 0)
+  if(res == enSdRes::OK)
   {
     devStatus.bats.name.clear();
     // read and forget first two header

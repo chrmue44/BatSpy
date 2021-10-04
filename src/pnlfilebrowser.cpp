@@ -114,6 +114,33 @@ void fuDelete(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch(key)
+  {
+    case enKey::YES:
+      {
+        enSdRes ret = cSdCard::inst().format();
+        cSdCard::inst().mkDir("rec");
+        cSdCard::inst().mkDir("log");
+        cSdCard::inst().mkDir("info");
+/*        if(ret == enSdRes::OK)
+          pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1043));
+        else
+          pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1042)); */
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+void f2FormatFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  pThis->showMsg(enMsg::YESNO, fuFormat, Txt::get(1040), Txt::get(1041));
+}
+
 void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {  
   cParBtn* p = reinterpret_cast<cParBtn*>(pItem);
@@ -137,6 +164,16 @@ void funcDown(cMenuesystem* pThis, enKey key, cParBase* pItem)
    fillFileList(pThis->getPan(panFileBrowser));
 }
 
+int initFkeyFilePanel(cPanel* pan, tCoord lf)
+{
+  int retVal;
+  // Serial.println("initDialogs2");
+  retVal  = pan->addTextItem(1,   0, 227, 80, lf, true, f1Func);
+  retVal |= pan->addTextItem(5,  81, 227, 79, lf, true, f2FormatFunc);
+  retVal |= pan->addTextItem(3, 161, 227, 79, lf, false);
+  retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
+  return retVal;
+}
 int initFileBrowserPan(cPanel* pan, tCoord lf)
 {
   int err = 0;

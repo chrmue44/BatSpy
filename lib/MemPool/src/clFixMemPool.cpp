@@ -86,8 +86,8 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
       {
         char Buf[300];
         snprintf(Buf, sizeof(Buf),
-                 "MEMPOOL: Chunks %u; alloc %s Addr %0x reqSize %u  chunkSize %u\n",
-                 m_ChunkCount, ClassName, (unsigned)p, size,pPool->getChunkSize());
+                 "MEMPOOL: Chunks %u; alloc %s Addr %0xl reqSize %ul  chunkSize %ul\n",
+                 m_ChunkCount, ClassName, (unsigned long)p, size,pPool->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
       m_totalAllocatedSize += pPool->getChunkSize();
@@ -121,8 +121,8 @@ void* clFixMemPool::allocate_impl(size_t size, const char* ClassName, enAllocSrc
       {
         char Buf[300];
         snprintf(Buf, sizeof(Buf),
-                 "HEAP   : Chunks %ui; new %s; Addr %ui; reqSize %ui",
-                  m_HeapTab.size(), ClassName, reinterpret_cast<unsigned>(p), size);
+                 "HEAP   : Chunks %ui; new %s; Addr %ui; reqSize %ul",
+                  m_HeapTab.size(), ClassName, reinterpret_cast<unsigned long>(p), size);
         clDebugLog::add(DBGSRC_MEMDYNALLOC,Buf);
       }
       else
@@ -170,7 +170,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
         char Buf[200];
         snprintf(Buf, sizeof(Buf),
         "MEMPOOL: Chunks %ul; free %s; Addr %ul; ChunkSize%ul ",
-        m_ChunkCount, ClassName, reinterpret_cast<unsigned>(p), (*i)->getChunkSize());
+        m_ChunkCount, ClassName, reinterpret_cast<unsigned long>(p), (*i)->getChunkSize());
         clDebugLog::add(Src,Buf);
       }
     }
@@ -193,7 +193,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
           char Buf[200];
           snprintf(Buf, sizeof(Buf),
                  "HEAP   : Chunks %ul; delete %s; Addr %0x\n",
-                 m_HeapTab.size(), ClassName, reinterpret_cast<unsigned>(p));
+                 m_HeapTab.size(), ClassName, reinterpret_cast<unsigned long>(p));
           clDebugLog::add(DBGSRC_MEMDYNALLOC,Buf);
         }
       }
@@ -204,7 +204,7 @@ void clFixMemPool::deallocate_impl(void *p, const char *ClassName, enAllocSrc s)
           char Buf[200];
           snprintf(Buf, sizeof(Buf),
           "HEAP   : ERROR delete %s; Addr %0x\n",
-          ClassName, reinterpret_cast<unsigned>(p));
+          ClassName, reinterpret_cast<unsigned long>(p));
           clDebugLog::add(DBGSRC_MEMFIXALLOC,Buf);
         }
       }

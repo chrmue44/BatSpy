@@ -126,11 +126,14 @@ enum tDbgLogSrc
   // Logging zu Timesync
   DBGSRC_TIMESYNC   =  0x00002000
 };
-
+#ifndef SIMU_DISPLAY
 #define PM_ASSERT(condition, message){ \
   if(!(condition)) {\
   Serial.printf("assert line : %i, %s\n",  __LINE__  , message);;\
   /*TBD*/}\
 }
+#else
+#define PM_ASSERT(condition, message)
+#endif
 
 #endif //#ifndef TYPEDEF_H

@@ -201,7 +201,7 @@ void clPool::findAllocatedChunks()
       //lint -e{826} (Info -- Suspicious pointer-to-pointer conversion (area too small))
       tChunk *pC2 = reinterpret_cast<tChunk*>(m_pBuf + (i * m_BrtChunkSize));
       void *p = &pC2->mem[0];
-      snprintf(Buf, sizeof(Buf), "Address: %0x", reinterpret_cast<unsigned>(p));
+      snprintf(Buf, sizeof(Buf), "Address: %0xl", (unsigned long)(p));
       clDebugLog::add(DBGSRC_MEMFIXALLOC,  Buf);
     }
   }

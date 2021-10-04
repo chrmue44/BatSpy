@@ -138,9 +138,10 @@ public:
       std::time_t end_time = std::chrono::system_clock::to_time_t(now);
       strncpy(Str, std::ctime(&end_time), size);
 
-      ultoa(timev.tv_sec,Str,10);
+      snprintf(Str, sizeof (Str),"%l:%l",timev.tv_sec, timev.tv_usec);
+/*      ultoa(timev.tv_sec,Str,10);
       strcat(Str,":");
-      ultoa(timev.tv_usec,Str+strlen(Str),10);
+      ultoa(timev.tv_usec,Str+strlen(Str),10); */
   }
 
   // Liefert die Systemzeit in ms als Double-Wert

@@ -5,7 +5,7 @@
 //#define CARDLIB_SD
 //#define CARDLIB_USDFS
 
-
+#include <Arduino.h>
 #if defined(CARDLIB_SD)
 #define FILENAME_LEN        13   ///< max. length of a file name
 #elif defined(CARDLIB_USDFS) || defined(CARDLIB_SDFAT)
@@ -21,9 +21,24 @@
 #include <wchar.h>
 #include "ff.h"
 #elif defined(CARDLIB_SDFAT)
-#include "SdFat.h"
-#define SD_FAT_TYPE 1
+#include <SdFat.h>
+#define SD_FAT_TYPE 2
 #define SD_CONFIG SdioConfig(FIFO_SDIO)
+#if SD_FAT_TYPE == 0
+typedef SdFat sd_t;
+typedef File tFILE;
+#elif SD_FAT_TYPE == 1
+typedef SdFat32 sd_t;
+typedef File32 tFILE;
+#elif SD_FAT_TYPE == 2
+typedef SdExFat sd_t;
+typedef ExFile tFILE;
+#elif SD_FAT_TYPE == 3
+typedef SdFs sd_t;
+typedef FsFile tFILE;
+#else  // SD_FAT_TYPE
+#error Invalid SD_FAT_TYPE
+#endif  // SD_FAT_TYPE
 
 /*#define SPI_CLOCK SD_SCK_MHZ(50)
 // Try to select the best SD card configuration.
@@ -59,6 +74,7 @@ enum enSdRes
   UNMOUNT_ERR = 12,
   RENAME_ERR = 13,
   SEEK_ERR = 14,
+  FORMAT_ERR = 15,
 };
 
 enum enMode {
@@ -79,9 +95,6 @@ typedef my_vector<stDirEntry, MAX_DIRENTRIES+1> tDirInfo;
 typedef File tFILE;
 #endif
 
-#ifdef CARDLIB_SDFAT
-typedef File32 tFILE;
-#endif
 /**
  * wrapper class for convenient use of different SD card libs
  **/
@@ -143,8 +156,20 @@ class cSdCard {
 
    size_t fileSize(tFILE& file) { return file.fileSize(); }
 
-   size_t available(tFILE& f)  { return f.available32();}
-   bool eof(tFILE& f) { return f.available32() == 0;}
+   size_t available(tFILE& f)
+   {
+  #if SD_FAT_TYPE == 1
+      return f.available32();
+  #endif
+  #if SD_FAT_TYPE == 2
+     return f.available();
+  #endif
+    }
+
+   bool eof(tFILE& f)
+   {
+     return available(f) == 0;
+   }
   
    /* 
     * set file position
@@ -152,6 +177,7 @@ class cSdCard {
    enSdRes setFilePos(tFILE& f, size_t pos) { return f.seekSet(pos) ? OK : SEEK_ERR; }
 
    size_t getFilePos(tFILE& f) { return f.curPosition();}
+
    /*
     * send file with given name to serial interface
     * format length 9 digit decimal as ASCII followed by ':'
@@ -175,7 +201,11 @@ class cSdCard {
     * get free memory in kByte
     */
    enSdRes getFreeMem(size_t& freeSpaceKb, size_t& totSpacekB);
-     
+
+   /*
+    * format SD card
+    */  
+   enSdRes format();
  protected:
    /**
     * transform path name
@@ -195,7 +225,7 @@ class cSdCard {
 #if defined(CARDLIB_USDFS)
   FATFS m_fatfs;                     ///< File system object
 #elif defined(CARDLIB_SDFAT)
-  SdFat32 m_sd;
+  sd_t m_sd;
 #endif
 };
 

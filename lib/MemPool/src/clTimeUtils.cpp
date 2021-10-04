@@ -19,7 +19,7 @@ double clTimeUtils::m_Frequency = 0;
 
 void clTimeUtils::sleep_ms(uint32_t Time)
 {
-  delayMicroseconds(Time * 1000);
+  delay(Time * 1000);
 }
 
 void clTimeUtils::sleep_s(uint32_t Time)

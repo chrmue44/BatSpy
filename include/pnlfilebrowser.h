@@ -17,6 +17,7 @@
 
 int initFileBrowserPan(cPanel* pan, tCoord lf);
 void initFileBrowser(cPanel* pan, const char* dir);
+int initFkeyFilePanel(cPanel* pan, tCoord lf);
 
 
 #endif // PNLFILEBROWSER_H
