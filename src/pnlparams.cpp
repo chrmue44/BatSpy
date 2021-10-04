@@ -67,7 +67,7 @@ int initParPan(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   err |= pan->addTextItem(1100,                  15, 20,            80, lf);
-//  err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
+  err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
   err |= pan->addTextItem(1148,                  15, 20 +  1 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  1 * lf,  20, lf, true);
   err |= pan->addTextItem(1320,                  15, 20 +  2 * lf,  80, lf);

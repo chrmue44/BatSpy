@@ -183,7 +183,7 @@ void loop()
       cSdCard::inst().getFreeMem(freeSpace, totSpace);
       float volt = readSupplyVoltage();
       devStatus.voltage.set(volt);
-      devStatus.freeSpace.set(freeSpace * 100.0 / totSpace);
+      devStatus.freeSpace.set(freeSpace / 1024);
       float temp = readTemperature();
       devStatus.temperature.set(temp);
       cParGraph* g = getLiveFft();
@@ -201,3 +201,4 @@ void loop()
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
   audio.operate( rtFft );
 }
+
