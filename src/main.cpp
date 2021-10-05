@@ -95,10 +95,9 @@ void setup()
   Serial.begin(9600);
   Serial.println("setting up bat detector");
 //  waitForSerial();
-  initTft();
-  tft.println("setting up bat detector");
-  delay(500);
   Txt::setResource(Texts);
+  initTft();
+  showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
   cSdCard::inst().getFreeMem(freeMem, totMem);
   Serial.printf("free memory on SD card: %u of %u [kB]\n", freeMem, totMem);

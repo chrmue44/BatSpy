@@ -96,7 +96,8 @@ struct stTxtList Texts[] =
   {   480, "ms/div"                    ,0},
   {   500, "Sel."                      ,0},
   {   510, "Entf."                     ,"Del."},
-
+  
+  {  1000, "Über..."                   ,"About..."},
   {  1001, "Laden ..."                 ,"Load ..."},  
   {  1005, "Sollen die Parametereinstellungen"," "},
   {  1006, "geladen werden?"           ,"Load settings?"},

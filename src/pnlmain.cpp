@@ -15,11 +15,41 @@
 #include "pnlmain.h"
 #undef OWN_H
 #include "pnllive.h"
+#include "config.h"
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
 
+#include "startup_pic.c_"
 
+void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
+{
+  tft.fillScreen(ILI9341_BLACK);
+  tft.setTextColor(ILI9341_YELLOW);
+  tft.setCursor(140, 5);
+  tft.print("BatSpy");
+  tft.setCursor(30, 20);
+  tft.print("an Open Source bat recording and detection device");
+  tft.writeRect(96,55,128, 128, startup_pic);
+  tft.setCursor(30, 195);
+  tft.print("Software Version: ");
+  tft.print(devStatus.version.get());
+  tft.setCursor(30, 210);
+  tft.print("(C) 2021 Christian M"CH_UEs"ller");
+  tft.setCursor(30, 230);
+  tft.print("press button to continue!");
+  bool exit = false;
+  if(waitBtn)
+  {
+    do
+    {
+      exit = !digitalRead(PIN_ROT_LEFT_S);
+    } while (!exit);
+  }
+  else
+    delay(1000);
+  tft.fillScreen(ILI9341_BLACK);
+}
 
 // *******************************************
 // drop down panel F1 for main panel
@@ -101,6 +131,7 @@ void initFunctionItems()
   f1MainItems.addItem(107);
   f1MainItems.addItem(108);
 
+  f4MainItems.addItem(1000);
   f4MainItems.addItem(1001);
   f4MainItems.addItem(1021);
   f4MainItems.addItem(1030);
@@ -159,29 +190,37 @@ void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   }
 }
 
-void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
-  switch (pThis->getFocusItem()) {
+void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
+{
+  switch (pThis->getFocusItem()) 
+  {
     case 0:
+      while(digitalRead(PIN_ROT_LEFT_S) == 0);
+      showSplashScreen(*gpDisplay, true);
+      pThis->refreshAll();
+      break;
+
+    case 1:
       pThis->showMsg(enMsg::YESNO, f4LoadFunc, Txt::get(1005), Txt::get(1006));
       break;
     
-    case 1:
+    case 2:
       pThis->showMsg(enMsg::YESNO, f4SaveFunc, Txt::get(1005), Txt::get(1025));
       break;
     
-    case 2:
+    case 3:
       pThis->setMainPanel(panParams);
       pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
-    case 3:
+    case 4:
       pThis->setMainPanel(panParRec);
       pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
-    case 4:
+    case 5:
       devStatus.year.set(devStatus.date.getYear());
       devStatus.month.set(devStatus.date.getMonth());
       devStatus.day.set(devStatus.date.getDay());
@@ -192,7 +231,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
-    case 5:
+    case 6:
       devStatus.latDeg.set(devStatus.geoPos.getDegLat());
       devStatus.latMin.set(devStatus.geoPos.getMinLat());
       devStatus.latSec.set(devStatus.geoPos.getSecLat());
