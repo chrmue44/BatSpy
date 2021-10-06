@@ -26,18 +26,20 @@ void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 {
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_YELLOW);
-  tft.setCursor(140, 5);
+  tft.drawRect(2, 2, DISP_WIDTH - 2, DISP_HEIGHT - 2, ILI9341_YELLOW);
+  tft.setCursor(140, 10);
   tft.print("BatSpy");
-  tft.setCursor(30, 20);
+  tft.setCursor(30, 25);
   tft.print("an Open Source bat recording and detection device");
   tft.writeRect(96,55,128, 128, startup_pic);
   tft.setCursor(30, 195);
   tft.print("Software Version: ");
   tft.print(devStatus.version.get());
   tft.setCursor(30, 210);
-  tft.print("(C) 2021 Christian M"CH_UEs"ller");
-  tft.setCursor(30, 230);
+  tft.print("(C) 2021 Christian M" CH_UEs "ller");
+  tft.setCursor(180, 225);
   tft.print("press button to continue!");
+#ifndef SIMU_DISPLAY
   bool exit = false;
   if(waitBtn)
   {
@@ -49,6 +51,7 @@ void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   else
     delay(1000);
   tft.fillScreen(ILI9341_BLACK);
+#endif
 }
 
 // *******************************************

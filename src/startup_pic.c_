@@ -5,16 +5,6 @@
 // Image Size     : 128x128 pixels
 // Memory usage   : 32768 bytes
 
-/*
-#if defined(__AVR__)
-    #include <avr/pgmspace.h>
-#elif defined(__PIC32MX__)
-    #define PROGMEM
-#elif defined(__arm__)
-    #define PROGMEM
-#endif
-*/
-
 
 const unsigned short startup_pic[16384] PROGMEM={
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,   // 0x0010 (16) pixels
