@@ -235,7 +235,10 @@ void cCassette::writeInfoFile(float peakVal)
   char infoFile[80];
  
   strncpy(infoFile, m_fileName, sizeof(infoFile));
-  cUtils::replace(m_fileName, ".raw", ".xml", infoFile, sizeof(infoFile));
+  if (m_recFmt == enRecFmt::RAW)
+    cUtils::replace(m_fileName, ".raw", ".xml", infoFile, sizeof(infoFile));
+  if (m_recFmt == enRecFmt::WAV)
+    cUtils::replace(m_fileName, ".wav", ".xml", infoFile, sizeof(infoFile));
   
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_day, m_month, m_year, m_hour, m_min, m_sec);
   float duration = (float)m_sampleCnt/ m_sampleRate;

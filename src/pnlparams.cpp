@@ -107,7 +107,7 @@ int initDateTimePan(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1143,                 120, 20 + 5 * lf,  80, lf);
   err |= pan->addNumItem(&devStatus.hour,       155, 20 + 5 * lf,  20, lf, true);
   err |= pan->addNumItem(&devStatus.minute,     180, 20 + 5 * lf,  20, lf, true);
-  err |= pan->addBtnItem(1032,                  120, 20 + 7 * lf,  50, lf, setTimeFunc);
+  err |= pan->addBtnItem(1032,                  120, 20 + 7 * lf,  50, lf + 3, setTimeFunc);
   return err;
 }
 
