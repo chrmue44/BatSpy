@@ -158,7 +158,8 @@ struct stParams
   cParNum stopH = 6;                 ///< hour of start time
   cParNum stopMin = 0;               ///< minute of start time
   cParNum voltFactor = 1;            ///< factor digits to voltage
-  cParEnum recAuto = 0;
+  cParEnum recAuto = 0;              ///< mode for automatic recording
+  bool sunriseCalc = false;          ///< true if sunrise and sunset are calculated
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
   cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
@@ -175,6 +176,7 @@ class cMenue : public cMenuesystem
   virtual void load();
   void printPars();
   void printStatus();
+  static int16_t readInt16FromEep(int32_t addr);
 
 protected:
   virtual void initPars();

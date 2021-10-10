@@ -23,6 +23,7 @@
 #include "cSdCard.h"
 #include "cLog.h"
 #include "pnllive.h"
+#include "pnlparams.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -191,6 +192,8 @@ void loop()
 
     if(tick15Min.check())
     {
+      if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
+        calcSunrise();
       cLog::logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
                  devStatus.voltage.get(), devStatus.temperature.get());
       checkSupplyVoltage();

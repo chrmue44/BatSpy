@@ -195,6 +195,7 @@ struct stTxtList Texts[] =
   {  1400, "Aus",                       "Off"},
   {  1401, "Ein",                       "On"},
   {  1402, "Zeitgesteuert",             "Time controlled"},
+  {  1403, "Dämmerung",                 "Twilight"},
   {  1500, "Fledermausart",             "Bat Species"},
   {  1510, "Parameter einstellen",      "Setup Parameters"},
   {  1600, "Datei wirklich löschen?:",  "Really delete file?:"},

@@ -30,6 +30,7 @@
 #include <Time.h>
 #else
 #include "simulation/cSdCard.h"
+#include "simulation/cRtc.h"
 typedef std::size_t size_t;
 #endif
 #pragma GCC diagnostic ignored "-Wunused-parameter" //disable because fuFocus functions may not use the parameters
@@ -115,6 +116,7 @@ void cMenue::initPars() {
   devPars.recAuto.addItem(1400),
   devPars.recAuto.addItem(1401),
   devPars.recAuto.addItem(1402),
+  devPars.recAuto.addItem(1403),
 
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.sweepSpeed.init(0, 10, 1, 0);
@@ -193,11 +195,10 @@ void cMenue::initPars() {
 
   load();
 
-#ifndef SIMU_DISPLAY
+  if (devPars.recAuto.get() == enRecAuto::TWILIGHT)
+    calcSunrise();
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
-#endif
-
 }
 
 void cMenue::initDialogs() {
@@ -289,12 +290,10 @@ void writeFloatToEep(int32_t addr, float val) {
   } s;
 
   s.v = val;
-#ifndef SIMU_DISPLAY
   EEPROM.write(addr++, s.b[0]);
   EEPROM.write(addr++, s.b[1]);  
   EEPROM.write(addr++, s.b[2]);  
   EEPROM.write(addr++, s.b[3]);
-#endif
 }
 
 void writeInt16ToEep(int32_t addr, int16_t val) {
@@ -304,49 +303,46 @@ void writeInt16ToEep(int32_t addr, int16_t val) {
   } s;
 
   s.v = val;
-#ifndef SIMU_DISPLAY
   EEPROM.write(addr++, s.b[0]);
   EEPROM.write(addr++, s.b[1]);  
-#endif
 }
 
-float readFloatFromEep(int addr) {
-  union {
+float readFloatFromEep(int addr) 
+{
+  union 
+  {
     float v;
     unsigned char b[4];
   } s;
-#ifndef SIMU_DISPLAY
   s.b[0] = EEPROM.read(addr++);  
   s.b[1] = EEPROM.read(addr++);  
   s.b[2] = EEPROM.read(addr++);  
   s.b[3] = EEPROM.read(addr);
-#endif
   return s.v;
 }
 
-int16_t readInt16FromEep(int32_t addr) {
-  union {
+int16_t readInt16FromEep(int32_t addr) 
+{
+  union 
+  {
     int16_t v;
     unsigned char b[2];
   } s;
 
-#ifndef SIMU_DISPLAY
   s.b[0] = EEPROM.read(addr++);  
   s.b[1] = EEPROM.read(addr);
-#endif
   return s.v;
 }
 
-unsigned char readCharFromEep(int addr) {
+unsigned char readCharFromEep(int addr) 
+{
   unsigned char retVal = 0;
-#ifndef SIMU_DISPLAY
   retVal = EEPROM.read(addr++);
-#endif
   return retVal;
 }
 
-void cMenue::save() {
-#ifndef SIMU_DISPLAY
+void cMenue::save() 
+{
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
   writeInt16ToEep(0x000C, devPars.recAuto.get());
@@ -391,12 +387,12 @@ void cMenue::save() {
   for(int i = 4; i <= maxAddr; i++)
     chks += readCharFromEep(i);
   writeInt16ToEep(0x0002, chks);
+#ifndef SIMU_DISPLAY
   Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
  #endif //#ifndef SIMU_DISPLAY
 }
 
 void cMenue::load() {
-#ifndef SIMU_DISPLAY
   if(checkCRC()) {
     devPars.volume.set(readFloatFromEep(0x0004));
     devPars.mixFreq.set(readFloatFromEep(0x0008));
@@ -422,20 +418,18 @@ void cMenue::load() {
     devStatus.geoPos.setLon(readFloatFromEep(0x004A));
     devPars.filtFreq.set(readFloatFromEep(0x004E));
     devPars.filtType.set(readInt16FromEep(0x0052));
-    devPars.startH.set(readInt16FromEep(0x0054));
-    devPars.startMin.set(readInt16FromEep(0x0056));
-    devPars.stopH.set(readInt16FromEep(0x0058));
-    devPars.stopMin.set(readInt16FromEep(0x005A));
+    devPars.startH.set(readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
+    devPars.startMin.set(readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
+    devPars.stopH.set(readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
+    devPars.stopMin.set(readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
     devPars.voltFactor.set(readFloatFromEep(0x005C));
     devPars.sweepSpeed.set(readInt16FromEep(0x0060));
     devPars.liveAmplitude.set(readInt16FromEep(0x0062));
   }
-#endif //#ifndef SIMU_DISPLAY
 }
 
 
 bool cMenue::checkCRC() {
-#ifndef SIMU_DISPLAY
   int16_t rdCks = readInt16FromEep(2);
   int16_t maxAddr = readInt16FromEep(0);
   int16_t cks = 0;
@@ -447,13 +441,9 @@ bool cMenue::checkCRC() {
   if(!retVal)
     DPRINTF1("checksum error in EEPROM, expected %i, read %i\n", rdCks, cks);
   return retVal;
-#else
-  return true;
-#endif
 }
 
 void cMenue::loadLanguage() {
-#ifndef SIMU_DISPLAY
   if(checkCRC()) {
     devPars.lang.set(readInt16FromEep(0x0042));
     if(devPars.lang.get() == 1)
@@ -461,7 +451,6 @@ void cMenue::loadLanguage() {
     else
       Txt::setLang(LANG_GER);
   }
-#endif //#ifndef SIMU_DISPLAY
 }
 
 

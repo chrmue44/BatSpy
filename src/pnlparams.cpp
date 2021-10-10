@@ -10,6 +10,7 @@
 #include "cRtc.h"
 #include "debug.h"
 #include "config.h"
+#include "csunrise.h"
 
 extern cRtc rtc;
 
@@ -30,6 +31,31 @@ void voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   float fact = calcVoltageFactor(devStatus.voltage.get());
   devPars.voltFactor.set(fact);
 }
+
+void calcSunrise()
+{
+  int srH, srM, ssH, ssM;
+  cSunRise::getSunSetSunRise(devStatus.geoPos.getLat(), devStatus.geoPos.getLon(),
+                                 year(), month(), day(), srH, srM, ssH, ssM);
+  devPars.startH.set(ssH);
+  devPars.startMin.set(ssM);
+  devPars.stopH.set(srH);
+  devPars.stopMin.set(srM);
+}
+
+void fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
+    calcSunrise();
+  else
+  {
+    devPars.startH.set(cMenue::readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
+    devPars.startMin.set(cMenue::readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
+    devPars.stopH.set(cMenue::readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
+    devPars.stopMin.set(cMenue::readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
+  }
+}
+
 
 int initParRec(cPanel* pan, tCoord lf)
 {
@@ -59,9 +85,10 @@ int initParRec(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
   err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  9 * lf,  15, lf, true);
   err |= pan->addTextItem(25,                    15, 20 + 10 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 10 * lf,  80, lf, true);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 10 * lf,  80, lf, true, fuCalcSunrise);
   return err;
 }
+
 
 int initParPan(cPanel* pan, tCoord lf)
 {

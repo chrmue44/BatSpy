@@ -87,4 +87,13 @@ enum enFiltType
   BANDPASS  = 2
 };
 
+// automatic recording
+enum enRecAuto
+{
+  OFF = 0,
+  ON = 1,
+  TIME = 2,
+  TWILIGHT = 3
+};
+
 #endif    //#ifndef _TYPES_H

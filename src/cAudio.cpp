@@ -351,14 +351,14 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       m_peakVal = m_peak.read();
       DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
     }
-    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() > 0))
+    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
       if ((devStatus.playStatus.get() == 0))
       {
         devStatus.time.set(rtc.getTime());
         devStatus.time.update(false);
         bool startRecording = false;
-        if (devPars.recAuto.get() == 1)
+        if (devPars.recAuto.get() == enRecAuto::ON)
           startRecording = true;
         else
         {
