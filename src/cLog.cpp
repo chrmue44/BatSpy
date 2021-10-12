@@ -10,6 +10,7 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <TimeLib.h>
+#include <stdarg.h>
 cLog* cLog::m_inst = nullptr;
 
 

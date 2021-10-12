@@ -14,9 +14,7 @@
 
 #include "types.h"
 //#define WAV
-#ifndef SIMU_DISPLAY
 #include "Audio.h"
-#endif
 #include "cSdCard.h"
 #ifdef WAV
 #include "play_fats_wav.h"
@@ -89,7 +87,6 @@ class cCassette {
     tFILE m_fil;                     ///< File object
 
     uint8_t m_buffern[BUFFSIZE] __attribute__( ( aligned ( 16 ) ) );
-//    uint8_t m_buffern2[BUFFSIZE] __attribute__( ( aligned ( 16 ) ) );    
     uint32_t m_nj = 0;
     size_t m_wr;
     uint32_t m_sampleRate;

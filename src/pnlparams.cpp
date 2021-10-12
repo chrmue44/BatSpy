@@ -117,12 +117,10 @@ int initParPan(cPanel* pan, tCoord lf)
 
 void setTimeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-#ifndef SIMU_DISPLAY
     rtc.setTime(
     devStatus.year.get(), devStatus.month.get(), devStatus.day.get(),
     devStatus.hour.get(), devStatus.minute.get(), 0
     );
-#endif
 }
 
 int initDateTimePan(cPanel* pan, tCoord lf)

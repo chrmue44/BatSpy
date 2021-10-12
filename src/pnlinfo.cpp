@@ -10,9 +10,7 @@
 
 
 void btnAudioFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
-#ifndef SIMU_DISPLAY
   AudioProcessorUsageMaxReset();
-#endif
 }
 
 int initInfoPan(cPanel* pan, tCoord lf) {

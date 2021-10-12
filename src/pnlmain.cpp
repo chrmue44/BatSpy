@@ -39,7 +39,6 @@ void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   tft.print("(C) 2021 Christian M" CH_UEs "ller");
   tft.setCursor(180, 225);
   tft.print("press button to continue!");
-#ifndef SIMU_DISPLAY
   bool exit = false;
   if(waitBtn)
   {
@@ -51,7 +50,6 @@ void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   else
     delay(1000);
   tft.fillScreen(ILI9341_BLACK);
-#endif
 }
 
 // *******************************************

@@ -91,12 +91,10 @@ void cSunRise::getSunSetSunRise(double lat, double lon, int year, int month, int
   double h = -50.0/60.0 * RAD;
   double B = lat * RAD; // geographische Breite
 
-//double Zeitzone = 0; //Weltzeit
-
   double Zeitzone = 1 + DaylightSaving(year, month, day, 12, 0);
-//  double Zeitzone = 2.0;   //Sommerzeit
+
   double Zeitgleichung = BerechneZeitgleichung(DK,T);
-  double Minuten = Zeitgleichung*60.0;
+ // double Minuten = Zeitgleichung*60.0;
   double Zeitdifferenz = 12.0*acos((sin(h) - sin(B)*sin(DK)) / (cos(B)*cos(DK)))/pi;
   double AufgangOrtszeit = 12.0 - Zeitdifferenz - Zeitgleichung;
   double UntergangOrtszeit = 12.0 + Zeitdifferenz - Zeitgleichung;

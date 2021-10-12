@@ -42,9 +42,7 @@
 #define PIN_ROT_RIGHT_B  56
 #define PIN_ROT_RIGHT_S  57
 
-#ifndef SIMU_DISPLAY
 #define PIN_SUPPLY_VOLT  A16
-#endif
 
 // audio out
 #define PIN_MQS          10      // output for mono MQS signal

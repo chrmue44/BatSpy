@@ -9,9 +9,7 @@
  * ***********************************************************/
 #ifndef _CRTC_H_
 #define _CRTC_H_
-#ifndef SIMU_DISPLAY
 #include <TimeLib.h>
-#endif
 class cRtc {
  public:
   cRtc();

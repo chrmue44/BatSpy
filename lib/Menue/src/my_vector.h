@@ -35,9 +35,7 @@ template  <class T, size_t NN> class  my_vector {
       return 0;
     }
     else {
-#ifndef SIMU_DISPLAY
-      Serial.printf("my_vector, maxsize reached\n", NN);
-#endif
+      Serial.printf("my_vector, maxsize reached: %i\n", NN);
       return 1;
     }
   }

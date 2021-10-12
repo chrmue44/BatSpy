@@ -8,12 +8,8 @@
 #ifndef CPARGRAPH_H
 #define CPARGRAPH_H
 
-#ifdef SIMU_DISPLAY
-#include "simulation/crfft.h"
-#else
 #include "crfft.h"
 //#include "crfft_o2.h"  internal fft (doesn't work...)
-#endif
 
 #include "menuedefs.h"
 #include "my_vector.h"

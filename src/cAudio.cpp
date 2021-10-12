@@ -48,7 +48,6 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
   return SR[idx].osc_frequency;
 }
 
-#ifndef SIMU_DISPLAY
 cAudio::cAudio() : 
 m_peak(),
 m_cass(m_peak),
@@ -436,5 +435,3 @@ void cAudio::calcLiveFft()
     graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
   }
 }
-
-#endif  //#ifndef SIMU_DISPLAY

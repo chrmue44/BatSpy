@@ -24,15 +24,9 @@
 #include "pnllive.h"
 #include "pnlfilebrowser.h"
 
-#ifndef SIMU_DISPLAY
 #include "cSdCard.h"
-#include <EEPROM.h>
+#include <Arduino.h>
 #include <Time.h>
-#else
-#include "simulation/cSdCard.h"
-#include "simulation/cRtc.h"
-typedef std::size_t size_t;
-#endif
 #pragma GCC diagnostic ignored "-Wunused-parameter" //disable because fuFocus functions may not use the parameters
 
 #define DEBUG_LEVEL  1
@@ -321,7 +315,7 @@ float readFloatFromEep(int addr)
   return s.v;
 }
 
-int16_t readInt16FromEep(int32_t addr) 
+int16_t cMenue::readInt16FromEep(int32_t addr) 
 {
   union 
   {
@@ -387,9 +381,7 @@ void cMenue::save()
   for(int i = 4; i <= maxAddr; i++)
     chks += readCharFromEep(i);
   writeInt16ToEep(0x0002, chks);
-#ifndef SIMU_DISPLAY
   Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
- #endif //#ifndef SIMU_DISPLAY
 }
 
 void cMenue::load() {
@@ -455,7 +447,6 @@ void cMenue::loadLanguage() {
 
 
 void cMenue::printPars() {
-#ifndef SIMU_DISPLAY
   Serial.printf("volume             [dB]: %.0f\n", devPars.volume.get());
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
   Serial.printf("recording time      [s]: %.1f\n", devPars.recTime.get());
@@ -464,16 +455,13 @@ void cMenue::printPars() {
   Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold.get() * 100);
   Serial.printf("pre amp type           : %s\n", devPars.preAmpType.getActText());
   Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain.getActText());
-#endif //#ifndef SIMU_DISPLAY
 }
 
 
 void cMenue::printStatus() {
  // enCassMode cassMode = STOP; ///< mode of operation of cassette player
-#ifndef SIMU_DISPLAY
   Serial.printf("avg. audio CPU usage: %.2f\n", devStatus.cpuAudioAvg.get());
   Serial.printf("max. audio CPU usage: %.2f\n", devStatus.cpuAudioMax.get());
   Serial.printf("audio memory usage:   %.0f\n", devStatus.audioMem.get());
-#endif //#ifndef SIMU_DISPLAY
 }
 

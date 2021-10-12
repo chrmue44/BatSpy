@@ -22,7 +22,7 @@
 
 class cWheels {
  public:
-  cWheels(int la, int lb, int btnL, int ra, int rb, int btnR);
+    cWheels(int la, int lb, int btnL, int ra, int rb, int btnR);
   void init();
   enKey getKey();
   void setDirection(bool ccw) { m_ccw = ccw; }

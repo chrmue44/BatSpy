@@ -90,7 +90,6 @@ void waitForSerial()
 
 void setup()
 {
-  size_t freeMem, totMem;
   initPins();
   audio.init();
   Serial.begin(9600);
@@ -100,8 +99,6 @@ void setup()
   initTft();
   showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
-  cSdCard::inst().getFreeMem(freeMem, totMem);
-  Serial.printf("free memory on SD card: %u of %u [kB]\n", freeMem, totMem);
   cLog::log("power on");
   delay(500);  
   menue.init();

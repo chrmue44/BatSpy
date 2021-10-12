@@ -113,7 +113,7 @@ int cCassette::operate() {
 
       cSdCard& sd = cSdCard::inst();
       size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
-      rc = sd.writeFile (m_fil, m_buffern, m_wr, cnt);
+      rc = sd.writeFile (m_fil, (const char*)m_buffern, m_wr, cnt);
       DPRINTF1("wr buf %i\n", cnt);
       if (rc != OK) { // IO error
         m_mode = enCassMode::STOP;
@@ -144,7 +144,7 @@ int cCassette::stop() {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
     while (m_recorder.available() > 0) {
-      rc = sd.writeFile(m_fil, (byte*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
+      rc = sd.writeFile(m_fil, (char*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
       m_sampleCnt += AUDIO_BLOCK_SAMPLES;
     }
@@ -202,16 +202,19 @@ void cCassette::writeWavHeader() {
 }
 
 
-void cCassette::writeWord(uint32_t value, size_t size) {
-  for (; size; --size, value >>= 8) {
-    byte val = value & 0xFF;    
+void cCassette::writeWord(uint32_t value, size_t size) 
+{
+  for (; size; --size, value >>= 8) 
+  {
+    char val = value & 0xFF;
 //    f_write(&m_fil, &val, 1, &m_wr);
     cSdCard::inst().writeFile(m_fil, &val, m_wr, 1);
 //    &m_fil.put( static_cast <char> (value & 0xFF) );
   }
 }
 
-void cCassette::finalizeWavFile() {
+void cCassette::finalizeWavFile() 
+{
   
    // (We'll need the final file size to fix the chunk sizes above)
   //size_t file_length = f.tellp();

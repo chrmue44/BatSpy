@@ -8,11 +8,7 @@
 #ifndef MENUEDEFS_H
 #define MENUEDEFS_H
 
-#ifdef SIMU_DISPLAY
-#include "simulation/cSdCard.h"
-#else
 #include <cSdCard.h>
-#endif
 #include <cstdint>
 #include <ILI9341_t3.h>
 

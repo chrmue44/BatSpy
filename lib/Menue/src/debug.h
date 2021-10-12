@@ -44,11 +44,14 @@
 #include <cstdio>
 extern MainWindow* pw;
 
-#define DPRINTLN1(x) {char b[128]; snprintf(b, sizeof(b), x); pw->log(b,1);}
-#define DPRINTF1(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,1);}
-#define DPRINTF2(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,2);}
-#define DPRINTF3(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,3);}
-#define DPRINTF4(x, ...) { char b[128]; snprintf(b, sizeof(b), (x), __VA_ARGS__); pw->log(b,4);}
+#define DPRINTLN1(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTLN2(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTLN3(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTLN4(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTF1(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTF2(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,2);}
+#define DPRINTF3(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,3);}
+#define DPRINTF4(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,4);}
 #else
   #define DPRINTLN1(x)
   #define DPRINTF1(x, ...)

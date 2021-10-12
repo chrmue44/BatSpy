@@ -11,12 +11,10 @@
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
 
-#ifndef SIMU_DISPLAY
-#include <Audio.h>
 #include "cCassette.h"
 #include "ctimer.h"
 #include "cRtc.h"
-#endif
+#include <Audio.h>
 #include "types.h"
 #include "config.h"
 
@@ -60,11 +58,10 @@ struct stSrDesc
  */
 class cAudio
 {
-#ifdef SIMU_DISPLAY
- public:
-    static int32_t getSampleRateHz(enSampleRate sr);
-    static size_t getFftOutputSize() { return 512; }
-#else
+// public:
+//    static int32_t getSampleRateHz(enSampleRate sr);
+//    static size_t getFftOutputSize() { return 512; }
+//#else
 private:
 
 
@@ -124,7 +121,5 @@ private:
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
   void calcLiveFft();
-#endif //#ifndef SIMU_DISPLAY
-
 };
 #endif   //#ifndef _CAUDIO_H
