@@ -19,23 +19,29 @@ enLang Txt::m_actLang = LANG_GER;
 stTxtList* Txt::m_pTextList = NULL;
 size_t Txt::m_size;
 
-void Txt::setLang(enLang lang) {
+void Txt::setLang(enLang lang) 
+{
   m_actLang = lang;
 }
 
-void Txt::setResource(stTxtList* p) {
+void Txt::setResource(stTxtList* p) 
+{
   m_pTextList = p;
 }
 
-const char* Txt::get(thText id) {
+const char* Txt::get(thText id) 
+{
     const char* p = NULL;
     bool found = false;
     thText i = 0;
     if(m_pTextList == NULL)
       return "set text resource!";
-    for (i= 0; ; i++) {
-      if (m_pTextList[i].id == id) {
-        switch (m_actLang) {
+    for (i= 0; ; i++) 
+    {
+      if (m_pTextList[i].id == id) 
+      {
+        switch (m_actLang) 
+        {
           case LANG_GER:
           default:
             p = m_pTextList[i].pGeText;

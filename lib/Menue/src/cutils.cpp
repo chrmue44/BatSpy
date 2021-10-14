@@ -146,7 +146,8 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
 }
 
 //https://www.geeksforgeeks.org/wildcard-character-matching/
-bool cUtils::isWhiteSpace(char c) {
+bool cUtils::isWhiteSpace(char c) 
+{
   return ((c == ' ') || (c == '\t') || (c == '\n'));
 }
 
