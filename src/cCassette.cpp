@@ -94,17 +94,22 @@ int cCassette::startRec(enRecFmt recFmt) {
 }
 
 
-int cCassette::operate() {
+int cCassette::operate()
+{
   enSdRes rc = enSdRes::OK;
-  if (m_mode == enCassMode::STOP) {
+  if (m_mode == enCassMode::STOP)
+  {
     return 0;
   }
-  else if (m_mode == enCassMode::REC) {
+  else if (m_mode == enCassMode::REC)
+  {
     size_t av = m_recorder.available();
-    if (av >= N_BUFFER  ) {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
+    if (av >= N_BUFFER  )
+    {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
       if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
         av = sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t);
-      for (size_t i = 0; i < av; i++) {
+      for (size_t i = 0; i < av; i++)
+      {
         memcpy(m_buffern + i * AUDIO_BLOCK_SAMPLES * sizeof(int16_t),
                m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
         m_recorder.freeBuffer();
@@ -114,8 +119,9 @@ int cCassette::operate() {
       cSdCard& sd = cSdCard::inst();
       size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
       rc = sd.writeFile (m_fil, (const char*)m_buffern, m_wr, cnt);
-      DPRINTF1("wr buf %i\n", cnt);
-      if (rc != OK) { // IO error
+      DPRINTF1("wr buf %lu\n", cnt);
+      if (rc != OK)
+      { // IO error
         m_mode = enCassMode::STOP;
         return 1;
       }
@@ -126,8 +132,10 @@ int cCassette::operate() {
     return 0;
   }
 
-  else if(m_mode == enCassMode::PLAY) {
-    if (!m_player.isPlaying()) {
+  else if(m_mode == enCassMode::PLAY)
+  {
+    if (!m_player.isPlaying())
+    {
       m_player.stop();
       DPRINTLN1("File is over");
       m_mode = enCassMode::STOP;
@@ -137,13 +145,16 @@ int cCassette::operate() {
 }
 
 
-int cCassette::stop() {
+int cCassette::stop()
+{
   enSdRes rc = enSdRes::OK;
   float peakVal = -1;
-  if (m_mode == enCassMode::REC) {
+  if (m_mode == enCassMode::REC)
+  {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
-    while (m_recorder.available() > 0) {
+    while (m_recorder.available() > 0)
+    {
       rc = sd.writeFile(m_fil, (char*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
       m_sampleCnt += AUDIO_BLOCK_SAMPLES;
@@ -164,7 +175,8 @@ int cCassette::stop() {
     DPRINTLN1(" Recording stopped!");
   }
   
-  else if(m_mode == enCassMode::PLAY) {
+  else if(m_mode == enCassMode::PLAY)
+  {
     DPRINTLN1("stopPlaying");
     m_player.stop();
   }
@@ -173,7 +185,8 @@ int cCassette::stop() {
 }
 
 
-void cCassette::startPlay() {
+void cCassette::startPlay()
+{
   DPRINTLN1("startPlaying ");
   DPRINTF1("Playfile: %s\n", m_fileName);
   delay(100);
@@ -181,7 +194,8 @@ void cCassette::startPlay() {
   m_mode = enCassMode::PLAY;
 }
 
-void cCassette::writeWavHeader() {
+void cCassette::writeWavHeader()
+{
   //https://www.cplusplus.com/forum/beginner/166954/
   char buf[24];
   memcpy(buf,"RIFF----WAVEfmt ", 16);     // (chunk size to be filled in later)
@@ -262,29 +276,35 @@ enSdRes cCassette::createRecordingDir()
 
   snprintf(m_fileName, sizeof(m_fileName),"/rec/%02i/%02i/%02i/%02i",m_year, m_month, m_day, m_hour);
   enSdRes ret = cSdCard::inst().chdir(m_fileName);
-  if(ret != OK) {
+  if(ret != OK)
+  {
     ret = cSdCard::inst().chdir("/rec");
-    if(ret != OK) {
+    if(ret != OK)
+    {
       ret = cSdCard::inst().mkDir("/rec");
     }
     snprintf(buf, sizeof(buf),"/rec/%02i",m_year);
     ret = cSdCard::inst().chdir(buf);
-    if(ret != OK) {
+    if(ret != OK)
+    {
       ret = cSdCard::inst().mkDir(buf);
     }
     snprintf(buf, sizeof(buf),"/rec/%02i/%02i", m_year, m_month);
     ret = cSdCard::inst().chdir(buf);
-    if(ret != OK) {
+    if(ret != OK)
+    {
       ret = cSdCard::inst().mkDir(buf);
     }      
     snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i",m_year ,m_month ,m_day);
     ret = cSdCard::inst().chdir(buf);
-    if(ret != OK) {
+    if(ret != OK)
+    {
       ret = cSdCard::inst().mkDir(buf);
     }      
     snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i/%02i",m_year ,m_month, m_day, m_hour);
     ret = cSdCard::inst().chdir(buf);
-    if(ret != OK) {
+    if(ret != OK)
+    {
       ret = cSdCard::inst().mkDir(buf);
     }      
     ret = cSdCard::inst().chdir(m_fileName);

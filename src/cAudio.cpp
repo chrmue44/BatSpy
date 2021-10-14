@@ -352,7 +352,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
     }
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
-      if ((devStatus.playStatus.get() == 0))
+      if ((devStatus.playStatus.get() == enPlayStatus::ST_STOP))
       {
         devStatus.time.set(rtc.getTime());
         devStatus.time.update(false);
@@ -377,7 +377,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
         {
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
-          devStatus.playStatus.set(2);
+          devStatus.playStatus.set(enPlayStatus::ST_REC);
           delay(5);
         }
       }
@@ -396,12 +396,12 @@ void cAudio::operate(bool liveFft)
     {
       switch (devStatus.playStatus.get())
       {
-      case 1:
-        devStatus.playStatus.set(0);
+      case enPlayStatus::ST_PLAY:
+        devStatus.playStatus.set(enPlayStatus::ST_STOP);
         break;
-      case 2:
+      case enPlayStatus::ST_REC:
         m_timeout.start();
-        devStatus.playStatus.set(3);
+        devStatus.playStatus.set(enPlayStatus::TIMEOUT);
         DPRINTLN1("start timeout");
         break;
       default:
@@ -415,7 +415,7 @@ void cAudio::operate(bool liveFft)
     m_oldCassMode = m_cass.getMode();
   }
 
-  if (devStatus.playStatus.get() == 3)
+  if (devStatus.playStatus.get() == enPlayStatus::TIMEOUT)
   {
     if (m_timeout.runTime() > devPars.deafTime.get())
     {

@@ -26,6 +26,8 @@ class cWheels {
   void init();
   enKey getKey();
   void setDirection(bool ccw) { m_ccw = ccw; }
+  Encoder& getEncoder() { return m_left; }     //for simulation
+  Bounce& getBounce() { return m_btnLeft; }
    
  protected:
   void checkEncoders();

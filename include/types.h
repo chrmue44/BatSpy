@@ -71,7 +71,8 @@ enum enKnobRot
 };
 
 // available operation modes
-enum enOpMode {
+enum enOpMode
+{
   HEAR_DIRECT     = 0,
   HEAR_HET        = 1,
   PLAY_DIRECT     = 2,
@@ -94,6 +95,20 @@ enum enRecAuto
   ON = 1,
   TIME = 2,
   TWILIGHT = 3
+};
+
+enum enPlayStatus
+{
+  ST_STOP = 0,
+  ST_PLAY = 1,
+  ST_REC  = 2,
+  TIMEOUT = 3,
+};
+
+enum enProjType
+{
+  DATE_TIME = 0,
+  ELEKON = 1
 };
 
 #endif    //#ifndef _TYPES_H

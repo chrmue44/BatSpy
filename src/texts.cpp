@@ -144,6 +144,9 @@ struct stTxtList Texts[] =
   {  1180, "Startzeit Aufnahme"        ,"Start Time Recording"},
   {  1181, "Stoppzeit Aufnahme"        ,"Stop Time Recording"},
   {  1182, ":"                         ,0},
+  {  1190, "Projektformat"             ,"Project format"},
+  {  1191, "Tag/Uhrzeit"               ,"Date/Time"},
+  {  1192, "Elekon"                    ,0},
   {  1200, "Name deutsch"              ,"Name" },
   {  1202, "Name latein"               ,"Name lat." },
   {  1204, "Hauptfreq. [kHz]"          ,"Main freq. [kHz]" },
@@ -199,7 +202,9 @@ struct stTxtList Texts[] =
   {  1500, "Fledermausart",             "Bat Species"},
   {  1510, "Parameter einstellen",      "Setup Parameters"},
   {  1600, "Datei wirklich löschen?:",  "Really delete file?:"},
-
+  {  1700, "Open Source Fledermausdetektor", "Open Source bat recording and detection device"},
+  {  1702, "Software Version: "        ,0 },
+  {  1704, "Taste drücken, um fortzufahren", "press button to continue!"},
 
   { 12000, TGE_ASC_0           ,0},
   { 12001, TGE_ASC_1           ,0},

@@ -25,20 +25,24 @@ cParEnum f4MainItems(0);
 void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 {
   tft.fillScreen(ILI9341_BLACK);
-  tft.setTextColor(ILI9341_YELLOW);
+  tft.setTextColor(ILI9341_WHITE);
   tft.drawRect(2, 2, DISP_WIDTH - 2, DISP_HEIGHT - 2, ILI9341_YELLOW);
+  tft.fillRect(3, 3, DISP_WIDTH - 4, DISP_HEIGHT - 4, COL_TEXTDROPBACK);
+
   tft.setCursor(140, 10);
   tft.print("BatSpy");
   tft.setCursor(30, 25);
-  tft.print("an Open Source bat recording and detection device");
+  tft.print(Txt::get(1700));
   tft.writeRect(96,55,128, 128, startup_pic);
   tft.setCursor(30, 195);
-  tft.print("Software Version: ");
+  tft.print(Txt::get(1702));
   tft.print(devStatus.version.get());
   tft.setCursor(30, 210);
   tft.print("(C) 2021 Christian M" CH_UEs "ller");
-  tft.setCursor(180, 225);
-  tft.print("press button to continue!");
+  tft.setTextColor(ILI9341_LIGHTGREY);
+  tft.setCursor(140, 225);
+  tft.print(Txt::get(1704));
+
   bool exit = false;
   if(waitBtn)
   {
@@ -151,24 +155,29 @@ void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 
 }
 
-void f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
-      (devStatus.opMode.get() == enOpMode::HEAR_DIRECT)) {
-    if (devStatus.playStatus.get() == 0)
-      devStatus.playStatus.set(2);
+      (devStatus.opMode.get() == enOpMode::HEAR_DIRECT))
+  {
+    if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
+      devStatus.playStatus.set(enPlayStatus::ST_REC);
     else
-      devStatus.playStatus.set(0);
+      devStatus.playStatus.set(enPlayStatus::ST_STOP);
   }
-  else {
-    if (devStatus.playStatus.get() == 0)
-      devStatus.playStatus.set(1);
+  else
+  {
+    if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
+      devStatus.playStatus.set(enPlayStatus::ST_PLAY);
     else
-      devStatus.playStatus.set(0);
+      devStatus.playStatus.set(enPlayStatus::ST_STOP);
   }
 }
 
-void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
-  switch (key) {
+void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (key)
+  {
     case YES:
       pThis->load();
       break;
@@ -179,8 +188,10 @@ void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   }
 }
 
-void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
-  switch (key) {
+void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (key)
+  {
     case enKey::YES:
       pThis->save();
       break;
@@ -254,7 +265,8 @@ void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f4MainItems;
@@ -284,7 +296,8 @@ void setVisibilityRecCount(cMenuesystem* pThis)
     p->itemList[2].isVisible = false;
 }
 
-void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   setVisibilityRecCount(pThis);
 }
 
@@ -313,12 +326,6 @@ int initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
   err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  80, lf, true, dispModeFunc);
-//  err |= pan->addTextItem(206,                     3, 30 +  3 * lf,  80, lf);
-//  err |= pan->addListItem(&devPars.dirSel,       100, 30 +  3 * lf, 210, lf, true, dirFunc);
-//  err |= pan->addTextItem(205,                     3, 30 +  4 * lf,  80, lf);
-//  err |= pan->addListItem(&devPars.fileSel,      100, 30 +  4 * lf, 210, lf, true, fileFunc);
-//  err |= pan->addTextItem(208,                     3, 30 +  5 * lf,  80, lf);
-//  err |= pan->addStrItem(&devPars.fileName,      100, 30 +  5 * lf, 210, lf);
   err |= pan->addTextItem(203,                     3, 30 +  3 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  3 * lf,  15, lf, true);
   err |= pan->addTextItem(204,                     3, 30 +  4 * lf,  80, lf);

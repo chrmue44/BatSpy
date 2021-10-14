@@ -26,45 +26,54 @@ m_btnRight(btnR, DEBOUNCE_TIME)
 }
 
 
-void cWheels::init() {
+void cWheels::init()
+{
   m_leftPos = m_left.read();
   m_rightPos = m_right.read();
 }
 
-void cWheels::increaseWrIdx() {
+void cWheels::increaseWrIdx()
+{
   m_wrIdx++;
   if(m_wrIdx == BUF_SIZE)
     m_wrIdx = 0;
 }
 
-void cWheels::checkEncoders() {
+void cWheels::checkEncoders()
+{
   int left = m_left.read();
   int right = m_right.read();
   
-  if (left != m_leftPos) {
+  if (left != m_leftPos)
+  {
     m_diffl += (m_leftPos - left);
     m_leftPos = left;
     DPRINTF1("pos left: %i\n",m_leftPos);
   }
 
-  if (right != m_rightPos) {
+  if (right != m_rightPos)
+  {
     m_diffr += (m_rightPos - right);
     m_rightPos = right;
     DPRINTF1("pos right: %i\n", m_rightPos);
   }
   
-  if(m_diffl <= -SENSITIVITY) {
+  if(m_diffl <= -SENSITIVITY)
+  {
     DPRINTF1("diff left: %i\n", m_diffl);
-    while (m_diffl <= -SENSITIVITY) {
+    while (m_diffl <= -SENSITIVITY)
+    {
       m_keys[m_wrIdx] = m_ccw ? enKey::DOWN : enKey::UP;
       increaseWrIdx();
       m_diffl += SENSITIVITY;
       DPRINTF1("encoder left: enKey::UP, diff: %i, index %i\n", m_diffl, m_wrIdx); 
     }
   }
-  else if(m_diffl >= SENSITIVITY) {
+  else if(m_diffl >= SENSITIVITY)
+  {
     DPRINTF1("diff left: %i\n", m_diffl);
-    while (m_diffl >= SENSITIVITY) {
+    while (m_diffl >= SENSITIVITY)
+    {
       m_keys[m_wrIdx] = m_ccw ? enKey::UP : enKey::DOWN;
       increaseWrIdx();
       m_diffl -= SENSITIVITY;
@@ -72,7 +81,8 @@ void cWheels::checkEncoders() {
     DPRINTF1("encoder left: enKey::DOWN, diff: %i, index %i\n", m_diffl, m_wrIdx); 
   }
   m_btnLeft.update();
-  if(m_btnLeft.fallingEdge()) {
+  if(m_btnLeft.fallingEdge())
+  {
     m_keys[m_wrIdx] = enKey::KEY_OK;
     increaseWrIdx();
     DPRINTLN1("encoder left: enKey::KEY_OK");
@@ -96,9 +106,11 @@ void cWheels::checkEncoders() {
   }*/
 }
 
-enKey cWheels::getKey() {
+enKey cWheels::getKey()
+{
   checkEncoders();
-  if(m_wrIdx != m_rdIdx) {
+  if(m_wrIdx != m_rdIdx)
+  {
     enKey retVal = m_keys[m_rdIdx];
     m_rdIdx++;
     if(m_rdIdx == BUF_SIZE)

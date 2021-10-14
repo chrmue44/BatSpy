@@ -112,9 +112,13 @@ void cMenue::initPars() {
   devPars.recAuto.addItem(1402),
   devPars.recAuto.addItem(1403),
 
+  devPars.projectType.addItem(1191);
+  devPars.projectType.addItem(1192);
+
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.sweepSpeed.init(0, 10, 1, 0);
   devPars.liveAmplitude.init(10,150, 2, 0);
+
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
@@ -218,7 +222,7 @@ void cMenue::initDialogs() {
   fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
-  hdrPanWaterfall = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
+  hdrPanWaterfall = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
   err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
 
@@ -243,11 +247,11 @@ void cMenue::initDialogs() {
   err |= getPan(panFont)->addTextItem(12007,                  15, 20 +  7 * lf, 200, lf);
   err |= getPan(panFont)->addTextItem(12010,                  15, 20 +  8 * lf, 200, 2 * lf, false, NULL, 2);
 
-  hdrBatInfo = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
+  hdrBatInfo = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
   err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
 
-  hdrParams = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, lf + 1);
+  hdrParams = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
 
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
@@ -368,7 +372,7 @@ void cMenue::save()
   writeFloatToEep(0x005C, devPars.voltFactor.get());
   writeInt16ToEep(0x0060, devPars.sweepSpeed.get());
   writeInt16ToEep(0x0062, devPars.liveAmplitude.get());
-  writeInt16ToEep(0x0064, 0);
+  writeInt16ToEep(0x0064, devPars.projectType.get());
   writeInt16ToEep(0x0066, 0);
   writeInt16ToEep(0x0068, 0);
   writeInt16ToEep(0x006A, 0);
@@ -384,8 +388,10 @@ void cMenue::save()
   Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
 }
 
-void cMenue::load() {
-  if(checkCRC()) {
+void cMenue::load()
+{
+  if(checkCRC())
+  {
     devPars.volume.set(readFloatFromEep(0x0004));
     devPars.mixFreq.set(readFloatFromEep(0x0008));
     devPars.recAuto.set(readInt16FromEep(0x000C));
@@ -417,15 +423,18 @@ void cMenue::load() {
     devPars.voltFactor.set(readFloatFromEep(0x005C));
     devPars.sweepSpeed.set(readInt16FromEep(0x0060));
     devPars.liveAmplitude.set(readInt16FromEep(0x0062));
+    devPars.projectType.set(readInt16FromEep(0x0064));
   }
 }
 
 
-bool cMenue::checkCRC() {
+bool cMenue::checkCRC()
+{
   int16_t rdCks = readInt16FromEep(2);
   int16_t maxAddr = readInt16FromEep(0);
   int16_t cks = 0;
-  for(int i = 4; i <= maxAddr; i++) {
+  for(int i = 4; i <= maxAddr; i++)
+  {
     cks += readCharFromEep(i);
   }
   
@@ -435,8 +444,10 @@ bool cMenue::checkCRC() {
   return retVal;
 }
 
-void cMenue::loadLanguage() {
-  if(checkCRC()) {
+void cMenue::loadLanguage()
+{
+  if(checkCRC())
+  {
     devPars.lang.set(readInt16FromEep(0x0042));
     if(devPars.lang.get() == 1)
       Txt::setLang(LANG_EN);
@@ -446,7 +457,8 @@ void cMenue::loadLanguage() {
 }
 
 
-void cMenue::printPars() {
+void cMenue::printPars()
+{
   Serial.printf("volume             [dB]: %.0f\n", devPars.volume.get());
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
   Serial.printf("recording time      [s]: %.1f\n", devPars.recTime.get());
@@ -458,7 +470,8 @@ void cMenue::printPars() {
 }
 
 
-void cMenue::printStatus() {
+void cMenue::printStatus()
+{
  // enCassMode cassMode = STOP; ///< mode of operation of cassette player
   Serial.printf("avg. audio CPU usage: %.2f\n", devStatus.cpuAudioAvg.get());
   Serial.printf("max. audio CPU usage: %.2f\n", devStatus.cpuAudioMax.get());

@@ -10,7 +10,7 @@
  * ***********************************************************/
 #ifndef CMENUE_H
 #define CMENUE_H
-
+#include <EEPROM.h>
 #include <MenueSystem.h>
 #include "types.h"
 #include "ctext.h"
@@ -161,6 +161,7 @@ struct stParams
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
   cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
+  cParEnum projectType = 0;          ///< type of project for automatic recording
 };
 
 

@@ -53,17 +53,13 @@ cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
                PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 cTerminal terminal;
 
-  void setDispLight(uint8_t bright)
-  {
-#ifdef ARDUINO_TEENSY41
+void setDispLight(uint8_t bright)
+{
   if(bright > 128)
     digitalWrite(PIN_TFT_LED, 1);
   else
     digitalWrite(PIN_TFT_LED, 0);  
-#else
-  analogWrite(PIN_TFT_LED, bright);
-#endif  
-  }
+}
 
 // *********************** initialization **************************
 void initTft()

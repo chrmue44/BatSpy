@@ -76,16 +76,18 @@ int initParRec(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  6 * lf,  20, lf, true);
   err |= pan->addTextItem(1145,                  15, 20 +  7 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  7 * lf,  40, lf, true);
-  err |= pan->addTextItem(1180,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.startH,       190, 20 +  8 * lf,  15, lf, true);
-  err |= pan->addTextItem(1182,                 206, 20 +  8 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  8 * lf,  15, lf, true);
-  err |= pan->addTextItem(1181,                  15, 20 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addTextItem(1190,                  15, 20 +  8 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.projectType, 190, 20 +  8 * lf,  80, lf, true);
+  err |= pan->addTextItem(1180,                  15, 20 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.startH,       190, 20 +  9 * lf,  15, lf, true);
   err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  9 * lf,  15, lf, true);
-  err |= pan->addTextItem(25,                    15, 20 + 10 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 10 * lf,  80, lf, true, fuCalcSunrise);
+  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  9 * lf,  15, lf, true);
+  err |= pan->addTextItem(1181,                  15, 20 + 10 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.stopH,        190, 20 + 10 * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 + 10 * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,      215, 20 + 10 * lf,  15, lf, true);
+  err |= pan->addTextItem(25,                    15, 20 + 11 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 11 * lf,  80, lf, true, fuCalcSunrise);
   return err;
 }
 

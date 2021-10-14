@@ -180,13 +180,13 @@ void cTerminal::parseControlCmd(const char* buf) {
   bool replyOk = true;
   switch(buf[0]) {
     case 'p':
-      devStatus.playStatus.set(1);
+      devStatus.playStatus.set(enPlayStatus::ST_PLAY);
       break;
     case 'r':
-      devStatus.playStatus.set(2);
+      devStatus.playStatus.set(enPlayStatus::ST_REC);
       break;
     case 's':
-      devStatus.playStatus.set(0);
+      devStatus.playStatus.set(enPlayStatus::ST_STOP);
       break;
     case 'f':
       devPars.fileName.set(&buf[1]);
