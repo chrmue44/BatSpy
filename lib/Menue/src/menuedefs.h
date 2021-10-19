@@ -12,6 +12,8 @@
 #include <cstdint>
 #include <ILI9341_t3.h>
 
+#define MMEM FLASHMEM
+
 extern ILI9341_t3* gpDisplay;
 
 enum enKey {

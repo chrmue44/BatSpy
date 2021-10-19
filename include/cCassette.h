@@ -28,7 +28,11 @@
 //#define MXFN 100 // maximal number of files
 #if defined(ARDUINO_TEENSY41)
 #define N_BUFFER 8  // min. nr of buffers to write to SD card
+#ifdef SIMU_DISPLAY
+#define BUFFSIZE (384000 / 10 *sizeof (int16_t))
+#else
 #define BUFFSIZE (3 * N_BUFFER * AUDIO_BLOCK_SAMPLES * sizeof(int16_t)) // size of buffer
+#endif
 #elif defined(__MK20DX256__)
 #define BUFFSIZE (8*1024) // size of buffer to be written
 #elif defined(__MK66FX1M0__)
@@ -38,10 +42,11 @@
 #endif
 
 
-class cCassette {
+class cCassette
+{
   public:
     cCassette(AudioAnalyzePeak& peak);
-    int startRec(float recTime, enRecFmt recFmt);
+//    int startRec(float recTime, enRecFmt recFmt);
     int startRec(const char* name, float recTime, enRecFmt recFmt);
     int startRec(enRecFmt recFmt);
     int stop();
@@ -67,6 +72,7 @@ class cCassette {
      */
     float getTitleTime() { return m_player.getTitleTime(); }
 
+    size_t getSampleCnt() { return m_sampleCnt; }
   protected:
     cCassette();
 
@@ -75,11 +81,10 @@ class cCassette {
     void writeInfoFile(float peakVal);
     void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
     void finalizeWavFile();
-    enSdRes createRecordingDir();
     uint32_t calcRecSamples(float time) { return (uint32_t)(time * (float)m_sampleRate); }
 
   private:
-    enCassMode m_mode = STOP;
+    enCassMode m_mode = enCassMode::STOP;
     AudioRecordQueue m_recorder;
     bool m_isRecFileOpen = false;
     bool m_isPlayFileOpen = false;
@@ -90,12 +95,6 @@ class cCassette {
     uint32_t m_nj = 0;
     size_t m_wr;
     uint32_t m_sampleRate;
-    int m_year;
-    int m_month;
-    int m_day;
-    int m_hour;
-    int m_min;
-    int m_sec;
     enRecFmt m_recFmt;
     AudioAnalyzePeak& m_peak;
     uint32_t m_sampleCnt;

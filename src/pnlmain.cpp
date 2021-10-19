@@ -22,7 +22,7 @@ cParEnum f4MainItems(0);
 
 #include "startup_pic.c_"
 
-void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
+void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 {
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_WHITE);
@@ -59,7 +59,8 @@ void showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 // *******************************************
 // drop down panel F1 for main panel
 
-void powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   switch (key) 
   {
     case enKey::YES:
@@ -73,7 +74,8 @@ void powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   }
 }
 
-void f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   switch (pThis->getFocusItem()) {
     case 0:
       pThis->setMainPanel(panGeo);
@@ -124,7 +126,7 @@ void f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 }
 
 
-void initFunctionItems()
+void MEMP initFunctionItems()
 {
   f1MainItems.addItem(100);
   f1MainItems.addItem(101);
@@ -146,7 +148,8 @@ void initFunctionItems()
 }
 
 
-void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f1MainItems;
@@ -155,15 +158,20 @@ void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 
 }
 
-void f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
       (devStatus.opMode.get() == enOpMode::HEAR_DIRECT))
   {
-    if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
-      devStatus.playStatus.set(enPlayStatus::ST_REC);
+    if(devPars.projectType.get() == enProjType::DATE_TIME)
+    {
+      if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
+        devStatus.playStatus.set(enPlayStatus::ST_REC);
+      else
+        devStatus.playStatus.set(enPlayStatus::ST_STOP);
+    }
     else
-      devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1015), Txt::get(1016));
   }
   else
   {
@@ -174,7 +182,7 @@ void f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (key)
   {
@@ -188,7 +196,7 @@ void f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (key)
   {
@@ -202,7 +210,7 @@ void f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
+void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
 {
   switch (pThis->getFocusItem()) 
   {
@@ -265,7 +273,7 @@ void f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
   item.type = ITEM_ENUM;
@@ -274,7 +282,7 @@ void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 }
 
 
-int initFkeyPanel(cPanel* pan, tCoord lf)
+int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
 {
   int retVal;
   // Serial.println("initDialogs2");
@@ -286,7 +294,7 @@ int initFkeyPanel(cPanel* pan, tCoord lf)
 }
 
 
-void setVisibilityRecCount(cMenuesystem* pThis)
+void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 {
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
@@ -296,13 +304,13 @@ void setVisibilityRecCount(cMenuesystem* pThis)
     p->itemList[2].isVisible = false;
 }
 
-void dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   setVisibilityRecCount(pThis);
 }
 
 
-void setFileToDisplay(const char* buf)
+void MEMP setFileToDisplay(const char* buf)
 {
   char infoFile[FILENAME_LEN];
   cUtils::replace(buf, ".raw", ".xml", infoFile, sizeof(infoFile));
@@ -316,7 +324,7 @@ void setFileToDisplay(const char* buf)
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
 
-int initMainPanel(cPanel* pan, tCoord lf)
+int MEMP initMainPanel(cPanel* pan, tCoord lf)
 {
   int err = pan->addTextItem(202,                  3, 30,            80, lf);
   err |= pan->addEnumItem(&devStatus.opMode,     150, 30,           140, lf, true);

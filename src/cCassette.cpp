@@ -25,12 +25,13 @@ m_peak(peak)
 
 }
 
-void cCassette::setSamplingRate(uint32_t s) {
+void cCassette::setSamplingRate(uint32_t s)
+{
   m_sampleRate = s;
   m_player.setSampleRate(s);
 }
 
-int cCassette::startRec(float recTime, enRecFmt recFmt) 
+/*int cCassette::startRec(float recTime, enRecFmt recFmt)
 {
   DPRINTLN1("cCassette::startRecording()");
   m_maxRecSamples = calcRecSamples(recTime);
@@ -44,7 +45,7 @@ int cCassette::startRec(float recTime, enRecFmt recFmt)
 
   if (!m_isRecFileOpen) 
   {
-    enSdRes ret = createRecordingDir();
+    enSdRes ret = cPrjoject::createRecordingDir();
     if(ret == OK)
     {
       char buf[16];
@@ -65,15 +66,17 @@ int cCassette::startRec(float recTime, enRecFmt recFmt)
   }
   return 0;
 }
+*/
 
-
-int cCassette::startRec(const char* name, float recTime, enRecFmt recFmt) {
+int cCassette::startRec(const char* name, float recTime, enRecFmt recFmt)
+{
   m_maxRecSamples = calcRecSamples(recTime);
-  strcpy(m_fileName, name);
+  strncpy(m_fileName, name, sizeof (m_fileName));
   return startRec(recFmt);
 }
 
-int cCassette::startRec(enRecFmt recFmt) {
+int cCassette::startRec(enRecFmt recFmt)
+{
   m_mode = enCassMode::REC;
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
@@ -167,7 +170,6 @@ int cCassette::stop()
     if (m_peak.available())
       peakVal = m_peak.read();
     
-    writeInfoFile(peakVal);
     if (rc)
       return 1;
     //
@@ -245,69 +247,4 @@ void cCassette::finalizeWavFile()
 }
 
 
-void cCassette::writeInfoFile(float peakVal)
-{
-  cFileInfo info;
-  char date [32];
-  char infoFile[80];
- 
-  strncpy(infoFile, m_fileName, sizeof(infoFile));
-  if (m_recFmt == enRecFmt::RAW)
-    cUtils::replace(m_fileName, ".raw", ".xml", infoFile, sizeof(infoFile));
-  if (m_recFmt == enRecFmt::WAV)
-    cUtils::replace(m_fileName, ".wav", ".xml", infoFile, sizeof(infoFile));
-  
-  snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_day, m_month, m_year, m_hour, m_min, m_sec);
-  float duration = (float)m_sampleCnt/ m_sampleRate;
-  info.write(infoFile, duration, m_sampleRate, date, cUtils::getFileName(m_fileName), 
-              devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal); 
-}
 
-enSdRes cCassette::createRecordingDir()
-{
-  char buf[80];
-
-  m_year = year();
-  m_month = month();
-  m_day = day();
-  m_hour = hour();
-  m_min = minute();
-  m_sec = second();
-
-  snprintf(m_fileName, sizeof(m_fileName),"/rec/%02i/%02i/%02i/%02i",m_year, m_month, m_day, m_hour);
-  enSdRes ret = cSdCard::inst().chdir(m_fileName);
-  if(ret != OK)
-  {
-    ret = cSdCard::inst().chdir("/rec");
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir("/rec");
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i",m_year);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i", m_year, m_month);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }      
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i",m_year ,m_month ,m_day);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }      
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i/%02i",m_year ,m_month, m_day, m_hour);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }      
-    ret = cSdCard::inst().chdir(m_fileName);
-  }
-  return ret;
-}

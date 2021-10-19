@@ -319,7 +319,7 @@ void cAudio::updateCassMode()
     if (m_cass.getMode() != enCassMode::REC)
     {
       setAudioConnections(0);
-      m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
+      startRec();
       devStatus.recCount.set(devStatus.recCount.get() + 1);
       delay(5);
     }
@@ -375,13 +375,18 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 
         if ((m_peakVal > m_recThresh) && startRecording)
         {
+          if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
+            m_prj.openPrjFile();
           devStatus.recCount.set(devStatus.recCount.get() + 1);
-          m_cass.startRec(devPars.recTime.get(), static_cast<enRecFmt>(devPars.recFmt.get()));
+          startRec();
           devStatus.playStatus.set(enPlayStatus::ST_REC);
           delay(5);
         }
       }
     }
+    else
+      m_prj.closePrjFile();
+
   }
 }
 
@@ -402,8 +407,14 @@ void cAudio::operate(bool liveFft)
       case enPlayStatus::ST_REC:
         m_timeout.start();
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
+        m_prj.writeInfoFile(m_peakVal, m_cass.getSampleCnt(), cPrjoject::getFileFmt());
         DPRINTLN1("start timeout");
         break;
+      case enPlayStatus::ST_STOP:
+        if(m_oldCassMode == enCassMode::REC)
+          m_prj.writeInfoFile(m_peakVal, m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+        break;
+
       default:
         break;
       }
@@ -433,5 +444,21 @@ void cAudio::calcLiveFft()
     m_lastFft = millis();
     cParGraph* graph = getLiveFft();
     graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+  }
+}
+
+void cAudio::startRec()
+{
+  if(devPars.projectType.get() == enProjType::ELEKON)
+  {
+    m_prj.createElekonFileName();
+    m_prj.addFile();
+    m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get(), enRecFmt::WAV);
+  }
+  else
+  {
+    enRecFmt fmt = static_cast<enRecFmt>(devPars.recFmt.get());
+    m_prj.createTimeFileName(fmt);
+    m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get(), fmt);
   }
 }

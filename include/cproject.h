@@ -1,5 +1,5 @@
-#ifndef CPROJECT_H
-#define CPROJECT_H
+#ifndef CPRJELEKON_H
+#define CPRJELEKON_H
 
 //#include <string>
 //#include <vector>
@@ -7,6 +7,7 @@
 //namespace fs = std::experimental::filesystem;
 #include "my_vector.h"
 #include "cxmlhelper.h"
+#include "types.h"
 
 struct stRecord
 {
@@ -14,37 +15,45 @@ struct stRecord
   char name[40];
 };
 
-class cProject
+class cPrjoject
 {
 public:
-  cProject(const char* localPath) : m_localPath(localPath) {}
-  int create(const char*);
-  int create(int y, int m, int d, int h, int duration, const char*);
+  cPrjoject();
+  void openPrjFile();
+  void closePrjFile();
+  void addFile();
+  void writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt);
 
-protected:
-  cProject();
+  bool getIsOpen() { return m_isOpen; }
+  const char* getWavFileName() { return m_wavFile; }
+  const char* createElekonFileName();
+  enSdRes createTimeFileName(enRecFmt recFmt);
+  static enRecFmt getFileFmt();
 
 private:
-  void openPrjFile(const char* name);
-  void closePrjFile();
-  void addFile(const char* wavFile, const char* name);
+  static enSdRes createRecordingDir(char* out, size_t outBufSize);
+  void saveStartTime();
 
-  void exportActDir();
-  void copy(const char* src, const char* dstFile, const char* dstPath);
+  bool m_isOpen;
   int m_startY;
   int m_startM;
   int m_startD;
-  int m_startH;
   int m_currY;
   int m_currM;
   int m_currD;
-  int m_currH;
   int m_counter;
-  my_vector<stRecord, 100> m_records;
-  const char* m_localPath;
-  char m_currPath[80];
-  char m_dstPath[80];
+
+  int m_fy;
+  int m_fMo;
+  int m_fDay;
+  int m_fh;
+  int m_fMin;
+  int m_fSec;
+
   cXmlHelper m_xml;
+  char m_prjName[16];
+  char m_wavFile[40];
+  char m_name[20];
 };
 
 #endif // CEXPORTER_H

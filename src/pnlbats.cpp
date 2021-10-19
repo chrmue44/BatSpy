@@ -12,7 +12,7 @@
 #include "pnlmain.h"
 #include "cmenue.h"
 
-void batFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP batFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   char line[512];
   char line2[512];
   size_t byteCount;
@@ -70,7 +70,8 @@ void batFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 }
 
 
-int initBatPan(cPanel* pan, tCoord lf){
+int MEMP initBatPan(cPanel* pan, tCoord lf)
+{
   int err = pan->addTextItem(1200,                        5,  20,           60, lf);
   err |= pan->addListItem(&devStatus.bats.name,      120,  20,          180, lf, true, batFunc);
   err |= pan->addTextItem(1202,                        5,  20 + 1 * lf,  60, lf);
@@ -96,7 +97,8 @@ int initBatPan(cPanel* pan, tCoord lf){
   return err;
 }
 
-void initBats() {
+void MEMP initBats()
+{
   char line[512];
   char line2[512];
   size_t byteCount;

@@ -473,7 +473,8 @@ char* cSdCard::getActPath() {
   return m_actDir;
 }
 */
-enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
+enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) 
+{
   enSdRes retVal = OK;
 #ifdef DEBUG_LEVEL
   if (mode == READ)
@@ -509,6 +510,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) {
       break;
     case enMode::WRITE:
     case enMode::APPEND:
+      del(name);
       ok = file.open(buf, FILE_WRITE);
       break;
   }

@@ -10,6 +10,9 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+// memeory control
+#define MEMP FLASHMEM     //memory region for user panel functions
+
 // voltage loss D1
 #define U_DIODE           0.29
 #define SUPPLY_12V_MIN   11.5     //min. required supply voltage lead 

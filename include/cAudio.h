@@ -17,6 +17,7 @@
 #include <Audio.h>
 #include "types.h"
 #include "config.h"
+#include "cproject.h"
 
 #include <cstdint>
 #include <cstddef>
@@ -58,13 +59,7 @@ struct stSrDesc
  */
 class cAudio
 {
-// public:
-//    static int32_t getSampleRateHz(enSampleRate sr);
-//    static size_t getFftOutputSize() { return 512; }
-//#else
 private:
-
-
   AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
   AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
@@ -99,6 +94,7 @@ private:
   int m_oldCassMode = -1;
   float m_peakVal;                  // last measured peak value
   uint32_t m_lastFft;
+  cPrjoject m_prj;
   
  public:
   cAudio();
@@ -121,5 +117,6 @@ private:
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
   void calcLiveFft();
+  void startRec();
 };
 #endif   //#ifndef _CAUDIO_H

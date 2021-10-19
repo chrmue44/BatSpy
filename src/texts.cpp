@@ -6,6 +6,7 @@
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
 
+#include <Arduino.h>
 #include "config.h"
 #include "ctext.h"
 
@@ -22,7 +23,7 @@ tText TGE_ASC_7[] = "C0 .. DF: \xC0\xC1\xC2\xC3\xC4\xC5\xC6\xC7 \xC8\xC9\xCA\xCB
 tText TGE_ASC_8[] = "E0 .. FF: \xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7 \xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF \xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7 \xF8\xF9\xFA\xFB\xFC\xFD\xFE\xFF";
 tText TGE_DOUBLE[] = "Doppelte Schriftgröße";
 
-struct stTxtList Texts[] =
+struct stTxtList PROGMEM Texts[] =
 {
   {     0, ""                          ,""},
   {     1, "Anzeige"                   ,"Display"},
@@ -102,6 +103,8 @@ struct stTxtList Texts[] =
   {  1005, "Sollen die Parametereinstellungen"," "},
   {  1006, "geladen werden?"           ,"Load settings?"},
   {  1010, "Wollen Sie wirklich ausschalten?", "Do you really want to power off?"},
+  {  1015, "Manueller Start nur möglich","Manual start only possible for"},
+  {  1016, "für Projektformat Datum/Uhrzeit","project format date/time"},
   {  1021, "Speichern ..."             ,"Save ..."},
   {  1025, "gespeichert werden?"       ,"Save settings?"},
   {  1030, "Parameter allgemein"       ,"Parameter misc."},

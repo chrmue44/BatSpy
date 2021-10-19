@@ -23,8 +23,14 @@
 #define TAG_DATE_TIME    "DateTime"
 #define TAG_FILE_NAME    "FileName"
 #define TAG_POSITION     "Position"
+#define TAG_TRIG_LEVEL   "Level"
+#define TAG_TRIG_FILT    "Filter"
+#define TAG_TRIG_FREQ    "Frequency"
+#define TAG_GAIN         "Gain"
+#define TAG_INP_FILTER   "InputFilter"
 
-enum enToken {
+enum enToken
+{
   OPEN_TAG,
   TEXT,
   CLOSE_TAG,
@@ -32,10 +38,11 @@ enum enToken {
   ERR_TOKEN
 };
 
-class cFileInfo {
+class cFileInfo
+{
 
  public:
-  int write(const char* fileName, float duration, int32_t sampleRate, const char* date,
+  int write(const char* fileName, float duration, const char* date,
             const char* wavFile, float lat, float lon, float peakVal);
   int readParameter(const char* fileName, uint32_t& sampleRate);
 

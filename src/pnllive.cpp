@@ -16,7 +16,7 @@ cParGraph* getLiveFft()
 }
 
 
-void setSampleRateLivePan()
+void MEMP setSampleRateLivePan()
 {
   cParGraph* g = getLiveFft();
   enSampleRate idx = (enSampleRate)devPars.sampleRate.get();
@@ -25,7 +25,7 @@ void setSampleRateLivePan()
   devStatus.freq1Tick.set(g->getMaxFreq(cAudio::getFftOutputSize())/ 1000 / Y_TICK_CNT);
 }
 
-void funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cParGraph* g = getLiveFft();
   int sq = g->getSqueeze();
@@ -46,7 +46,7 @@ void funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 }
 
-int initLivePan(cPanel* pan, tCoord lf)
+int MEMP initLivePan(cPanel* pan, tCoord lf)
 {
   int h = 128;
   int p1 = 32;

@@ -9,17 +9,28 @@
 #include "cfileinfo.h"
 #include <cSdCard.h>
 #include "cutils.h"
+#include "cmenue.h"
+
 #include <cstring>
 
-int cFileInfo::write(const char* fileName, float duration, int32_t sampleRate, 
-                    const char* date, const char* wavFile, float lat, float lon, float peakVal)
+int cFileInfo::write(const char* fileName, float duration, const char* date,
+                     const char* wavFile, float lat, float lon, float peakVal)
 {
+  int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
-  if(ret == 0) {
+  if(ret == 0)
+  {
     writeLine("<BatRecord>");
     writeTag(TAG_FILE_NAME, wavFile);
     writeTag(TAG_DATE_TIME, date);
     writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
+    writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
+    writeTag(TAG_INP_FILTER, devPars.preAmpType.getActText());
+    writeLine("<Trigger>");
+    writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");
+    writeTag(TAG_TRIG_FILT, devPars.filtType.getActText());
+    writeTag(TAG_TRIG_FREQ, devPars.filtFreq.get(), "kHz");
+    writeLine("</Trigger>");
     writeTag(TAG_DURATION, duration, "Sec");
     writeTag(TAG_PEAK_VAL, peakVal, "%");
     writeLine("<GPS>");

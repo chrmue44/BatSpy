@@ -4,7 +4,8 @@
 #include "config.h"
 
 // operation modes of recorder
-enum enCassMode {
+enum enCassMode
+{
   STOP = 1,
   PLAY = 2,
   REC  = 3

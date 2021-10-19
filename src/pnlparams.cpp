@@ -14,7 +14,7 @@
 
 extern cRtc rtc;
 
-void languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch(devPars.lang.get()) {
     case 0:
@@ -26,13 +26,13 @@ void languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   float fact = calcVoltageFactor(devStatus.voltage.get());
   devPars.voltFactor.set(fact);
 }
 
-void calcSunrise()
+void MEMP calcSunrise()
 {
   int srH, srM, ssH, ssM;
   cSunRise::getSunSetSunRise(devStatus.geoPos.getLat(), devStatus.geoPos.getLon(),
@@ -43,7 +43,7 @@ void calcSunrise()
   devPars.stopMin.set(srM);
 }
 
-void fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
     calcSunrise();
@@ -57,7 +57,7 @@ void fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
 }
 
 
-int initParRec(cPanel* pan, tCoord lf)
+int MEMP initParRec(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   err |= pan->addTextItem(1110,                  15, 20          ,  80, lf);
@@ -92,7 +92,7 @@ int initParRec(cPanel* pan, tCoord lf)
 }
 
 
-int initParPan(cPanel* pan, tCoord lf)
+int MEMP initParPan(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   err |= pan->addTextItem(1100,                  15, 20,            80, lf);
@@ -117,7 +117,7 @@ int initParPan(cPanel* pan, tCoord lf)
 
 
 
-void setTimeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP setTimeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
     rtc.setTime(
     devStatus.year.get(), devStatus.month.get(), devStatus.day.get(),
@@ -125,7 +125,7 @@ void setTimeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
     );
 }
 
-int initDateTimePan(cPanel* pan, tCoord lf)
+int MEMP initDateTimePan(cPanel* pan, tCoord lf)
 {
   int err = pan->addTextItem(1142,                 120, 20 + 4 * lf,  80, lf);
   err |= pan->addNumItem(&devStatus.day,        155, 20 + 4 * lf,  20, lf, true);
@@ -138,7 +138,7 @@ int initDateTimePan(cPanel* pan, tCoord lf)
   return err;
 }
 
-void setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
     float lat = devStatus.latDeg.get() + devStatus.latMin.get()/60.0 + devStatus.latSec.get()/60000.0;
     if(devStatus.latSign.get() == 1)
@@ -150,7 +150,7 @@ void setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
     devStatus.geoPos.setLon(lon);
 }
 
-int initPositionPan(cPanel* pan, tCoord lf)
+int MEMP initPositionPan(cPanel* pan, tCoord lf)
 {
   int err = pan->addEnumItem(&devStatus.latSign, 120, 20 + 4 * lf,  10, lf, true, setPosFunc);
   err |= pan->addNumItem(&devStatus.latDeg,      130, 20 + 4 * lf,  17, lf, true, setPosFunc);

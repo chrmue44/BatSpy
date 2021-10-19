@@ -9,11 +9,13 @@
 #include "pnlinfo.h"
 
 
-void btnAudioFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void btnAudioFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
   AudioProcessorUsageMaxReset();
 }
 
-int initInfoPan(cPanel* pan, tCoord lf) {
+int MEMP initInfoPan(cPanel* pan, tCoord lf)
+{
   int  err = pan->addTextItem(400,                 3,  30,            80, lf);
   err |= pan->addNumItem(&devStatus.cpuAudioAvg, 145,  30,            35, lf, false);
   err |= pan->addTextItem(401,                   185,  30,            80, lf);

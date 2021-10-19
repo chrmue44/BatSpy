@@ -7,7 +7,7 @@ int getItemIndexFile(int i) {  return FILE_OFFS + (i * (BTN_COUNT + 1)); }
 int getItemIndexSel(int i) {   return getItemIndexFile(i) + 1; }
 int getItemIndexDel(int i) {   return getItemIndexFile(i) + 2; }
 
-bool isDir(const char* name)
+bool MEMP isDir(const char* name)
 {
   bool retVal = false;
   for(size_t i = 0; i < devStatus.dir.size(); i++)
@@ -21,7 +21,7 @@ bool isDir(const char* name)
   return retVal;
 }
 
-void fillFileList(cPanel* pan)
+void MEMP fillFileList(cPanel* pan)
 {
   size_t idxPnl = 0;
   size_t idxDir = devStatus.fileIndex;
@@ -59,7 +59,7 @@ void fillFileList(cPanel* pan)
   pan->refresh();
 }
 
-void initFileBrowser(cPanel* pan, const char* dir)
+void MEMP initFileBrowser(cPanel* pan, const char* dir)
 {
   cSdCard& sd = cSdCard::inst();
   sd.chdir(dir);
@@ -72,14 +72,14 @@ void initFileBrowser(cPanel* pan, const char* dir)
 }
 
 
-void fuFilter(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP fuFilter(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cPanel* pnl = pThis->getPan(panFileBrowser);
   initFileBrowser(pnl, cSdCard::inst().getActDir());
 }
 
 
-void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cParBtn* p = reinterpret_cast<cParBtn*>(pItem);
   int index = getItemIndexFile(p->getIndex());
@@ -101,7 +101,7 @@ void funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 char buf[FILENAME_LEN];
 
-void fuDelete(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP fuDelete(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if(key == enKey::YES)
   {
@@ -114,13 +114,13 @@ void fuDelete(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch(key)
   {
     case enKey::YES:
       {
-        enSdRes ret = cSdCard::inst().format();
+        /*enSdRes ret = */cSdCard::inst().format();
         cSdCard::inst().mkDir("rec");
         cSdCard::inst().mkDir("log");
         cSdCard::inst().mkDir("info");
@@ -136,12 +136,12 @@ void fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void f2FormatFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f2FormatFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   pThis->showMsg(enMsg::YESNO, fuFormat, Txt::get(1040), Txt::get(1041));
 }
 
-void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {  
   cParBtn* p = reinterpret_cast<cParBtn*>(pItem);
   int index = getItemIndexFile(p->getIndex());
@@ -151,20 +151,20 @@ void funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)
   pThis->showMsg(enMsg::YESNO, fuDelete, Txt::get(1600), pStr->get());
 }
 
-void funcUp(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP funcUp(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if(devStatus.fileIndex > 0)
     devStatus.fileIndex--;
   fillFileList(pThis->getPan(panFileBrowser));
 }
 
-void funcDown(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP funcDown(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
    devStatus.fileIndex++;
    fillFileList(pThis->getPan(panFileBrowser));
 }
 
-int initFkeyFilePanel(cPanel* pan, tCoord lf)
+int MEMP initFkeyFilePanel(cPanel* pan, tCoord lf)
 {
   int retVal;
   // Serial.println("initDialogs2");
@@ -174,7 +174,7 @@ int initFkeyFilePanel(cPanel* pan, tCoord lf)
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
-int initFileBrowserPan(cPanel* pan, tCoord lf)
+int MEMP initFileBrowserPan(cPanel* pan, tCoord lf)
 {
   int err = 0;
   err |= pan->addTextItem(220,                     3, 20         ,  80, lf);

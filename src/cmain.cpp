@@ -141,9 +141,9 @@ void loop()
     if(key != enKey::NOKEY)
     {
       // just update time and date here to minimize noise
-      devStatus.time.set(rtc.getTime());
+/*      devStatus.time.set(rtc.getTime());
       devStatus.date.set(rtc.getTime());
-      devStatus.time.update(true);
+      devStatus.time.update(true); */
       
       if(!backLightOn)
       {
@@ -181,6 +181,9 @@ void loop()
       devStatus.temperature.set(temp);
       cParGraph* g = getLiveFft();
       devStatus.msPerDiv.set(g->getMsPerDiv());
+      devStatus.time.set(rtc.getTime());
+      devStatus.date.set(rtc.getTime());
+      devStatus.time.update(true);
     }
 
     if(tick15Min.check())
