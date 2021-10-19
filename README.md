@@ -17,5 +17,6 @@ Triggered by adjustable trigger functions, bat calls are recorded fully automati
 - possibility for self-sufficient stationary use for several days
 - mobile device with integrated charging possibility via cell phone charger
 - Data exchange with PC via USB interface
+- support for Elekon project file format for easy post processing
 - stationary version rechargeable via solar panel
 - favorable price
