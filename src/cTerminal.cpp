@@ -14,14 +14,17 @@
 extern cMenue menue;
 
 
-cTerminal::cTerminal() {
+cTerminal::cTerminal() 
+{
 }
 
-void cTerminal::parseCmd() {
+void MEMF cTerminal::parseCmd() 
+{
   int numBytes = Serial.available();
   if(numBytes <= 0)
     return;
-  while(numBytes > 0) {
+  while(numBytes > 0) 
+  {
     m_recbuf[m_recIdx] = Serial.read();
     numBytes--;
     if(m_recbuf[m_recIdx] == '\n')
@@ -31,15 +34,16 @@ void cTerminal::parseCmd() {
   }
 }
 
-void cTerminal::execCmd() {
+void MEMF cTerminal::execCmd() 
+{
   enSdRes rc;
   m_recbuf[m_recIdx] = 0;
   tDirInfo dirInfo;
   size_t dirIdx;
   char ret;
 
-  switch(m_recbuf[0]) {
-
+  switch(m_recbuf[0]) 
+  {
     case 'h':
       Serial.println("");
       showCommands();
@@ -175,7 +179,8 @@ void cTerminal::execCmd() {
   m_recIdx = 0;
 }
 
-void cTerminal::parseControlCmd(const char* buf) {
+void MEMF cTerminal::parseControlCmd(const char* buf) 
+{
   m_key = enKey::TER;
   bool replyOk = true;
   switch(buf[0]) {
@@ -207,7 +212,8 @@ void cTerminal::parseControlCmd(const char* buf) {
   Serial.write(0x04);
 }
 
-void cTerminal::parseSetCmd(const char* buf) {
+void MEMF cTerminal::parseSetCmd(const char* buf) 
+{
   m_key = enKey::TER;
   bool replyOk = true;
   int val = 0;
@@ -239,7 +245,8 @@ void cTerminal::parseSetCmd(const char* buf) {
 }
 
 
-void cTerminal::showCommands() {
+void MEMF cTerminal::showCommands() 
+{
   Serial.println("Available commands:");
   Serial.println("c<name>  change directory");
   Serial.println("Cf<name> set play name");  

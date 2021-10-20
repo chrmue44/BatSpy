@@ -13,7 +13,7 @@
 
 #include <cstring>
 
-int cFileInfo::write(const char* fileName, float duration, const char* date,
+int MEMF cFileInfo::write(const char* fileName, float duration, const char* date,
                      const char* wavFile, float lat, float lon, float peakVal)
 {
   int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
@@ -42,7 +42,7 @@ int cFileInfo::write(const char* fileName, float duration, const char* date,
   return ret;
 }
 
-int cFileInfo::writeLine(const char* text)
+int MEMF cFileInfo::writeLine(const char* text)
 {
   size_t bytesWritten;
   size_t len = strlen(text);
@@ -51,7 +51,7 @@ int cFileInfo::writeLine(const char* text)
 }
 
 
-int cFileInfo::writeTag(const char* tag, const char* text)
+int MEMF cFileInfo::writeTag(const char* tag, const char* text)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%s</%s>", tag, text, tag);
@@ -59,28 +59,28 @@ int cFileInfo::writeTag(const char* tag, const char* text)
 }
 
 
-int cFileInfo::writeTag(const char* tag, float val, const char* unit)
+int MEMF cFileInfo::writeTag(const char* tag, float val, const char* unit)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%f %s</%s>", tag, val, unit, tag);
   return writeLine(buf);
 }
 
-int cFileInfo::writeTag(const char* tag, float val1, float val2)
+int MEMF cFileInfo::writeTag(const char* tag, float val1, float val2)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%f %f</%s>", tag, val1, val2, tag);
   return writeLine(buf);
 }
 
-int cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
+int MEMF cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%li %s</%s>", tag, val, unit, tag);
   return writeLine(buf);
 }
 
-int cFileInfo::getNextChar()
+int MEMF cFileInfo::getNextChar()
 {
   char c;
   size_t bytesRead;
@@ -91,7 +91,7 @@ int cFileInfo::getNextChar()
     return c;
 }
 
-void cFileInfo::putBack()
+void MEMF cFileInfo::putBack()
 {
   size_t pos = cSdCard::inst().getFilePos(m_file);
   if(pos > 0)
@@ -99,7 +99,8 @@ void cFileInfo::putBack()
 }
 
 
-enToken cFileInfo::getToken() {
+enToken MEMF cFileInfo::getToken() 
+{
   int ret;
   do {
     ret = getNextChar();
@@ -108,14 +109,17 @@ enToken cFileInfo::getToken() {
   if (ret < 0)
     return enToken::END;
 
-  if(ret == '<') {
+  if(ret == '<') 
+  {
     ret = getNextChar();
     if(ret < 0)
       return  enToken::END;
 
     // close tag
-    if(ret == '/') {
-        do {
+    if(ret == '/') 
+    {
+        do 
+        {
           ret = getNextChar();
           m_name[idx++] = (char)ret;
           if(idx >= sizeof (m_name))
@@ -128,9 +132,11 @@ enToken cFileInfo::getToken() {
     }
 
     //open tag
-    else {
+    else 
+    {
       m_name[idx++] = (char)ret;
-      do {
+      do 
+      {
         ret = getNextChar();
         m_name[idx++] = (char)ret;
         if(idx >= sizeof (m_name))
@@ -143,9 +149,11 @@ enToken cFileInfo::getToken() {
   }
 
   // text
-  else {
+  else 
+  {
       m_name[idx++] = (char)ret;
-      do {
+      do 
+      {
         ret = getNextChar();
         m_name[idx++] = (char)ret;
         if((idx >= sizeof (m_name)) || (ret < 0))
@@ -160,20 +168,27 @@ enToken cFileInfo::getToken() {
   return enToken::ERR_TOKEN;
 }
 
-int cFileInfo::readParameter(const char* fileName, uint32_t& sampleRate) {
+int MEMF cFileInfo::readParameter(const char* fileName, uint32_t& sampleRate) 
+{
   int retVal = 0;
   enSdRes res = cSdCard::inst().openFile(fileName, m_file, enMode::READ);
-  if(res == enSdRes::OK) {
-    do {
+  if(res == enSdRes::OK) 
+  {
+    do 
+    {
       enToken tok = getToken();
       if (tok == enToken::END)
         break;
-      if(tok == enToken::OPEN_TAG) {
-        if(strcmp(m_name, TAG_SAMPLE_RATE) == 0) {
+      if(tok == enToken::OPEN_TAG) 
+      {
+        if(strcmp(m_name, TAG_SAMPLE_RATE) == 0) 
+        {
           tok = getToken();
-          if(tok == enToken::TEXT) {
+          if(tok == enToken::TEXT) 
+          {
             char* p = strstr(m_name, "Hz");
-            if(p == nullptr) {
+            if(p == nullptr) 
+            {
               retVal = 3;
               break;
             }
@@ -181,7 +196,8 @@ int cFileInfo::readParameter(const char* fileName, uint32_t& sampleRate) {
             sampleRate = atoi(m_name);
             break;
           }
-          else {
+          else 
+          {
             retVal = 2;
             break;
           }

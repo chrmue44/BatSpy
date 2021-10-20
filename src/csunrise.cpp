@@ -5,8 +5,9 @@
  *                    chrmue44(AT)gmail{DOT}com              *
  * https://www.astronomie.info/zeitgleichung/neu.html        *
  * ***********************************************************/
-
+#include <Arduino.h>
 #include "csunrise.h"
+#include "config.h"
 #include <math.h>
 
 const double cSunRise::pi2=6.283185307179586476925286766559;
@@ -15,7 +16,7 @@ const double cSunRise::RAD = 0.017453292519943295769236907684886;
 
 
 // Gregorianischer Kalender
-double cSunRise::JulianischesDatum (int Jahr, int Monat, int Tag, int Stunde, int Minuten, double Sekunden )
+double MEMP cSunRise::JulianischesDatum (int Jahr, int Monat, int Tag, int Stunde, int Minuten, double Sekunden )
 {
   int   Gregor;
   if (Monat<=2)
@@ -31,7 +32,7 @@ double cSunRise::JulianischesDatum (int Jahr, int Monat, int Tag, int Stunde, in
   + Minuten/1440.0 + Sekunden/86400.0;
 }
 
-double cSunRise::InPi(double x)
+double MEMP cSunRise::InPi(double x)
 {
   int n = (int)(x/pi2);
   x = x - n*pi2;
@@ -41,14 +42,14 @@ double cSunRise::InPi(double x)
 }
 
 
-double cSunRise::eps(double T) // Neigung der Erdachse
+double MEMP cSunRise::eps(double T) // Neigung der Erdachse
 {
   return RAD*(23.43929111 + (-46.8150*T - 0.00059*T*T + 0.001813*T*T*T)/3600.0);
 }
 
 
 
-double cSunRise::BerechneZeitgleichung(double &DK ,double T)
+double MEMP cSunRise::BerechneZeitgleichung(double &DK ,double T)
 {
   double RA_Mittel = 18.71506921 + 2400.0513369*T +(2.5862e-5 - 1.72e-9*T)*T*T;
   double M  = InPi(pi2 * (0.993133 + 99.997361*T));
@@ -80,7 +81,7 @@ double cSunRise::BerechneZeitgleichung(double &DK ,double T)
 
 
 
-void cSunRise::getSunSetSunRise(double lat, double lon, int year, int month, int day, int&srH, int&srM, int& ssH, int&ssM)
+void MEMP cSunRise::getSunSetSunRise(double lat, double lon, int year, int month, int day, int&srH, int&srM, int& ssH, int&ssM)
 {
   double JD2000 = 2451545.0;
   double JD;
@@ -115,7 +116,7 @@ void cSunRise::getSunSetSunRise(double lat, double lon, int year, int month, int
   adjustHm(ssH, ssM);
 }
 
-void cSunRise::adjustT(double& t)
+void MEMP cSunRise::adjustT(double& t)
 {
   if (t < 0.0)
     t +=24.0;
@@ -123,7 +124,7 @@ void cSunRise::adjustT(double& t)
     t -=24.0;
 }
 
-void cSunRise::adjustHm(int& h, int& min)
+void MEMP cSunRise::adjustHm(int& h, int& min)
 {
   if (min >= 60)
   {
@@ -139,7 +140,7 @@ void cSunRise::adjustHm(int& h, int& min)
   }
 }
 
-int cSunRise::EasterCode(int Year)
+int MEMP cSunRise::EasterCode(int Year)
 {
   int a;    //Hilfvariable
   int b;    //Hilfvariable
@@ -155,7 +156,7 @@ int cSunRise::EasterCode(int Year)
 //  Die Funktion DaylightSaving überprüft, ob im Augenblick Sommerzeit herrscht, oder nicht.
 //  Sommerzeit wird aufgrund von UTC (Weltzeit) berechnet.
 
-bool cSunRise::DaylightSaving (int Year, int Month, int Day, int Hour, int Minute)                    // TRUE/HIGH wenn Sommerzeit
+bool MEMP cSunRise::DaylightSaving (int Year, int Month, int Day, int Hour, int Minute)                    // TRUE/HIGH wenn Sommerzeit
 {
     bool active;
     long StartDSInM   = (DayOfYear(Year, 3, StartDateDaylightSaving(Year)) *1440) + 120;    // Start Sommerzeit in Minuten
@@ -168,7 +169,7 @@ bool cSunRise::DaylightSaving (int Year, int Month, int Day, int Hour, int Minut
 
 //  Die Funktion DAYOFYEAR berechnet den Tag des Jahres aus dem Eingangsdatum.
 
-int cSunRise::DayOfYear (int Year, int Month, int Day)      // ( 05.01.2012 = 5 .... 31.12.2012 = 366)
+int MEMP cSunRise::DayOfYear (int Year, int Month, int Day)      // ( 05.01.2012 = 5 .... 31.12.2012 = 366)
 {
     int sj = LeapYear(Year);
     int DayNbr = Day + 489 * Month / 16 - (7 + Month) / 10 * (2 - sj) -30 ;
@@ -178,7 +179,7 @@ int cSunRise::DayOfYear (int Year, int Month, int Day)      // ( 05.01.2012 = 5 
 
 // Tag Start Sommerzeit (02:00 Uhr/März) - Schaltjahre werden berücksichtigt
 
-int cSunRise::StartDateDaylightSaving(int Year)
+int MEMP cSunRise::StartDateDaylightSaving(int Year)
 {
     int e = EasterCode(Year);
     int Day;
@@ -188,7 +189,7 @@ int cSunRise::StartDateDaylightSaving(int Year)
 
 // Tag Ende Sommerzeit (03:00 Uhr/Oktober)
 
-int cSunRise::EndDateDaylightSaving(int Year)
+int MEMP cSunRise::EndDateDaylightSaving(int Year)
 {
     int e = EasterCode(Year);
     int Day;
@@ -198,7 +199,7 @@ int cSunRise::EndDateDaylightSaving(int Year)
 
 //  Die Funktion LEAPYEAR testet, ob das Eingangsjahr ein Schaltjahr ist und gibt gegebenenfalls TRUE bzw. "1" aus.
 //  Gültig für 1901 bis 2099
-int cSunRise::LeapYear (int Year)                     // Schaltjahr aktiv (1 = Ja)
+int MEMP cSunRise::LeapYear (int Year)                     // Schaltjahr aktiv (1 = Ja)
 {
     int sj = (1/(1 + Year % 4)) - (1/(1 + Year % 100)) + (1/(1 + Year % 400));
     return sj;

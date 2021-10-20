@@ -1,4 +1,13 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}com              *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************/
+
 #include "cxmlhelper.h"
+#include "config.h"
 #include <string.h>
 
 cXmlHelper::cXmlHelper() :
@@ -7,7 +16,7 @@ m_fileIsOpen(false)
 
 }
 
-enSdRes cXmlHelper::openFile(const char* name)
+enSdRes MEMF cXmlHelper::openFile(const char* name)
 {
   enSdRes res = cSdCard::inst().openFile(name, m_file, enMode::WRITE);
   if(res == enSdRes::OK)
@@ -15,13 +24,13 @@ enSdRes cXmlHelper::openFile(const char* name)
   return res;
 }
 
-void cXmlHelper::closeFile()
+void MEMF cXmlHelper::closeFile()
 {
   if(m_fileIsOpen)
     cSdCard::inst().closeFile(m_file);
   m_fileIsOpen = false;
 }
-void  cXmlHelper::writeString(const char* str)
+void MEMF cXmlHelper::writeString(const char* str)
 {
   if(m_fileIsOpen)
   {
@@ -32,13 +41,13 @@ void  cXmlHelper::writeString(const char* str)
 }
 
 
-void cXmlHelper::initXml() 
+void MEMF cXmlHelper::initXml() 
 {
   m_indent = 0;
   writeString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 }
 
-void cXmlHelper::closeTag(const char* tagName)
+void MEMF cXmlHelper::closeTag(const char* tagName)
 {
   m_indent -= INDENT;
   writeString("</");
@@ -47,7 +56,8 @@ void cXmlHelper::closeTag(const char* tagName)
   newLine();
 }
 
-void cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool close) {
+void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool close) 
+{
   if(!close)
     m_indent += INDENT;
   writeString("<");
@@ -71,14 +81,14 @@ void cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool close) {
   newLine();
 }
 
-void cXmlHelper::value(const char* value)
+void MEMF cXmlHelper::value(const char* value)
 {
   writeString(value);
   m_indent -= INDENT;
   newLine();
 }
 
-void cXmlHelper::value(double value) 
+void MEMF cXmlHelper::value(double value) 
 {
   char buf[32];
   snprintf(buf, sizeof(buf),"%f",value);
@@ -87,7 +97,7 @@ void cXmlHelper::value(double value)
   newLine();
 }
 
-void cXmlHelper::value(int value) 
+void MEMF cXmlHelper::value(int value) 
 {
   char buf[32];
   snprintf(buf, sizeof(buf),"%i",value);
@@ -97,19 +107,19 @@ void cXmlHelper::value(int value)
 }
 
 
-void cXmlHelper::simpleTag(const char* tagName, const char* val, tAttrList* attr) 
+void MEMF cXmlHelper::simpleTag(const char* tagName, const char* val, tAttrList* attr) 
 {
   openTag(tagName, attr);
   value(val);
   closeTag(tagName);
 }
 
-void cXmlHelper::simpleTagNoValue(const char* tagName, tAttrList *attr )
+void MEMF cXmlHelper::simpleTagNoValue(const char* tagName, tAttrList *attr )
 {
   openTag(tagName, attr, true);
 }
 
-void cXmlHelper::newLine()
+void MEMF cXmlHelper::newLine()
 {
   if(m_indent < 0)
     m_indent = 0;

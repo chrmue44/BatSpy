@@ -8,20 +8,22 @@
 
 #include "cLog.h"
 #include "cSdCard.h"
+#include "config.h"
+
 #include <Arduino.h>
 #include <TimeLib.h>
 #include <stdarg.h>
 cLog* cLog::m_inst = nullptr;
 
 
-cLog* cLog::inst() 
+cLog* MEMF cLog::inst() 
 {
   if(m_inst == nullptr)
     m_inst = new cLog();
   return m_inst;
 }
 
-cLog::cLog()
+MEMF cLog::cLog()
 {
   cSdCard& sd = cSdCard::inst();
   enSdRes ret = sd.chdir("/log");
@@ -32,13 +34,13 @@ cLog::cLog()
   
 }
 
-void cLog::timeStamp()
+void MEMF cLog::timeStamp()
 {
     snprintf(m_timeStamp, sizeof(m_timeStamp),"%02i-%02i-%02i %02i:%02i:%02i",
              year() % 100, month(), day(), hour(), minute(), second());
 }
 
-void cLog::log(const char* msg)
+void MEMF cLog::log(const char* msg)
 {
   inst()->timeStamp();
   cSdCard& sd = cSdCard::inst();
@@ -51,7 +53,7 @@ void cLog::log(const char* msg)
   sd.closeFile(f);  
 }
 
-void cLog::logf(const char* fmt, ...)
+void MEMF cLog::logf(const char* fmt, ...)
 {
   char buf[256];
   va_list args;

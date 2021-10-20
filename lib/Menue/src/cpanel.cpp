@@ -9,7 +9,7 @@ cPanel::cPanel() :
   itemList() {
 }
 
-int cPanel::addTextItem(const char *pText, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f, tCoord textSize) {
+int MMEM cPanel::addTextItem(const char *pText, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f, tCoord textSize) {
   stPanelItem item;
 
   cParText* p = new cParText();
@@ -21,7 +21,7 @@ int cPanel::addTextItem(const char *pText, tCoord x, tCoord y, tCoord w, tCoord 
   return addItem(item, x, y, w, h, isEdit, f);
 }
 
-int cPanel::addBtnItem(thText txt, tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f, int idx)
+int MMEM cPanel::addBtnItem(thText txt, tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f, int idx)
 {
   stPanelItem item;
   cParBtn* p = new cParBtn();
@@ -32,7 +32,8 @@ int cPanel::addBtnItem(thText txt, tCoord x, tCoord y, tCoord w, tCoord h, fuFoc
   return addItem(item, x, y, w, h,true, f);
 }
 
-int cPanel::addItem(stPanelItem& item, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addItem(stPanelItem& item, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   item.x = x;
   item.y = y;
   item.width = w;
@@ -43,28 +44,32 @@ int cPanel::addItem(stPanelItem& item, tCoord x, tCoord y, tCoord w, tCoord h, b
   return itemList.push_back(item);
 }
 
-int cPanel::addEnumItem(cParEnum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addEnumItem(cParEnum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_ENUM;
   return addItem(item, x, y, w, h, isEdit, f);
 }
 
-int cPanel::addListItem(cParList* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addListItem(cParList* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_LIST;
   return addItem(item, x, y, w, h, isEdit, f);
 }
 
-int cPanel::addNumItem(cParNum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addNumItem(cParNum* pPar, tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_NR;
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_DATE;
@@ -72,21 +77,23 @@ int cPanel::addDateItem(cParDate* pPar,tCoord x, tCoord y, tCoord w, tCoord h, b
 }
 
 
-int cPanel::addTimeItem(cParTime* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f){
+int MMEM cPanel::addTimeItem(cParTime* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f)
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_TIME;
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) {
+int MMEM cPanel::addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f) 
+{
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_GEO;
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, uint16_t color, fuFocus f)
+int MMEM cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, uint16_t color, fuFocus f)
 {
   stPanelItem item;
   item.p = pPar;
@@ -95,7 +102,7 @@ int cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, boo
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f)
+int MMEM cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f)
 {
   stPanelItem item;
   item.p = pPar;
@@ -106,10 +113,13 @@ int cPanel::addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h,
   return ret;
 }
 
-thItem cPanel::findFirstEditItem() {
+thItem MMEM cPanel::findFirstEditItem() 
+{
   thItem retVal = 9999;
-  for(uint32_t i  = 0; i < itemList.size(); i++) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+  for(uint32_t i  = 0; i < itemList.size(); i++) 
+  {
+    if(itemList[i].isEdit && itemList[i].isVisible) 
+    {
        retVal = i;
        break;
     }
@@ -118,11 +128,13 @@ thItem cPanel::findFirstEditItem() {
 }
 
 
-thItem cPanel::findLastEditItem() {
+thItem MMEM cPanel::findLastEditItem() 
+{
   thItem retVal = 9999;
   thItem i = itemList.size() - 1;
   for(;;i--) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+    if(itemList[i].isEdit && itemList[i].isVisible) 
+    {
       retVal = i;
       break;
     }
@@ -133,10 +145,13 @@ thItem cPanel::findLastEditItem() {
 }
 
 
-thItem cPanel::findNextEditItem(thItem it) {
+thItem MMEM cPanel::findNextEditItem(thItem it) 
+{
   thItem retVal = 9999;
-  for(uint32_t i  = it + 1; i < itemList.size(); i++) {
-    if(itemList[i].isEdit && itemList[i].isVisible) {
+  for(uint32_t i  = it + 1; i < itemList.size(); i++) 
+  {
+    if(itemList[i].isEdit && itemList[i].isVisible) 
+    {
        retVal = i;
        break;
     }
@@ -144,12 +159,16 @@ thItem cPanel::findNextEditItem(thItem it) {
   return retVal;
 }
 
-thItem cPanel::findPrevEditItem(thItem it) {
+thItem MMEM cPanel::findPrevEditItem(thItem it) 
+{
   thItem retVal = 9999;
-  if ( it > 0) {
+  if ( it > 0) 
+  {
     thItem i = it - 1;
-    for(;;i--) {
-      if(itemList[i].isEdit && itemList[i].isVisible) {
+    for(;;i--) 
+    {
+      if(itemList[i].isEdit && itemList[i].isVisible) 
+      {
         retVal = i;
         break;
       }
@@ -160,20 +179,26 @@ thItem cPanel::findPrevEditItem(thItem it) {
   return retVal;
 }
 
-void cPanel::refresh() {
-  for(size_t i = 0; i < itemList.size(); i++) {
+void MMEM cPanel::refresh() 
+{
+  for(size_t i = 0; i < itemList.size(); i++) 
+  {
     itemList[i].p->update(true);
-    if (itemList[i].type == ITEM_GRAPH) {
+    if (itemList[i].type == ITEM_GRAPH) 
+    {
       cParGraph* p = reinterpret_cast<cParGraph*>(itemList[i].p);
       p->initPlot(true);
     }
   }
 }
 
-bool cPanel::isRefresh() {
+bool MMEM cPanel::isRefresh() 
+{
   bool retVal = false;
-  for(size_t i = 0; i < itemList.size(); i++) {
-    if (itemList[i].p->isUpdate()) {
+  for(size_t i = 0; i < itemList.size(); i++) 
+  {
+    if (itemList[i].p->isUpdate()) 
+    {
       retVal = true;
       break;
     }

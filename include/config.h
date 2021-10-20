@@ -12,6 +12,7 @@
 
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
+#define MEMF FLASHMEM     //memory region for user file handling functions
 
 // voltage loss D1
 #define U_DIODE           0.29

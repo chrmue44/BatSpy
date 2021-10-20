@@ -42,7 +42,8 @@ cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
 cMenue::~cMenue() {
 }
 
-void cMenue::initPars() {
+void MEMP cMenue::initPars() 
+{
   
   devPars.lang.clear();
   devPars.lang.addItem(1101);
@@ -199,7 +200,8 @@ void cMenue::initPars() {
   devStatus.date.set(rtc.getTime());
 }
 
-void cMenue::initDialogs() {
+void MEMP cMenue::initDialogs() 
+{
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
   int err;
@@ -281,8 +283,10 @@ void cMenue::initDialogs() {
   initFileBrowser(getPan(panFileBrowser), "/");
 }
 
-void writeFloatToEep(int32_t addr, float val) {
-  union {
+void MEMP writeFloatToEep(int32_t addr, float val) 
+{
+  union 
+  {
     float v;
     char b[4];
   } s;
@@ -294,8 +298,10 @@ void writeFloatToEep(int32_t addr, float val) {
   EEPROM.write(addr++, s.b[3]);
 }
 
-void writeInt16ToEep(int32_t addr, int16_t val) {
-  union {
+void MEMP writeInt16ToEep(int32_t addr, int16_t val) 
+{
+  union 
+  {
     int16_t v;
     unsigned char b[2];
   } s;
@@ -305,7 +311,7 @@ void writeInt16ToEep(int32_t addr, int16_t val) {
   EEPROM.write(addr++, s.b[1]);  
 }
 
-float readFloatFromEep(int addr) 
+float MEMP readFloatFromEep(int addr) 
 {
   union 
   {
@@ -319,7 +325,7 @@ float readFloatFromEep(int addr)
   return s.v;
 }
 
-int16_t cMenue::readInt16FromEep(int32_t addr) 
+int16_t MEMP cMenue::readInt16FromEep(int32_t addr) 
 {
   union 
   {
@@ -332,14 +338,14 @@ int16_t cMenue::readInt16FromEep(int32_t addr)
   return s.v;
 }
 
-unsigned char readCharFromEep(int addr) 
+unsigned char MEMP readCharFromEep(int addr) 
 {
   unsigned char retVal = 0;
   retVal = EEPROM.read(addr++);
   return retVal;
 }
 
-void cMenue::save() 
+void MEMP cMenue::save() 
 {
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
@@ -388,7 +394,7 @@ void cMenue::save()
   Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
 }
 
-void cMenue::load()
+void MEMP cMenue::load()
 {
   if(checkCRC())
   {
@@ -428,7 +434,7 @@ void cMenue::load()
 }
 
 
-bool cMenue::checkCRC()
+bool MEMP cMenue::checkCRC()
 {
   int16_t rdCks = readInt16FromEep(2);
   int16_t maxAddr = readInt16FromEep(0);
@@ -444,7 +450,7 @@ bool cMenue::checkCRC()
   return retVal;
 }
 
-void cMenue::loadLanguage()
+void MEMP cMenue::loadLanguage()
 {
   if(checkCRC())
   {
@@ -457,7 +463,7 @@ void cMenue::loadLanguage()
 }
 
 
-void cMenue::printPars()
+void MEMP cMenue::printPars()
 {
   Serial.printf("volume             [dB]: %.0f\n", devPars.volume.get());
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
@@ -470,7 +476,7 @@ void cMenue::printPars()
 }
 
 
-void cMenue::printStatus()
+void MEMP cMenue::printStatus()
 {
  // enCassMode cassMode = STOP; ///< mode of operation of cassette player
   Serial.printf("avg. audio CPU usage: %.2f\n", devStatus.cpuAudioAvg.get());

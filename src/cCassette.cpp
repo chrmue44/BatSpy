@@ -31,43 +31,6 @@ void cCassette::setSamplingRate(uint32_t s)
   m_player.setSampleRate(s);
 }
 
-/*int cCassette::startRec(float recTime, enRecFmt recFmt)
-{
-  DPRINTLN1("cCassette::startRecording()");
-  m_maxRecSamples = calcRecSamples(recTime);
-  if (m_isRecFileOpen)
-  {
-    enSdRes rc = cSdCard::inst().closeFile(m_fil);
-    if (rc != OK) 
-      return 1;
-    m_isRecFileOpen = false;
-  }
-
-  if (!m_isRecFileOpen) 
-  {
-    enSdRes ret = cPrjoject::createRecordingDir();
-    if(ret == OK)
-    {
-      char buf[16];
-      char ext[5];
-      switch(recFmt)
-      {
-        case enRecFmt::RAW:
-          strncpy(ext, "raw", sizeof(ext));
-          break;
-        case enRecFmt::WAV:
-          strncpy(ext, "wav", sizeof(ext));
-          break;
-      }
-      snprintf(buf,sizeof(buf),"/%02i%02i.%s",m_min, m_sec, ext);
-      strcat(m_fileName, buf);
-      return startRec(recFmt);
-    }
-  }
-  return 0;
-}
-*/
-
 int cCassette::startRec(const char* name, float recTime, enRecFmt recFmt)
 {
   m_maxRecSamples = calcRecSamples(recTime);

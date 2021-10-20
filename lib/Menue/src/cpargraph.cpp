@@ -11,7 +11,8 @@
 typedef std::size_t size_t;
 #endif
 
-const uint16_t colorMap[] = {
+const uint16_t PROGMEM colorMap[] = 
+{
   0x0000, //0
   0x0002, //1
   0x0004, //2
@@ -31,7 +32,8 @@ const uint16_t colorMap[] = {
   0xFC00, //16
 };
 
-void cParGraph::sety(size_t i, uint16_t y) {
+void MMEM cParGraph::sety(size_t i, uint16_t y) 
+{
   long cy_old = limitY(m_amplitude * m_dat.t.yMin[i] / m_amplRaw + m_y0);
   long cy_new = limitY(m_amplitude * y / m_amplRaw + m_y0);
   int16_t x = m_x + i;
@@ -42,7 +44,8 @@ void cParGraph::sety(size_t i, uint16_t y) {
 }
 
 
-void cParGraph::sety(size_t i, int16_t min, int16_t max) {
+void MMEM cParGraph::sety(size_t i, int16_t min, int16_t max) 
+{
   long cy_old_min = limitY(m_y0 - m_amplitude * m_dat.t.yMin[i] / m_amplRaw);
   long cy_old_max = limitY(m_y0 - m_amplitude * m_dat.t.yMax[i] / m_amplRaw);
   long cy_new_min = limitY(m_y0 - m_amplitude * min / m_amplRaw);
@@ -56,17 +59,21 @@ void cParGraph::sety(size_t i, int16_t min, int16_t max) {
   m_dat.t.yMax[i] = max;
 }
 
-void cParGraph::plotGraph() {
+void MMEM cParGraph::plotGraph() 
+{
     cSdCard& sd = cSdCard::inst();
     int result;
     float samplesPerPixelf = (float)((m_tMax - m_tMin) * m_sampleRate) / m_width;
     bool plot = false;
 
-    switch (m_plotState) {
+    switch (m_plotState) 
+    {
       case 0:
-        if (m_initPlot && !m_plotComplete) {
+        if (m_initPlot && !m_plotComplete) 
+        {
           result = initFile();
-          if(result == 0) {
+          if(result == 0) 
+          {
             plot = true;
             m_plotState = 1;
             m_actPixel = 0;
@@ -87,7 +94,8 @@ void cParGraph::plotGraph() {
     }
 
     if(plot) {
-      switch(m_mode) {
+      switch(m_mode)
+      {
         default:
         case GRAPH_XT:
           createXtPlot(samplesPerPixelf);
@@ -95,10 +103,10 @@ void cParGraph::plotGraph() {
         case GRAPH_FFT:
           createFftPlot(samplesPerPixelf);
           break;
-
       }
 
-      if((m_actPixel == m_width) || (m_fileSize - m_filePos) <= 0) {
+      if((m_actPixel == m_width) || (m_fileSize - m_filePos) <= 0) 
+      {
         result = sd.closeFile(m_file);
         m_plotState = 0;
         m_plotComplete = true;
@@ -106,7 +114,8 @@ void cParGraph::plotGraph() {
     }
 }
 
-void cParGraph::createXtPlot(float samplesPerPixelf) {
+void MMEM cParGraph::createXtPlot(float samplesPerPixelf) 
+{
   int16_t pixelToPlot;
   size_t samplesPerPixel = samplesPerPixelf;
   if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
@@ -117,18 +126,21 @@ void cParGraph::createXtPlot(float samplesPerPixelf) {
     pixelToPlot = GRAPH_PIXEL_PER_TICK;
 
   int16_t xMax = (m_actPixel + pixelToPlot) < m_width ? m_actPixel + pixelToPlot :m_width;
-  if (samplesPerPixelf > 1.0) {
+  if (samplesPerPixelf > 1.0) 
+  {
     m_isMinMax = true;
     plotAsBand(samplesPerPixel, xMax);
   }
-  else {
+  else 
+  {
     plotAsSinglePixels(samplesPerPixelf, pixelToPlot);
     m_isMinMax = false;
   }
   update(true);
 }
 
-int16_t cParGraph::limitY(int16_t y){
+int16_t MMEM cParGraph::limitY(int16_t y)
+{
   if(y > m_yMax)
     return m_yMax;
   if(y < m_y)
@@ -136,7 +148,8 @@ int16_t cParGraph::limitY(int16_t y){
   return y;
 }
 
-void cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) {
+void MMEM cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) 
+{
   int16_t scratch[FFT_SIZE];
   size_t bytesRead;
   cSdCard& sd = cSdCard::inst();
@@ -173,7 +186,8 @@ void cParGraph::plotAsSinglePixels(float samplesPerPixelf, int16_t pixelToPlot) 
   m_actPixel = m_width;
 }
 
-void cParGraph::plotAsBand(size_t samplesPerPixel, int16_t xMax) {
+void MMEM cParGraph::plotAsBand(size_t samplesPerPixel, int16_t xMax) 
+{
   int16_t scratch[256];
   size_t bytesRead;
   cSdCard& sd = cSdCard::inst();
@@ -205,8 +219,10 @@ void cParGraph::plotAsBand(size_t samplesPerPixel, int16_t xMax) {
   }
 }
 
-void cParGraph::initDiagram() {
-  switch (m_mode) {
+void MMEM cParGraph::initDiagram() 
+{
+  switch (m_mode) 
+  {
     case enGraphMode::GRAPH_XT:
       drawGrid();
       break;
@@ -220,38 +236,48 @@ void cParGraph::initDiagram() {
   }
 }
 
-void cParGraph::drawYscale() {
+void MMEM cParGraph::drawYscale() 
+{
 //  for( int y = m_y0 - m_height /2; y <= m_y0 + m_height/2; y+=16) {
   float y = m_y0 - m_height /2;
-  for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) {
+  for(int i = 0; i <= Y_TICK_CNT; i++, y+=(float)m_height/Y_TICK_CNT) 
+  {
     gpDisplay->drawLine(m_x, y, m_x + SCALE_WIDTH, y, COL_GRID);
   }
 }
 
-void cParGraph::drawGrid() {
-  if(m_initPlot) {
+void MMEM cParGraph::drawGrid() 
+{
+  if(m_initPlot) 
+  {
     int16_t ampl = m_height / 2;
-    for (int16_t i = 0; i < GRAPH_DIVX_COUNT; i++) {
+    for (int16_t i = 0; i < GRAPH_DIVX_COUNT; i++) 
+    {
       int16_t y = m_y0 - ampl + i * ampl / 2;
 
-      for (int16_t x = m_x; x < m_x +m_width; x+=3) {
+      for (int16_t x = m_x; x < m_x +m_width; x+=3) 
+      {
         gpDisplay->drawPixel(x, y, COL_GRID);
       }
     }
 
-    for (int16_t i = 0; i < 6; i++) {
+    for (int16_t i = 0; i < 6; i++) 
+    {
       int16_t x = m_x + i *m_width / GRAPH_DIVX_COUNT;
-      for (int16_t y = m_y0 - ampl; y < m_y0 + ampl; y+=3) {
+      for (int16_t y = m_y0 - ampl; y < m_y0 + ampl; y+=3) 
+      {
         gpDisplay->drawPixel(x, y, COL_GRID);
       }
     }
   }
 }
 
-void cParGraph::initPlot(bool b) {
+void MMEM cParGraph::initPlot(bool b) 
+{
   m_initPlot = b;
   m_plotComplete = false;
-  if(m_plotState == 1) {
+  if(m_plotState == 1) 
+  {
     cSdCard& sd = cSdCard::inst();
     sd.closeFile(m_file);
   }
@@ -268,7 +294,8 @@ void cParGraph::initPlot(bool b) {
 }
 
 
-int cParGraph::initFile() {
+int MMEM cParGraph::initFile() 
+{
   cSdCard& sd = cSdCard::inst();
   int retVal = 1;
   enSdRes result = sd.openFile(m_plotFileName, m_file, READ);
@@ -286,7 +313,8 @@ int cParGraph::initFile() {
 }
 
 
-float cParGraph::measure(int16_t levelRaw) {
+float MMEM cParGraph::measure(int16_t levelRaw) 
+{
   float retVal = -1;
   size_t start = 9999;
   size_t end = 9999;
@@ -296,23 +324,27 @@ float cParGraph::measure(int16_t levelRaw) {
     m_measState = 0;
   else
     m_measState = 10;
-  for(size_t i = 0; i <m_width; i++) {
+  for(size_t i = 0; i <m_width; i++) 
+  {
     int32_t diff = m_dat.t.yMax[i] - m_dat.t.yMin[i];
-    switch (m_measState) {
+    switch (m_measState) 
+    {
       case 0:
         if (diff < level)
            m_measState = 1;
         break;
 
       case 1:
-        if (diff >= level) {
+        if (diff >= level) 
+        {
            start = i;
            m_measState = 2;
         }
         break;
 
       case 2:
-        if (diff < level) {
+        if (diff < level) 
+        {
            end = i;
            retVal = (float)(end - start)/m_width * (m_tMax - m_tMin);
            plotCursor(m_x + start);
@@ -328,7 +360,8 @@ float cParGraph::measure(int16_t levelRaw) {
         break;
 
       case 11:
-        if (m_dat.t.yMin[i] >= levelRaw) {
+        if (m_dat.t.yMin[i] >= levelRaw) 
+        {
           m_measState = 12;
           start = i;
         }
@@ -340,7 +373,8 @@ float cParGraph::measure(int16_t levelRaw) {
          break;
 
       case 13:
-        if (m_dat.t.yMin[i] >= levelRaw) {
+        if (m_dat.t.yMin[i] >= levelRaw) 
+        {
           m_measState = 0;
           end = i;
           retVal = (float)m_sampleRate / (end - start);
@@ -353,20 +387,23 @@ float cParGraph::measure(int16_t levelRaw) {
       default:
         m_measState = 0;
     }
-    if (done) {
+    if (done) 
+    {
       break;
     }
   }
   return retVal;
 }
 
-void cParGraph::plotCursor(uint16_t x) {
+void MMEM cParGraph::plotCursor(uint16_t x) 
+{
   size_t yMin = m_y0 + m_amplitude;
   for(size_t i = m_y0 - m_amplitude; i < yMin; i+=2)
     gpDisplay->drawPixel(x, i, COL_CURSOR);
 }
 
-uint16_t cParGraph::getColor(float val, float min, float max) {
+uint16_t MMEM cParGraph::getColor(float val, float min, float max) 
+{
   uint16_t size = sizeof(colorMap) / sizeof(colorMap[0]);
   if (val < min)
     return colorMap[0];
@@ -381,7 +418,8 @@ uint16_t cParGraph::getColor(float val, float min, float max) {
   }
 }
 
-void cParGraph::drawColorMap() {
+void MMEM cParGraph::drawColorMap() 
+{
   int16_t min = m_x + 40;
   int16_t max = m_x + m_width - 40;
   for (int16_t x = min; x < max; x++) {
@@ -390,7 +428,8 @@ void cParGraph::drawColorMap() {
   }
 }
 
-void cParGraph::createFftPlot(float samplesPerPixelF) {
+void MMEM cParGraph::createFftPlot(float samplesPerPixelF) 
+{
   uint16_t pixelToPlot;
   size_t samplesPerPixel = samplesPerPixelF;
   if(((m_tMax - m_tMin) * m_sampleRate) < 5000)
@@ -408,14 +447,16 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
   size_t totBytes2read;
   int16_t* pStart;
   float max = 0;
-  for(size_t x = m_actPixel; x < xMax; x++) {
+  for(size_t x = m_actPixel; x < xMax; x++) 
+  {
     DPRINTF1("start copy to scratch, x: %lu\n", x);  //@@@
     if ((samplesPerPixel >= fftWidth) || m_dat.f.firstFft){
       totBytes2read = getRemBytes() < sizeof(m_dat.f.scratch) ? getRemBytes() : sizeof(m_dat.f.scratch);
       pStart = &m_dat.f.scratch[0];
       m_dat.f.firstFft = false;
     }
-    else {
+    else 
+    {
       totBytes2read = samplesPerPixel * 2;
       for(size_t a = 0; a < FFT_SIZE - samplesPerPixel; a++)
         m_dat.f.scratch[a] = m_dat.f.scratch[a + samplesPerPixel];
@@ -438,13 +479,15 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
       m_dat.f.fft.setInput(j, m_dat.f.scratch[j]);
     m_dat.f.fft.process();
 
-    for(int j = 0; j < FFT_SIZE/2; j++) {
+    for(int j = 0; j < FFT_SIZE/2; j++) 
+    {
       v[j] = m_dat.f.fft.getOutput(j);
         if (max < v[j])
           max = v[j];
     }
 
-    for(int j = 0; j < FFT_SIZE/2; j++) {
+    for(int j = 0; j < FFT_SIZE/2; j++) 
+    {
       uint16_t col = getColor(v[j], m_dat.f.levelMin, m_dat.f.levelMax);
       gpDisplay->drawPixel(x + m_x + SCALE_WIDTH, m_y0 + m_height/2 - j, col);
     } 
@@ -459,7 +502,7 @@ void cParGraph::createFftPlot(float samplesPerPixelF) {
   update(true);
 }
 
-void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
+void MMEM cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
 {
   int max = maxAmpl * m_dat.rf.squeeze;
   if(m_dat.rf.squeeze == 0)
@@ -534,7 +577,7 @@ void cParGraph::updateLiveData(uint16_t *data, int16_t maxAmpl)
    }
 }
 
-void cParGraph::setSqueeze(int16_t s, size_t sizeFft)
+void MMEM cParGraph::setSqueeze(int16_t s, size_t sizeFft)
 {
   if(m_mode == enGraphMode::LIVE_FFT)
   {
@@ -547,7 +590,7 @@ void cParGraph::setSqueeze(int16_t s, size_t sizeFft)
   }
 }
 
-uint16_t cParGraph::getSqueeze()
+uint16_t MMEM cParGraph::getSqueeze()
 {
   if(m_mode == enGraphMode::LIVE_FFT)
     return m_dat.rf.squeeze;
@@ -555,7 +598,7 @@ uint16_t cParGraph::getSqueeze()
     return 1;
 }
 
-float cParGraph::getMaxFreq(size_t sizeFft)
+float MMEM cParGraph::getMaxFreq(size_t sizeFft)
 {
   if(m_mode == enGraphMode::LIVE_FFT)
   {

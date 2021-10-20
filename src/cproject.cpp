@@ -11,7 +11,7 @@ m_isOpen(false)
 }
 
 //function will return total number of days
-int  getNumberOfDays(int month, int year)
+int MEMF getNumberOfDays(int month, int year)
 {
   //leap year condition, if month is 2
   if( month == 2)
@@ -31,7 +31,7 @@ int  getNumberOfDays(int month, int year)
 
 
 
-void cPrjoject::openPrjFile()
+void MEMF cPrjoject::openPrjFile()
 {
   char fName[FILENAME_LEN];
 
@@ -72,7 +72,7 @@ void cPrjoject::openPrjFile()
   m_isOpen = true;
 }
 
-void cPrjoject::saveStartTime()
+void MEMF cPrjoject::saveStartTime()
 {
   m_fy = year();
   m_fMo = month();
@@ -82,7 +82,7 @@ void cPrjoject::saveStartTime()
   m_fSec = second();
 }
 
-const char* cPrjoject::createElekonFileName()
+const char* MEMF cPrjoject::createElekonFileName()
 {
   snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%04i.wav", m_prjName, m_startY, m_startM, m_startD, m_counter);
   snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%04i", m_startY, m_startM, m_startD, m_counter);
@@ -91,7 +91,7 @@ const char* cPrjoject::createElekonFileName()
   return m_wavFile;
 }
 
-void cPrjoject::addFile()
+void MEMF cPrjoject::addFile()
 {
   tAttrList attr;
   stAttr item;
@@ -105,7 +105,7 @@ void cPrjoject::addFile()
   m_xml.simpleTagNoValue("Record", &attr);
 }
 
-void cPrjoject::closePrjFile()
+void MEMF cPrjoject::closePrjFile()
 {
   if(m_isOpen)
   {
@@ -119,7 +119,7 @@ void cPrjoject::closePrjFile()
 }
 
 
-enSdRes cPrjoject::createRecordingDir(char* out, size_t outBufSize)
+enSdRes MEMF cPrjoject::createRecordingDir(char* out, size_t outBufSize)
 {
   char buf[80];
 
@@ -166,7 +166,7 @@ enSdRes cPrjoject::createRecordingDir(char* out, size_t outBufSize)
   return ret;
 }
 
-enSdRes cPrjoject::createTimeFileName(enRecFmt recFmt)
+enSdRes MEMF cPrjoject::createTimeFileName(enRecFmt recFmt)
 {
   enSdRes ret = createRecordingDir(m_wavFile, sizeof (m_wavFile));
   if(ret == OK)
@@ -190,7 +190,7 @@ enSdRes cPrjoject::createTimeFileName(enRecFmt recFmt)
 }
 
 
-void cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt)
+void MEMF cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt)
 {
   cFileInfo info;
   char date [32];
@@ -208,7 +208,7 @@ void cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt)
               devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal);
 }
 
-enRecFmt cPrjoject::getFileFmt()
+enRecFmt MEMF cPrjoject::getFileFmt()
 {
   if(devPars.projectType.get() == enProjType::ELEKON)
     return enRecFmt::WAV;
