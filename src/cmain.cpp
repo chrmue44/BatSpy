@@ -24,6 +24,7 @@
 #include "cLog.h"
 #include "pnllive.h"
 #include "pnlparams.h"
+#include "cgps.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -45,6 +46,8 @@ ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST,
 cAudio audio;  // audio control
 cRtc rtc;
 cMenue menue(320, 240, &tft);
+cGps gps;
+
 Metro tick300ms(300);
 Metro tick1s(1000);
 Metro tick15Min(1000 * 60 * 15);
@@ -106,6 +109,7 @@ void setup()
   setDispLight(255);
   devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
+  gps.init();
 }
 
 
@@ -115,6 +119,7 @@ int loopFreq;
 void loop() 
 {
   loopCount++;
+  gps.operate();
   static bool backLightOn = true;
   if (tick300ms.check())
   {

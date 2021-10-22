@@ -69,6 +69,8 @@
 #define PIN_BCLK         21
 #define PIN_MCLK         23
 
+#define SERIAL_GPS       Serial5
+
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
@@ -76,4 +78,3 @@ void checkSupplyVoltage();
 float readTemperature();
 
 #endif  //#ifndef _CONFIG_H
-
