@@ -218,7 +218,6 @@ void MEMP cMenue::initDialogs()
   // main panel
   panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH,   DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
   err |= initMainPanel(getPan(panGeo), lf);
-  setMainPanel(panGeo);
 
   // F-KEYs for waterfall panel
   fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
@@ -281,6 +280,12 @@ void MEMP cMenue::initDialogs()
   panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");
+
+//  if(digitalRead(PIN_ID_12V))
+//    setMainPanel(pnlLive);
+//  else
+    setMainPanel(panGeo);
+
 }
 
 void MEMP writeFloatToEep(int32_t addr, float val) 

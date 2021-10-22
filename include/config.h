@@ -9,7 +9,34 @@
  * ***********************************************************/
 #ifndef _CONFIG_H
 #define _CONFIG_H
-
+/*
+                  +---------+    +---------+
+                --| GND     +----+     VIN |--
+                --| D0                 GND |--
+                --| D1   Teensy 4.1    3V3 |--
+                --| D2              A9 D23 |--
+                --| D3              A8 D22 |--
+                --| D4              A7 D21 |-- BCLK_ADC
+                --| D5              A6 D20 |-- LRCLK_ADC
+         TFT_DC --| D6              A5 D19 |--
+                --| D7              A4 D18 |--
+                --| D8              A3 D17 |-- ROT_LEFT_B
+                --| D9              A2 D16 |-- AMP2
+         TX_ADC --| D10             A1 D15 |-- AMP0
+       TFT_MOSI --| D11             A0 D14 |-- TFT_CS
+       TFT_MISO --| D12                D13 |--
+       TFT_SCLK --| 3V3                GND |--
+        TFT_RST --| D24 A10        A17 D41 |--
+                --| D25 A11        A16 D40 |-- SUPPLY_VOLT
+                --| D26 A12        A15 D39 |--
+                --| D27 A13        A14 D38 |-- POWER_OFF
+                --| D28                D37 |-- ROT_LEFT_S
+           AMP1 --| D29                D36 |-- ROT_LEFT_A
+           AMP3 --| D30                D35 |-- TX_GPS
+        TFT_LED --| D31                D34 |-- TX_GPS
+                --| D32                D33 |--
+                  +------------------------+
+*/
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
 #define MEMF FLASHMEM     //memory region for user file handling functions
@@ -69,7 +96,7 @@
 #define PIN_BCLK         21
 #define PIN_MCLK         23
 
-#define SERIAL_GPS       Serial5
+#define SERIAL_GPS       Serial8
 
 float readSupplyVoltage();
 void initPins();
