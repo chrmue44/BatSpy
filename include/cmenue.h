@@ -66,6 +66,8 @@ struct stStatus
   cParNum recCount = 0;           ///< nr of recordings
   cParGeoPos geoPos;              ///< actual geographic position
   cParNum satCount = 0;           ///< number of satellites
+  cParNum height = 0;             ///< height [m]
+  cParEnum posValid = 0;
   cParEnum playStatus = 0;        ///< status Aufnahme/Abspielen
   cParNum timMin = 0;             ///< left border of time-, waterfall-diagram
   cParNum timMax = 2.5;           ///< right border of time-, waterfall-diagram

@@ -44,7 +44,6 @@ void MEMF cGps::operate()
         m_minute = minute;
         m_second = second;
       }
-      m_gps.satellites
     }
   }
 }

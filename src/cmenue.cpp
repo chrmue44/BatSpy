@@ -192,6 +192,9 @@ void MEMP cMenue::initPars()
   devStatus.freq1Tick.init(0,300,0.1,1);
   devStatus.msPerDiv.init(0,10000,1,0);
   devStatus.satCount.init(0, 24, 1, 0);
+  devStatus.height.init(-100, 10000, 0.1, 1);
+  devStatus.posValid.addItem(16);
+  devStatus.posValid.addItem(15);
 
   load();
   setPosFunc(this, enKey::NO, nullptr);
