@@ -122,7 +122,9 @@ class cParGeoPos : public cParBase {
   int getDegLat() { return (int)m_lat; }
   int getDegLon() { return (int)m_lon; }
   int getMinLat() { return static_cast<int>((m_lat - (int)m_lat) * 60.0); }
+  float getMinfLat() { return (m_lat - (int)m_lat) * 60.0; }
   int getMinLon() { return static_cast<int>((m_lon - (int)m_lon) * 60.0); }
+  float getMinfLon() { return (m_lon - (int)m_lon) * 60.0; }
   int getSecLat() { return static_cast<int>((m_lat - (int)m_lat - (float)getMinLat()/60.0) * 60000.0); }
   int getSecLon() { return static_cast<int>((m_lon - (int)m_lon - (float)getMinLon()/60.0) * 60000.0); }
   void setLat(float lat) {m_lat = lat;}

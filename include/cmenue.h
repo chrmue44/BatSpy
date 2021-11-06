@@ -65,8 +65,7 @@ struct stStatus
   cParEnum opMode = enOpMode::HEAR_HET; ///< display mode
   cParNum recCount = 0;           ///< nr of recordings
   cParGeoPos geoPos;              ///< actual geographic position
-//  cParStr fPlayName = "";         ///< name of file to play
-//  cParStr fRecName = "";          ///< name of actual recFile
+  cParNum satCount = 0;           ///< number of satellites
   cParEnum playStatus = 0;        ///< status Aufnahme/Abspielen
   cParNum timMin = 0;             ///< left border of time-, waterfall-diagram
   cParNum timMax = 2.5;           ///< right border of time-, waterfall-diagram
@@ -77,7 +76,6 @@ struct stStatus
   cParTime time;                  ///< actual time
   cParDate date;                  ///< actual date
   cParGraph graph;                ///< x-t-diagram
-//  cParBtn* btnMeas;               ///< button to measure pulse width
   cParNum pulseWidth = 0;         ///< measured pulse width
   cParStr measUnit = "ms";
   cParGraph waterf;               ///< waterfall diagram
@@ -85,11 +83,9 @@ struct stStatus
   cParNum amplMax = 100;          ///< max. amplitude for td display
   cParNum amplMin = -100;         ///< min. amplitude for td display
   stBatInfo bats;                 ///< struct to store bat informations
-//  cParBtn* btnAudio;              ///< button to clear audio performance measurement
   tDirInfo dir;                   ///< content of current dir
   size_t fileIndex = 0;           ///< index of file in dir
   size_t startIndex = 0;          ///< start index of directory
-  //cParBtn* btnSetTime;
   cParNum year = 2021;
   cParNum month = 7;
   cParNum day = 13;
@@ -116,10 +112,6 @@ struct stStatus
   cParNum msPerDiv = 150;
   cParEnum dirFilter = 0;
   cParStr dirFiles[DIR_PAN_SIZE];
-//  cParBtn dirSel[DIR_PAN_SIZE];
-//  cParBtn dirDel[DIR_PAN_SIZE];
-//  cParBtn dirUp;
-//  cParBtn dirDown;
 };
 
 

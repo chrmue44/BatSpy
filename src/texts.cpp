@@ -52,6 +52,7 @@ struct stTxtList PROGMEM Texts[] =
   {   107, "Font-Tabelle"              ,"Font Table"},
   {   108, "Ausschalten"               ,"Power Off"},
   {   150, "Übersicht"                 ,"Overview"},
+  {   190, "Anzahl Satelliten"         ,"Number of Satellites"},
   {   200, "Position"                  ,0},
   {   201, "Zeit"                      ,"Time"},
   {   202, "Betriebsart"               ,"Operation mode"},

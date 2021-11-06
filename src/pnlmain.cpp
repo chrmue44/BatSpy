@@ -342,7 +342,10 @@ int MEMP initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.preAmpType,   150, 30 +  5 * lf, 120, lf, true);
   err |= pan->addTextItem(1325,                    3, 30 +  6 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   150, 30 +  6 * lf, 120, lf, true);
-
+  err |= pan->addTextItem(200,                     3, 30 +  8 * lf,  80, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,      150, 30 +  8 * lf, 150, lf);
+  err |= pan->addTextItem(190,                     3, 30 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    150, 30 +  9 * lf, 150, lf, false);
   err |= pan->addTextItem(201,                     3, 200 + lf,     70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,     70, lf);

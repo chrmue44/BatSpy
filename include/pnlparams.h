@@ -15,6 +15,7 @@ int initParPan(cPanel* pan, tCoord lf);
 int initParRec(cPanel* pan, tCoord lf);
 int initDateTimePan(cPanel* pan, tCoord lf);
 int initPositionPan(cPanel* pan, tCoord lf);
+void setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void calcSunrise();
 
 #endif // PNLPARAMS_H

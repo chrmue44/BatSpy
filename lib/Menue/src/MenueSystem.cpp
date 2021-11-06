@@ -184,8 +184,8 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
          else
            lon = 'W';
          snprintf(str, sizeof(str), "%c %02i\xf7 %.3f  %c %03i\xf7 %.3f",
-                  lat, p->getDegLat(), p->getMinLat(),
-                  lon, p->getDegLon(), p->getMinLon());
+                  lat, p->getDegLat(), p->getMinfLat(),
+                  lon, p->getDegLon(), p->getMinfLon());
          printText(str);
        }
        break;

@@ -118,7 +118,7 @@ void MEMP cMenue::initPars()
 
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.sweepSpeed.init(0, 10, 1, 0);
-  devPars.liveAmplitude.init(10,150, 2, 0);
+  devPars.liveAmplitude.init(10,300, 2, 0);
 
 
   devStatus.opMode.clear();
@@ -191,8 +191,10 @@ void MEMP cMenue::initPars()
 
   devStatus.freq1Tick.init(0,300,0.1,1);
   devStatus.msPerDiv.init(0,10000,1,0);
+  devStatus.satCount.init(0, 24, 1, 0);
 
   load();
+  setPosFunc(this, enKey::NO, nullptr);
 
   if (devPars.recAuto.get() == enRecAuto::TWILIGHT)
     calcSunrise();
