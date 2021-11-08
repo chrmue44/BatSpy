@@ -11,7 +11,10 @@
 #include <string.h>
 
 cXmlHelper::cXmlHelper() :
-m_fileIsOpen(false)
+m_fileIsOpen(false),
+m_lastWasClose(false),
+m_lastWasOpen(false)
+
 {
 
 }
@@ -49,17 +52,39 @@ void MEMF cXmlHelper::initXml()
 
 void MEMF cXmlHelper::closeTag(const char* tagName)
 {
-  m_indent -= INDENT;
+  indent(false);
   writeString("</");
   writeString(tagName);
   writeString(">");
   newLine();
+  m_lastWasClose = true;
 }
 
-void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool close) 
+void MEMF cXmlHelper::indent(bool openTag)
 {
-  if(!close)
-    m_indent += INDENT;
+  if(openTag)
+  {
+    if(m_lastWasOpen)
+    {
+      m_indent += INDENT;
+    }
+  }
+  else
+  {
+    if(m_lastWasClose)
+      m_indent -= INDENT;
+  }
+  if(m_newLine)
+  {
+    for(int i = 0; i < m_indent; i++)
+      writeString(" ");
+    m_newLine = false;
+  }
+}
+
+void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool nl, bool close)
+{
+  indent(true);
   writeString("<");
   writeString(tagName);
   if(attr != NULL)
@@ -78,39 +103,43 @@ void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool close)
   if(close)
     writeString("/");
   writeString(">");
-  newLine();
+  newLine(nl);
+  m_lastWasOpen = true;
 }
 
-void MEMF cXmlHelper::value(const char* value)
+void MEMF cXmlHelper::value(const char* val, bool newL)
 {
-  writeString(value);
-  m_indent -= INDENT;
-  newLine();
+  indent(false);
+  writeString(val);
+  newLine(newL);
 }
 
-void MEMF cXmlHelper::value(double value) 
-{
-  char buf[32];
-  snprintf(buf, sizeof(buf),"%f",value);
-  writeString(buf);
-  m_indent -= INDENT;
-  newLine();
-}
-
-void MEMF cXmlHelper::value(int value) 
+void MEMF cXmlHelper::value(double val, bool newL)
 {
   char buf[32];
-  snprintf(buf, sizeof(buf),"%i",value);
-  writeString(buf);
-  m_indent -= INDENT;
-  newLine();
+  snprintf(buf, sizeof(buf),"%f",val);
+  value(&buf[0], newL);
+}
+
+void MEMF cXmlHelper::value(int val, bool newL)
+{
+  char buf[32];
+  snprintf(buf, sizeof(buf),"%i",val);
+  value(&buf[0], newL);
 }
 
 
 void MEMF cXmlHelper::simpleTag(const char* tagName, const char* val, tAttrList* attr) 
 {
-  openTag(tagName, attr);
-  value(val);
+  openTag(tagName, attr, false);
+  value(val, false);
+  closeTag(tagName);
+}
+
+void MEMF cXmlHelper::simpleTag(const char* tagName, float val, tAttrList* attr)
+{
+  openTag(tagName, attr, false);
+  value(val, false);
   closeTag(tagName);
 }
 
@@ -119,13 +148,15 @@ void MEMF cXmlHelper::simpleTagNoValue(const char* tagName, tAttrList *attr )
   openTag(tagName, attr, true);
 }
 
-void MEMF cXmlHelper::newLine()
+void MEMF cXmlHelper::newLine(bool nl)
 {
-  if(m_indent < 0)
-    m_indent = 0;
-  writeString("\n");
-  for(int i = 0; i < m_indent; i++)
+  if(nl)
   {
-    writeString(" ");
+    if(m_indent < 0)
+      m_indent = 0;
+    writeString("\n");
+    m_newLine = true;
   }
+  m_lastWasClose = false;
+  m_lastWasOpen = false;
 }

@@ -180,8 +180,7 @@ void MEMP cMenue::initPars()
   devStatus.lonDeg.init(0,59,1,0,3);
   devStatus.lonMin.init(0, 59, 1, 0,2);
   devStatus.lonSec.init(0,999,5,0,3);
-  devStatus.geoPos.setLat(49.1234);
-  devStatus.geoPos.setLon(8.2345);
+  devStatus.geoPos.set(49.1234, 8.2345);
   
   devStatus.peakVal.init(0, 100, 0.1, 2);
   devStatus.freeSpace.init(0, 256000, 1, 0);

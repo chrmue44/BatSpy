@@ -15,14 +15,13 @@ void MEMF cGps::init()
   m_valid = false;
 }
 
-void MEMF cGps::operate()
+void MEMF cGps::operate(float& lat, float& lon)
 {
   while (SERIAL_GPS.available())
   {
     int c = SERIAL_GPS.read();
     if (m_gps.encode(c))
     {
-      float lat, lon;
       int year;
       byte month, day, hour, minute, second, hundredths;
       m_gps.f_get_position(&lat, &lon, &m_age);
@@ -43,6 +42,8 @@ void MEMF cGps::operate()
         m_hour = hour;
         m_minute = minute;
         m_second = second;
+        if(m_gpx.isOpen())
+          m_gpx.log(lat, lon, m_altitude);
       }
     }
   }

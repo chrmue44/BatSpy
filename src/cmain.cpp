@@ -119,7 +119,6 @@ int loopFreq;
 void loop() 
 {
   loopCount++;
-  gps.operate();
   static bool backLightOn = true;
   if (tick300ms.check())
   {
@@ -171,6 +170,9 @@ void loop()
 
     if(tick1s.check())
     {
+      float lat, lon;
+      gps.operate(lat, lon);
+      devStatus.geoPos.set(lat, lon);
       loopFreq = loopCount;
       loopCount = 0;
       devStatus.cpuAudioAvg.set(AudioProcessorUsage());

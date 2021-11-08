@@ -48,6 +48,6 @@ void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);
 void showSplashScreen(ILI9341_t3& tft, bool waitBtn);
-
+void setGpsLog(cMenuesystem* pThis, bool on);
 
 #endif // PANMAIN_H

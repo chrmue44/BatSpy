@@ -16,6 +16,7 @@
 #undef OWN_H
 #include "pnllive.h"
 #include "config.h"
+#include "cgps.h"
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
@@ -180,6 +181,7 @@ void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     else
       devStatus.playStatus.set(enPlayStatus::ST_STOP);
   }
+  pThis->refreshMainPanel();
 }
 
 void MEMP f4LoadFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -273,6 +275,18 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  stPanelItem item;
+  item.type = ITEM_ENUM;
+  if(gps.isLogOpen())
+    gps.closeLog();
+  else
+    gps.openLog();
+  pThis->refreshMainPanel();
+  setGpsLog(pThis, gps.isLogOpen());
+}
+
 void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -288,7 +302,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   // Serial.println("initDialogs2");
   retVal  = pan->addTextItem(1,   0, 227, 80, lf, true, f1Func);
   retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
-  retVal |= pan->addTextItem(3, 161, 227, 79, lf, false);
+  retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
@@ -324,34 +338,42 @@ void MEMP setFileToDisplay(const char* buf)
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
 
+void setGpsLog(cMenuesystem* pThis, bool on)
+{
+  cPanel* pan = pThis->getPan(panGeo);
+  pan->itemList[21].isVisible = on;
+}
+
 int MEMP initMainPanel(cPanel* pan, tCoord lf)
 {
-  int err = pan->addTextItem(202,                  3, 30,            80, lf);
-  err |= pan->addEnumItem(&devStatus.opMode,     150, 30,           140, lf, true);
-  err |= pan->addNumItem(&devStatus.recCount,    260, 30 +  2 * lf,  40, lf, false);
-  err |= pan->itemList[2].isVisible = false;
-  err |= pan->addTextItem(30,                      3, 30 +      lf,  80, lf);
-  err |= pan->addEnumItem(&devStatus.playStatus, 150, 30 +      lf, 120, lf, false);
-  err |= pan->addTextItem(25,                      3, 30 +  2 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      150, 30 +  2 * lf,  80, lf, true, dispModeFunc);
-  err |= pan->addTextItem(203,                     3, 30 +  3 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.mixFreq,       150, 30 +  3 * lf,  15, lf, true);
-  err |= pan->addTextItem(204,                     3, 30 +  4 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.volume,        150, 30 +  4 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                    3, 30 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,   150, 30 +  5 * lf, 120, lf, true);
-  err |= pan->addTextItem(1325,                    3, 30 +  6 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   150, 30 +  6 * lf, 120, lf, true);
-  err |= pan->addTextItem(200,                     3, 30 +  8 * lf,  80, lf);
-  err |= pan->addGeoItem(&devStatus.geoPos,      150, 30 +  8 * lf, 150, lf);
-  err |= pan->addTextItem(193,                     3, 30 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.height,      150, 30 +  9 * lf, 150, lf, false);
-  err |= pan->addTextItem(190,                     3, 30 + 10 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.satCount,    150, 30 + 10 * lf, 150, lf, false);
-  err |= pan->addTextItem(195,                     3, 30 + 11 * lf,  80, lf);
-  err |= pan->addEnumItem(&devStatus.posValid,    150, 30 + 11 * lf, 150, lf, false);
-  err |= pan->addTextItem(201,                     3, 200 + lf,     70, lf);
-  err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,     70, lf);
-  err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,     70, lf);
+  int err = pan->addTextItem(202,                  3,  30,            80, lf);
+  err |= pan->addEnumItem(&devStatus.opMode,     150,  30,           140, lf, true);
+  err |= pan->addNumItem(&devStatus.recCount,    260,  30 +  2 * lf,  40, lf, false);
+  pan->itemList[2].isVisible = false;
+  err |= pan->addTextItem(30,                      3,  30 +      lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.playStatus, 150,  30 +      lf, 120, lf, false);
+  err |= pan->addTextItem(25,                      3,  30 +  2 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,      150,  30 +  2 * lf,  80, lf, true, dispModeFunc);
+  err |= pan->addTextItem(203,                     3,  30 +  3 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.mixFreq,       150,  30 +  3 * lf,  15, lf, true);
+  err |= pan->addTextItem(204,                     3,  30 +  4 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.volume,        150,  30 +  4 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                    3,  30 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,   150,  30 +  5 * lf, 120, lf, true);
+  err |= pan->addTextItem(1325,                    3,  30 +  6 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 +  6 * lf, 120, lf, true);
+  err |= pan->addTextItem(200,                     3,  30 +  8 * lf,  80, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,      150,  30 +  8 * lf, 150, lf);
+  err |= pan->addTextItem(193,                     3,  30 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.height,      150,  30 +  9 * lf, 150, lf, false);
+  err |= pan->addTextItem(190,                     3,  30 + 10 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    150,  30 + 10 * lf,  30, lf, false);
+  err |= pan->addTextItem(191,                   200,  30 + 10 * lf,  80, lf);
+  setGpsLog(&menue, false);
+  err |= pan->addTextItem(195,                     3,  30 + 11 * lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.posValid,   150,  30 + 11 * lf, 150, lf, false);
+  err |= pan->addTextItem(201,                     3, 200 + lf,       70, lf);
+  err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,       70, lf);
+  err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,       70, lf);
   return err;
 }
