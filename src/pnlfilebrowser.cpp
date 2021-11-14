@@ -1,7 +1,16 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}com              *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************/
+
 #include "pnlfilebrowser.h"
 #include "pnlmain.h"
 #include "debug.h"
 #include "cutils.h"
+#include "globals.h"
 
 int getItemIndexFile(int i) {  return FILE_OFFS + (i * (BTN_COUNT + 1)); }
 int getItemIndexSel(int i) {   return getItemIndexFile(i) + 1; }

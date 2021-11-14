@@ -174,7 +174,8 @@ protected:
    */
   void drawGrid(stPanelItem* p);
 
-  void printText(const char* txt);
+  void printText(const char* txt, stPanelItem& item);
+  void printText(const char* txt, int16_t x, int16_t y, int16_t w, int16_t h);
 
 private:
   static void msgYesFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);

@@ -115,7 +115,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParText* p = reinterpret_cast<cParText*>(item.p);
           if(p)
-            printText(p->getText());
+            printText(p->getText(), item);
         }
         break;
 
@@ -123,7 +123,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParEnum* p = reinterpret_cast<cParEnum*>(item.p);
        // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
-          printText(p->getActText());
+          printText(p->getActText(), item);
         }
         break;
 
@@ -131,7 +131,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParList* p = reinterpret_cast<cParList*>(item.p);
          // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
-          printText(p->getActText());
+          printText(p->getActText(), item);
         }
         break;
 
@@ -146,7 +146,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
             else
               snprintf(fmt, sizeof(fmt), "%%0%lu.%luf",p->getLeadingZeros(), p->getDecimals());
             snprintf(str, sizeof(str), fmt,p->get());
-            printText(str);              
+            printText(str, item);
           }
         }
         break;
@@ -160,7 +160,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
           if(y > 100)
             y-= 100;
           snprintf(str, sizeof(str), "%02lu.%02lu.%02u", p->getDay(), p->getMonth() + 1, y);
-          printText(str);
+          printText(str, item);
         }
         break;
 
@@ -168,7 +168,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
        {
          cParTime* p = reinterpret_cast<cParTime*>(item.p);
          snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
-         printText(str);
+         printText(str, item);
        }
        break;
 
@@ -186,7 +186,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
          snprintf(str, sizeof(str), "%c %02i\x87 %.3f  %c %03i\x87 %.3f",
                   lat, p->getDegLat(), p->getMinfLat(),
                   lon, p->getDegLon(), p->getMinfLon());
-         printText(str);
+         printText(str, item);
        }
        break;
 
@@ -194,7 +194,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParStr* p = reinterpret_cast<cParStr*>(item.p);
           gpDisplay->setTextColor(p->getColor(), COL_TEXTBACK);
-          printText(p->get());
+          printText(p->get(), item);
         }
         break;
 
@@ -202,7 +202,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParBtn* p = reinterpret_cast<cParBtn*>(item.p);
           gpDisplay->setCursor(item.x + 2, item.y + 2);
-          printText(p->getText());
+          printText(p->getText(), item);
           gpDisplay->drawRect(item.x, item.y, item.width - 2, item.height - 2, COL_TEXT);
           gpDisplay->fillRect(item.x + item.width - 2, item.y + 2, 2, item.height  - 2, COL_MSGSHADOW);
           gpDisplay->fillRect(item.x + 2, item.y + item.height - 2, item.width -2 , 2, COL_MSGSHADOW);
@@ -264,7 +264,7 @@ void MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
         gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, COL_TEXTHDRBACK);
         gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4);
         gpDisplay->setTextColor(COL_TEXTHDR, COL_TEXTHDRBACK);
-        printText(Txt::get(11));
+        printText(Txt::get(11), pan->x, pan->y, pan->width, 15);
         gpDisplay->fillRect(pan->x, pan->y + 15, pan->width, pan->height, COL_TEXTBACK);
         gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
         gpDisplay->fillRect(pan->x + pan->width, pan->y + 3, 3, pan->height, COL_MSGSHADOW);
@@ -944,10 +944,15 @@ bool MMEM cMenuesystem::keyPauseLongEnough(uint32_t ms)
 }
 
 
-void MMEM cMenuesystem::printText(const char *txt)
+void MMEM cMenuesystem::printText(const char* txt, int16_t x, int16_t y, int16_t w, int16_t h)
 {
   char buf[512];
-
   cUtils::replaceUTF8withInternalCoding(txt, buf, sizeof(buf));
+  gpDisplay->setClipFrame(x, y, w, h);
   gpDisplay->print(buf);
+}
+
+void MMEM cMenuesystem::printText(const char *txt, stPanelItem& item)
+{
+  printText(txt, item.x, item.y, item.width, item.height);
 }

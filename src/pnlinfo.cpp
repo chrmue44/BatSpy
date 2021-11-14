@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "pnlinfo.h"
-
+#include "globals.h"
 
 void btnAudioFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {

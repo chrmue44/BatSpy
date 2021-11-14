@@ -9,7 +9,7 @@
 #include "cfileinfo.h"
 #include <cSdCard.h>
 #include "cutils.h"
-#include "cmenue.h"
+#include "globals.h"
 
 #include <cstring>
 

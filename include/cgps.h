@@ -5,6 +5,8 @@
  *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
+#ifndef CGPS_H
+#define CGPS_H
 
 #include <Arduino.h>
 #include "TinyGPS.h"
@@ -40,6 +42,7 @@ class cGps
    byte m_hour;
    byte m_minute;
    byte m_second;
+   char m_recLine[60];
+   char* m_pRec;
 };
-
-extern cGps gps;
+#endif //#ifndef CGPS_H

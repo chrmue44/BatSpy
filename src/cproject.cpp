@@ -2,7 +2,7 @@
 #include "cxmlhelper.h"
 #include "cutils.h"
 #include "cfileinfo.h"
-#include "cmenue.h"
+#include "globals.h"
 
 cPrjoject::cPrjoject() :
 m_isOpen(false)

@@ -8,13 +8,11 @@
 
 #include <cstdlib>
 #include <cstring>
-#include "cmenue.h"
+
 #include "ctext.h"
 #include "cutils.h"
 #include <ILI9341_t3.h>
-#include "cRtc.h"
 #include "debug.h"
-#include "cAudio.h"
 #include "cfileinfo.h"
 #include "pnlmain.h"
 #include "pnlwaterfall.h"
@@ -27,13 +25,12 @@
 #include "cSdCard.h"
 #include <Arduino.h>
 #include <Time.h>
+#include "globals.h"
+
 #pragma GCC diagnostic ignored "-Wunused-parameter" //disable because fuFocus functions may not use the parameters
 
 #define DEBUG_LEVEL  1
 
-stStatus devStatus;          ///< status of the device
-stParams devPars;            ///< parameters of the device
-extern cRtc rtc;
 
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
   cMenuesystem(width, height, pDisplay) {

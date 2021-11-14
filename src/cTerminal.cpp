@@ -6,7 +6,7 @@
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
 
-#include "cTerminal.h"
+#include "globals.h"
 #include <Arduino.h>
 #include "cSdCard.h"
 #include "cmenue.h"

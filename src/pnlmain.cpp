@@ -9,14 +9,12 @@
 #include <Arduino.h>
 #include "cutils.h"
 #include "debug.h"
-#include "cAudio.h"
 #include "cfileinfo.h"
 #define OWN_H
 #include "pnlmain.h"
 #undef OWN_H
 #include "pnllive.h"
-#include "config.h"
-#include "cgps.h"
+#include "globals.h"
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);

@@ -8,6 +8,7 @@
 
 #include "pnlmain.h"
 #include "cutils.h"
+#include "globals.h"
 
 void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   if(devStatus.fileIndex > 0)

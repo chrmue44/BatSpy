@@ -8,7 +8,7 @@
 
 #include "pnllive.h"
 #include "pnlmain.h"
-#include "cAudio.h"
+#include "globals.h"
 
 cParGraph* getLiveFft()
 {

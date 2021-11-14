@@ -179,9 +179,4 @@ private:
   void loadLanguage();
 };
 
-
-extern stStatus devStatus;           ///< status of the device
-extern stParams devPars;             ///< parameters of the device
-extern cMenue menue;                 ///< menue system of the device
-
 #endif // CMENUE_H

@@ -5,14 +5,17 @@
  *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
-
-#include "cgps.h"
+//#define DEBUG_LEVEL  1
+#include "debug.h"
+#include "globals.h"
 #include "config.h"
 
 void MEMF cGps::init()
 {
-  SERIAL_GPS.begin(4800);
+  SERIAL_GPS.begin(9800, SERIAL_8N1);
+  cSdCard::inst().chdir("/log");
   m_valid = false;
+  m_pRec = m_recLine;
 }
 
 void MEMF cGps::operate(float& lat, float& lon)
@@ -20,6 +23,13 @@ void MEMF cGps::operate(float& lat, float& lon)
   while (SERIAL_GPS.available())
   {
     int c = SERIAL_GPS.read();
+    *m_pRec++ = c;
+    if(c == '\n')
+    {
+      gpsLog.log(m_recLine);
+      m_pRec = m_recLine;
+    }
+    DPRINT1((char)c);
     if (m_gps.encode(c))
     {
       int year;

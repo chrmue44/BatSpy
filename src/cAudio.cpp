@@ -6,11 +6,9 @@
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
 
-#include "cAudio.h"
-#include "config.h"
+#include "globals.h"
 //#define DEBUG_LEVEL 2
 #include "debug.h"
-#include "cmenue.h"
 #include "pnllive.h"
 
 #ifdef ARDUINO_TEENSY41

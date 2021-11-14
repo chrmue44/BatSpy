@@ -10,7 +10,7 @@
 #include "cutils.h"
 #include "debug.h"
 #include "pnlmain.h"
-#include "cmenue.h"
+#include "globals.h"
 
 void MEMP batFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   char line[512];

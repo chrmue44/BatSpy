@@ -8,23 +8,14 @@
 
 //#define DEBUG_LEVEL 4
 #include "debug.h"
-#include "cAudio.h"
-#include "config.h"
-#include <ILI9341_t3.h>
-#include <Metro.h>
 #include "fnt8x11.h"
-#include "cmenue.h"
-#include "cRtc.h"
-#include "cWheels.h"
 #include "debug.h"
-#include "cTerminal.h"
 #include "clFixMemPool.h"
 #include "pnlmain.h"
 #include "cSdCard.h"
-#include "cLog.h"
 #include "pnllive.h"
 #include "pnlparams.h"
-#include "cgps.h"
+#include "globals.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -39,22 +30,7 @@ const tChunkTab memChunks[] = {
   {8, 20}
 };
 */
-// ************************ global objects *************************
 //clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
-ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST, 
-                            PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
-cAudio audio;  // audio control
-cRtc rtc;
-cMenue menue(320, 240, &tft);
-cGps gps;
-
-Metro tick300ms(300);
-Metro tick1s(1000);
-Metro tick15Min(1000 * 60 * 15);
-
-cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
-               PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
-cTerminal terminal;
 
 void setDispLight(uint8_t bright)
 {
@@ -98,7 +74,7 @@ void setup()
   initTft();
   showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
-  cLog::log("power on");
+  sysLog.log("power on");
   delay(500);  
   menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
@@ -197,7 +173,7 @@ void loop()
     {
       if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
         calcSunrise();
-      cLog::logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
+      sysLog.logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
                  devStatus.voltage.get(), devStatus.temperature.get());
       checkSupplyVoltage();
     }
@@ -206,4 +182,3 @@ void loop()
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
   audio.operate( rtFft );
 }
-

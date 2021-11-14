@@ -13,25 +13,15 @@
 #include <Arduino.h>
 #include <TimeLib.h>
 #include <stdarg.h>
-cLog* cLog::m_inst = nullptr;
 
-
-cLog* MEMF cLog::inst() 
-{
-  if(m_inst == nullptr)
-    m_inst = new cLog();
-  return m_inst;
-}
-
-MEMF cLog::cLog()
+MEMF cLog::cLog(const char* name)
 {
   cSdCard& sd = cSdCard::inst();
   enSdRes ret = sd.chdir("/log");
   if(ret != enSdRes::OK) 
     ret = sd.mkDir("/log");
-  snprintf(m_fileName, sizeof(m_fileName),"/log/%02i%02i%02i-%02i%02i.log", 
-           year()%100, month(),day(),hour(), minute());
-  
+  snprintf(m_fileName, sizeof(m_fileName),"/log/%s_%02i%02i%02i-%02i%02i.log", 
+           name, year()%100, month(),day(),hour(), minute());  
 }
 
 void MEMF cLog::timeStamp()
@@ -42,12 +32,12 @@ void MEMF cLog::timeStamp()
 
 void MEMF cLog::log(const char* msg)
 {
-  inst()->timeStamp();
+  timeStamp();
   cSdCard& sd = cSdCard::inst();
   tFILE f;
-  sd.openFile(inst()->m_fileName, f, enMode::WRITE);
+  sd.openFile(m_fileName, f, enMode::WRITE);
   char buf[256];
-  snprintf(buf, sizeof(buf), "%s %s\n", inst()->m_timeStamp, msg);
+  snprintf(buf, sizeof(buf), "%s %s\n", m_timeStamp, msg);
   size_t written;
   sd.writeFile(f, buf, written, strlen(buf));
   sd.closeFile(f);  

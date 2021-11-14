@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "pnlparams.h"
-#include "cRtc.h"
+#include "globals.h"
 #include "debug.h"
 #include "config.h"
 #include "csunrise.h"

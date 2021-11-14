@@ -13,7 +13,7 @@
 #include "cmenue.h"
 #include "cMeanCalc.h"
 #include "InternalTemperature.h"
-#include "cLog.h"
+#include "globals.h"
 
 cMeanCalc<int16_t,10> digits;
 
@@ -42,7 +42,7 @@ void checkSupplyVoltage()
   if(!ok)
   {
     digitalWrite(PIN_POWER_OFF, 0);
-    cLog::logf("power down voltage too low : %f \n ", volt);
+    sysLog.logf("power down voltage too low : %f \n ", volt);
     delay(1000);
     cSdCard::inst().unmount();
   }    

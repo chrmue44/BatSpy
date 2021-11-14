@@ -14,17 +14,17 @@
 class cLog
 {
  public:
-  static void log(const char* msg);
-  static void logf(const char* fmt, ...);
+  cLog(const char* name);
+  void log(const char* msg);
+  void logf(const char* fmt, ...);
 
  protected:
   cLog();
-  static cLog* inst();
 
  private:
   void timeStamp();
   static cLog* m_inst;
-  char m_fileName[24];
+  char m_fileName[40];
   char m_timeStamp[20];
 
 };
