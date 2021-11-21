@@ -16,7 +16,7 @@ class cGps
 {
   public:
     void init();
-    void operate(float& lat, float& lon);
+    void operate(float& lat, float& lon, bool testMode = false);
     int getLonDeg() { return static_cast<int>(m_lon); }
     float getLonMin() { return m_lon - static_cast<int>(m_lon); }
     int getLatDeg() { return static_cast<int>(m_lat); }
@@ -24,6 +24,7 @@ class cGps
     void openLog() { m_gpx.open();}
     void closeLog() { m_gpx.close();}
     bool isLogOpen() { return m_gpx.isOpen();}
+    void test();
 
  private:
    TinyGPS m_gps;
@@ -42,7 +43,7 @@ class cGps
    byte m_hour;
    byte m_minute;
    byte m_second;
-   char m_recLine[60];
-   char* m_pRec;
+   char m_recLine[200];
+   uint32_t m_recIdx;
 };
 #endif //#ifndef CGPS_H

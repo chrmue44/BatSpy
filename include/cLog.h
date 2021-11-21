@@ -11,21 +11,29 @@
 #ifndef _CLOG_H_
 #define _CLOG_H_
 
+#include "cSdCard.h"
+
 class cLog
 {
  public:
   cLog(const char* name);
-  void log(const char* msg);
+  void log(const char* msg, bool keepOpen = false);
   void logf(const char* fmt, ...);
+  void close();
 
  protected:
   cLog();
 
  private:
   void timeStamp();
-  static cLog* m_inst;
+  void create();
+
+  bool m_create;
+  bool m_open = false;
+  tFILE m_fd;
+
   char m_fileName[40];
   char m_timeStamp[20];
-
+  char m_name[8];
 };
 #endif //#ifndef _CLOG_H_

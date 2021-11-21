@@ -63,8 +63,12 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   switch (key) 
   {
     case enKey::YES:
+      sysLog.close();
+      gpsLog.close();
       digitalWrite(PIN_POWER_OFF, 0);
       delay(1000);
+      for(;;)
+        ;
       break;
       
     default:

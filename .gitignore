@@ -9,3 +9,6 @@ lib/InternalTemperature/README.md
 lib/InternalTemperature/examples
 lib/Snooze/examples
 lib/Snooze/images
+lib/ILI9341_t3/examples
+lib/ILI9341_t3/extras
+lib/ILI9341_t3/docs

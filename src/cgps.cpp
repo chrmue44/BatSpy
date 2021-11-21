@@ -15,20 +15,44 @@ void MEMF cGps::init()
   SERIAL_GPS.begin(9800, SERIAL_8N1);
   cSdCard::inst().chdir("/log");
   m_valid = false;
-  m_pRec = m_recLine;
+  m_recIdx = 0;
 }
 
-void MEMF cGps::operate(float& lat, float& lon)
+void MEMF cGps::test()
+{
+  char esc[2];
+  float lat,lon;
+  do
+  {
+    operate(lat, lon, true);
+    while(Serial.available() > 0)
+    {
+      char c = Serial.read();
+      esc[1] = esc[0];
+      esc[0] = c;
+      if((esc[1] != 'q') || (esc[0] != '!'))
+        SERIAL_GPS.write(c);
+      else
+       break;
+    }
+  } while ((esc[1] != 'q') || (esc[0] != '!'));
+}
+
+
+void MEMF cGps::operate(float& lat, float& lon, bool testMode)
 {
   while (SERIAL_GPS.available())
   {
     int c = SERIAL_GPS.read();
-    *m_pRec++ = c;
-    if(c == '\n')
+    if((c == '$') || (m_recIdx >= (sizeof(m_recLine) - 1))) 
     {
-      gpsLog.log(m_recLine);
-      m_pRec = m_recLine;
+      m_recLine[m_recIdx] = 0;
+      gpsLog.log(m_recLine, true);
+      m_recIdx = 0;
     }
+    m_recLine[m_recIdx++] = c;
+    if(testMode)
+      Serial.print((char)c);
     DPRINT1((char)c);
     if (m_gps.encode(c))
     {

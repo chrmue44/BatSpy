@@ -91,7 +91,8 @@ void MEMF cTerminal::execCmd()
       else
         Serial.write('1');      
       break;
-      
+
+          
     case 'm':
       ret = cSdCard::inst().mkDir(&m_recbuf[1]);
       if(ret == 0)
@@ -100,7 +101,12 @@ void MEMF cTerminal::execCmd()
         Serial.write('1');
       Serial.write(0x04);      
       break;
-      
+    
+    case 'g':
+      gps.test();
+      Serial.write("GPS test mode finished\n");
+      break;
+
     case 'n':
       {
         char oldName[FILENAME_LEN];
@@ -257,6 +263,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("d        show directory");
   Serial.println("D0       Debug: force display activity off");
   Serial.println("D1       Debug: force display activity on");
+  Serial.println("g        GPS mode: Serial connected to GPS, terminate with 'q!'");
   Serial.println("n<old> <new> rename file or directory");  
   Serial.println("o        key OK");
   Serial.println("p        print parameters");

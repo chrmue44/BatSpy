@@ -509,8 +509,10 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
       ok = file.open(buf, O_RDONLY);
       break;
     case enMode::WRITE:
-    case enMode::APPEND:
       del(name);
+      ok = file.open(buf, FILE_WRITE);
+      break;
+    case enMode::APPEND:
       ok = file.open(buf, FILE_WRITE);
       break;
   }
