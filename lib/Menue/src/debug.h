@@ -45,9 +45,10 @@
 extern MainWindow* pw;
 
 #define DPRINTLN1(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
-#define DPRINTLN2(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
-#define DPRINTLN3(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
-#define DPRINTLN4(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,1);}
+#define DPRINTLN2(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,2);}
+#define DPRINTLN3(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,3);}
+#define DPRINTLN4(x) {char b[256]; snprintf(b, sizeof(b), x); if(pw != nullptr) pw->log(b,4);}
+#define DPRINT1(x) { char b[256]; snprintf(b, sizeof(b), "%c", x); if(pw != nullptr) pw->log(b,1);}
 #define DPRINTF1(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,1);}
 #define DPRINTF2(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,2);}
 #define DPRINTF3(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); if(pw != nullptr) pw->log(b,3);}

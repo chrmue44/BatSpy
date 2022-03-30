@@ -158,7 +158,6 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.p = &f1MainItems;
   item.f = nullptr;
   pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFunc);
-
 }
 
 void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)

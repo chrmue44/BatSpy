@@ -145,7 +145,7 @@ void MEMF cXmlHelper::simpleTag(const char* tagName, float val, tAttrList* attr)
 
 void MEMF cXmlHelper::simpleTagNoValue(const char* tagName, tAttrList *attr )
 {
-  openTag(tagName, attr, true);
+  openTag(tagName, attr, true, true);
 }
 
 void MEMF cXmlHelper::newLine(bool nl)

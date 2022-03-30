@@ -7,6 +7,7 @@
 #include <cstring>
 #include "Arduino.h"
 #include "ctext.h"
+
 int cUtils::stripExtension(const char* fileName, char* result, size_t resultSize) {
   const char* p = strrchr(fileName, '.');
   if (p != nullptr) {
