@@ -87,23 +87,6 @@ void cWheels::checkEncoders()
     increaseWrIdx();
     DPRINTLN1("encoder left: enKey::KEY_OK");
   }
-  /*
-  if(diffr < 0) {
-    for(int i = 0; i < -diffl; i++) {
-      m_keys[m_wrIdx] = LEFT;
-      m_wrIdx++;
-      if(m_wrIdx == BUF_SIZE)
-        m_wrIdx = 0;
-    }
-  }
-  if(diffr > 0) {
-    for(int i = 0; i < diffl; i++) {
-      m_keys[m_wrIdx] = RIGHT;
-      m_wrIdx++;
-      if(m_wrIdx == BUF_SIZE)
-        m_wrIdx = 0;
-    }
-  }*/
 }
 
 enKey cWheels::getKey()
