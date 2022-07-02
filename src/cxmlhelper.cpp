@@ -82,9 +82,9 @@ void MEMF cXmlHelper::indent(bool openTag)
   }
 }
 
-void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool nl, bool close)
+void MEMF cXmlHelper::openTag(const char* tagName, tAttrList* attr, bool nl, bool close, bool withIndent)
 {
-  indent(true);
+  indent(withIndent);
   writeString("<");
   writeString(tagName);
   if(attr != NULL)
@@ -145,7 +145,7 @@ void MEMF cXmlHelper::simpleTag(const char* tagName, float val, tAttrList* attr)
 
 void MEMF cXmlHelper::simpleTagNoValue(const char* tagName, tAttrList *attr )
 {
-  openTag(tagName, attr, true, true);
+  openTag(tagName, attr, true, true, false);
 }
 
 void MEMF cXmlHelper::newLine(bool nl)

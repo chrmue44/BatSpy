@@ -24,7 +24,7 @@ public:
   void initXml();
   enSdRes openFile(const char* name);
   void closeFile();
-  void openTag(const char* tagName, tAttrList* attr = NULL, bool newLine = true, bool close = false);
+  void openTag(const char* tagName, tAttrList* attr = NULL, bool newLine = true, bool close = false, bool withIndent = true);
   void closeTag(const char* tagName);
   void value(const char* value, bool newLine = true);
   void value(double value, bool newLine = true);

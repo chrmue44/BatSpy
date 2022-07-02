@@ -97,7 +97,8 @@ void MEMF cPrjoject::addFile()
   stAttr item;
   attr.clear();
   strncpy(item.name, "File", sizeof(item.name));
-  strncpy(item.value, m_wavFile, sizeof(item.value));
+  strncpy(item.value, m_name, sizeof(item.value));
+  strcat(item.value, ".wav");
   attr.push_back(item);
   strncpy(item.name, "Name",sizeof(item.name));
   strncpy(item.value, m_name, sizeof(item.value));

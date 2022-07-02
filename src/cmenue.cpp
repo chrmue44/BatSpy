@@ -64,9 +64,9 @@ void MEMP cMenue::initPars()
   devPars.preAmpType.addItem(1322);
 
 
-  for(int t = 1300; t <= 1317; t++)
+  for(int t = 1300; t <= 1318; t++)
     devPars.sampleRate.addItem(t);
-  devPars.sampleRate.set(SR_352K);  
+  devPars.sampleRate.set(SR_312K);  
   devPars.recTime.init(3, 30, 1, 0);
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
