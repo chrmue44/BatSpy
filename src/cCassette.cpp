@@ -164,7 +164,6 @@ void cCassette::writeWavHeader()
   //https://www.cplusplus.com/forum/beginner/166954/
   char buf[24];
   memcpy(buf,"RIFF----WAVEfmt ", 16);     // (chunk size to be filled in later)
-  //f_write(&m_fil, buf,16, &m_wr);
   cSdCard::inst().writeFile(m_fil, buf, m_wr, 16);
   writeWord(16, 4 );  // no extension data
   writeWord( 1, 2 );  // PCM - integer samples
@@ -176,7 +175,6 @@ void cCassette::writeWavHeader()
 
   // Write the data chunk header
   memcpy(buf,"data----", 8);     // (chunk size to be filled in later)
-//  f_write(&m_fil, buf,8, &m_wr);
   cSdCard::inst().writeFile(m_fil, buf, m_wr, 8);
 }
 
@@ -186,26 +184,18 @@ void cCassette::writeWord(uint32_t value, size_t size)
   for (; size; --size, value >>= 8) 
   {
     char val = value & 0xFF;
-//    f_write(&m_fil, &val, 1, &m_wr);
     cSdCard::inst().writeFile(m_fil, &val, m_wr, 1);
-//    &m_fil.put( static_cast <char> (value & 0xFF) );
   }
 }
 
 void cCassette::finalizeWavFile() 
 {
   
-   // (We'll need the final file size to fix the chunk sizes above)
-  //size_t file_length = f.tellp();
   size_t file_length = cSdCard::inst().fileSize(m_fil);
-  // Fix the data chunk header to contain the data size
-//  f.seekp( data_chunk_pos + 4 );
   cSdCard::inst().setFilePos(m_fil, WAV_DATACHUNK_POS + 4);
   writeWord(file_length - WAV_DATACHUNK_POS + 8 );
 
-  // Fix the file header to contain the proper RIFF chunk size, which is (file size - 8) bytes
   cSdCard::inst().setFilePos(m_fil, 0 + 4);
-  //f.seekp( 0 + 4 );
   writeWord(file_length - 8, 4 ); 
 }
 

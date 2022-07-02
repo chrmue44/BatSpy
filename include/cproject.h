@@ -1,9 +1,15 @@
+/*************************************************************
+ * BatSpy: Teensy 4.1 based recording device for bat sounds  *
+ * ***********************************************************
+ * Copyright (C) 2021 Christian Mueller                      *
+ *                    chrmue44(AT)gmail{DOT}com              *
+ * License: GNU GPLv3.0                                      *
+ * ***********************************************************
+ * Access to the real time clock
+ * ***********************************************************/
 #ifndef CPRJELEKON_H
 #define CPRJELEKON_H
 
-//#include <string>
-//#include <vector>
-//#include <filesystem>
 //namespace fs = std::experimental::filesystem;
 #include "my_vector.h"
 #include "cxmlhelper.h"
