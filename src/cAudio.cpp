@@ -372,6 +372,9 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
           }
         }
 
+        if (!startRecording && m_prj.getIsOpen())
+          m_prj.closePrjFile();
+
         if ((m_peakVal > m_recThresh) && startRecording)
         {
           if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())

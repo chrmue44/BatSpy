@@ -86,6 +86,8 @@ void setup()
   devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
   gps.init();
+  if(devPars.recAuto.get() == 3)
+    calcSunrise();
 }
 
 
@@ -146,9 +148,13 @@ void loop()
 
     if(tick1s.check())
     {
-      float lat, lon;
-      gps.operate(lat, lon);
-      devStatus.geoPos.set(lat, lon);
+      if(devPars.srcPosition.get() == 1)
+      {
+        float lat, lon;
+        gps.operate(lat, lon);
+        devStatus.geoPos.set(lat, lon);
+      }
+
       loopFreq = loopCount;
       loopCount = 0;
       devStatus.cpuAudioAvg.set(AudioProcessorUsage());

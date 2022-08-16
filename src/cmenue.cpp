@@ -117,6 +117,9 @@ void MEMP cMenue::initPars()
   devPars.sweepSpeed.init(0, 10, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
 
+  devPars.srcPosition.addItem(1410);
+  devPars.srcPosition.addItem(1412);
+
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
@@ -188,7 +191,7 @@ void MEMP cMenue::initPars()
   devStatus.freq1Tick.init(0,300,0.1,1);
   devStatus.msPerDiv.init(0,10000,1,0);
   devStatus.satCount.init(0, 24, 1, 0);
-  devStatus.height.init(-100, 10000, 0.1, 1);
+  devStatus.height.init(-100, 10000, 5, 0);
   devStatus.posValid.addItem(16);
   devStatus.posValid.addItem(15);
 
@@ -357,7 +360,8 @@ void MEMP cMenue::save()
   writeFloatToEep(0x0008, devPars.mixFreq.get());
   writeInt16ToEep(0x000C, devPars.recAuto.get());
   writeInt16ToEep(0x000E, devPars.sendDelay.get());
-  // 4 bytes free here
+  writeInt16ToEep(0x0010, devPars.srcPosition.get());
+  // 2 bytes free here
   writeFloatToEep(0x0014, devPars.recTime.get());
   writeInt16ToEep(0x0018, devPars.sampleRate.get());
   writeInt16ToEep(0x001A, devPars.preAmpGain.get());
@@ -385,11 +389,18 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0060, devPars.sweepSpeed.get());
   writeInt16ToEep(0x0062, devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, devPars.projectType.get());
-  writeInt16ToEep(0x0066, 0);
-  writeInt16ToEep(0x0068, 0);
+  writeFloatToEep(0x0066, devStatus.height.get());
   writeInt16ToEep(0x006A, 0);
   writeInt16ToEep(0x006C, 0);
   writeInt16ToEep(0x006E, 0);
+  writeInt16ToEep(0x0070, 0);
+  writeInt16ToEep(0x0072, 0);
+  writeInt16ToEep(0x0074, 0);
+  writeInt16ToEep(0x0076, 0);
+  writeInt16ToEep(0x0078, 0);
+  writeInt16ToEep(0x007A, 0);
+  writeInt16ToEep(0x007C, 0);
+  writeInt16ToEep(0x007E, 0);
   int16_t maxAddr = 0x006F;
   writeInt16ToEep(0, maxAddr);
 
@@ -408,7 +419,8 @@ void MEMP cMenue::load()
     devPars.mixFreq.set(readFloatFromEep(0x0008));
     devPars.recAuto.set(readInt16FromEep(0x000C));
     devPars.sendDelay.set(readInt16FromEep(0x000E));
-    // 4 bytes free here 
+    devPars.srcPosition.set(readInt16FromEep(0x0010));
+    // 2 bytes free here
     devPars.recTime.set(readFloatFromEep(0x0014));
     devPars.sampleRate.set(readInt16FromEep(0x0018));
     devPars.preAmpGain.set(readInt16FromEep(0x001A));
@@ -436,6 +448,7 @@ void MEMP cMenue::load()
     devPars.sweepSpeed.set(readInt16FromEep(0x0060));
     devPars.liveAmplitude.set(readInt16FromEep(0x0062));
     devPars.projectType.set(readInt16FromEep(0x0064));
+    devStatus.height.set(readFloatFromEep(0x0066));
   }
 }
 
