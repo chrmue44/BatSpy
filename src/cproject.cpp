@@ -33,32 +33,32 @@ int MEMF getNumberOfDays(int month, int year)
 
 void MEMF cPrjoject::openPrjFile()
 {
-  char fName[FILENAME_LEN];
+  char buf[FILENAME_LEN];
 
   m_startY = year();
   m_startM = month();
   m_startD = day();
   snprintf(m_prjName, sizeof(m_prjName),"%04i%02i%02i", m_startY, m_startM, m_startD);
-  snprintf(fName, sizeof (fName), "/prj/%04i%02i%02i", m_startY, m_startM, m_startD);
+  snprintf(buf, sizeof (buf), "/prj/%04i%02i%02i", m_startY, m_startM, m_startD);
   cSdCard::inst().mkDir("/prj");
-  cSdCard::inst().mkDir(fName);
-  cSdCard::inst().chdir(fName);
+  cSdCard::inst().mkDir(buf);
+  cSdCard::inst().chdir(buf);
   cSdCard::inst().mkDir("Records");
   cSdCard::inst().chdir("/");
 
-  strcat(fName, "/");
-  strcat(fName, m_prjName);
-  strcat(fName, ".bpr");
+  strcat(buf, "/");
+  strcat(buf, m_prjName);
+  strcat(buf, ".bpr");
 
   tAttrList attr;
-  m_xml.openFile(fName);
+  m_xml.openFile(buf);
   m_xml.initXml();
   stAttr item;
   strncpy(item.name, "xmlns:xsi", sizeof(item.name));
   strncpy(item.value, "http://www.w3.org/2001/XMLSchema-instance", sizeof(item.value));
   attr.push_back(item);
   strncpy(item.name, "FileVersion", sizeof(item.name)); 
-  strncpy(item.value, "6", sizeof(item.value));
+  strncpy(item.value, "3", sizeof(item.value));
   attr.push_back(item);
   strncpy(item.name, "Originator", sizeof(item.name));
   strncpy(item.value, "BatSpy, Ver" __DATE__  "/"  __TIME__ , sizeof(item.value));
@@ -66,7 +66,10 @@ void MEMF cPrjoject::openPrjFile()
   m_xml.openTag("BatExplorerProjectFile", &attr);
 
   m_xml.simpleTag("Name", m_prjName);
-  m_xml.simpleTag("Type","Elekon");
+  snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", m_startY, m_startM, m_startD, hour(),  minute(), m_fSec);
+  m_xml.simpleTag("Created", buf);
+  m_xml.simpleTag("Notes","");
+  m_xml.simpleTag("AutoProcess", "true");
   m_xml.openTag("Records");
   m_counter = 1;
   m_isOpen = true;
