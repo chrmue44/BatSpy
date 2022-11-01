@@ -378,7 +378,13 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
         if ((m_peakVal > m_recThresh) && startRecording)
         {
           if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
-            m_prj.openPrjFile();
+          {
+            char buf[2*PAR_STR_LEN+3];
+            strncpy(buf, devStatus.notes1.getActText(), sizeof(buf));
+            strncat(buf, ", ", 2);
+            strncat(buf, devStatus.notes2.getActText(), PAR_STR_LEN);
+            m_prj.openPrjFile(buf);
+          }
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           startRec();
           devStatus.playStatus.set(enPlayStatus::ST_REC);

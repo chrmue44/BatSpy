@@ -17,6 +17,7 @@
 #include "Metro.h"
 #include "cWheels.h"
 #include "cTerminal.h"
+#include "cnotes.h"
 
 extern cLog sysLog;
 extern cLog gpsLog;
@@ -34,6 +35,7 @@ extern cWheels wheels;
 extern cTerminal terminal;
 extern stStatus devStatus;          ///< status of the device
 extern stParams devPars;            ///< parameters of the device
-
+extern cnotes notes1;
+extern cnotes notes2;
 
 #endif //#ifndef GLOBALS_H

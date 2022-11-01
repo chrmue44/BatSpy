@@ -10,6 +10,7 @@
  * ***********************************************************/
 #ifndef CMENUE_H
 #define CMENUE_H
+#include "Arduino.h"
 #include <EEPROM.h>
 #include <MenueSystem.h>
 #include "types.h"
@@ -114,6 +115,8 @@ struct stStatus
   cParNum msPerDiv = 150;
   cParEnum dirFilter = 0;
   cParStr dirFiles[DIR_PAN_SIZE];
+  cParList notes1 = 0;
+  cParList notes2 = 0;
 };
 
 

@@ -41,7 +41,6 @@ cMenue::~cMenue() {
 
 void MEMP cMenue::initPars() 
 {
-  
   devPars.lang.clear();
   devPars.lang.addItem(1101);
   devPars.lang.addItem(1102);
@@ -120,6 +119,10 @@ void MEMP cMenue::initPars()
   devPars.srcPosition.addItem(1410);
   devPars.srcPosition.addItem(1412);
 
+  notes1.initNotes(PATH_NOTES1, 2000, 2005);
+  notes1.initListPar(devStatus.notes1);
+  notes2.initNotes(PATH_NOTES2, 2010, 2013);
+  notes2.initListPar(devStatus.notes2);
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);

@@ -24,6 +24,9 @@ Metro tick15Min(1000 * 60 * 15);
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
                PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 cTerminal terminal;
+cnotes notes1;
+cnotes notes2;
+
 
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device

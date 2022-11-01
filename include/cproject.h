@@ -25,7 +25,7 @@ class cPrjoject
 {
 public:
   cPrjoject();
-  void openPrjFile();
+  void openPrjFile(const char* pNotes);
   void closePrjFile();
   void addFile();
   void writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt);

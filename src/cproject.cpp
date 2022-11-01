@@ -31,7 +31,7 @@ int MEMF getNumberOfDays(int month, int year)
 
 
 
-void MEMF cPrjoject::openPrjFile()
+void MEMF cPrjoject::openPrjFile(const char* pNotes)
 {
   char buf[FILENAME_LEN];
 
@@ -68,7 +68,7 @@ void MEMF cPrjoject::openPrjFile()
   m_xml.simpleTag("Name", m_prjName);
   snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", m_startY, m_startM, m_startD, hour(),  minute(), m_fSec);
   m_xml.simpleTag("Created", buf);
-  m_xml.simpleTag("Notes","");
+  m_xml.simpleTag("Notes",pNotes);
   m_xml.simpleTag("AutoProcess", "true");
   m_xml.openTag("Records");
   m_counter = 1;

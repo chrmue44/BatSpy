@@ -43,6 +43,8 @@ struct stTxtList PROGMEM Texts[] =
   {    24, "Abspielen HET"             ,"Play HET"},
   {    25, "Automatische Aufnahme"     ,"Auto Recording"},
   {    30, "Status"                    ,0},
+  {    32, "Projekt-Notizen 1"         ,"Project Notes 1"},
+  {    33, "Projekt-Notizen 2"         ,"Project Notes 2"},
   {   100, "Übersicht"                 ,"Overview"},
   {   101, "Live-Anzeige"              ,"Live display"},
   {   102, "Datei-Manager"             ,"File Manager"},
