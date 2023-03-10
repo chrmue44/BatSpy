@@ -198,19 +198,18 @@ void MEMP cMenue::initPars()
   devStatus.posValid.addItem(15);
 
   load();
-  /**
+  
    setPosFunc(this, enKey::NO, nullptr);
 
   if (devPars.recAuto.get() == enRecAuto::TWILIGHT)
     calcSunrise();
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
-  **/
 }
 
 void MEMP cMenue::initDialogs() 
 {
-  /**
+
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
   int err;
@@ -294,7 +293,6 @@ void MEMP cMenue::initDialogs()
 //    setMainPanel(pnlLive);
 //  else
     setMainPanel(panGeo);
-  **/
 }
 
 void MEMP writeFloatToEep(int32_t addr, float val) 

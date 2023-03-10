@@ -10,18 +10,18 @@
 
 cLog sysLog("sys");
 cLog gpsLog("gps");
-///cGps gps;
+cGps gps;
 ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST, 
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
-///cAudio audio;  // audio control
+////cAudio audio;  // audio control
 cRtc rtc;
 cMenue menue(320, 240, &tft);
 
 Metro tick300ms(300);
 Metro tick1s(1000);
 Metro tick15Min(1000 * 60 * 15);
-///cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
-///               PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
+////cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
+////               PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 /**
 cTerminal terminal;
 **/

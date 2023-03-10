@@ -278,7 +278,6 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-   /**
   stPanelItem item;
   item.type = ITEM_ENUM;
   if(gps.isLogOpen())
@@ -287,7 +286,6 @@ void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     gps.openLog();
   pThis->refreshMainPanel();
   setGpsLog(pThis, gps.isLogOpen());
-  **/
 }
 
 void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -343,8 +341,8 @@ void MEMP setFileToDisplay(const char* buf)
 
 void setGpsLog(cMenuesystem* pThis, bool on)
 {
-  ////cPanel* pan = pThis->getPan(panGeo);
-  ////pan->itemList[21].isVisible = on;
+  cPanel* pan = pThis->getPan(panGeo);
+  pan->itemList[21].isVisible = on;
 }
 
 int MEMP initMainPanel(cPanel* pan, tCoord lf)

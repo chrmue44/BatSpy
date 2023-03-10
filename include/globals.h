@@ -9,7 +9,7 @@
 #define GLOBALS_H
 
 #include "cLog.h"
-////#include "cgps.h" 
+#include "cgps.h" 
 #include "ILI9341_t3.h"
 #include "config.h"
 #include "cRtc.h"
@@ -20,7 +20,7 @@
 ////#include "cTerminal.h"
 extern cLog sysLog;
 extern cLog gpsLog;
-///extern cGps gps;
+extern cGps gps;
 extern ILI9341_t3 tft;
 ////extern cAudio audio;  // audio control
 extern cRtc rtc;
