@@ -13,11 +13,12 @@
 #include "cutils.h"
 #include <ILI9341_t3.h>
 #include "debug.h"
-/**
- #include "cfileinfo.h"
+
+////#include "cfileinfo.h"
 #include "pnlmain.h"
-#include "pnlwaterfall.h"
+////#include "pnlwaterfall.h"
 #include "pnlbats.h"
+/**
 #include "pnlparams.h"
 #include "pnlinfo.h"
 #include "pnllive.h"
@@ -53,9 +54,8 @@ void MEMP cMenue::initPars()
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
-  ////initBats();
-
-  ////initFunctionItems();
+  initBats();
+  initFunctionItems();
 
   devPars.preAmpGain.addItem(1331);
   devPars.preAmpGain.addItem(1332);

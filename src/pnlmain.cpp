@@ -15,10 +15,10 @@
 #undef OWN_H
 ////#include "pnllive.h"
 #include "globals.h"
-/**
+
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
-**/
+
 #include "startup_pic.c_"
 
 void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
@@ -35,7 +35,7 @@ void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   tft.writeRect(96,55,128, 128, startup_pic);
   tft.setCursor(30, 195);
   tft.print(Txt::get(1702));
-///  tft.print(devStatus.version.get());
+  tft.print(devStatus.version.get());
   tft.setCursor(30, 210);
   tft.print("(C) 2021 Christian M" CH_UEs "ller");
   tft.setTextColor(ILI9341_LIGHTGREY);
@@ -55,7 +55,6 @@ void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   tft.fillScreen(ILI9341_BLACK);
 }
 
-/**
 // *******************************************
 // drop down panel F1 for main panel
 
@@ -77,7 +76,7 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-
+/**
 void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (pThis->getFocusItem()) {
@@ -128,7 +127,7 @@ void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-
+**/
 
 void MEMP initFunctionItems()
 {
@@ -151,7 +150,7 @@ void MEMP initFunctionItems()
   f4MainItems.addItem(1033);
 }
 
-
+/**
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -160,7 +159,7 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.f = nullptr;
   pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFunc);
 }
-
+**/
 void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
@@ -213,7 +212,7 @@ void MEMP f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-
+/**
 void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
 {
   switch (pThis->getFocusItem()) 
@@ -296,8 +295,8 @@ void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.p = &f4MainItems;
   pThis->createDropDown(item, DISP_WIDTH - 120 - 1, DISP_HEIGHT - f4MainItems.size() * LINE_HEIGHT - 15, 120, f4DropFunc);
 }
-
-
+**/
+/**
 int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
 {
   int retVal;
@@ -308,7 +307,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
-
+**/
 
 void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 {
@@ -325,7 +324,7 @@ void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   setVisibilityRecCount(pThis);
 }
 
-
+/**
 void MEMP setFileToDisplay(const char* buf)
 {
   char infoFile[FILENAME_LEN];
@@ -339,11 +338,11 @@ void MEMP setFileToDisplay(const char* buf)
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
-
+**/
 void setGpsLog(cMenuesystem* pThis, bool on)
 {
-  cPanel* pan = pThis->getPan(panGeo);
-  pan->itemList[21].isVisible = on;
+  ////cPanel* pan = pThis->getPan(panGeo);
+  ////pan->itemList[21].isVisible = on;
 }
 
 int MEMP initMainPanel(cPanel* pan, tCoord lf)
@@ -379,4 +378,3 @@ int MEMP initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,       70, lf);
   return err;
 }
-**/

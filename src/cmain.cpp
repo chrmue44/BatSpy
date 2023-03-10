@@ -78,13 +78,13 @@ void setup()
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  
-  /**menue.init();
+  menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
-  **/
-  ///audio.setup();
-  ///wheels.setDirection(true);  
+  
+  ////audio.setup();
+  ////wheels.setDirection(true);  
   setDispLight(255);
   /** devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
