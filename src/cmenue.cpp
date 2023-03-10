@@ -18,9 +18,10 @@
 #include "pnlmain.h"
 #include "pnlwaterfall.h"
 #include "pnlbats.h"
-/**
+
 #include "pnlparams.h"
 #include "pnlinfo.h"
+/**
 #include "pnllive.h"
 #include "pnlfilebrowser.h"
 **/

@@ -14,7 +14,7 @@ cLog gpsLog("gps");
 ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST, 
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
 ///cAudio audio;  // audio control
-///cRtc rtc;
+cRtc rtc;
 cMenue menue(320, 240, &tft);
 
 Metro tick300ms(300);
