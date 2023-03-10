@@ -17,7 +17,7 @@
 #include "ctext.h"
 ////#include "cCassette.h"
 ////#include "cAudio.h"
-////#include "cRtc.h"
+#include "cRtc.h"
 
 #define FREQ_MIN   0
 #define FREQ_MAX   150

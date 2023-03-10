@@ -13,7 +13,7 @@
 #define OWN_H
 #include "pnlmain.h"
 #undef OWN_H
-////#include "pnllive.h"
+#include "pnllive.h"
 #include "globals.h"
 
 cParEnum f1MainItems(0);
@@ -76,7 +76,7 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-/**
+
 void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (pThis->getFocusItem()) {
@@ -127,7 +127,7 @@ void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-**/
+
 
 void MEMP initFunctionItems()
 {
@@ -150,7 +150,7 @@ void MEMP initFunctionItems()
   f4MainItems.addItem(1033);
 }
 
-/**
+
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -159,7 +159,7 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.f = nullptr;
   pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFunc);
 }
-**/
+
 void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
@@ -212,7 +212,7 @@ void MEMP f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
   }
 }
-/**
+
 void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
 {
   switch (pThis->getFocusItem()) 
@@ -278,6 +278,7 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
+   /**
   stPanelItem item;
   item.type = ITEM_ENUM;
   if(gps.isLogOpen())
@@ -286,6 +287,7 @@ void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     gps.openLog();
   pThis->refreshMainPanel();
   setGpsLog(pThis, gps.isLogOpen());
+  **/
 }
 
 void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -295,8 +297,8 @@ void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.p = &f4MainItems;
   pThis->createDropDown(item, DISP_WIDTH - 120 - 1, DISP_HEIGHT - f4MainItems.size() * LINE_HEIGHT - 15, 120, f4DropFunc);
 }
-**/
-/**
+
+
 int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
 {
   int retVal;
@@ -307,7 +309,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
-**/
+
 
 void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 {
@@ -324,7 +326,7 @@ void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   setVisibilityRecCount(pThis);
 }
 
-/**
+
 void MEMP setFileToDisplay(const char* buf)
 {
   char infoFile[FILENAME_LEN];
@@ -332,13 +334,13 @@ void MEMP setFileToDisplay(const char* buf)
   cFileInfo info;
   uint32_t sampleRate;
   int ret = info.readParameter(infoFile, sampleRate);
-  if(ret != 0)
-    sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+  ////if(ret != 0)
+  ////  sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
   devStatus.freqMax.set(sampleRate / 2000);
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }
-**/
+
 void setGpsLog(cMenuesystem* pThis, bool on)
 {
   ////cPanel* pan = pThis->getPan(panGeo);

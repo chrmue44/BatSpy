@@ -9,8 +9,6 @@
  * ***********************************************************/
 #ifndef PANMAIN_H
 #define PANMAIN_H
-#include <MenueSystem.h>  //// for test
-/**
 #include "cmenue.h"
 #ifdef OWN_H
 #define extern
@@ -41,7 +39,7 @@ extern thPanel panDateTime;    ///< panel to set time and date
 #ifdef OWN_H
 #undef extern
 #endif
-**/
+
 void setFileToDisplay(const char* buf);
 void initFunctionItems();
 int initFkeyPanel(cPanel* pan, tCoord lf);
