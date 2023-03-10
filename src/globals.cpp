@@ -15,7 +15,7 @@ ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST,
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
 ///cAudio audio;  // audio control
 ///cRtc rtc;
-///cMenue menue(320, 240, &tft);
+cMenue menue(320, 240, &tft);
 
 Metro tick300ms(300);
 Metro tick1s(1000);
@@ -25,5 +25,5 @@ Metro tick15Min(1000 * 60 * 15);
 /**
 cTerminal terminal;
 **/
-///stStatus devStatus;          ///< status of the device
-///stParams devPars;            ///< parameters of the device
+stStatus devStatus;          ///< status of the device
+stParams devPars;            ///< parameters of the device

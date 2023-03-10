@@ -76,7 +76,7 @@ void setup()
   initTft();
   showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
-  ///sysLog.log("power on");
+  sysLog.log("power on");
   delay(500);  
   /**menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
