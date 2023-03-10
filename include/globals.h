@@ -8,7 +8,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-///#include "cLog.h"
+#include "cLog.h"
 ///#include "cgps.h" 
 #include "ILI9341_t3.h"
 #include "config.h"
@@ -18,16 +18,16 @@
 #include "Metro.h"
 ///#include "cWheels.h"
 ///#include "cTerminal.h"
-///extern cLog sysLog;
-///extern cLog gpsLog;
+extern cLog sysLog;
+extern cLog gpsLog;
 ///extern cGps gps;
 extern ILI9341_t3 tft;
 ///extern cAudio audio;  // audio control
 ///extern cRtc rtc;
 ///extern cMenue menue;
-///extern Metro tick300ms;
-///extern Metro tick1s;
-///extern Metro tick15Min;
+extern Metro tick300ms;
+extern Metro tick1s;
+extern Metro tick15Min;
 ///extern cWheels wheels;
 /**
 extern cTerminal terminal;
