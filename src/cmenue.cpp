@@ -14,9 +14,9 @@
 #include <ILI9341_t3.h>
 #include "debug.h"
 
-////#include "cfileinfo.h"
+#include "cfileinfo.h"
 #include "pnlmain.h"
-////#include "pnlwaterfall.h"
+#include "pnlwaterfall.h"
 #include "pnlbats.h"
 /**
 #include "pnlparams.h"

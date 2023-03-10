@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include "cutils.h"
 #include "debug.h"
-////#include "cfileinfo.h"
+#include "cfileinfo.h"
 #define OWN_H
 #include "pnlmain.h"
 #undef OWN_H
