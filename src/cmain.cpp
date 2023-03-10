@@ -5,17 +5,18 @@
  *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
-
+#include <Arduino.h>
 //#define DEBUG_LEVEL 4
 #include "debug.h"
+#include "config.h"
 #include "fnt8x11.h"
-#include "debug.h"
-#include "clFixMemPool.h"
-#include "pnlmain.h"
+///#include "clFixMemPool.h"
+///#include "pnlmain.h"
 #include "cSdCard.h"
-#include "pnllive.h"
-#include "pnlparams.h"
+///#include "pnllive.h"
+///#include "pnlparams.h"
 #include "globals.h"
+#include "ctext.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -65,29 +66,34 @@ void waitForSerial()
 
 void setup()
 {
-  initPins();
-  audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
+  initPins();
+  ///audio.init();
 //  waitForSerial();
   Txt::setResource(Texts);
+  setDispLight(255);
   initTft();
-  showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
+  ///showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
-  sysLog.log("power on");
+  ///sysLog.log("power on");
   delay(500);  
-  menue.init();
+  /**menue.init();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
-  audio.setup();
-  wheels.setDirection(true);  
+  **/
+  ///audio.setup();
+  ///wheels.setDirection(true);  
   setDispLight(255);
-  devStatus.opMode.set(enOpMode::HEAR_HET);
+  /** devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
-  gps.init();
+  **/
+  ///gps.init();
+  /**
   if(devPars.recAuto.get() == 3)
     calcSunrise();
+   **/
 }
 
 
@@ -96,6 +102,16 @@ int loopCount = 0;
 int loopFreq;
 void loop() 
 {
+  static int i;
+  if(i > 128)
+    i = 0;
+  else
+    i = 255;
+  delay(1000);
+  setDispLight(i);
+  Serial.print(i);
+}
+/*
   loopCount++;
   static bool backLightOn = true;
   if (tick300ms.check())
@@ -127,7 +143,7 @@ void loop()
       devStatus.date.set(rtc.getTime());
       devStatus.time.update(true); */
       
-      if(!backLightOn)
+/**      if(!backLightOn)
       {
         backLightOn = true;
         setDispLight(255);
@@ -187,4 +203,4 @@ void loop()
   bool rtFft = (menue.getFocusPanel() == pnlLive) ||
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
   audio.operate( rtFft );
-}
+} **/

@@ -9,13 +9,16 @@
 #include "config.h"
 #include <Arduino.h>
 
+
 #include "debug.h"
+/***
 #include "cmenue.h"
 #include "cMeanCalc.h"
 #include "InternalTemperature.h"
+**/
 #include "globals.h"
 
-cMeanCalc<int16_t,10> digits;
+/// cMeanCalc<int16_t,10> digits;
 
 void initPins()
 {
@@ -31,6 +34,7 @@ void initPins()
   digitalWrite(PIN_POWER_OFF, 1);
 }
 
+/**
 void checkSupplyVoltage()
 {
   float volt =readSupplyVoltage();
@@ -85,3 +89,4 @@ float readTemperature()
   else
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
 }
+**/
