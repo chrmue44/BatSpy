@@ -11,7 +11,7 @@
 #include "config.h"
 #include "fnt8x11.h"
 ///#include "clFixMemPool.h"
-///#include "pnlmain.h"
+#include "pnlmain.h"
 #include "cSdCard.h"
 ///#include "pnllive.h"
 ///#include "pnlparams.h"
@@ -74,7 +74,7 @@ void setup()
   Txt::setResource(Texts);
   setDispLight(255);
   initTft();
-  ///showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
+  showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
   ///sysLog.log("power on");
   delay(500);  
