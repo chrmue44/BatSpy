@@ -41,7 +41,6 @@ cMenue::~cMenue() {
 
 void MEMP cMenue::initPars() 
 {
-  
   devPars.lang.clear();
   devPars.lang.addItem(1101);
   devPars.lang.addItem(1102);
@@ -56,12 +55,25 @@ void MEMP cMenue::initPars()
 
   initFunctionItems();
 
-  devPars.preAmpGain.addItem(1331);
-  devPars.preAmpGain.addItem(1332);
-  devPars.preAmpGain.addItem(1333);
-  devPars.preAmpGain.addItem(1334);
-  devPars.preAmpType.addItem(1321);
-  devPars.preAmpType.addItem(1322);
+  if(digitalRead(PIN_ID_12V) == 0)
+  {
+    devPars.preAmpGain.addItem(1350);
+    devPars.preAmpGain.addItem(1351);
+    devPars.preAmpGain.addItem(1352);
+    devPars.preAmpGain.addItem(1353);
+    devPars.preAmpGain.addItem(1354);
+    devPars.preAmpGain.addItem(1355);
+    devPars.preAmpType.addItem(1322);
+  }
+  else
+  {
+    devPars.preAmpGain.addItem(1331);
+    devPars.preAmpGain.addItem(1332);
+    devPars.preAmpGain.addItem(1333);
+    devPars.preAmpGain.addItem(1334);
+    devPars.preAmpType.addItem(1321);
+    devPars.preAmpType.addItem(1322);
+  }
 
 
   for(int t = 1300; t <= 1318; t++)
@@ -120,6 +132,10 @@ void MEMP cMenue::initPars()
   devPars.srcPosition.addItem(1410);
   devPars.srcPosition.addItem(1412);
 
+  notes1.initNotes(PATH_NOTES1, 2000, 2005);
+  notes1.initListPar(devStatus.notes1);
+  notes2.initNotes(PATH_NOTES2, 2010, 2013);
+  notes2.initListPar(devStatus.notes2);
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);

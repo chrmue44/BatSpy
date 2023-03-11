@@ -15,6 +15,7 @@
 #undef OWN_H
 #include "pnllive.h"
 #include "globals.h"
+#include "pnlparams.h"
 
 cParEnum f1MainItems(0);
 cParEnum f4MainItems(0);
@@ -322,6 +323,7 @@ void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   setVisibilityRecCount(pThis);
+  calcSunrise();
 }
 
 
@@ -354,25 +356,29 @@ int MEMP initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(30,                      3,  30 +      lf,  80, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, 150,  30 +      lf, 120, lf, false);
   err |= pan->addTextItem(25,                      3,  30 +  2 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      150,  30 +  2 * lf,  80, lf, true, dispModeFunc);
-  err |= pan->addTextItem(203,                     3,  30 +  3 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.mixFreq,       150,  30 +  3 * lf,  15, lf, true);
-  err |= pan->addTextItem(204,                     3,  30 +  4 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.volume,        150,  30 +  4 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                    3,  30 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,   150,  30 +  5 * lf, 120, lf, true);
-  err |= pan->addTextItem(1325,                    3,  30 +  6 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 +  6 * lf, 120, lf, true);
-  err |= pan->addTextItem(200,                     3,  30 +  8 * lf,  80, lf);
-  err |= pan->addGeoItem(&devStatus.geoPos,      150,  30 +  8 * lf, 150, lf);
-  err |= pan->addTextItem(193,                     3,  30 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.height,      150,  30 +  9 * lf, 150, lf, false);
-  err |= pan->addTextItem(190,                     3,  30 + 10 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.satCount,    150,  30 + 10 * lf,  30, lf, false);
-  err |= pan->addTextItem(191,                   200,  30 + 10 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,      150,  30 +  2 * lf, 100, lf, true, dispModeFunc);
+  err |= pan->addTextItem(32,                      3,  30 +  3 * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes1,     150,  30 +  3 * lf, 169, lf, true);
+  err |= pan->addTextItem(33,                      3,  30 +  4 * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes2,     150,  30 +  4 * lf, 169, lf, true);
+  err |= pan->addTextItem(203,                     3,  30 +  5 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.mixFreq,       150,  30 +  5 * lf,  15, lf, true);
+  err |= pan->addTextItem(204,                     3,  30 +  6 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.volume,        150,  30 +  6 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                    3,  30 +  7 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,   150,  30 +  7 * lf, 120, lf, true);
+  err |= pan->addTextItem(1325,                    3,  30 +  8 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 +  8 * lf, 120, lf, true);
+  err |= pan->addTextItem(200,                     3,  30 +  9 * lf,  80, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,      150,  30 +  9 * lf, 150, lf);
+  err |= pan->addTextItem(193,                     3,  30 + 10 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.height,      150,  30 + 10 * lf, 150, lf, false);
+  err |= pan->addTextItem(190,                     3,  30 + 11 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    150,  30 + 11 * lf,  30, lf, false);
+  err |= pan->addTextItem(191,                   200,  30 + 12 * lf,  80, lf);
   setGpsLog(&menue, false);
-  err |= pan->addTextItem(195,                     3,  30 + 11 * lf,  80, lf);
-  err |= pan->addEnumItem(&devStatus.posValid,   150,  30 + 11 * lf, 150, lf, false);
+  err |= pan->addTextItem(195,                     3,  30 + 12 * lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.posValid,   150,  30 + 12 * lf, 150, lf, false);
   err |= pan->addTextItem(201,                     3, 200 + lf,       70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,       70, lf);
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,       70, lf);

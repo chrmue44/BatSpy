@@ -104,6 +104,7 @@ private:
   void setSampleRate(enSampleRate sr);
   void setPreAmpType(enPreAmp type);
   void setPreAmpGain(enGain gain);
+  void setPreAmpGain(enGainRevB gain);
   void setup();
   void updateCassMode();
   void checkAutoRecording(cMenue& menue, cRtc& rtc);

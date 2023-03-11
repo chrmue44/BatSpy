@@ -115,6 +115,8 @@ struct stStatus
   cParNum msPerDiv = 150;
   cParEnum dirFilter = 0;
   cParStr dirFiles[DIR_PAN_SIZE];
+  cParList notes1 = 0;
+  cParList notes2 = 0;
 };
 
 

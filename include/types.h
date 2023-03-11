@@ -60,6 +60,17 @@ enum enGain
   GAIN_54DB            = 3,
 };
 
+// available hardware gain settings for pre amp Version 2
+enum enGainRevB
+{
+  GAIN_30DB            = 0,
+  GAIN_33DB            = 1,
+  GAIN_40DB            = 2,
+  GAIN_48DB            = 3,
+  GAIN_53DB            = 4,
+  GAIN_58DB            = 5
+};
+
 // recording format on SD card
 enum enRecFmt
 {

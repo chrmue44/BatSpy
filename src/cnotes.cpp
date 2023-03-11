@@ -1,22 +1,29 @@
 #include "cnotes.h"
 #include "cSdCard.h"
+#include "cutils.h"
+#include "globals.h"
 
 cnotes::cnotes()
 {
 
 }
 
-void cnotes::initNotes(char* fName, thText tHandleStart, thText tHandleEnd)
+void cnotes::initNotes(const char* fName, thText tHandleStart, thText tHandleEnd)
 {
   m_fName = fName;
+
+  char buf[PAR_STR_LEN];
+  strncpy(buf, fName, sizeof (buf));
+  strncat(buf, ".", 2);
+  strncat(buf, devPars.lang.getActText(), 20);
+
   cSdCard& sd = cSdCard::inst();
-  if(!sd.fileExists(fName))
-    createFile(tHandleStart, tHandleEnd);
+  if(!sd.fileExists(buf))
+    createFile(buf, tHandleStart, tHandleEnd);
 
   tFILE file;
-  char buf[64];
   size_t bytesRead;
-  enSdRes res = sd.openFile(fName, file, enMode::WRITE);
+  enSdRes res = sd.openFile(buf, file, enMode::READ);
   if(res == enSdRes::OK)
   {
     for(;;)
@@ -26,6 +33,7 @@ void cnotes::initNotes(char* fName, thText tHandleStart, thText tHandleEnd)
         break;
       m_count++;
     }
+    sd.closeFile(file);
   }
 }
 
@@ -35,32 +43,48 @@ void cnotes::getNote(int i, char* buf, size_t bufSize)
   tFILE file;
   int count = 0;
   size_t bytesRead = 0;
-  enSdRes res = sd.openFile(m_fName, file, enMode::READ);
+
+  char fName[PAR_STR_LEN * 2];
+  strncpy(fName, m_fName, sizeof (fName));
+  strncat(fName, ".", 2);
+  strncat(fName, devPars.lang.getActText(), 20);
+
+  enSdRes res = sd.openFile(fName, file, enMode::READ);
   if(res == enSdRes::OK)
   {
     for(;;)
     {
       enSdRes res = sd.readLine(file, buf, bufSize, bytesRead);
+      cUtils::replaceCharsInPlace(buf, bufSize, '\n', 0);
       if(res == enSdRes::OK)
       {
-        count++;
         if(count == i)
           break;
         else
           buf[0] = 0;
+        count++;
       }
       else
-          buf[0] = 0;
-        ;
+        buf[0] = 0;
     }
   }
 }
 
-void cnotes::createFile(thText tHandleStart, thText tHandleEnd)
+void cnotes::initListPar(cParList& list)
+{
+  for(int i = 0; i < m_count; i++)
+  {
+    char buf[PAR_STR_LEN];
+    getNote(i, buf, sizeof (buf));
+    list.addItem(buf);
+  }
+}
+
+void cnotes::createFile(const char* fName, thText tHandleStart, thText tHandleEnd)
 {
   cSdCard& sd = cSdCard::inst();
   tFILE file;
-  enSdRes res = sd.openFile(m_fName, file, enMode::WRITE);
+  enSdRes res = sd.openFile(fName, file, enMode::WRITE);
   if(res == enSdRes::OK)
   {
     size_t written;

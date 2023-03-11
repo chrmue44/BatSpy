@@ -104,4 +104,7 @@ float calcVoltageFactor(float volt);
 void checkSupplyVoltage();
 float readTemperature();
 
+#define PATH_NOTES1  "/info/notes1.txt"
+#define PATH_NOTES2  "/info/notes2.txt"
+
 #endif  //#ifndef _CONFIG_H

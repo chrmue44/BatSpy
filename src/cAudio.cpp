@@ -178,6 +178,49 @@ void cAudio::setPreAmpGain(enGain gain)
   }
 }
 
+void cAudio::setPreAmpGain(enGainRevB gain)
+{
+  switch (gain)
+  {
+  case enGainRevB::GAIN_30DB:
+    digitalWrite(PIN_AMP_0, 1);
+    digitalWrite(PIN_AMP_1, 1);
+    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(PIN_AMP_3, 1);
+    break;
+  case enGainRevB::GAIN_33DB:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 1);
+    digitalWrite(PIN_AMP_2, 1);
+    digitalWrite(PIN_AMP_3, 0);
+    break;
+  case enGainRevB::GAIN_40DB:
+    digitalWrite(PIN_AMP_0, 1);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(PIN_AMP_3, 0);
+    break;
+  case enGainRevB::GAIN_48DB:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(PIN_AMP_3, 1);
+    break;
+  case enGainRevB::GAIN_53DB:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 1);
+    digitalWrite(PIN_AMP_3, 0);
+    break;
+  case enGainRevB::GAIN_58DB:
+    digitalWrite(PIN_AMP_0, 0);
+    digitalWrite(PIN_AMP_1, 0);
+    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(PIN_AMP_3, 0);
+    break;
+  }
+}
+
 void cAudio::setTrigFilter(float freq, enFiltType type)
 {
   float maxFreq = m_sampleRate/2;
@@ -232,9 +275,13 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
-  setPreAmpType((enPreAmp)devPars.preAmpType.get());
-  setPreAmpGain((enGain)devPars.preAmpGain.get());
-
+  if(digitalRead(PIN_ID_12V) == 0)
+    setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
+  else
+  {
+    setPreAmpType((enPreAmp)devPars.preAmpType.get());
+    setPreAmpGain((enGain)devPars.preAmpGain.get());
+  }
   if (isSetupNeeded())
   {
     float vol = pow(10, (devPars.volume.get() / 10));
@@ -378,7 +425,13 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
         if ((m_peakVal > m_recThresh) && startRecording)
         {
           if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
-            m_prj.openPrjFile();
+          {
+            char buf[2*PAR_STR_LEN+3];
+            strncpy(buf, devStatus.notes1.getActText(), sizeof(buf));
+            strncat(buf, ", ", 2);
+            strncat(buf, devStatus.notes2.getActText(), PAR_STR_LEN);
+            m_prj.openPrjFile(buf);
+          }
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           startRec();
           devStatus.playStatus.set(enPlayStatus::ST_REC);
