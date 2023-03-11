@@ -114,7 +114,7 @@ int cCassette::operate()
 int cCassette::stop()
 {
   enSdRes rc = enSdRes::OK;
-  float peakVal = -1;
+  float peakVal = -1.0;
   if (m_mode == enCassMode::REC)
   {
     m_recorder.end();

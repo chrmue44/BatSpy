@@ -10,7 +10,7 @@
 //#define DEBUG_LEVEL  1
 #include "debug.h"
 
-cWheels::cWheels(int la, int lb, int btnL, int ra, int rb, int btnR) :
+cWheels::cWheels(int la, int lb, int btnL, int ra, int rb, int btnR):
 m_left(la, lb),
 m_btnLeft(btnL, DEBOUNCE_TIME),
 m_right(ra, rb),
@@ -18,10 +18,6 @@ m_btnRight(btnR, DEBOUNCE_TIME)
 {
   pinMode(btnL,INPUT_PULLUP);
   pinMode(btnR,INPUT_PULLUP);
-  pinMode(la, INPUT_PULLUP);
-  pinMode(ra, INPUT_PULLUP);
-  pinMode(lb, INPUT_PULLUP);
-  pinMode(rb, INPUT_PULLUP);
   init();
 }
 

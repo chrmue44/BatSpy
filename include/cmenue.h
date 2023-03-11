@@ -10,6 +10,7 @@
  * ***********************************************************/
 #ifndef CMENUE_H
 #define CMENUE_H
+#include <Arduino.h>
 #include <EEPROM.h>
 #include <MenueSystem.h>
 #include "types.h"

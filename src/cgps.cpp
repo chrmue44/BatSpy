@@ -20,7 +20,7 @@ void MEMF cGps::init()
 
 void MEMF cGps::test()
 {
-  char esc[2];
+  char esc[2] = {0,0};
   float lat,lon;
   do
   {

@@ -502,7 +502,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);
   DPRINTF1("full path: %s\n", buf);
-  bool ok;
+  bool ok = enSdRes::OPEN_FILE_ERR;
   switch(mode)
   {
     case enMode::READ:
