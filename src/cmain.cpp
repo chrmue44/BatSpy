@@ -99,7 +99,7 @@ int loopCount = 0;
 int loopFreq;
 void loop() 
 {
-  static int i;
+/*  static int i;
   if(i > 128)
     i = 0;
   else
@@ -107,8 +107,8 @@ void loop()
   delay(1000);
   setDispLight(i);
   Serial.print(i);
-}
-/*
+} */
+
   loopCount++;
   static bool backLightOn = true;
   if (tick300ms.check())
@@ -126,11 +126,11 @@ void loop()
   else
   {
     // get new commands
-    if (!cSdCard::inst().isFileTransferActive())
-      terminal.parseCmd();
-    enKey key = terminal.getKey();
+    /**if (!cSdCard::inst().isFileTransferActive())
+      terminal.parseCmd();**/
+    enKey key = enKey::NOKEY; //// terminal.getKey();
     if (key == NOKEY)
-      key = wheels.getKey();
+      key = wheels.getKey(); 
 
     //handle commands
     if(key != enKey::NOKEY)
@@ -140,7 +140,7 @@ void loop()
       devStatus.date.set(rtc.getTime());
       devStatus.time.update(true); */
       
-/**      if(!backLightOn)
+      if(!backLightOn)
       {
         backLightOn = true;
         setDispLight(255);
@@ -149,13 +149,13 @@ void loop()
       else
       {
         menue.handleKey(key);
-        audio.setup();
-        audio.updateCassMode();
+        ////audio.setup();
+        ////audio.updateCassMode();
         tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
         wheels.setDirection(devPars.knobRotation.get() == 0);
       }
     }
-
+/**
     //handle audio processing
     audio.checkAutoRecording(menue, rtc);
 
@@ -196,8 +196,11 @@ void loop()
                  devStatus.voltage.get(), devStatus.temperature.get());
       checkSupplyVoltage();
     }
+  **/
   }
+  /**
   bool rtFft = (menue.getFocusPanel() == pnlLive) ||
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
   audio.operate( rtFft );
-} **/
+  **/
+} 
