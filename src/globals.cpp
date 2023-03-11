@@ -20,8 +20,8 @@ cMenue menue(320, 240, &tft);
 Metro tick300ms(300);
 Metro tick1s(1000);
 Metro tick15Min(1000 * 60 * 15);
-////cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
-////               PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
+cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S,
+               PIN_ROT_RIGHT_A, PIN_ROT_RIGHT_B, PIN_ROT_RIGHT_S);
 /**
 cTerminal terminal;
 **/

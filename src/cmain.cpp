@@ -13,8 +13,8 @@
 ///#include "clFixMemPool.h"
 #include "pnlmain.h"
 #include "cSdCard.h"
-///#include "pnllive.h"
-///#include "pnlparams.h"
+#include "pnllive.h"
+#include "pnlparams.h"
 #include "globals.h"
 #include "ctext.h"
 
@@ -84,16 +84,13 @@ void setup()
   menue.printPars();
   
   ////audio.setup();
-  ////wheels.setDirection(true);  
+  wheels.setDirection(true);  
   setDispLight(255);
-  /** devStatus.opMode.set(enOpMode::HEAR_HET);
+  devStatus.opMode.set(enOpMode::HEAR_HET);
   setVisibilityRecCount(&menue);
-  **/
-  ///gps.init();
-  /**
+  gps.init();
   if(devPars.recAuto.get() == 3)
     calcSunrise();
-   **/
 }
 
 
