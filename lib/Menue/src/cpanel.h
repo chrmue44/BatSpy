@@ -8,13 +8,12 @@
  * ***********************************************************/
 #ifndef CPANEL_H
 #define CPANEL_H
-
+#include <TimeLib.h>
 #include "menuedefs.h"
 #include "my_vector.h"
 #include <cstring>
 #include "ctext.h"
 #include "cpargraph.h"
-#include <ctime>
 
 
 /**
@@ -82,8 +81,7 @@ class cParDate : public cParBase{
   uint32_t getYear() { return m_year; }
   void set(uint32_t y, uint32_t m, uint32_t d) { m_day = d; m_month = m; m_year = y; update(true);}
   void set(time_t t) {
-     struct tm* tmp = gmtime(&t);
-     m_day = tmp->tm_mday; m_month = tmp->tm_mon; m_year = tmp->tm_year; update(true);
+     m_day = day(); m_month = month(); m_year = year(); update(true);
   }
  private:
   uint32_t m_day = 1;
@@ -102,8 +100,7 @@ class cParTime : public cParBase{
   uint32_t getSec() { return m_sec; }
   void set(int h, int m, int s) { m_hour = h; m_min = m; m_sec = s; update(true);}
   void set(time_t t) {
-     struct tm* tmp = gmtime(&t);
-     m_hour = tmp->tm_hour; m_min = tmp->tm_min; m_sec = tmp->tm_sec; update(true);
+     m_hour = hour(); m_min = minute(); m_sec = second(); update(true);
   }
  private:
   uint32_t m_hour = 0;

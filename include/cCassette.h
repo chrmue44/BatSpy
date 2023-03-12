@@ -90,8 +90,11 @@ class cCassette
     bool m_isPlayFileOpen = false;
     //FATFS m_fatfs;                 ///< File system object
     tFILE m_fil;                     ///< File object
-
-    uint8_t m_buffern[BUFFSIZE] __attribute__( ( aligned ( 16 ) ) );
+#ifdef SIMU_DISPLAY
+    uint8_t m_buffern[BUFFSIZE];
+#else
+    uint8_t m_buffern[BUFFSIZE] __attribute__((aligned(16)));
+#endif
     uint32_t m_nj = 0;
     size_t m_wr;
     uint32_t m_sampleRate;

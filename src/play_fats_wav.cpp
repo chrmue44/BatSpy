@@ -26,8 +26,9 @@
 
 #include <Arduino.h>
 #include "play_fats_wav.h"
+#ifndef SIMU_DISPLAY
 #include "spi_interrupt.h"
-
+#endif
 #define STATE_DIRECT_8BIT_MONO		0  // playing mono at native sample rate
 #define STATE_DIRECT_8BIT_STEREO	1  // playing stereo at native sample rate
 #define STATE_DIRECT_16BIT_MONO		2  // playing mono at native sample rate
@@ -115,7 +116,7 @@ void AudioPlayFatsWav::stop(void)
 void AudioPlayFatsWav::update(void)
 {
 	int32_t n;
-	unsigned int bRead;
+	size_t bRead;
 
 	// only update if we're playing
 	if (state == STATE_STOP) return;

@@ -26,8 +26,9 @@
 
 //#include <Arduino.h>
 #include "play_fats_raw.h"
+#ifndef SIMU_DISPLAY
 #include "spi_interrupt.h"
-
+#endif
 
 void AudioPlayFatsRaw::begin(void)
 {
@@ -82,7 +83,7 @@ void AudioPlayFatsRaw::stop(void)
 
 void AudioPlayFatsRaw::update(void)
 {
-	unsigned int i, n;
+	size_t i, n;
 	audio_block_t *block;
 
 	// only update if we're playing

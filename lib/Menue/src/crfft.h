@@ -172,7 +172,7 @@ class cRfft {
    void transform(complex* f, int N)     //calcola il vettore trasformato
    {
      ordina(f, N);    //dapprima lo ordina col reverse order
-     complex W[N / 2]; //vettore degli zeri dell'unità.
+     complex W[FFT_SIZE]; //vettore degli zeri dell'unità.
                                //Prima N/2-1 ma genera errore con ciclo for successivo
                               //in quanto prova a copiare in una zona non allocata "W[N/2-1]"
      W[1].setPolar(1., -2. * M_PI / N);
