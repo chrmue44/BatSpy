@@ -50,21 +50,25 @@ void MEMF cLog::log(const char* msg, bool keepOpen)
   cSdCard& sd = cSdCard::inst();
   if(!m_open)
   {
-    sd.openFile(m_fileName, m_fd, enMode::APPEND);
-    m_open = true;
+    enSdRes res = sd.openFile(m_fileName, m_fd, enMode::APPEND);
+    if(res == enSdRes::OK)
+      m_open = true;
   }
-  char buf[256];
-  if(msg[strlen(msg) - 1] == '\n')
-    snprintf(buf, sizeof(buf), "%s %s", m_timeStamp, msg);
-  else
-    snprintf(buf, sizeof(buf), "%s %s\n", m_timeStamp, msg);
-  
-  size_t written;
-  sd.writeFile(m_fd, buf, written, strlen(buf));
-  if(!keepOpen)
+  if (m_open)
   {
-    sd.closeFile(m_fd);
-    m_open = false;
+    char buf[256];
+    if (msg[strlen(msg) - 1] == '\n')
+      snprintf(buf, sizeof(buf), "%s %s", m_timeStamp, msg);
+    else
+      snprintf(buf, sizeof(buf), "%s %s\n", m_timeStamp, msg);
+
+    size_t written;
+    sd.writeFile(m_fd, buf, written, strlen(buf));
+    if (!keepOpen)
+    {
+      sd.closeFile(m_fd);
+      m_open = false;
+    }
   }
 }
 

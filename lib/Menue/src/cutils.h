@@ -10,6 +10,25 @@
 
 #include <cstring>
 
+#ifdef SIMU_DISPLAY
+#define A_UML_CAP    "Ä"
+#define A_UML_SMALL  "ä"
+#define O_UML_CAP    "Ö"
+#define O_UML_SMALL  "ö"
+#define U_UML_CAP    "Ü"
+#define U_UML_SMALL  "ü"
+#define S_UML        "ß"
+#define DEG_SIGN     "°"
+#else
+#define A_UML_CAP    "\xc3\x84"
+#define A_UML_SMALL  "\xc3\xa4"
+#define O_UML_CAP    "\xc3\x96"
+#define O_UML_SMALL  "\xc3\xb6"
+#define U_UML_CAP    "\xc3\x9c"
+#define U_UML_SMALL  "\xc3\xbc"
+#define S_UML        "\xc3\x9f"
+#define DEG_SIGN     "\xc2\xb0"
+#endif
 class cUtils
 {
  public:

@@ -15,37 +15,33 @@
 #include <Bounce.h>
 
 
-#define BUF_SIZE 20
+#define KEYBUF_SIZE 20
 #define DEBOUNCE_TIME 100  //50
 #define SENSITIVITY   4  //4
 
 class cWheels {
  public:
-    cWheels(int la, int lb, int btnL, int ra, int rb, int btnR);
+    cWheels(int la, int lb, int btnL);
   void init();
   enKey getKey();
   void setDirection(bool ccw) { m_ccw = ccw; }
-  SimpleEncoder& getEncoder() { return m_left; }     //for simulation
-  Bounce& getBounce() { return m_btnLeft; }
+  SimpleEncoder* getEncoder() { return &m_enc; }     //for simulation
+  Bounce* getBounce() { return &m_btn; }
    
  protected:
   void checkEncoders();
   void increaseWrIdx();
 
  private:
-  SimpleEncoder m_left;
-  int m_leftPos;
-  Bounce m_btnLeft;
-  SimpleEncoder m_right;
-  int m_rightPos;
-  Bounce m_btnRight;
+  SimpleEncoder m_enc;
+  int m_pos;
+  Bounce m_btn;
   bool m_ccw;
 
-  enKey m_keys[BUF_SIZE];
-  int m_wrIdx = 0;
-  int m_rdIdx = 0;
-  int m_diffl = 0;
-  int m_diffr = 0;
+  enKey m_keys[KEYBUF_SIZE];
+  int m_wrIdx;
+  int m_rdIdx;
+  int m_diff;
 };
 
 

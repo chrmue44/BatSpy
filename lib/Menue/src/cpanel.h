@@ -22,9 +22,12 @@
 class cParNum : public cParBase {
  public:
   cParNum(float v) :
-   m_step(1),
-   m_decimals(0),
-   m_val(v) {}
+    m_min(0.0),
+    m_max(1.0),
+    m_step(1),
+    m_decimals(0),
+    m_leadZeros(0),
+    m_val(v) {}
   
   void set(float v) {
     if((v >= m_min) && (v <= m_max))
@@ -55,7 +58,11 @@ private:
 
 class cParStr : public cParBase {
  public:
-    cParStr() {}
+    cParStr() :
+    m_color(0) 
+    {
+      val[0] = 0;
+    }
   cParStr(const char* p) { set(p); }
   char* get() {return val;}
   void set(const char* p) { strncpy(val, p, sizeof(val)); update(true); }
@@ -172,6 +179,12 @@ typedef my_vector<cListItem, CNT_ENUM_ITEM> tList;
  */
 class cEnumItem : public cParBase {
  public:
+   cEnumItem() :
+     m_id(0),
+     m_text(nullptr)
+   {
+
+   }
   uint16_t getId() { return m_id;  }
   void setId(uint16_t id) { m_id = id; }
   tText*  getpText() { return m_text; }
@@ -299,14 +312,14 @@ class cParEnum : public cParBase {
 
   int addItem(thText text) {
     cEnumItem item;
-    item.setId (m_enumeration.size());
+    item.setId ((uint16_t)m_enumeration.size());
     item.setText(Txt::get(text));
     return m_enumeration.push_back(item);
   }
 
   int addItem(const char* text) {
     cEnumItem item;
-    item.setId(m_enumeration.size());
+    item.setId((uint16_t)m_enumeration.size());
     item.setText(text);
     return m_enumeration.push_back(item);
   }
@@ -339,14 +352,14 @@ class cParList : public cParBase {
 
   int addItem(thText text) {
     cListItem item;
-    item.setId (m_enumeration.size());
+    item.setId ((uint16_t)m_enumeration.size());
     item.setText(Txt::get(text));
     return m_enumeration.push_back(item);
   }
 
   int addItem(const char* text) {
     cListItem item;
-    item.setId(m_enumeration.size());
+    item.setId((uint16_t)m_enumeration.size());
     item.setText(text);
     return m_enumeration.push_back(item);
   }

@@ -117,28 +117,28 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
      return 0;
 
   bool found = false;
-  int retVal = replaceAll(str, "\xc3\x9f", CH_SS, result, resultSize);
+  int retVal = replaceAll(str, S_UML, CH_SS, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\x84", CH_AE, result, resultSize);
+  retVal = replaceAll(str, A_UML_CAP, CH_AE, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\x96", CH_OE, result, resultSize);
+  retVal = replaceAll(str, O_UML_CAP, CH_OE, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\x9c", CH_UE, result, resultSize);
+  retVal = replaceAll(str, U_UML_CAP, CH_UE, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\xa4", CH_AEs, result, resultSize);
+  retVal = replaceAll(str, A_UML_SMALL, CH_AEs, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\xb6", CH_OEs, result, resultSize);
+  retVal = replaceAll(str, O_UML_SMALL, CH_OEs, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc3\xbc", CH_UEs, result, resultSize);
+  retVal = replaceAll(str, U_UML_SMALL, CH_UEs, result, resultSize);
   if(retVal == 0)
     found = true; 
-  retVal = replaceAll(str, "\xc2\xb0", CH_DEG, result, resultSize);
+  retVal = replaceAll(str, DEG_SIGN, CH_DEG, result, resultSize);
   if(retVal == 0)
     found = true;
   if(!found)
