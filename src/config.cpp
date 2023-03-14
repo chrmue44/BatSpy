@@ -29,6 +29,7 @@ void initPins()
   pinMode(PIN_TFT_LED, OUTPUT);
   pinMode(PIN_POWER_OFF, OUTPUT);
   digitalWrite(PIN_POWER_OFF, 1);
+  wheels.init();
 }
 
 void checkSupplyVoltage()

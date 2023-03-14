@@ -10,8 +10,12 @@ class SimpleEncoder
   m_pin1(pin1),
   m_pin2(pin2) 
   {
-		pinMode(m_pin1, INPUT_PULLUP);
-		pinMode(m_pin2, INPUT_PULLUP);
+  }
+
+  void init()
+  {
+	pinMode(m_pin1, INPUT_PULLUP);
+	pinMode(m_pin2, INPUT_PULLUP);
   }
 
   uint32_t read()

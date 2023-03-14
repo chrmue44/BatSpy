@@ -13,7 +13,7 @@ void cnotes::initNotes(const char* fName, thText tHandleStart, thText tHandleEnd
   m_fName = fName;
 
   char buf[PAR_STR_LEN];
-  strncpy(buf, fName, sizeof (buf));
+  strncpy(buf, fName, sizeof (buf) - 1);
   strncat(buf, ".", 2);
   strncat(buf, devPars.lang.getActText(), 20);
 

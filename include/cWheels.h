@@ -42,6 +42,7 @@ class cWheels {
   int m_wrIdx;
   int m_rdIdx;
   int m_diff;
+  int m_btnPin;
 };
 
 

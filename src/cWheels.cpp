@@ -17,16 +17,17 @@ m_btn(btnL, DEBOUNCE_TIME),
 m_ccw(false),
 m_wrIdx(0),
 m_rdIdx(0),
-m_diff(0)
+m_diff(0),
+m_btnPin(btnL)
 {
-  pinMode(btnL,INPUT_PULLUP);
-  init();
 }
 
 
 void cWheels::init()
 {
+  pinMode(m_btnPin, INPUT_PULLUP);
   m_pos = m_enc.read();
+  m_enc.init();
 }
 
 void cWheels::increaseWrIdx()
