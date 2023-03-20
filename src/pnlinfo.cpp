@@ -30,13 +30,15 @@ int MEMP initInfoPan(cPanel* pan, tCoord lf)
   err |= pan->addBtnItem(309,                    145,  30 +  5 * lf,  90, lf + 3, btnAudioFunc);
   err |= pan->addTextItem(430,                     3,  30 +  7 * lf,  80, lf);
   err |= pan->addStrItem(&devStatus.version,     145,  30 +  7 * lf,  80, lf);
-  err |= pan->addTextItem(440,                     3,  30 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.freeSpace,   145,  30 +  8 * lf,  80, lf, false);
-  err |= pan->addTextItem(450,                     3,  30 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,     145,  30 +  9 * lf,  40, lf, false);
-  err |= pan->addNumItem(&devStatus.digits,      245,  30 +  9 * lf,  40, lf, false);
-  err |= pan->addTextItem(455,                     3,  30 + 10 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.temperature, 145,  30 + 10 * lf,  40, lf, false);
+  err |= pan->addTextItem(435,                     3,  30 +  8 * lf,  80, lf);
+  err |= pan->addStrItem(&devStatus.hwVersion,    145, 30 +  8 * lf,  80, lf);
+  err |= pan->addTextItem(440,                     3,  30 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,   145,  30 +  9 * lf,  80, lf, false);
+  err |= pan->addTextItem(450,                     3,  30 + 10 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,     145,  30 + 10 * lf,  40, lf, false);
+  err |= pan->addNumItem(&devStatus.digits,      245,  30 + 10 * lf,  40, lf, false);
+  err |= pan->addTextItem(455,                     3,  30 + 11 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.temperature, 145,  30 + 11 * lf,  40, lf, false);
 
   return err;
 }

@@ -96,6 +96,7 @@ struct stTxtList PROGMEM Texts[] =
   {   410, "MEM blocks audio"          ,0},
   {   415, "Spitzenwert"               ,"Peak Value"},
   {   430, "Software-Version"          ,"Software Version"},
+  {   435, "Hardware-Version"          ,"Hardware Version"},
   {   440, "Freier Speicher [MB]"      ,"Free Disk Space [MB]"},
   {   450, "Versorgungsspannung [V]"   ,"Supply Voltage [V]"},
   {   455, "Temperatur [°C]"           ,"Temperature [°C]"},

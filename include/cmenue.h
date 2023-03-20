@@ -107,6 +107,7 @@ struct stStatus
   cParNum freqMax = FREQ_MAX;     ///< max freq for waterfall diagram
   cParNum peakVal = 0;
   cParStr version = "BatSpy " __DATE__  "/"  __TIME__;
+  cParStr hwVersion = "";
   cParNum freeSpace = 0;
   cParNum voltage = 0;
   cParNum digits = 0;

@@ -69,10 +69,10 @@ m_cHp2Ft(m_filtDisp, m_fft)
 void cAudio::init()
 {
   // set pre amp to the lowest posible amplification
-  digitalWrite(PIN_AMP_0, 1);
-  digitalWrite(PIN_AMP_1, 1);
-  digitalWrite(PIN_AMP_2, 1);
-  digitalWrite(PIN_AMP_3, 0);
+  digitalWrite(pinAmp0, 1);
+  digitalWrite(pinAmp1, 1);
+  digitalWrite(pinAmp2, 1);
+  digitalWrite(pinAmp3, 0);
 
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
@@ -142,11 +142,11 @@ void cAudio::setPreAmpType(enPreAmp type)
   switch (type)
   {
   case enPreAmp::LINEAR:
-    digitalWrite(PIN_AMP_3, 1);
+    digitalWrite(pinAmp3, 1);
     break;
 
   case enPreAmp:: HIGH_PASS:
-    digitalWrite(PIN_AMP_3, 0);
+    digitalWrite(pinAmp3, 0);
     break;
   }
 }
@@ -156,24 +156,24 @@ void cAudio::setPreAmpGain(enGain gain)
   switch (gain)
   {
   case enGain::GAIN_27DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 1);
-    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 1);
+    digitalWrite(pinAmp2, 0);
     break;
   case enGain::GAIN_36DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 1);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 1);
     break;
   case enGain::GAIN_45DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 1);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 1);
     break;
   case enGain::GAIN_54DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 0);
     break;
   }
 }
@@ -183,40 +183,40 @@ void cAudio::setPreAmpGain(enGainRevB gain)
   switch (gain)
   {
   case enGainRevB::GAIN_30DB:
-    digitalWrite(PIN_AMP_0, 1);
-    digitalWrite(PIN_AMP_1, 1);
-    digitalWrite(PIN_AMP_2, 0);
-    digitalWrite(PIN_AMP_3, 1);
+    digitalWrite(pinAmp0, 1);
+    digitalWrite(pinAmp1, 1);
+    digitalWrite(pinAmp2, 0);
+    digitalWrite(pinAmp3, 1);
     break;
   case enGainRevB::GAIN_33DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 1);
-    digitalWrite(PIN_AMP_2, 1);
-    digitalWrite(PIN_AMP_3, 0);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 1);
+    digitalWrite(pinAmp2, 1);
+    digitalWrite(pinAmp3, 0);
     break;
   case enGainRevB::GAIN_40DB:
-    digitalWrite(PIN_AMP_0, 1);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
-    digitalWrite(PIN_AMP_3, 0);
+    digitalWrite(pinAmp0, 1);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 0);
+    digitalWrite(pinAmp3, 0);
     break;
   case enGainRevB::GAIN_48DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
-    digitalWrite(PIN_AMP_3, 1);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 0);
+    digitalWrite(pinAmp3, 1);
     break;
   case enGainRevB::GAIN_53DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 1);
-    digitalWrite(PIN_AMP_3, 0);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 1);
+    digitalWrite(pinAmp3, 0);
     break;
   case enGainRevB::GAIN_58DB:
-    digitalWrite(PIN_AMP_0, 0);
-    digitalWrite(PIN_AMP_1, 0);
-    digitalWrite(PIN_AMP_2, 0);
-    digitalWrite(PIN_AMP_3, 0);
+    digitalWrite(pinAmp0, 0);
+    digitalWrite(pinAmp1, 0);
+    digitalWrite(pinAmp2, 0);
+    digitalWrite(pinAmp3, 0);
     break;
   }
 }
@@ -275,7 +275,8 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
-  if(digitalRead(PIN_ID_12V) == 0)
+  if(is12V() && isRevisionA() ||  // special version Rev A
+    isRevisionB())   
     setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
   else
   {

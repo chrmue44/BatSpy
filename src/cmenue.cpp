@@ -55,7 +55,7 @@ void MEMP cMenue::initPars()
 
   initFunctionItems();
 
-  if(digitalRead(PIN_ID_12V) == 0)
+  if(is12V() && isRevisionA() || isRevisionB())
   {
     devPars.preAmpGain.addItem(1350);
     devPars.preAmpGain.addItem(1351);

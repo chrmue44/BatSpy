@@ -37,6 +37,10 @@
                 --| D32                D33 |--
                   +------------------------+
 */
+
+#include <cstdint>
+#include "Arduino.h"
+
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
 #define MEMF FLASHMEM     //memory region for user file handling functions
@@ -58,12 +62,20 @@
 
 // identification
 #define PIN_ID_12V        4      // low level == 12V supply
+#define PIN_REV1          5      // revision bit 0
+#define PIN_REV2          9      // revision bit 1
+#define PIN_REV3         28      // revision bit 2
 
 //control pre amplifier
-#define PIN_AMP_0        15      // enable feedback resistor
-#define PIN_AMP_1        29      // enable feedback resistor
-#define PIN_AMP_2        16      // enable feedback resistor
-#define PIN_AMP_3        30      // enable pre amp with high pass
+#define PIN_AMP_0_REVA   15      // enable feedback resistor
+#define PIN_AMP_1_REVA   29      // enable feedback resistor
+#define PIN_AMP_2_REVA   16      // enable feedback resistor
+#define PIN_AMP_3_REVA   30      // enable pre amp with high pass
+
+#define PIN_AMP_0_REVB   15      // enable feedback resistor
+#define PIN_AMP_1_REVB    1      // enable feedback resistor
+#define PIN_AMP_2_REVB   16      // enable feedback resistor
+#define PIN_AMP_3_REVB    0      // enable feedback resistor
 
 //encoder
 #define PIN_ROT_LEFT_A   36      // encoder input A
@@ -74,6 +86,7 @@
 #define PIN_ROT_RIGHT_S  57
 
 #define PIN_SUPPLY_VOLT  A16
+#define PIN_SIG_LAMP     23      // external output
 
 // audio out
 #define PIN_MQS          10      // output for mono MQS signal
@@ -98,11 +111,20 @@
 
 #define SERIAL_GPS       Serial8
 
+
+extern uint8_t pinAmp0;
+extern uint8_t pinAmp1;
+extern uint8_t pinAmp2;
+extern uint8_t pinAmp3;
+
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
 void checkSupplyVoltage();
 float readTemperature();
+inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
+inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
+inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"
