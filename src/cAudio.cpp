@@ -275,7 +275,7 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
-  if(is12V() && isRevisionA() ||  // special version Rev A
+  if((is12V() && isRevisionA()) ||  // special version Rev A
     isRevisionB())   
     setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
   else
