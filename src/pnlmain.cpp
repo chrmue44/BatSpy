@@ -344,7 +344,18 @@ void MEMP setFileToDisplay(const char* buf)
 void setGpsLog(cMenuesystem* pThis, bool on)
 {
   cPanel* pan = pThis->getPan(panGeo);
-  pan->itemList[21].isVisible = on;
+  pan->itemList[25].isVisible = on;
+}
+
+void setGpsStatus(cMenuesystem* pThis)
+{
+  bool on = devPars.srcPosition.get() == 1;
+
+  cPanel* pan = pThis->getPan(panGeo);
+  pan->itemList[23].isVisible = on;
+  pan->itemList[24].isVisible = on;
+  pan->itemList[26].isVisible = on;
+  pan->itemList[27].isVisible = on;
 }
 
 int MEMP initMainPanel(cPanel* pan, tCoord lf)
@@ -382,5 +393,6 @@ int MEMP initMainPanel(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(201,                     3, 200 + lf,       70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,       70, lf);
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,       70, lf);
+  setGpsStatus(&menue);
   return err;
 }
