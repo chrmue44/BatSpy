@@ -37,7 +37,7 @@ class cTimer
   }
 
   float runTime() {
-    return (float)runTimeMs()/1000.0;
+    return (float)runTimeMs()/1000.0f;
   }
  
  private:

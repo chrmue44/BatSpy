@@ -36,12 +36,12 @@ class complex {
     tComplexBase getPhi() {
       if(m_r == 0) {
         if(m_i > 0)
-          return M_PI / 2;
+          return (tComplexBase)(M_PI / 2);
         else
-          return 1.5 * M_PI;
+          return (tComplexBase)(1.5 * M_PI);
 
       } else {
-        return atan(m_i / m_r);
+        return (tComplexBase)(atan(m_i / m_r));
       }
     }
 

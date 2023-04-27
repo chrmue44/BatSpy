@@ -42,7 +42,7 @@ thPanel MMEM cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord 
   item.width = width;
   item.height = height;
   item.type = type;
-  i = m_panelList.size();
+  i = (thPanel)m_panelList.size();
   m_panelList.push_back(item);
   return i;
 }
@@ -559,8 +559,8 @@ void MMEM cMenuesystem::handleEditMode(cPanel& pan, enKey key)
                   m_focus.item--;
                 else
                 {
-                  m_firstDropDownItem = pEnum->size() - pan.itemList.size();
-                  m_focus.item = pan.itemList.size() - 1;
+                  m_firstDropDownItem = (thItem)(pEnum->size() - pan.itemList.size());
+                  m_focus.item = (thItem)(pan.itemList.size() - 1);
                 }
               }
               reInitDropDownItems();

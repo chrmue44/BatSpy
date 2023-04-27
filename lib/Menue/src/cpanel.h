@@ -125,10 +125,10 @@ class cParGeoPos : public cParBase {
   float getLon() {return m_lon;}
   int getDegLat() { return (int)m_lat; }
   int getDegLon() { return (int)m_lon; }
-  int getMinLat() { return static_cast<int>((m_lat - (int)m_lat) * 60.0); }
-  float getMinfLat() { return (m_lat - (int)m_lat) * 60.0; }
-  int getMinLon() { return static_cast<int>((m_lon - (int)m_lon) * 60.0); }
-  float getMinfLon() { return (m_lon - (int)m_lon) * 60.0; }
+  int getMinLat() { return static_cast<int>((m_lat - (int)m_lat) * 60.0f); }
+  float getMinfLat() { return (m_lat - (int)m_lat) * 60.0f; }
+  int getMinLon() { return static_cast<int>((m_lon - (int)m_lon) * 60.0f); }
+  float getMinfLon() { return (m_lon - (int)m_lon) * 60.0f; }
   int getSecLat() { return static_cast<int>((m_lat - (int)m_lat - (float)getMinLat()/60.0) * 60000.0); }
   int getSecLon() { return static_cast<int>((m_lon - (int)m_lon - (float)getMinLon()/60.0) * 60000.0); }
   void setLat(float lat) {m_lat = lat; update(true);}
@@ -161,6 +161,11 @@ class cParBtn : public cParBase {
  */
 class cListItem : public cParBase {
  public:
+   cListItem() :
+     m_id(0)
+   {
+     m_text[0] = 0;
+   }
   uint16_t getId() { return m_id;  }
   void setId(uint16_t id) { m_id = id; }
   tText*  getpText() { return m_text; }

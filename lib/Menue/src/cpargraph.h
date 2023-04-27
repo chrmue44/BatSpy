@@ -30,7 +30,13 @@ struct stTime {
 
 struct stFft {
   stFft() :
-  fft() {}
+    firstFft(false),
+    levelMin(0.0),
+    levelMax(1.0),
+    fft() 
+    {
+      memset(scratch, 0, sizeof(scratch));
+    }
   
   cRfft fft;
   float levelMin;
@@ -71,7 +77,9 @@ enum enGraphMode {
  */
 class cParGraph : public cParBase {
  public:
-  cParGraph(enGraphMode mode) : m_mode(mode) {}
+  cParGraph(enGraphMode mode) :
+    m_mode(mode) 
+  {}
   void setAmplitude(int16_t a) {if(a > 0) m_amplitude = 100 * m_height / 2 / a; }
   void setAmplitudeRaw(int16_t ar) { m_amplRaw = ar; }
   void setY0(int16_t y0) { m_y0 = y0; }
@@ -130,9 +138,9 @@ class cParGraph : public cParBase {
 
  private:
   bool m_isMinMax = false;
-  int16_t m_amplitude;     ///< amplitude of 100% in pixel
-  int16_t m_y0;            ///< y-coordinate for value 0
-  int16_t m_amplRaw;       ///< amplitude of raw value
+  int16_t m_amplitude = 240;     ///< amplitude of 100% in pixel
+  int16_t m_y0 = 120;            ///< y-coordinate for value 0
+  int16_t m_amplRaw = 100;       ///< amplitude of raw value
 
   int m_measState = 0;     ///< state of measurement
   tFILE m_file;            ///< handle to plotted file
@@ -142,17 +150,17 @@ class cParGraph : public cParBase {
   float m_tMax = 2.0;      ///< max x value of graph in physical units
   int m_plotState = 0;     ///< state of plotting
   char m_plotFileName[PAR_STR_LEN]; ///< name of plotted file
-  uint32_t m_sampleRate;    ///< sample rate of actual file
-  uint16_t m_x;
-  uint16_t m_y;
-  uint16_t m_yMax;
-  uint16_t m_width;
-  uint16_t m_height;
+  uint32_t m_sampleRate = 384000;    ///< sample rate of actual file
+  uint16_t m_x = 0;
+  uint16_t m_y = 0;
+  uint16_t m_yMax = 1;
+  uint16_t m_width = 320;
+  uint16_t m_height = 240;
   size_t m_filePos = 0;      ///< start position in file
   size_t m_fileSize = 0;     ///< size of the opened file
   uint16_t m_actPixel = 0;   ///< x pos. of currently plotted pixel};
   uData m_dat;
-  enGraphMode m_mode;
+  enGraphMode m_mode = enGraphMode::GRAPH_FFT;
 };
 
 #endif // CPARGRAPH_H

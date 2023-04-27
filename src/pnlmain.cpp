@@ -245,27 +245,27 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
 
     case 5:
-      devStatus.year.set(devStatus.date.getYear());
-      devStatus.month.set(devStatus.date.getMonth());
-      devStatus.day.set(devStatus.date.getDay());
-      devStatus.hour.set(devStatus.time.getHour());
-      devStatus.minute.set(devStatus.time.getMin());
+      devStatus.year.set((float)devStatus.date.getYear());
+      devStatus.month.set((float)devStatus.date.getMonth());
+      devStatus.day.set((float)devStatus.date.getDay());
+      devStatus.hour.set((float)devStatus.time.getHour());
+      devStatus.minute.set((float)devStatus.time.getMin());
       pThis->setMainPanel(panDateTime);
       pThis->setHdrPanel(hdrParams);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
     case 6:
-      devStatus.latDeg.set(devStatus.geoPos.getDegLat());
-      devStatus.latMin.set(devStatus.geoPos.getMinLat());
-      devStatus.latSec.set(devStatus.geoPos.getSecLat());
+      devStatus.latDeg.set((float)devStatus.geoPos.getDegLat());
+      devStatus.latMin.set((float)devStatus.geoPos.getMinLat());
+      devStatus.latSec.set((float)devStatus.geoPos.getSecLat());
       if(devStatus.latDeg.get() > 0)
         devStatus.latSign.set(0);
       else
         devStatus.latSign.set(1);
-      devStatus.lonDeg.set(devStatus.geoPos.getDegLon());
-      devStatus.lonMin.set(devStatus.geoPos.getMinLon());
-      devStatus.lonSec.set(devStatus.geoPos.getSecLon());
+      devStatus.lonDeg.set((float)devStatus.geoPos.getDegLon());
+      devStatus.lonMin.set((float)devStatus.geoPos.getMinLon());
+      devStatus.lonSec.set((float)devStatus.geoPos.getSecLon());
       if(devStatus.lonDeg.get() > 0)
         devStatus.lonSign.set(0);
       else
@@ -336,7 +336,7 @@ void MEMP setFileToDisplay(const char* buf)
   int ret = info.readParameter(infoFile, sampleRate);
   if(ret != 0)
     sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-  devStatus.freqMax.set(sampleRate / 2000);
+  devStatus.freqMax.set((float)sampleRate / 2000);
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);
 }

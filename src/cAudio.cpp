@@ -229,13 +229,13 @@ void cAudio::setTrigFilter(float freq, enFiltType type)
   switch (type)
   {
     case enFiltType::HIGHPASS:
-      m_filter.setHighpass(0, f, 0.7);
+      m_filter.setHighpass(0, f, 0.7f);
       break;
     case enFiltType::LOWPASS:
-      m_filter.setLowpass(0, f, 0.7);
+      m_filter.setLowpass(0, f, 0.7f);
       break;
     case enFiltType::BANDPASS:
-      m_filter.setBandpass(0, f, 0.7);
+      m_filter.setBandpass(0, f, 0.7f);
       break;  
     default:
       break;
