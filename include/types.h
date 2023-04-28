@@ -133,4 +133,11 @@ enum enProjType
   ELEKON = 1
 };
 
+enum enMenueType
+{
+  EXPERT = 0,
+  RECORDER = 1,
+  HANDHELD = 2,
+};
+
 #endif    //#ifndef _TYPES_H

@@ -41,9 +41,13 @@ extern thPanel panDateTime;    ///< panel to set time and date
 #endif
 
 void setFileToDisplay(const char* buf);
-void initFunctionItems();
+void initFunctionItemsExpert();
+void initFunctionItemsRecorder();
+void initFunctionItemsHandheld();
 int initFkeyPanel(cPanel* pan, tCoord lf);
-int initMainPanel(cPanel* pan, tCoord lf);
+int initMainPanelExpert(cPanel* pan, tCoord lf);
+int initMainPanelRecorder(cPanel* pan, tCoord lf);
+int initMainPanelHandheld(cPanel* pan, tCoord lf);
 void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);

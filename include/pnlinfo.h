@@ -12,6 +12,7 @@
 #define PNLINFO_H
 
 #include "cmenue.h"
-int initInfoPan(cPanel* pan, tCoord lf);
+int initInfoPanExpert(cPanel* pan, tCoord lf);
+int initInfoPanRecorder(cPanel* pan, tCoord lf);
 
 #endif // PNLBATS_H

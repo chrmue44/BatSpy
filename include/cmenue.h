@@ -129,7 +129,7 @@ struct stParams
   cParNum volume =   6;              ///< volume setting
   cParNum mixFreq = 40;              ///< mixer frequency
   cParNum recTime = 3;               ///< recording time
-  cParEnum sampleRate = enSampleRate::SR_384K;  ///< sample rate
+  cParEnum sampleRate = enSampleRate::SR_384K;    ///< sample rate
   cParEnum lang   = LANG_GER;        ///< display language
   cParList dirSel = 0;               ///< select directory
   cParList fileSel = 0;              ///< select file
@@ -142,9 +142,9 @@ struct stParams
   cParNum deafTime = 3;              ///< timeout after one recording
   cParNum backLightTime = 120;       ///< time for backlight
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
-  cParEnum preAmpType = HIGH_PASS;   ///< type of pre amplifier
-  cParEnum dispOrient = RIGHT_HAND;  ///< display orientation
-  cParEnum knobRotation = CLOCKWISE; ///< knob rotation
+  cParEnum preAmpType = enPreAmp::HIGH_PASS;      ///< type of pre amplifier
+  cParEnum dispOrient = enDispOrient::RIGHT_HAND; ///< display orientation
+  cParEnum knobRotation = enKnobRot::CLOCKWISE;   ///< knob rotation
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
   cParEnum recFmt = 0;               ///< recording format
   cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
@@ -161,6 +161,7 @@ struct stParams
   cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
   cParEnum projectType = 0;          ///< type of project for automatic recording
   cParEnum srcPosition = 0;          ///< source of position (fixed, GPS)
+  cParEnum menueType = enMenueType::EXPERT;       ///< menue type
 };
 
 
@@ -182,6 +183,10 @@ protected:
 private:
   bool checkCRC();
   void loadLanguage();
+  int initExpertPanels(tCoord lf);
+  int initRecorderPanels(tCoord lf);
+  int initHandheldPanels(tCoord lf);
+
 };
 
 #endif // CMENUE_H

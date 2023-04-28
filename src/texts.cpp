@@ -105,9 +105,9 @@ struct stTxtList PROGMEM Texts[] =
   {   480, "ms/div"                    ,0},
   {   500, "Sel."                      ,0},
   {   510, "Entf."                     ,"Del."},
-  
+
   {  1000, "Über..."                   ,"About..."},
-  {  1001, "Laden ..."                 ,"Load ..."},  
+  {  1001, "Laden ..."                 ,"Load ..."},
   {  1005, "Sollen die Parametereinstellungen"," "},
   {  1006, "geladen werden?"           ,"Load settings?"},
   {  1010, "Wollen Sie wirklich ausschalten?", "Do you really want to power off?"},
@@ -190,11 +190,11 @@ struct stTxtList PROGMEM Texts[] =
   {  1316, "352"                       ,0},
   {  1317, "384"                       ,0},
   {  1318, "480"                       ,0},
-  
+
   {  1320, "Filter",                    0},
   {  1321, "aus",                       "off"},
   {  1322, "HP 16kHz",                  0},
-  
+
   {  1325, "Verstärkung",               "Gain"},
   {  1330, "Pre Trigger [ms]",          0},
   {  1331, "27 dB",                     0},
@@ -227,15 +227,19 @@ struct stTxtList PROGMEM Texts[] =
   {  1700, "Open Source Fledermausdetektor", "Open Source bat recording and detection device"},
   {  1702, "Software Version: "         ,0 },
   {  1704, "Taste drücken, um fortzufahren", "press button to continue!"},
-  {  2000, "offene Ladschaft",          "open land"},
-  {  2001, "einzelne Bäume, Häuser",    "single trees, houses"},
+  {  1710, "Dialoge",                   "Dialogs"},
+  {  1711, "Experte",                   "Expert"},
+  {  1712, "Recorder",                  "Recorder"},
+  {  1713, "Handgerät",                 "Handheld" },
+  {  2000, "offene Landschaft",         "open land"},
+  {  2001, "einzelne Bäume & Häuser",   "single trees & houses"},
   {  2002, "Straße",                    "street"},
   {  2003, "Waldweg",                   "forest track" },
   {  2004, "dichter Wald",              "forest" },
   {  2005, "Waldweiher",                "pond surrounded by forrest" },
   {  2010, "klarer Himmel",             "blue sky" },
-  {  2011, "bewölkt, trocken",          "cloudy, no rain" },
-  {  2012, "bewölkt, Schauer",          "cloudy with rainshowers" },
+  {  2011, "bewölkt trocken",           "cloudy no rain" },
+  {  2012, "bewölkt Schauer",           "cloudy with rainshowers" },
   {  2013, "Regen",                     "rain" },
 
   { 12000, TGE_ASC_0           ,0},

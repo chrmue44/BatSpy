@@ -53,9 +53,7 @@ void MEMP cMenue::initPars()
 
   initBats();
 
-  initFunctionItems();
-
-  if(is12V() && isRevisionA() || isRevisionB())
+  if(hasAmpRevB())
   {
     devPars.preAmpGain.addItem(1350);
     devPars.preAmpGain.addItem(1351);
@@ -99,7 +97,7 @@ void MEMP cMenue::initPars()
 
   devPars.deafTime.set(0);
   devPars.deafTime.init(0,30,1,0);
-  devPars.backLightTime.set(120);
+//  devPars.backLightTime.set(120);
   devPars.backLightTime.init(5,300,1,0);
 
   devPars.knobRotation.clear();
@@ -132,12 +130,16 @@ void MEMP cMenue::initPars()
   devPars.srcPosition.addItem(1410);
   devPars.srcPosition.addItem(1412);
 
+  devPars.menueType.addItem(1711),
+  devPars.menueType.addItem(1712),
+  devPars.menueType.addItem(1713),
+
   notes1.initNotes(PATH_NOTES1, 2000, 2005);
   notes1.initListPar(devStatus.notes1);
   notes2.initNotes(PATH_NOTES2, 2010, 2013);
   notes2.initListPar(devStatus.notes2);
 
-  devStatus.opMode.clear();
+    devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
   devStatus.opMode.addItem(21);
   devStatus.opMode.addItem(22);
@@ -225,25 +227,45 @@ void MEMP cMenue::initDialogs()
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
   int err;
-  // F-KEYs for main panel
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
-  setFkeyPanel(fkeyMainPan);
-  err = initFkeyPanel(getPan(fkeyMainPan), lf);
-
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
   hdrMainPanel = getHdrPanel();
-  err |= getPan(hdrMainPanel)->addTextItem(150, lf, 1, 180, LINE_HEIGHT);
+  err = getPan(hdrMainPanel)->addTextItem(150, lf, 1, 180, LINE_HEIGHT);
+
+  // F-KEYs for main panel
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  setFkeyPanel(fkeyMainPan);
+
+  switch (devPars.menueType.get())
+  {
+    case enMenueType::EXPERT:
+      initFunctionItemsExpert();
+      initExpertPanels(lf);
+      break;
+    case enMenueType::RECORDER:
+      initFunctionItemsRecorder();
+      initRecorderPanels(lf);
+      break;
+    case enMenueType::HANDHELD:
+      initFunctionItemsHandheld();
+      initHandheldPanels(lf);
+      break;
+  }
+}
+
+int MEMP cMenue::initExpertPanels(tCoord lf)
+{
+  int err = initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH,   DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
-  err |= initMainPanel(getPan(panGeo), lf);
+  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  err |= initMainPanelExpert(getPan(panGeo), lf);
 
   // F-KEYs for waterfall panel
   fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
-  hdrPanWaterfall = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
   err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
 
@@ -251,61 +273,182 @@ void MEMP cMenue::initDialogs()
   err |= initWaterPan(getPan(panWaterfall), lf);
 
   // x-t-diagram panel
-  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initTimePan(getPan(panTime), lf);
 
-  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initLivePan(getPan(pnlLive), lf);
 
-  panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,     DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= getPan(panFont)->addTextItem(12000,                  15, 20,           200, lf);
-  err |= getPan(panFont)->addTextItem(12001,                  15, 20      + lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12002,                  15, 20 +  2 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12003,                  15, 20 +  3 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12004,                  15, 20 +  4 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12005,                  15, 20 +  5 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12006,                  15, 20 +  6 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12007,                  15, 20 +  7 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12010,                  15, 20 +  8 * lf, 200, 2 * lf, false, NULL, 2);
+  panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= getPan(panFont)->addTextItem(12000, 15, 20, 200, lf);
+  err |= getPan(panFont)->addTextItem(12001, 15, 20 + lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12002, 15, 20 + 2 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12003, 15, 20 + 3 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12004, 15, 20 + 4 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12005, 15, 20 + 5 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12006, 15, 20 + 6 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12007, 15, 20 + 7 * lf, 200, lf);
+  err |= getPan(panFont)->addTextItem(12010, 15, 20 + 8 * lf, 200, 2 * lf, false, NULL, 2);
 
-  hdrBatInfo = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
   err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
 
-  hdrParams = createPanel(PNL_HEADER,  0, 0, DISP_WIDTH, HDR_HEIGHT);
-  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
 
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initInfoPan(getPan(panInfo), lf);
+  err |= initInfoPanExpert(getPan(panInfo), lf);
+
+  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
 
   // parameter panel
-  panParams =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
 
-  panParRec =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initParRec(getPan(panParRec), lf);
 
-  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
 
-  panBats =  createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1,  DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panBats = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initBatPan(getPan(panBats), lf);
 
-  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
+  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initDateTimePan(getPan(panDateTime), lf);
 
   fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
   err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
 
-  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1 );
+  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");
 
-//  if(digitalRead(PIN_ID_12V))
-//    setMainPanel(pnlLive);
-//  else
-    setMainPanel(panGeo);
+  setMainPanel(panGeo);
 
+  return err;
+}
+
+int MEMP cMenue::initHandheldPanels(tCoord lf)
+{
+  int err = initFkeyPanel(getPan(fkeyMainPan), lf);
+
+  // main panel
+  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  err |= initMainPanelExpert(getPan(panGeo), lf);
+
+  // F-KEYs for waterfall panel
+  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
+
+  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
+  err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
+
+  panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initWaterPan(getPan(panWaterfall), lf);
+
+  // x-t-diagram panel
+  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initTimePan(getPan(panTime), lf);
+
+  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initLivePan(getPan(pnlLive), lf);
+
+  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
+  err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
+
+
+  panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initInfoPanRecorder(getPan(panInfo), lf);
+
+  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
+
+  // parameter panel
+  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initParPan(getPan(panParams), lf);
+
+  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initParRec(getPan(panParRec), lf);
+
+  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initPositionPan(getPan(panPosition), lf);
+
+  panBats = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initBatPan(getPan(panBats), lf);
+
+  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initDateTimePan(getPan(panDateTime), lf);
+
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
+
+  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initFileBrowserPan(getPan(panFileBrowser), lf);
+  initFileBrowser(getPan(panFileBrowser), "/");
+
+  setMainPanel(panGeo);
+
+  return err;
+}
+
+
+int MEMP cMenue::initRecorderPanels(tCoord lf)
+{
+  int err = initFkeyPanel(getPan(fkeyMainPan), lf);
+
+  // main panel
+  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  err |= initMainPanelRecorder(getPan(panGeo), lf);
+
+  // F-KEYs for waterfall panel
+  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
+
+  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
+  err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
+
+  panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initWaterPan(getPan(panWaterfall), lf);
+
+  // x-t-diagram panel
+  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initTimePan(getPan(panTime), lf);
+
+  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initLivePan(getPan(pnlLive), lf);
+  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
+
+  panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initInfoPanRecorder(getPan(panInfo), lf);
+
+  // parameter panel
+  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initParPan(getPan(panParams), lf);
+
+  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initParRec(getPan(panParRec), lf);
+
+  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initPositionPan(getPan(panPosition), lf);
+
+  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initDateTimePan(getPan(panDateTime), lf);
+
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
+
+  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  err |= initFileBrowserPan(getPan(panFileBrowser), lf);
+  initFileBrowser(getPan(panFileBrowser), "/");
+
+  setMainPanel(panGeo);
+
+  return err;
 }
 
 void MEMP writeFloatToEep(int32_t addr, float val) 
@@ -377,7 +520,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x000C, devPars.recAuto.get());
   writeInt16ToEep(0x000E, devPars.sendDelay.get());
   writeInt16ToEep(0x0010, devPars.srcPosition.get());
-  // 2 bytes free here
+  writeInt16ToEep(0x0012, devPars.menueType.get());
   writeFloatToEep(0x0014, devPars.recTime.get());
   writeInt16ToEep(0x0018, devPars.sampleRate.get());
   writeInt16ToEep(0x001A, devPars.preAmpGain.get());
@@ -436,7 +579,7 @@ void MEMP cMenue::load()
     devPars.recAuto.set(readInt16FromEep(0x000C));
     devPars.sendDelay.set(readInt16FromEep(0x000E));
     devPars.srcPosition.set(readInt16FromEep(0x0010));
-    // 2 bytes free here
+    devPars.menueType.set(readInt16FromEep(0x0012));
     devPars.recTime.set(readFloatFromEep(0x0014));
     devPars.sampleRate.set(readInt16FromEep(0x0018));
     devPars.preAmpGain.set(readInt16FromEep(0x001A));
@@ -474,6 +617,8 @@ bool MEMP cMenue::checkCRC()
   int16_t rdCks = readInt16FromEep(2);
   int16_t maxAddr = readInt16FromEep(0);
   int16_t cks = 0;
+  if (maxAddr == 0)
+    return false;
   for(int i = 4; i <= maxAddr; i++)
   {
     cks += readCharFromEep(i);

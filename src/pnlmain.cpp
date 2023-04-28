@@ -78,7 +78,7 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
-void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f1DropFuncExpert(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (pThis->getFocusItem()) {
     case 0:
@@ -129,8 +129,97 @@ void MEMP f1DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP f1DropFuncHandheld(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (pThis->getFocusItem()) {
+  case 0:
+    pThis->setMainPanel(panGeo);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 1:
+    devStatus.grafLive.initPlot(true);
+    setSampleRateLivePan();
+    pThis->setMainPanel(pnlLive);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 2:
+    pThis->setMainPanel(panFileBrowser);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyFilePan);
+    break;
+  case 3:
+    devStatus.graph.initPlot(true);
+    pThis->setMainPanel(panTime);
+    pThis->setHdrPanel(hdrPanWaterfall);;
+    pThis->setFkeyPanel(fkeyWaterPan);
+    break;
+  case 4:
+    devStatus.waterf.initPlot(true);
+    pThis->setMainPanel(panWaterfall);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyWaterPan);
+    break;
+  case 5:
+    pThis->setMainPanel(panInfo);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 6:
+    pThis->setMainPanel(panBats);
+    pThis->setHdrPanel(hdrBatInfo);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 7:
+    pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+    break;
+  }
+}
 
-void MEMP initFunctionItems()
+void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (pThis->getFocusItem()) {
+  case 0:
+    pThis->setMainPanel(panGeo);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 1:
+    devStatus.grafLive.initPlot(true);
+    setSampleRateLivePan();
+    pThis->setMainPanel(pnlLive);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 2:
+    pThis->setMainPanel(panFileBrowser);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyFilePan);
+    break;
+  case 3:
+    devStatus.graph.initPlot(true);
+    pThis->setMainPanel(panTime);
+    pThis->setHdrPanel(hdrPanWaterfall);;
+    pThis->setFkeyPanel(fkeyWaterPan);
+    break;
+  case 4:
+    devStatus.waterf.initPlot(true);
+    pThis->setMainPanel(panWaterfall);
+    pThis->setHdrPanel(hdrPanWaterfall);
+    pThis->setFkeyPanel(fkeyWaterPan);
+    break;
+  case 5:
+    pThis->setMainPanel(panInfo);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 6:
+    pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+    break;
+  }
+}
+
+
+void MEMP initFunctionItemsExpert()
 {
   f1MainItems.addItem(100);
   f1MainItems.addItem(101);
@@ -151,6 +240,44 @@ void MEMP initFunctionItems()
   f4MainItems.addItem(1033);
 }
 
+void MEMP initFunctionItemsHandheld()
+{
+  f1MainItems.addItem(100);
+  f1MainItems.addItem(101);
+  f1MainItems.addItem(102);
+  f1MainItems.addItem(103);
+  f1MainItems.addItem(104);
+  f1MainItems.addItem(105);
+  f1MainItems.addItem(106);
+  f1MainItems.addItem(108);
+
+  f4MainItems.addItem(1000);
+  f4MainItems.addItem(1001);
+  f4MainItems.addItem(1021);
+  f4MainItems.addItem(1030);
+  f4MainItems.addItem(1034);
+  f4MainItems.addItem(1031);
+  f4MainItems.addItem(1033);
+}
+
+void MEMP initFunctionItemsRecorder()
+{
+  f1MainItems.addItem(100);
+  f1MainItems.addItem(101);
+  f1MainItems.addItem(102);
+  f1MainItems.addItem(103);
+  f1MainItems.addItem(104);
+  f1MainItems.addItem(105);
+  f1MainItems.addItem(108);
+
+  f4MainItems.addItem(1000);
+  f4MainItems.addItem(1001);
+  f4MainItems.addItem(1021);
+  f4MainItems.addItem(1030);
+  f4MainItems.addItem(1034);
+  f4MainItems.addItem(1031);
+  f4MainItems.addItem(1033);
+}
 
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
@@ -158,7 +285,18 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   item.type = ITEM_ENUM;
   item.p = &f1MainItems;
   item.f = nullptr;
-  pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFunc);
+  switch (devPars.menueType.get())
+  {
+  case enMenueType::EXPERT:
+    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncExpert);
+    break;
+  case enMenueType::RECORDER:
+    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncRecorder);
+    break;
+  case enMenueType::HANDHELD:
+    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncHandheld);
+    break;
+  }
 }
 
 void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -219,7 +357,9 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   switch (pThis->getFocusItem()) 
   {
     case 0:
+#ifndef SIMU_DISPLAY
       while(digitalRead(PIN_ROT_LEFT_S) == 0);
+#endif
       showSplashScreen(*gpDisplay, true);
       pThis->refreshAll();
       break;
@@ -302,22 +442,24 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
 {
   int retVal;
   // Serial.println("initDialogs2");
-  retVal  = pan->addTextItem(1,   0, 227, 80, lf, true, f1Func);
+ 
+  retVal = pan->addTextItem(1, 0, 227, 80, lf, true, f1Func);
   retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
   retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
 
+int visRecCntIndex = 0;
 
 void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 {
   thPanel i = pThis->getMainPanel();
   cPanel* p = pThis->getPan(i);
   if(devPars.recAuto.get() > 0)
-    p->itemList[2].isVisible = true;
+    p->itemList[visRecCntIndex].isVisible = true; 
   else
-    p->itemList[2].isVisible = false;
+    p->itemList[visRecCntIndex].isVisible = false;
 }
 
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -358,41 +500,82 @@ void setGpsStatus(cMenuesystem* pThis)
   pan->itemList[27].isVisible = on;
 }
 
-int MEMP initMainPanel(cPanel* pan, tCoord lf)
+int MEMP initMainPanelExpert(cPanel* pan, tCoord lf)
 {
-  int err = pan->addTextItem(202,                  3,  30,            80, lf);
-  err |= pan->addEnumItem(&devStatus.opMode,     150,  30,           140, lf, true);
-  err |= pan->addNumItem(&devStatus.recCount,    260,  30 +  2 * lf,  40, lf, false);
-  pan->itemList[2].isVisible = false;
-  err |= pan->addTextItem(30,                      3,  30 +      lf,  80, lf);
-  err |= pan->addEnumItem(&devStatus.playStatus, 150,  30 +      lf, 120, lf, false);
-  err |= pan->addTextItem(25,                      3,  30 +  2 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      150,  30 +  2 * lf, 100, lf, true, dispModeFunc);
-  err |= pan->addTextItem(32,                      3,  30 +  3 * lf, 120, lf);
-  err |= pan->addListItem(&devStatus.notes1,     150,  30 +  3 * lf, 169, lf, true);
-  err |= pan->addTextItem(33,                      3,  30 +  4 * lf, 120, lf);
-  err |= pan->addListItem(&devStatus.notes2,     150,  30 +  4 * lf, 169, lf, true);
-  err |= pan->addTextItem(203,                     3,  30 +  5 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.mixFreq,       150,  30 +  5 * lf,  15, lf, true);
-  err |= pan->addTextItem(204,                     3,  30 +  6 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.volume,        150,  30 +  6 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                    3,  30 +  7 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,   150,  30 +  7 * lf, 120, lf, true);
-  err |= pan->addTextItem(1325,                    3,  30 +  8 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 +  8 * lf, 120, lf, true);
-  err |= pan->addTextItem(200,                     3,  30 +  9 * lf,  80, lf);
-  err |= pan->addGeoItem(&devStatus.geoPos,      150,  30 +  9 * lf, 150, lf);
-  err |= pan->addTextItem(193,                     3,  30 + 10 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.height,      150,  30 + 10 * lf, 150, lf, false);
-  err |= pan->addTextItem(190,                     3,  30 + 11 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.satCount,    150,  30 + 11 * lf,  30, lf, false);
-  err |= pan->addTextItem(191,                   200,  30 + 12 * lf,  80, lf);
+  visRecCntIndex = 2;
+  int r = 2;
+  int err = pan->addTextItem(202,                  3,  30,             80, lf);
+  err |= pan->addEnumItem(&devStatus.opMode,     150,  30,            140, lf, true);
+  err |= pan->addNumItem(&devStatus.recCount,    260,  30 + r   * lf,  40, lf, false);
+  pan->itemList[visRecCntIndex].isVisible = false;
+  err |= pan->addTextItem(30,                      3,  30 +       lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.playStatus, 150,  30 +       lf, 120, lf, false);
+  err |= pan->addTextItem(25,                      3,  30 + r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,      150,  30 + r++ * lf, 100, lf, true, dispModeFunc);
+  err |= pan->addTextItem(32,                      3,  30 + r   * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes1,     150,  30 + r++ * lf, 169, lf, true);
+  err |= pan->addTextItem(33,                      3,  30 + r   * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes2,     150,  30 + r++ * lf, 169, lf, true);
+  err |= pan->addTextItem(203,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.mixFreq,       150,  30 + r++ * lf,  15, lf, true);
+  err |= pan->addTextItem(204,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.volume,        150,  30 + r++ * lf,  20, lf, true);
+  if (hasAmpRevB())
+  {
+    err |= pan->addTextItem(1320,                  3,  30 + r   * lf,   80, lf);
+    err |= pan->addEnumItem(&devPars.preAmpType, 150,  30 + r++ * lf,  120, lf, true);
+  }
+  err |= pan->addTextItem(1325,                    3,  30 + r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 + r++ * lf, 120, lf, true);
+  err |= pan->addTextItem(200,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,      150,  30 + r++ * lf, 150, lf);
+  err |= pan->addTextItem(193,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.height,      150,  30 + r++ * lf, 150, lf, false);
+  err |= pan->addTextItem(190,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    150,  30 + r++ * lf,  30, lf, false);
+  err |= pan->addTextItem(191,                   200,  30 + r   * lf,  80, lf);
   setGpsLog(&menue, false);
-  err |= pan->addTextItem(195,                     3,  30 + 12 * lf,  80, lf);
-  err |= pan->addEnumItem(&devStatus.posValid,   150,  30 + 12 * lf, 150, lf, false);
-  err |= pan->addTextItem(201,                     3, 200 + lf,       70, lf);
-  err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,       70, lf);
-  err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,       70, lf);
+  err |= pan->addTextItem(195,                     3,  30 + r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devStatus.posValid,   150,  30 + r   * lf, 150, lf, false);
+  err |= pan->addTextItem(201,                     3, 200 + lf,        70, lf);
+  err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,        70, lf);
+  err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,        70, lf);
+  setGpsStatus(&menue);
+  return err;
+}
+
+int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
+{
+  visRecCntIndex = 0;
+  int r = 0;
+  int err = pan->addNumItem(&devStatus.recCount, 260, 30 + r * lf, 40, lf, false);
+  pan->itemList[visRecCntIndex].isVisible = false;
+  err |= pan->addTextItem(25,                    3, 30 + r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,    150, 30 + r++ * lf, 100, lf, true, dispModeFunc);
+  err |= pan->addTextItem(32,                    3, 30 + r   * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes1,   150, 30 + r++ * lf, 169, lf, true);
+  err |= pan->addTextItem(33,                    3, 30 + r   * lf, 120, lf);
+  err |= pan->addListItem(&devStatus.notes2,   150, 30 + r++ * lf, 169, lf, true);
+  if (hasAmpRevB())
+  {
+    err |= pan->addTextItem(1320,                  3, 30 + r   * lf, 80, lf);
+    err |= pan->addEnumItem(&devPars.preAmpType, 150, 30 + r++ * lf, 120, lf, true);
+  }
+  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain, 150, 30 + r++ * lf, 120, lf, true);
+  err |= pan->addTextItem(200,                   3, 30 + r   * lf, 80, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,    150, 30 + r++ * lf, 150, lf);
+  err |= pan->addTextItem(193,                   3, 30 + r   * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.height,    150, 30 + r++ * lf, 150, lf, false);
+  err |= pan->addTextItem(190,                   3, 30 + r   * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.satCount,  150, 30 + r++ * lf, 30, lf, false);
+  err |= pan->addTextItem(191,                 200, 30 + r   * lf, 80, lf);
+  setGpsLog(&menue, false);
+  err |= pan->addTextItem(195,                   3, 30 + r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devStatus.posValid, 150, 30 + r++ * lf, 150, lf, false);
+  err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
+  err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
+  err |= pan->addTimeItem(&devStatus.time,     180, 200 + lf, 70, lf);
   setGpsStatus(&menue);
   return err;
 }

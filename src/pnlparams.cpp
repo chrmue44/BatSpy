@@ -60,34 +60,35 @@ void MEMP fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
 int MEMP initParRec(cPanel* pan, tCoord lf)
 {
   int  err = 0;
+  int r = 1;
   err |= pan->addTextItem(1110,                  15, 20          ,  80, lf);
   err |= pan->addEnumItem(&devPars.sampleRate,  190, 20          ,  30, lf, true);
-  err |= pan->addTextItem(1120,                  15, 20 +  1 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  1 * lf,  30, lf, true);
-  err |= pan->addTextItem(1140,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  2 * lf,  30, lf, true);
-  err |= pan->addTextItem(1170,                  15, 20 +  3 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  3 * lf,  30, lf, true);
-  err |= pan->addTextItem(1175,                  15, 20 +  4 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  4 * lf,  70, lf, true);
-  err |= pan->addTextItem(1330,                  15, 20 +  5 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  5 * lf,  80, lf, true);
-  err |= pan->addTextItem(1144,                  15, 20 +  6 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  6 * lf,  20, lf, true);
-  err |= pan->addTextItem(1145,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  7 * lf,  40, lf, true);
-  err |= pan->addTextItem(1190,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.projectType, 190, 20 +  8 * lf,  80, lf, true);
-  err |= pan->addTextItem(1180,                  15, 20 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.startH,       190, 20 +  9 * lf,  15, lf, true);
-  err |= pan->addTextItem(1182,                 206, 20 +  9 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  9 * lf,  15, lf, true);
-  err |= pan->addTextItem(1181,                  15, 20 + 10 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.stopH,        190, 20 + 10 * lf,  15, lf, true);
-  err |= pan->addTextItem(1182,                 206, 20 + 10 * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,      215, 20 + 10 * lf,  15, lf, true);
-  err |= pan->addTextItem(25,                    15, 20 + 11 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 + 11 * lf,  80, lf, true, fuCalcSunrise);
+  err |= pan->addTextItem(1120,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1140,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1170,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  r++ * lf,  70, lf, true);
+  err |= pan->addTextItem(1330,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
+  err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  r++ * lf,  20, lf, true);
+  err |= pan->addTextItem(1145,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  r++ * lf,  40, lf, true);
+  err |= pan->addTextItem(1190,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.projectType, 190, 20 +  r++ * lf,  80, lf, true);
+  err |= pan->addTextItem(25,                    15, 20 +  r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf, 80, lf, true, fuCalcSunrise);
+  err |= pan->addTextItem(1180,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.startH,       190, 20 +  r   * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 +  r   * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  r++ * lf,  15, lf, true);
+  err |= pan->addTextItem(1181,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  r   * lf,  15, lf, true);
+  err |= pan->addTextItem(1182,                 206, 20 +  r   * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  r++ * lf,  15, lf, true);
   return err;
 }
 
@@ -97,20 +98,22 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   int  err = 0;
   err |= pan->addTextItem(1100,                  15, 20,            80, lf);
   err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
-  err |= pan->addTextItem(1148,                  15, 20 +  1 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  1 * lf,  20, lf, true);
-  err |= pan->addTextItem(1320,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 +  2 * lf,  80, lf, true);
-  err |= pan->addTextItem(1325,                  15, 20 +  3 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,  170, 20 +  3 * lf,  80, lf, true);
-  err |= pan->addTextItem(1150,                  15, 20 +  4 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.knobRotation,170, 20 +  4 * lf, 100, lf, true);
-  err |= pan->addTextItem(1160,                  15, 20 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  5 * lf,  80, lf, true);
-  err |= pan->addTextItem(1165,                  15, 20 +  6 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,    170, 20 +  6 * lf,  80, lf, true, voltageFunc);
-  err |= pan->addTextItem(1167,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.sendDelay,    170, 20 +  7 * lf,  80, lf, true);
+  err |= pan->addTextItem(1710,                  15, 20 +  1 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.menueType,   170, 20 +  1 * lf, 100, lf, true);
+  err |= pan->addTextItem(1148,                  15, 20 +  2 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  2 * lf,  20, lf, true);
+  err |= pan->addTextItem(1320,                  15, 20 +  3 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 +  3 * lf,  80, lf, true);
+  err |= pan->addTextItem(1325,                  15, 20 +  4 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,  170, 20 +  4 * lf,  80, lf, true);
+  err |= pan->addTextItem(1150,                  15, 20 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.knobRotation,170, 20 +  5 * lf, 100, lf, true);
+  err |= pan->addTextItem(1160,                  15, 20 +  6 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  6 * lf,  80, lf, true);
+  err |= pan->addTextItem(1165,                  15, 20 +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,    170, 20 +  7 * lf,  80, lf, true, voltageFunc);
+  err |= pan->addTextItem(1167,                  15, 20 +  8 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.sendDelay,    170, 20 +  8 * lf,  80, lf, true);
 
   return err;
 }
@@ -169,7 +172,6 @@ int MEMP initPositionPan(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.lonSec,      210, 20 + 5 * lf,  25, lf, true, setPosFunc);
   err |= pan->addTextItem(193,                    70, 20 + 7 * lf,  70, lf);
   err |= pan->addNumItem(&devStatus.height,      140, 20 + 7 * lf,  70, lf, true);
-
 
   return err;
 }

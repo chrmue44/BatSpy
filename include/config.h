@@ -125,6 +125,7 @@ float readTemperature();
 inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
 inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
 inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
+inline bool hasAmpRevB() { return (is12V() && isRevisionA()) /* special version Rev A*/ || isRevisionB(); }
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

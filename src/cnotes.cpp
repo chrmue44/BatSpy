@@ -45,6 +45,7 @@ void cnotes::getNote(int i, char* buf, size_t bufSize)
   size_t bytesRead = 0;
 
   char fName[PAR_STR_LEN * 2];
+  char line[PAR_STR_LEN];
   strncpy(fName, m_fName, sizeof (fName));
   strncat(fName, ".", 2);
   strncat(fName, devPars.lang.getActText(), 20);
@@ -54,12 +55,15 @@ void cnotes::getNote(int i, char* buf, size_t bufSize)
   {
     for(;;)
     {
-      enSdRes res = sd.readLine(file, buf, bufSize, bytesRead);
-      cUtils::replaceCharsInPlace(buf, bufSize, '\n', 0);
+      enSdRes res = sd.readLine(file, line, sizeof(line), bytesRead);
       if(res == enSdRes::OK)
       {
-        if(count == i)
+        if (count == i)
+        {
+          cUtils::replaceCharsInPlace(line, sizeof(line), '\n', 0);
+          cUtils::replaceUTF8withInternalCoding(line, buf, bufSize);
           break;
+        }
         else
           buf[0] = 0;
         count++;

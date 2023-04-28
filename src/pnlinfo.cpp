@@ -14,7 +14,7 @@ void btnAudioFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   AudioProcessorUsageMaxReset();
 }
 
-int MEMP initInfoPan(cPanel* pan, tCoord lf)
+int MEMP initInfoPanExpert(cPanel* pan, tCoord lf)
 {
   int  err = pan->addTextItem(400,                 3,  30,            80, lf);
   err |= pan->addNumItem(&devStatus.cpuAudioAvg, 145,  30,            35, lf, false);
@@ -40,5 +40,16 @@ int MEMP initInfoPan(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(455,                     3,  30 + 11 * lf,  80, lf);
   err |= pan->addNumItem(&devStatus.temperature, 145,  30 + 11 * lf,  40, lf, false);
 
+  return err;
+}
+
+int MEMP initInfoPanRecorder(cPanel* pan, tCoord lf)
+{
+  int err = pan->addTextItem(430, 3,                   30 + 4 * lf, 80, lf);
+  err |= pan->addStrItem(&devStatus.version, 145,   30 + 4 * lf, 80, lf);
+  err |= pan->addTextItem(435, 3,                   30 + 5 * lf, 80, lf);
+  err |= pan->addStrItem(&devStatus.hwVersion, 145, 30 + 5 * lf, 80, lf);
+  err |= pan->addTextItem(440, 3,                   30 + 6 * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace, 145, 30 + 6 * lf, 80, lf, false);
   return err;
 }
