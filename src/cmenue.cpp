@@ -113,7 +113,7 @@ void MEMP cMenue::initPars()
   devPars.startMin.init(0, 59, 10, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
   devPars.stopMin.init(0, 59, 10, 0, 2);
-  devPars.voltFactor.init(0, 1, 0.0000001, 5);
+  devPars.voltFactor.init(0, 1, 0.0000001f, 5);
 
   devPars.recAuto.addItem(1400),
   devPars.recAuto.addItem(1401),
@@ -152,9 +152,9 @@ void MEMP cMenue::initPars()
   devStatus.playStatus.addItem(335);
   devStatus.playStatus.addItem(337);
 
-  devStatus.timStep.init(0, 10, 0.0, DEC_TIM_MIN);
+  devStatus.timStep.init(0, 10, 0.0f, DEC_TIM_MIN);
   devStatus.timMin.init(0, 10, devStatus.timStep.get() * 2, DEC_TIM_MIN);
-  devStatus.timMax.init(0, 12, 0.4, DEC_TIM_MIN);
+  devStatus.timMax.init(0, 12, 0.4f, DEC_TIM_MIN);
 
   devStatus.amplMax.init(1,100,0.0,0);
 
@@ -198,16 +198,16 @@ void MEMP cMenue::initPars()
   devStatus.lonDeg.init(0,59,1,0,3);
   devStatus.lonMin.init(0, 59, 1, 0,2);
   devStatus.lonSec.init(0,999,5,0,3);
-  devStatus.geoPos.set(49.1234, 8.2345);
+  devStatus.geoPos.set(49.1234, 8.2345f);
   
-  devStatus.peakVal.init(0, 100, 0.1, 2);
+  devStatus.peakVal.init(0, 100, 0.1f, 2);
   devStatus.freeSpace.init(0, 256000, 1, 0);
-  devStatus.voltage.init(0, 20, 0.05, 2);
+  devStatus.voltage.init(0, 20, 0.05f, 2);
   devStatus.digits.init(0, 10000, 1, 0);
-  devStatus.temperature.init(-50,100,0.1,1);
+  devStatus.temperature.init(-50, 100, 0.1f, 1);
 
-  devStatus.freq1Tick.init(0,300,0.1,1);
-  devStatus.msPerDiv.init(0,10000,1,0);
+  devStatus.freq1Tick.init(0, 300,0.1f, 1);
+  devStatus.msPerDiv.init(0, 10000, 1, 0);
   devStatus.satCount.init(0, 24, 1, 0);
   devStatus.height.init(-100, 10000, 5, 0);
   devStatus.posValid.addItem(16);
@@ -518,7 +518,7 @@ void MEMP cMenue::save()
   writeFloatToEep(0x0004, devPars.volume.get());
   writeFloatToEep(0x0008, devPars.mixFreq.get());
   writeInt16ToEep(0x000C, devPars.recAuto.get());
-  writeInt16ToEep(0x000E, devPars.sendDelay.get());
+  writeInt16ToEep(0x000E, (int16_t)devPars.sendDelay.get());
   writeInt16ToEep(0x0010, devPars.srcPosition.get());
   writeInt16ToEep(0x0012, devPars.menueType.get());
   writeFloatToEep(0x0014, devPars.recTime.get());
@@ -540,14 +540,14 @@ void MEMP cMenue::save()
   writeFloatToEep(0x004A, devStatus.geoPos.getLon());
   writeFloatToEep(0x004E, devPars.filtFreq.get());
   writeInt16ToEep(0x0052, devPars.filtType.get());
-  writeInt16ToEep(0x0054, devPars.startH.get());
-  writeInt16ToEep(0x0056, devPars.startMin.get());
-  writeInt16ToEep(0x0058, devPars.stopH.get());
-  writeInt16ToEep(0x005A, devPars.stopMin.get());
-  writeFloatToEep(0x005C, devPars.voltFactor.get());
-  writeInt16ToEep(0x0060, devPars.sweepSpeed.get());
-  writeInt16ToEep(0x0062, devPars.liveAmplitude.get());
-  writeInt16ToEep(0x0064, devPars.projectType.get());
+  writeInt16ToEep(0x0054, (int16_t)devPars.startH.get());
+  writeInt16ToEep(0x0056, (int16_t)devPars.startMin.get());
+  writeInt16ToEep(0x0058, (int16_t)devPars.stopH.get());
+  writeInt16ToEep(0x005A, (int16_t)devPars.stopMin.get());
+  writeFloatToEep(0x005C, (int16_t)devPars.voltFactor.get());
+  writeInt16ToEep(0x0060, (int16_t)devPars.sweepSpeed.get());
+  writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
+  writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
   writeFloatToEep(0x0066, devStatus.height.get());
   writeInt16ToEep(0x006A, 0);
   writeInt16ToEep(0x006C, 0);

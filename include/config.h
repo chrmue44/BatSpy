@@ -46,12 +46,12 @@
 #define MEMF FLASHMEM     //memory region for user file handling functions
 
 // voltage loss D1
-#define U_DIODE           0.29
-#define SUPPLY_12V_MIN   11.5     //min. required supply voltage lead 
-#define SUPPLY_4V_MIN     3.0     //min. required supply voltage LiIon 
+#define U_DIODE           0.29f
+#define SUPPLY_12V_MIN   11.5f     //min. required supply voltage lead 
+#define SUPPLY_4V_MIN     3.0f     //min. required supply voltage LiIon 
 
-#define TEMP_OFFS_PORTABLE   34.0   // temp offset measured CPU temp to outside temp
-#define TEMP_OFFS_STATIONARY 25.0   // temp offset measured CPU temp to outside temp
+#define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
+#define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
