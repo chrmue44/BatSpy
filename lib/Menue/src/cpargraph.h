@@ -30,10 +30,10 @@ struct stTime {
 
 struct stFft {
   stFft() :
-    firstFft(false),
+    fft(), 
     levelMin(0.0),
     levelMax(1.0),
-    fft() 
+    firstFft(false)
     {
       memset(scratch, 0, sizeof(scratch));
     }

@@ -31,12 +31,13 @@ class cMenue;
 #define MIX_CHAN2        2
 #define MIX_CHAN3        3
 
+#define LIVE_CNT_EXTEND  20            ///< counter ticks to extend live display after signal drops below threshold 
 
 // audio settings that cause a change in the settings (and a therefor a longer pause of a few 100 ms)
 struct stAudioSettings
 {
-  uint32_t sampleRate = 352000;        //< current sampling rate [Hz]
-  enSampleRate parSampleR = SR_352K;   //< selected sample rate (enumerator)
+  uint32_t sampleRate = 352000;        ///< current sampling rate [Hz]
+  enSampleRate parSampleR = SR_352K;   ///< selected sample rate (enumerator)
   float oscFrequency = 0.0;
   enOpMode opMode;
   float volume = 1.0;
@@ -95,6 +96,7 @@ private:
   float m_peakVal;                  // last measured peak value
   uint32_t m_lastFft;
   cPrjoject m_prj;
+  int m_liveCnt = 0;                // counter to extend scrolling of live display when signal stopped 
   
  public:
   cAudio();

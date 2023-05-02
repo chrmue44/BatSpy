@@ -84,6 +84,17 @@ public:
 	void windowFunction(const int16_t *w) {
 		window = w;
 	}
+	int find_max_amp() {
+		int max = 0;
+		int retVal = 0;
+        for(int i = 0; i < 512; i++) {
+            if(max < output[i]) {
+			    retVal = i;
+				max = output[i];  
+		    }
+		}
+		return retVal;
+	}
 	virtual void update(void);
 	uint16_t output[512] __attribute__ ((aligned (4)));
 private:

@@ -238,6 +238,7 @@ void MEMP cMenue::initDialogs()
 
   switch (devPars.menueType.get())
   {
+    default:
     case enMenueType::EXPERT:
       initFunctionItemsExpert();
       initExpertPanels(lf);

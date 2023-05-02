@@ -496,9 +496,22 @@ void cAudio::calcLiveFft()
 {
   if(m_fft.available() && millis() > (m_lastFft + devPars.sweepSpeed.get()))
   {
+    int idx = m_fft.find_max_amp();
+    uint16_t ampl = m_fft.output[idx];
     m_lastFft = millis();
-    cParGraph* graph = getLiveFft();
-    graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+
+    if(ampl > (devPars.liveAmplitude.get() / 4))
+      m_liveCnt = LIVE_CNT_EXTEND;
+    else
+    {
+      if(m_liveCnt > 0)
+        m_liveCnt--;
+    }
+    if(m_liveCnt > 0)
+    {
+      cParGraph* graph = getLiveFft();
+      graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+    }
   }
 }
 
