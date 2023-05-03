@@ -98,6 +98,12 @@ void loop()
 {
   loopCount++;
   static bool backLightOn = true;
+  
+  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
+              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
+  audio.operate( rtFft );
+  audio.checkAutoRecording(menue, rtc);
+  
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
@@ -143,8 +149,6 @@ void loop()
       }
     }
 
-    //handle audio processing
-    audio.checkAutoRecording(menue, rtc);
 
     if(tick1s.check())
     {
@@ -184,7 +188,4 @@ void loop()
       checkSupplyVoltage();
     }
   }
-  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
-              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
-  audio.operate( rtFft );
 }

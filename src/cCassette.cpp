@@ -19,8 +19,7 @@
 extern "C" uint32_t usd_getError(void);
 #endif   //#ifndef ARDUINO_TEENSY41
 
-cCassette::cCassette(AudioAnalyzePeak& peak) :
-m_peak(peak)
+cCassette::cCassette() 
 {
 
 }
@@ -114,7 +113,7 @@ int cCassette::operate()
 int cCassette::stop()
 {
   enSdRes rc = enSdRes::OK;
-  float peakVal = -1.0;
+  //float peakVal = -1.0;
   if (m_mode == enCassMode::REC)
   {
     m_recorder.end();
@@ -130,9 +129,6 @@ int cCassette::stop()
 
     //close file
     rc = sd.closeFile(m_fil);
-    if (m_peak.available())
-      peakVal = m_peak.read();
-    
     if (rc)
       return 1;
     //

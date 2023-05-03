@@ -45,7 +45,7 @@
 class cCassette
 {
   public:
-    cCassette(AudioAnalyzePeak& peak);
+    cCassette();
 //    int startRec(float recTime, enRecFmt recFmt);
     int startRec(const char* name, float recTime, enRecFmt recFmt);
     int startRec(enRecFmt recFmt);
@@ -73,8 +73,6 @@ class cCassette
     float getTitleTime() { return m_player.getTitleTime(); }
 
     size_t getSampleCnt() { return m_sampleCnt; }
-  protected:
-    cCassette();
 
   private:
     void writeWavHeader();
@@ -99,7 +97,6 @@ class cCassette
     size_t m_wr;
     uint32_t m_sampleRate;
     enRecFmt m_recFmt;
-    AudioAnalyzePeak& m_peak;
     uint32_t m_sampleCnt;
     uint32_t m_maxRecSamples;
 

@@ -5,8 +5,6 @@
  *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
  * ***********************************************************
- * The cAudio class encapsulates the complete audio
- * functionality based on the Teensy Audio Library 
  * ***********************************************************/
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
@@ -18,6 +16,7 @@
 #include "types.h"
 #include "config.h"
 #include "cproject.h"
+#include "cTrigger.h"
 
 #include <cstdint>
 #include <cstddef>
@@ -55,8 +54,11 @@ struct stSrDesc
 };
 
 
+
 /***
  * contains everything needed for audio processing
+ * The cAudio class encapsulates the complete audio
+ * functionality based on the Teensy Audio Library 
  */
 class cAudio
 {
@@ -66,7 +68,6 @@ private:
   AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
   AudioEffectMultiply      m_mult1;     // multiplier for heterodyne
   AudioMixer4              m_mixer;     // selector for input: player or mic
-  AudioAnalyzePeak         m_peak;      // peak detector
   AudioFilterBiquad        m_filter;    // filter before peak detection
   AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
@@ -90,14 +91,12 @@ private:
   uint32_t m_oscFreq = 45000;       // start heterodyne detecting at this frequency
   float m_freq_oscillator = 50000;  // oscillator frequency calculated for m_sine (depending on SR)
   stAudioSettings m_old;            // old settings
-  float m_recThresh;                // recording thresh hold
-  cTimer m_timeout;
+  cTimer m_timeout;                 // blocking time out after recording 
   int m_oldCassMode = -1;
-  float m_peakVal;                  // last measured peak value
-  uint32_t m_lastFft;
   cPrjoject m_prj;
-  int m_liveCnt = 0;                // counter to extend scrolling of live display when signal stopped 
-  
+  stFftInfo m_fftInfo;              // some variables to handle FFT operation
+  cTrigger m_trigger;               // state machine to detect trigger
+
  public:
   cAudio();
   void init();
@@ -111,7 +110,7 @@ private:
   void updateCassMode();
   void checkAutoRecording(cMenue& menue, cRtc& rtc);
   void operate(bool liveFft);
-  float getLastPeakVal() { return m_peakVal;}
+  float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
 
  private:
@@ -122,4 +121,5 @@ private:
   void calcLiveFft();
   void startRec();
 };
+
 #endif   //#ifndef _CAUDIO_H

@@ -140,4 +140,11 @@ enum enMenueType
   HANDHELD = 2,
 };
 
+
+// type of recording trigger
+enum enTrigType
+{
+  LEVEL,       //trigger when level exceeded
+  FREQUENCY    //trigger when frequency exceeded
+};
 #endif    //#ifndef _TYPES_H

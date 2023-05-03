@@ -118,6 +118,7 @@ struct stStatus
   cParStr dirFiles[DIR_PAN_SIZE];
   cParList notes1 = 0;
   cParList notes2 = 0;
+  cParNum lastCallF = 0.0;
 };
 
 
@@ -162,6 +163,7 @@ struct stParams
   cParEnum projectType = 0;          ///< type of project for automatic recording
   cParEnum srcPosition = 0;          ///< source of position (fixed, GPS)
   cParEnum menueType = enMenueType::EXPERT;       ///< menue type
+  cParEnum triggerType = enTrigType::LEVEL;       ///< trigger type for recording
 };
 
 

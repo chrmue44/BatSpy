@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "globals.h"
-//#define DEBUG_LEVEL 2
+//#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "pnllive.h"
 
@@ -48,20 +48,20 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
 }
 
 cAudio::cAudio() : 
-m_peak(),
-m_cass(m_peak),
+m_cass(),
 m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
 m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
 m_cMx2Mu(m_mixer, 0, m_mult1, 0),
 m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
 m_cMi2Fi(m_audioIn, 0, m_filter, 0),
-m_cFi2Pk(m_filter, m_peak),
+m_cFi2Pk(m_filter, m_trigger.getPeakDetector()),
 m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
 m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
 m_cMi2Hp(m_audioIn, m_filtDisp),
-m_cHp2Ft(m_filtDisp, m_fft)
+m_cHp2Ft(m_filtDisp, m_fft),
+m_trigger(m_fftInfo)
 {
   DPRINTLN4("Audio connections initialized");
 }
@@ -321,7 +321,7 @@ void cAudio::setup()
 
     setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
-    m_recThresh = pow(10, (devPars.recThreshhold.get() / 10.0));
+    m_trigger.setThreshold(pow(10, (devPars.recThreshhold.get() / 10.0)));
     m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
     setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
     delay(100);
@@ -391,11 +391,6 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 {
   if(m_cass.getMode() != enCassMode::REC)
   {
-    if (m_peak.available())
-    {
-      m_peakVal = m_peak.read();
-      DPRINTF2("peak: %f   threshhold: %f\n", m_peakVal, m_recThresh);
-    }
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
       if ((devStatus.playStatus.get() == enPlayStatus::ST_STOP))
@@ -422,7 +417,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
         if (!startRecording && m_prj.getIsOpen())
           m_prj.closePrjFile();
 
-        if ((m_peakVal > m_recThresh) && startRecording)
+        if (m_trigger.getRecTrigger() && startRecording)
         {
           if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
           {
@@ -447,8 +442,16 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 
 void cAudio::operate(bool liveFft)
 {
-  m_cass.operate();  
-  if(liveFft)
+  m_cass.operate();
+  bool fftAvailable = m_fft.available();  
+  if(fftAvailable)
+  {
+    int idx = m_fft.find_max_amp();
+    m_fftInfo.lastMaxAmpl = m_fft.output[idx];
+    m_fftInfo.lastMaxFreq = (float)m_sampleRate * idx / getFftOutputSize() / 2.0;  
+    m_trigger.checkTrigger();
+  }
+  if(liveFft && fftAvailable)
     calcLiveFft();
   if (m_oldCassMode != m_cass.getMode())
   {
@@ -462,12 +465,16 @@ void cAudio::operate(bool liveFft)
       case enPlayStatus::ST_REC:
         m_timeout.start();
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
-        m_prj.writeInfoFile(m_peakVal, m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+        m_trigger.releaseRecTrigger();
+        m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
         DPRINTLN1("start timeout");
         break;
       case enPlayStatus::ST_STOP:
         if(m_oldCassMode == enCassMode::REC)
-          m_prj.writeInfoFile(m_peakVal, m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+        {
+          m_trigger.releaseRecTrigger();
+          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+        }
         break;
 
       default:
@@ -486,7 +493,6 @@ void cAudio::operate(bool liveFft)
     if (m_timeout.runTime() > devPars.deafTime.get())
     {
       devStatus.playStatus.set(0);
-      m_peak.read();
       DPRINTF1("timeout over, timeout %f,  timer %f\n", devPars.deafTime.get(), m_timeout.runTime());
     }
   }
@@ -494,20 +500,24 @@ void cAudio::operate(bool liveFft)
 
 void cAudio::calcLiveFft()
 {
-  if(m_fft.available() && millis() > (m_lastFft + devPars.sweepSpeed.get()))
+  if(millis() > (m_fftInfo.lastFftTime + devPars.sweepSpeed.get()))
   {
-    int idx = m_fft.find_max_amp();
-    uint16_t ampl = m_fft.output[idx];
-    m_lastFft = millis();
-
-    if(ampl > (devPars.liveAmplitude.get() / 4))
-      m_liveCnt = LIVE_CNT_EXTEND;
+    m_fftInfo.lastFftTime = millis();
+    if(m_fftInfo.liveCnt == 0)
+    {
+      if(m_trigger.getLiveTrigger())
+        m_fftInfo.liveCnt = LIVE_CNT_EXTEND;
+    }
     else
     {
-      if(m_liveCnt > 0)
-        m_liveCnt--;
+      if(m_fftInfo.lastMaxAmpl < 100)
+        m_fftInfo.liveCnt--;
+      DPRINTF4("count %i\n",m_fftInfo.liveCnt);
+      if(m_fftInfo.liveCnt == 0)
+        m_trigger.releaseLiveTrigger();
     }
-    if(m_liveCnt > 0)
+
+    if(m_fftInfo.liveCnt > 0)
     {
       cParGraph* graph = getLiveFft();
       graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());

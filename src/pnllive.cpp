@@ -63,16 +63,14 @@ int MEMP initLivePan(cPanel* pan, tCoord lf)
      err |= pan->addNumItem(&devPars.sweepSpeed,  125,  p1 + h + 1 * lf,   25, lf, true);
      err |= pan->addTextItem(475,                 190,  p1 + h + 1 * lf,   80, lf);
      err |= pan->addNumItem(&devPars.liveAmplitude,280, p1 + h + 1 * lf,   25, lf, true);
-     err |= pan->addTextItem(202,                   5,  p1 + h + 2 * lf,   80, lf);
-     err |= pan->addEnumItem(&devStatus.opMode,   125,  p1 + h + 2 * lf,  140, lf, true);
-     err |= pan->addTextItem(203,                   5,  p1 + h + 3 * lf,   80, lf);
-     err |= pan->addNumItem(&devPars.mixFreq,     125,  p1 + h + 3 * lf,   15, lf, true);
-     err |= pan->addTextItem(204,                 190,  p1 + h + 3 * lf,   80, lf);
-     err |= pan->addNumItem(&devPars.volume,      280,  p1 + h + 3 * lf,   20, lf, true);
-     err |= pan->addTextItem(1320,                  5,  p1 + h + 4 * lf,   80, lf);
-     err |= pan->addEnumItem(&devPars.preAmpType, 125,  p1 + h + 4 * lf,   60, lf, true);
-     err |= pan->addTextItem(1325,                190,  p1 + h + 4 * lf,   80, lf);
-     err |= pan->addEnumItem(&devPars.preAmpGain, 280,  p1 + h + 4 * lf,   33, lf, true);
+     err |= pan->addTextItem(203,                   5,  p1 + h + 2 * lf,   80, lf);
+     err |= pan->addNumItem(&devPars.mixFreq,     125,  p1 + h + 2 * lf,   15, lf, true);
+     err |= pan->addTextItem(204,                 190,  p1 + h + 2 * lf,   80, lf);
+     err |= pan->addNumItem(&devPars.volume,      280,  p1 + h + 2 * lf,   20, lf, true);
+     err |= pan->addTextItem(1325,                  5,  p1 + h + 3 * lf,   80, lf);
+     err |= pan->addEnumItem(&devPars.preAmpGain, 125,  p1 + h + 3 * lf,   33, lf, true);
+     err |= pan->addTextItem(1338,                190,  p1 + h + 4 * lf,   80, lf);
+     err |= pan->addNumItem(&devStatus.lastCallF, 280,  p1 + h + 4 * lf,   40, lf, false);
 
   return err;
 }

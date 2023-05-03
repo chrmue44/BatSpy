@@ -61,12 +61,14 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   int r = 1;
-  err |= pan->addTextItem(1110,                  15, 20          ,  80, lf);
-  err |= pan->addEnumItem(&devPars.sampleRate,  190, 20          ,  30, lf, true);
+  err |= pan->addTextItem(1110,                  15, 20            ,  80, lf);
+  err |= pan->addEnumItem(&devPars.sampleRate,  190, 20            ,  30, lf, true);
   err |= pan->addTextItem(1120,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.recTime,      190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1140,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1360,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.triggerType, 190, 20 +  r++ * lf, 120, lf, true);
   err |= pan->addTextItem(1170,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);
@@ -79,8 +81,8 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1190,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.projectType, 190, 20 +  r++ * lf,  80, lf, true);
-  err |= pan->addTextItem(25,                    15, 20 +  r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf, 80, lf, true, fuCalcSunrise);
+  err |= pan->addTextItem(25,                    15, 20 +  r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf,  80, lf, true, fuCalcSunrise);
   err |= pan->addTextItem(1180,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.startH,       190, 20 +  r   * lf,  15, lf, true);
   err |= pan->addTextItem(1182,                 206, 20 +  r   * lf,   5, lf);

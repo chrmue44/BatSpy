@@ -337,7 +337,14 @@ class cParEnum : public cParBase {
   void clear() { m_enumeration.clear(); m_val = 0; }
 
   uint32_t get() { return m_val; }
-  void set(uint32_t v) { m_val = v; update(true); }
+  void set(uint32_t v)
+  {
+    if (m_val < m_enumeration.size())
+      m_val = v;
+    else
+      m_val = 0;
+    update(true);
+  }
 
  private:
   tEnum m_enumeration;  ///< enumeration values
@@ -377,7 +384,14 @@ class cParList : public cParBase {
   void clear() { m_enumeration.clear(); m_val = 0; }
 
   uint32_t get() { return m_val; }
-  void set(uint32_t v) { m_val = v; update(true); }
+  void set(uint32_t v)
+  {
+    if (m_val < m_enumeration.size())
+      m_val = v;
+    else
+      m_val = 0;
+    update(true);
+  }
 
  private:
   tList m_enumeration;  ///< list values

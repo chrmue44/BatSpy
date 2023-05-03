@@ -202,6 +202,8 @@ struct stTxtList PROGMEM Texts[] =
   {  1333, "45 dB",                     0},
   {  1334, "54 dB",                     0},
 
+  {  1338, "letzter Ruf [kHz]",         "last call [kHz]"},
+
   {  1340, "°",                         0},
   {  1341, "N",                         0},
   {  1342, "S",                         0},
@@ -214,6 +216,9 @@ struct stTxtList PROGMEM Texts[] =
   {  1353, "48 dB",                     0},
   {  1354, "53 dB",                     0},
   {  1355, "58 dB",                     0},
+  {  1360, "Trigger",                   "Trigger"},
+  {  1361, "Pegelüberschreitung",       "Exceed Level"},
+  {  1362, "Frequenz",                  "Frequency"},
   {  1400, "Aus",                       "Off"},
   {  1401, "Ein",                       "On"},
   {  1402, "Zeitgesteuert",             "Time controlled"},

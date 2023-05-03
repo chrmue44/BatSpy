@@ -33,6 +33,7 @@
     #define DPRINTF3(x, ...)
   #endif
   #if DEBUG_LEVEL <= 4
+    #define DPRINT4(x)       Serial.print (x);
     #define DPRINTLN4(x)     Serial.println (x);
     #define DPRINTF4(x, ...) Serial.printf(x, __VA_ARGS__);
   #else
@@ -47,6 +48,7 @@
 #define DPRINTLN2(x) {char b[256]; snprintf(b, sizeof(b), x); Serial.log(b,2);}
 #define DPRINTLN3(x) {char b[256]; snprintf(b, sizeof(b), x); Serial.log(b,3);}
 #define DPRINTLN4(x) {char b[256]; snprintf(b, sizeof(b), x); Serial.log(b,4);}
+#define DPRINT4(x)   {char b[256]; snprintf(b, sizeof(b),"%c", x); Serial.log(b,4);}
 #define DPRINT1(x) { char b[256]; snprintf(b, sizeof(b), "%c", x); Serial.log(b,1);}
 #define DPRINTF1(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); Serial.log(b,1);}
 #define DPRINTF2(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); Serial.log(b,2);}
@@ -60,6 +62,7 @@
   #define DPRINTLN3(x)
   #define DPRINTF3(x, ...)
   #define DPRINTLN4(x)
+  #define DPRINT4(x)
   #define DPRINTF4(x, ...)
 #endif
 

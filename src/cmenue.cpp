@@ -134,6 +134,9 @@ void MEMP cMenue::initPars()
   devPars.menueType.addItem(1712),
   devPars.menueType.addItem(1713),
 
+  devPars.triggerType.addItem(1361);
+  devPars.triggerType.addItem(1362);
+
   notes1.initNotes(PATH_NOTES1, 2000, 2005);
   notes1.initListPar(devStatus.notes1);
   notes2.initNotes(PATH_NOTES2, 2010, 2013);
@@ -212,6 +215,7 @@ void MEMP cMenue::initPars()
   devStatus.height.init(-100, 10000, 5, 0);
   devStatus.posValid.addItem(16);
   devStatus.posValid.addItem(15);
+  devStatus.lastCallF.init(0.0f, 200.0f, 0.1f, 1);
 
   load();
   setPosFunc(this, enKey::NO, nullptr);
@@ -226,11 +230,10 @@ void MEMP cMenue::initDialogs()
 {
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
-  int err;
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
   hdrMainPanel = getHdrPanel();
-  err = getPan(hdrMainPanel)->addTextItem(150, lf, 1, 180, LINE_HEIGHT);
+  getPan(hdrMainPanel)->addTextItem(150, lf, 1, 180, LINE_HEIGHT);
 
   // F-KEYs for main panel
   fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
@@ -550,7 +553,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
   writeFloatToEep(0x0066, devStatus.height.get());
-  writeInt16ToEep(0x006A, 0);
+  writeInt16ToEep(0x006A, devPars.triggerType.get());
   writeInt16ToEep(0x006C, 0);
   writeInt16ToEep(0x006E, 0);
   writeInt16ToEep(0x0070, 0);
@@ -609,6 +612,7 @@ void MEMP cMenue::load()
     devPars.liveAmplitude.set(readInt16FromEep(0x0062));
     devPars.projectType.set(readInt16FromEep(0x0064));
     devStatus.height.set(readFloatFromEep(0x0066));
+    devPars.triggerType.set(readInt16FromEep(0x006A));
   }
 }
 
