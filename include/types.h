@@ -145,6 +145,7 @@ enum enMenueType
 enum enTrigType
 {
   LEVEL,       //trigger when level exceeded
-  FREQUENCY    //trigger when frequency exceeded
+  FREQUENCY,   //trigger when frequency exceeded
+  FREQ_LEVEL   //trigger when frequency and level exceeded
 };
 #endif    //#ifndef _TYPES_H

@@ -164,6 +164,7 @@ struct stParams
   cParEnum srcPosition = 0;          ///< source of position (fixed, GPS)
   cParEnum menueType = enMenueType::EXPERT;       ///< menue type
   cParEnum triggerType = enTrigType::LEVEL;       ///< trigger type for recording
+  cParNum minEventLen = 1.0;         ///< minimal event length for trigger
 };
 
 

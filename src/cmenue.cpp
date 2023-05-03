@@ -136,6 +136,9 @@ void MEMP cMenue::initPars()
 
   devPars.triggerType.addItem(1361);
   devPars.triggerType.addItem(1362);
+  devPars.triggerType.addItem(1363);
+
+  devPars.minEventLen.init(0.0f, 20.0f, 0.5f, 1);
 
   notes1.initNotes(PATH_NOTES1, 2000, 2005);
   notes1.initListPar(devStatus.notes1);
@@ -553,9 +556,8 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
   writeFloatToEep(0x0066, devStatus.height.get());
-  writeInt16ToEep(0x006A, devPars.triggerType.get());
-  writeInt16ToEep(0x006C, 0);
-  writeInt16ToEep(0x006E, 0);
+  writeInt16ToEep(0x006A, (int16_t)devPars.triggerType.get());
+  writeFloatToEep(0x006C, devPars.minEventLen.get());
   writeInt16ToEep(0x0070, 0);
   writeInt16ToEep(0x0072, 0);
   writeInt16ToEep(0x0074, 0);
@@ -564,7 +566,15 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x007A, 0);
   writeInt16ToEep(0x007C, 0);
   writeInt16ToEep(0x007E, 0);
-  int16_t maxAddr = 0x006F;
+  writeInt16ToEep(0x0080, 0);
+  writeInt16ToEep(0x0082, 0);
+  writeInt16ToEep(0x0084, 0);
+  writeInt16ToEep(0x0086, 0);
+  writeInt16ToEep(0x0088, 0);
+  writeInt16ToEep(0x008A, 0);
+  writeInt16ToEep(0x008C, 0);
+  writeInt16ToEep(0x008E, 0);
+  int16_t maxAddr = 0x008F;
   writeInt16ToEep(0, maxAddr);
 
   int16_t chks = 0;
@@ -613,6 +623,7 @@ void MEMP cMenue::load()
     devPars.projectType.set(readInt16FromEep(0x0064));
     devStatus.height.set(readFloatFromEep(0x0066));
     devPars.triggerType.set(readInt16FromEep(0x006A));
+    devPars.minEventLen.set(readFloatFromEep(0x006C));
   }
 }
 

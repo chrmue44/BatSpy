@@ -71,6 +71,7 @@ private:
   AudioFilterBiquad        m_filter;    // filter before peak detection
   AudioEffectDelay         m_delay;     // delay for pre trigger
   cCassette                m_cass;      // player/recorder
+  AudioAnalyzePeak         m_peak;
   AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
   AudioFilterBiquad        m_filtDisp;  // high pass filter for live display
 

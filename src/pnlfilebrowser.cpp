@@ -133,6 +133,7 @@ void MEMP fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
         cSdCard::inst().mkDir("rec");
         cSdCard::inst().mkDir("log");
         cSdCard::inst().mkDir("info");
+        cSdCard::inst().mkDir("prj");
 /*        if(ret == enSdRes::OK)
           pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1043));
         else

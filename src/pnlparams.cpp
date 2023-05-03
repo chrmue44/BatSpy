@@ -69,6 +69,8 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1360,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.triggerType, 190, 20 +  r++ * lf, 120, lf, true);
+  err |= pan->addTextItem(1370,                  15, 20 +  r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.minEventLen,  190, 20 +  r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1170,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);

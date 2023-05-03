@@ -38,21 +38,23 @@ class cTrigger
   bool m_recTrigger = false;                    ///< trigger signal for recording
   bool m_liveTrigger = false;                   ///< trigger signal for live display
   stFftInfo& m_fftInfo;
-  AudioAnalyzePeak m_peak;                      ///< peak detector
+  AudioAnalyzePeak& m_peak;                     ///< peak detector
   float m_peakVal;
-  float m_recThresh;                            ///< recording thresh hold (0.0 ... 1.0)
-  float m_minFreq;                              ///< minimal frequency found during trigger
+  float m_recThresh = 0.1;                      ///< recording thresh hold (0.0 ... 1.0)
+  float m_minFreq = 15000;                      ///< minimal frequency found during trigger
+  int m_minEventLen = 1;                        ///< minimum event length to trigger
 
  public:
-  cTrigger(stFftInfo& info);
+  cTrigger(stFftInfo& info, AudioAnalyzePeak& peak);
   void checkTrigger();
   void releaseLiveTrigger();
   void releaseRecTrigger();
-  AudioAnalyzePeak& getPeakDetector() { return m_peak; } 
+  //AudioAnalyzePeak& getPeakDetector() { return m_peak; } 
   bool getRecTrigger() { return m_recTrigger; }
   bool getLiveTrigger() { return m_liveTrigger; }
   float lastPeakVal() { return m_peakVal;}
   void setThreshold(float level) { m_recThresh = level; }
+  void setMinEventLength(float len, uint32_t sampleRate);
 
  private:
   void checkLiveTrigger(float fFilter);

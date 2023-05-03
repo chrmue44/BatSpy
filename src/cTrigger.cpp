@@ -11,11 +11,16 @@
 #include "debug.h"
 #include "cTrigger.h"
 
-cTrigger::cTrigger(stFftInfo& info) :
+cTrigger::cTrigger(stFftInfo& info, AudioAnalyzePeak& peak) :
 m_fftInfo(info),
-m_peak()
+m_peak(peak)
 {
 
+}
+
+void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
+{
+  m_minEventLen = (int)(len / 1000.0 * sampleRate / 512.0 + 0.5); 
 }
 
 void cTrigger::checkTrigger()
@@ -47,6 +52,7 @@ void cTrigger::releaseRecTrigger()
     m_stateRec = enTrigState::ARMED;
     if (m_peak.available())
       m_peakVal = m_peak.read();
+    DPRINTF4("rec trig released: peak %.3f \n", m_peakVal);
   }      
 }
 
@@ -61,7 +67,7 @@ void cTrigger::checkRecordingTrigger(float fFilter)
       if ((devPars.triggerType.get() == enTrigType::LEVEL) &&
         (m_peakVal >= m_recThresh))
       {
-        DPRINT4("recording triggered\n");
+        DPRINTF4("recording triggered, peak %.3f, thresh %.3f\n", m_peakVal, m_recThresh);
         m_recTrigger = true;
         m_stateRec = enTrigState::TRIGGERED;
       }
@@ -74,15 +80,25 @@ void cTrigger::checkRecordingTrigger(float fFilter)
           DPRINTF4("pre trigger f: %f\n", m_fftInfo.lastMaxFreq);
         }
       }
+      else if (devPars.triggerType.get() == enTrigType::FREQ_LEVEL)
+      {
+        if ((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && 
+            (m_fftInfo.lastMaxFreq >= fFilter) && (m_peakVal >= m_recThresh))
+        {
+          m_countRec = 0;
+          m_stateRec = enTrigState::PRE_TRIG;
+          DPRINTF4("pre trigger f: %f, level %.3f\n", m_fftInfo.lastMaxFreq, m_peakVal);
+        }
+      }
       break;
 
     case enTrigState::PRE_TRIG:
       if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq >= fFilter))
       {
         m_countRec++;
-        if(m_countRec > 0)
+        if(m_countRec >= m_minEventLen)
         {
-          DPRINT4("recording triggered\n");
+          DPRINTF4("recording triggered, count %i\n", m_countRec);
           m_recTrigger = true;
           m_stateRec = enTrigState::TRIGGERED;
         }

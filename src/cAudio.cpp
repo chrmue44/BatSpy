@@ -49,19 +49,20 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
 
 cAudio::cAudio() : 
 m_cass(),
+m_peak(),
 m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
 m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
 m_cMx2Mu(m_mixer, 0, m_mult1, 0),
 m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
 m_cMi2Fi(m_audioIn, 0, m_filter, 0),
-m_cFi2Pk(m_filter, m_trigger.getPeakDetector()),
+m_cFi2Pk(m_filter, m_peak),
 m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 m_cMi2De(m_audioIn, 0, m_delay, 0),
 m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
 m_cMi2Hp(m_audioIn, m_filtDisp),
 m_cHp2Ft(m_filtDisp, m_fft),
-m_trigger(m_fftInfo)
+m_trigger(m_fftInfo, m_peak)
 {
   DPRINTLN4("Audio connections initialized");
 }
@@ -322,6 +323,7 @@ void cAudio::setup()
     setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
     m_trigger.setThreshold(pow(10, (devPars.recThreshhold.get() / 10.0)));
+    m_trigger.setMinEventLength(devPars.minEventLen.get(), m_sampleRate);
     m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
     setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
     delay(100);
@@ -492,7 +494,8 @@ void cAudio::operate(bool liveFft)
   {
     if (m_timeout.runTime() > devPars.deafTime.get())
     {
-      devStatus.playStatus.set(0);
+      devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      m_trigger.releaseLiveTrigger();
       DPRINTF1("timeout over, timeout %f,  timer %f\n", devPars.deafTime.get(), m_timeout.runTime());
     }
   }
