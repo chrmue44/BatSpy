@@ -159,7 +159,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
             y -= 2000;
           if(y > 100)
             y-= 100;
-          snprintf(str, sizeof(str), "%02lu.%02lu.%02u", p->getDay(), p->getMonth() + 1, y);
+          snprintf(str, sizeof(str), "%02lu.%02lu.%02u", p->getDay(), p->getMonth(), y);
           printText(str, item);
         }
         break;
@@ -650,15 +650,19 @@ void MMEM cMenuesystem::editPar(stPanelItem &item, enKey key)
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
           if(key == DOWN)
           {
-            p->set(p->get() + p->getStep());
-            if(p->get() > p->getMax())
-              p->set(p->getMax());
+            float newVal = p->get() + p->getStep();
+            if (newVal > p->getMax())
+              p->set(p->getMin());
+            else
+              p->set(newVal);
           }
           if(key == UP)
           {
-            p->set(p->get() - p->getStep());
-            if(p->get() < p->getMin())
-              p->set(p->getMin());
+            float newVal = p->get() - p->getStep();
+            if(newVal < p->getMin())
+              p->set(p->getMax());
+            else
+              p->set(newVal);
           }
         }
         break;
