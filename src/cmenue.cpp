@@ -475,7 +475,7 @@ void MEMP writeFloatToEep(int32_t addr, float val)
 
 void MEMP writeInt16ToEep(int32_t addr, int16_t val) 
 {
-  union 
+  union  
   {
     int16_t v;
     unsigned char b[2];

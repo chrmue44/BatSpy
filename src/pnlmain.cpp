@@ -487,6 +487,7 @@ void setGpsLog(cMenuesystem* pThis, bool on)
   pan->itemList[25].isVisible = on;
 }
 
+/*
 void setGpsStatus(cMenuesystem* pThis)
 {
   bool on = devPars.srcPosition.get() == enSrcPosition::GPS;
@@ -496,7 +497,7 @@ void setGpsStatus(cMenuesystem* pThis)
   pan->itemList[24].isVisible = on;
   pan->itemList[26].isVisible = on;
   pan->itemList[27].isVisible = on;
-}
+} */
 
 int MEMP initMainPanelExpert(cPanel* pan, tCoord lf)
 {
@@ -538,7 +539,7 @@ int MEMP initMainPanelExpert(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(201,                     3, 200 + lf,        70, lf);
   err |= pan->addDateItem(&devStatus.date,       100, 200 + lf,        70, lf);
   err |= pan->addTimeItem(&devStatus.time,       180, 200 + lf,        70, lf);
-  setGpsStatus(&menue);
+  //setGpsStatus(&menue);
   return err;
 }
 
@@ -546,37 +547,54 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
 {
   visRecCntIndex = 0;
   int r = 0;
+  int x = 140;
   int err = pan->addNumItem(&devStatus.recCount, 260, 30 + r * lf, 40, lf, false);
   pan->itemList[visRecCntIndex].isVisible = false;
   err |= pan->addTextItem(25,                    3, 30 + r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,    150, 30 + r++ * lf, 100, lf, true, dispModeFunc);
+  err |= pan->addEnumItem(&devPars.recAuto,      x, 30 + r++ * lf, 100, lf, true, dispModeFunc);
   err |= pan->addTextItem(32,                    3, 30 + r   * lf, 120, lf);
-  err |= pan->addListItem(&devStatus.notes1,   150, 30 + r++ * lf, 169, lf, true);
+  err |= pan->addListItem(&devStatus.notes1,     x, 30 + r++ * lf, 169, lf, true);
   err |= pan->addTextItem(33,                    3, 30 + r   * lf, 120, lf);
-  err |= pan->addListItem(&devStatus.notes2,   150, 30 + r++ * lf, 169, lf, true);
+  err |= pan->addListItem(&devStatus.notes2,     x, 30 + r++ * lf, 169, lf, true);
   if (!hasAmpRevB())
   {
     err |= pan->addTextItem(1320,                  3, 30 + r   * lf, 80, lf);
-    err |= pan->addEnumItem(&devPars.preAmpType, 150, 30 + r++ * lf, 120, lf, true);
+    err |= pan->addEnumItem(&devPars.preAmpType,   x, 30 + r++ * lf, 120, lf, true);
   }
   err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain, 150, 30 + r++ * lf, 120, lf, true);
-  err |= pan->addTextItem(200,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addGeoItem(&devStatus.geoPos,    150, 30 + r++ * lf, 150, lf, false);
-  err |= pan->addTextItem(193,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.height,    150, 30 + r++ * lf, 150, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
   if (devPars.srcPosition.get() == enSrcPosition::GPS)
   {
-    err |= pan->addTextItem(190,                 3, 30 + r * lf, 80, lf);
-    err |= pan->addNumItem(&devStatus.satCount, 150, 30 + r++ * lf, 30, lf, false);
+    err |= pan->addTextItem(200, 3, 30 + r * lf, 80, lf);
+    err |= pan->addGeoItem(&devStatus.geoPos,     x, 30 + r++ * lf, 150, lf, false);
+    err |= pan->addTextItem(190,                  3, 30 + r * lf, 80, lf);
+    err |= pan->addNumItem(&devStatus.satCount,   x, 30 + r++ * lf, 30, lf, false);
     err |= pan->addTextItem(191,                200, 30 + r * lf, 80, lf);
     setGpsLog(&menue, false);
     err |= pan->addTextItem(195,                  3, 30 + r * lf, 80, lf);
-    err |= pan->addEnumItem(&devStatus.posValid, 150, 30 + r++ * lf, 150, lf, false);
+    err |= pan->addEnumItem(&devStatus.posValid,  x, 30 + r++ * lf, 150, lf, false);
   }
+  else
+  {
+    err |= pan->addEnumItem(&devStatus.latSign,   x, 30 + r * lf, 10, lf, true, setPosFunc);
+    err |= pan->addNumItem(&devStatus.latDeg,   x + 10, 30 + r * lf, 17, lf, true, setPosFunc);
+    err |= pan->addTextItem(1340,               x + 25, 30 + r * lf, 10, lf);
+    err |= pan->addNumItem(&devStatus.latMin,   x + 30, 30 + r * lf, 17, lf, true, setPosFunc);
+    err |= pan->addTextItem(1345,               x + 45, 30 + r * lf, 10, lf);
+    err |= pan->addNumItem(&devStatus.latSec,   x + 50, 30 + r * lf, 25, lf, true, setPosFunc);
+    err |= pan->addEnumItem(&devStatus.lonSign, x + 90, 30 + r * lf, 10, lf, true, setPosFunc);
+    err |= pan->addNumItem(&devStatus.lonDeg,   x + 100, 30 + r * lf, 25, lf, true, setPosFunc);
+    err |= pan->addTextItem(1340,               x + 125, 30 + r * lf, 10, lf);
+    err |= pan->addNumItem(&devStatus.lonMin,   x + 130, 30 + r * lf, 17, lf, true, setPosFunc);
+    err |= pan->addTextItem(1345,               x + 145, 30 + r * lf, 10, lf);
+    err |= pan->addNumItem(&devStatus.lonSec,   x + 150, 30 + r++ * lf, 25, lf, true, setPosFunc);
+  }
+  err |= pan->addTextItem(193,                   3, 30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.height,      x, 30 + r * lf, 50, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
+
   err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
   err |= pan->addTimeItem(&devStatus.time,     180, 200 + lf, 70, lf);
-  setGpsStatus(&menue);
+  //setGpsStatus(&menue);
   return err;
 }
