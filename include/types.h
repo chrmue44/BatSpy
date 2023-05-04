@@ -133,6 +133,7 @@ enum enProjType
   ELEKON = 1
 };
 
+/// menu level
 enum enMenueType
 {
   EXPERT = 0,
@@ -141,11 +142,18 @@ enum enMenueType
 };
 
 
-// type of recording trigger
+/// type of recording trigger
 enum enTrigType
 {
-  LEVEL,       //trigger when level exceeded
-  FREQUENCY,   //trigger when frequency exceeded
-  FREQ_LEVEL   //trigger when frequency and level exceeded
+  LEVEL,       ///< trigger when level exceeded
+  FREQUENCY,   ///< trigger when frequency exceeded
+  FREQ_LEVEL   ///<trigger when frequency and level exceeded
+};
+
+/// source of position information
+enum enSrcPosition
+{
+  FIX = 0,
+  GPS = 1
 };
 #endif    //#ifndef _TYPES_H

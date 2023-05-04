@@ -161,9 +161,9 @@ struct stParams
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
   cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
   cParEnum projectType = 0;          ///< type of project for automatic recording
-  cParEnum srcPosition = 0;          ///< source of position (fixed, GPS)
-  cParEnum menueType = enMenueType::EXPERT;       ///< menue type
-  cParEnum triggerType = enTrigType::LEVEL;       ///< trigger type for recording
+  cParEnum srcPosition = enSrcPosition::FIX;  ///< source of position (fixed, GPS)
+  cParEnum menueType = enMenueType::EXPERT;   ///< menue type
+  cParEnum triggerType = enTrigType::LEVEL;   ///< trigger type for recording
   cParNum minEventLen = 1.0;         ///< minimal event length for trigger
 };
 

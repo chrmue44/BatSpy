@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "config.h"
 #include "csunrise.h"
+#include "pnlmain.h"
 
 extern cRtc rtc;
 
@@ -56,6 +57,25 @@ void MEMP fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP fuMenuMode(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  enMenueType m = (enMenueType)devPars.menueType.get();
+  f1MainItems.clear();
+  f4MainItems.clear();
+  switch (m)
+  {
+    default:
+    case enMenueType::EXPERT:
+      initFunctionItemsExpert();
+      break;
+    case enMenueType::HANDHELD:
+      initFunctionItemsHandheld();
+      break;
+    case enMenueType::RECORDER:
+      initFunctionItemsRecorder();
+      break;
+  }
+}
 
 int MEMP initParRec(cPanel* pan, tCoord lf)
 {
@@ -86,13 +106,13 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(25,                    15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf,  80, lf, true, fuCalcSunrise);
   err |= pan->addTextItem(1180,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.startH,       190, 20 +  r   * lf,  15, lf, true);
+  err |= pan->addNumItem(&devPars.startH,       190, 20 +  r   * lf,  16, lf, true);
   err |= pan->addTextItem(1182,                 206, 20 +  r   * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  r++ * lf,  15, lf, true);
+  err |= pan->addNumItem(&devPars.startMin,     215, 20 +  r++ * lf,  16, lf, true);
   err |= pan->addTextItem(1181,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  r   * lf,  15, lf, true);
+  err |= pan->addNumItem(&devPars.stopH,        190, 20 +  r   * lf,  16, lf, true);
   err |= pan->addTextItem(1182,                 206, 20 +  r   * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  r++ * lf,  15, lf, true);
+  err |= pan->addNumItem(&devPars.stopMin,      215, 20 +  r++ * lf,  16, lf, true);
   return err;
 }
 
@@ -103,9 +123,9 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1100,                  15, 20,            80, lf);
   err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
   err |= pan->addTextItem(1710,                  15, 20 +  1 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.menueType,   170, 20 +  1 * lf, 100, lf, true);
+  err |= pan->addEnumItem(&devPars.menueType,   170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
   err |= pan->addTextItem(1148,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  2 * lf,  20, lf, true);
+  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  2 * lf,  25, lf, true);
   err |= pan->addTextItem(1320,                  15, 20 +  3 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 +  3 * lf,  80, lf, true);
   err |= pan->addTextItem(1325,                  15, 20 +  4 * lf,  80, lf);

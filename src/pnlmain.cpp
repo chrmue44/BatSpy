@@ -17,8 +17,6 @@
 #include "globals.h"
 #include "pnlparams.h"
 
-cParEnum f1MainItems(0);
-cParEnum f4MainItems(0);
 
 #include "startup_pic.c_"
 
@@ -491,7 +489,7 @@ void setGpsLog(cMenuesystem* pThis, bool on)
 
 void setGpsStatus(cMenuesystem* pThis)
 {
-  bool on = devPars.srcPosition.get() == 1;
+  bool on = devPars.srcPosition.get() == enSrcPosition::GPS;
 
   cPanel* pan = pThis->getPan(panGeo);
   pan->itemList[23].isVisible = on;
@@ -556,7 +554,7 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   err |= pan->addListItem(&devStatus.notes1,   150, 30 + r++ * lf, 169, lf, true);
   err |= pan->addTextItem(33,                    3, 30 + r   * lf, 120, lf);
   err |= pan->addListItem(&devStatus.notes2,   150, 30 + r++ * lf, 169, lf, true);
-  if (hasAmpRevB())
+  if (!hasAmpRevB())
   {
     err |= pan->addTextItem(1320,                  3, 30 + r   * lf, 80, lf);
     err |= pan->addEnumItem(&devPars.preAmpType, 150, 30 + r++ * lf, 120, lf, true);
@@ -564,15 +562,18 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain, 150, 30 + r++ * lf, 120, lf, true);
   err |= pan->addTextItem(200,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addGeoItem(&devStatus.geoPos,    150, 30 + r++ * lf, 150, lf);
+  err |= pan->addGeoItem(&devStatus.geoPos,    150, 30 + r++ * lf, 150, lf, false);
   err |= pan->addTextItem(193,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.height,    150, 30 + r++ * lf, 150, lf, false);
-  err |= pan->addTextItem(190,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.satCount,  150, 30 + r++ * lf, 30, lf, false);
-  err |= pan->addTextItem(191,                 200, 30 + r   * lf, 80, lf);
-  setGpsLog(&menue, false);
-  err |= pan->addTextItem(195,                   3, 30 + r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devStatus.posValid, 150, 30 + r++ * lf, 150, lf, false);
+  err |= pan->addNumItem(&devStatus.height,    150, 30 + r++ * lf, 150, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
+  if (devPars.srcPosition.get() == enSrcPosition::GPS)
+  {
+    err |= pan->addTextItem(190,                 3, 30 + r * lf, 80, lf);
+    err |= pan->addNumItem(&devStatus.satCount, 150, 30 + r++ * lf, 30, lf, false);
+    err |= pan->addTextItem(191,                200, 30 + r * lf, 80, lf);
+    setGpsLog(&menue, false);
+    err |= pan->addTextItem(195,                  3, 30 + r * lf, 80, lf);
+    err |= pan->addEnumItem(&devStatus.posValid, 150, 30 + r++ * lf, 150, lf, false);
+  }
   err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
   err |= pan->addTimeItem(&devStatus.time,     180, 200 + lf, 70, lf);

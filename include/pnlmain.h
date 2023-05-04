@@ -11,7 +11,7 @@
 #define PANMAIN_H
 #include "cmenue.h"
 #ifdef OWN_H
-#define extern
+#define extern                 // trick to automatically declare vars in cpp file
 #endif
 extern thPanel fkeyMainPan;    ///< f-key panel for main screen
 extern thPanel f2pan;
@@ -35,6 +35,9 @@ extern thPanel panParRec;      ///< panel for recording settings
 extern thPanel panPosition;    ///< panel for setting of position
 extern thPanel panBats;        ///< panel for bat infos
 extern thPanel panDateTime;    ///< panel to set time and date
+
+extern cParEnum f1MainItems;   ///< pop up menu F1
+extern cParEnum f4MainItems;   ///< pop up menu F4
 
 #ifdef OWN_H
 #undef extern

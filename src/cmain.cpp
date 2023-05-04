@@ -152,7 +152,7 @@ void loop()
 
     if(tick1s.check())
     {
-      if(devPars.srcPosition.get() == 1)
+      if(devPars.srcPosition.get() == enSrcPosition::GPS)
       {
         float lat, lon;
         gps.operate(lat, lon);
