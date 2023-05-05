@@ -113,12 +113,12 @@ struct stStatus
   cParNum digits = 0;
   cParNum temperature = 0;
   cParGraph grafLive;
-  cParNum msPerDiv = 150;
   cParEnum dirFilter = 0;
   cParStr dirFiles[DIR_PAN_SIZE];
   cParList notes1 = 0;
   cParList notes2 = 0;
   cParNum lastCallF = 0.0;
+  cParList liveMsPerDiv = 0;
 };
 
 
@@ -159,7 +159,6 @@ struct stParams
   bool sunriseCalc = false;          ///< true if sunrise and sunset are calculated
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
-  cParNum sweepSpeed = 2;            ///< sweep speed live display (delay time in ms)
   cParEnum projectType = 0;          ///< type of project for automatic recording
   cParEnum srcPosition = enSrcPosition::FIX;  ///< source of position (fixed, GPS)
   cParEnum menueType = enMenueType::EXPERT;   ///< menue type

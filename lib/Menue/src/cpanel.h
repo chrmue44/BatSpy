@@ -275,6 +275,7 @@ struct cPanel {
   int addGraphItem(cParGraph* pPar,tCoord x, tCoord y, tCoord w, tCoord h, fuFocus f = nullptr);
   void refresh();
   bool isRefresh();
+  void clear() { itemList.clear(); }
 
   /**
    * @brief addItem add an item to a panel

@@ -124,7 +124,6 @@ void MEMP cMenue::initPars()
   devPars.projectType.addItem(1192);
 
   devPars.sendDelay.init(0, 20, 1, 0);
-  devPars.sweepSpeed.init(0, 10, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
 
   devPars.srcPosition.addItem(1410);
@@ -213,7 +212,6 @@ void MEMP cMenue::initPars()
   devStatus.temperature.init(-50, 100, 0.1f, 1);
 
   devStatus.freq1Tick.init(0, 300,0.1f, 1);
-  devStatus.msPerDiv.init(0, 10000, 1, 0);
   devStatus.satCount.init(0, 24, 1, 0);
   devStatus.height.init(-100, 10000, 5, 0);
   devStatus.posValid.addItem(16);
@@ -236,8 +234,7 @@ void MEMP cMenue::initDialogs()
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
-  hdrMainPanel = getHdrPanel();
-  getPan(hdrMainPanel)->addTextItem(150, lf, 1, 180, LINE_HEIGHT);
+  setHeaderPanelText(this, 100);
 
   // F-KEYs for main panel
   fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
@@ -285,7 +282,7 @@ int MEMP cMenue::initExpertPanels(tCoord lf)
   err |= initTimePan(getPan(panTime), lf);
 
   pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initLivePan(getPan(pnlLive), lf);
+  err |= initLivePanHandheld(getPan(pnlLive), lf);
 
   panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= getPan(panFont)->addTextItem(12000, 15, 20, 200, lf);
@@ -305,9 +302,6 @@ int MEMP cMenue::initExpertPanels(tCoord lf)
 
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initInfoPanExpert(getPan(panInfo), lf);
-
-  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
-  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
 
   // parameter panel
   panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
@@ -361,7 +355,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
   err |= initTimePan(getPan(panTime), lf);
 
   pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initLivePan(getPan(pnlLive), lf);
+  err |= initLivePanHandheld(getPan(pnlLive), lf);
 
   hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
   err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
@@ -370,9 +364,6 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initInfoPanRecorder(getPan(panInfo), lf);
-
-  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
-  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
 
   // parameter panel
   panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
@@ -416,10 +407,8 @@ int MEMP cMenue::initRecorderPanels(tCoord lf)
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
   pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initLivePan(getPan(pnlLive), lf);
-  hdrParams = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
-  err |= getPan(hdrParams)->addTextItem(1510, 3, 1, 180, lf);
-
+  err |= initLivePanRecorder(getPan(pnlLive), lf);
+  
   panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initInfoPanRecorder(getPan(panInfo), lf);
 
@@ -542,7 +531,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0058, (int16_t)devPars.stopH.get());
   writeInt16ToEep(0x005A, (int16_t)devPars.stopMin.get());
   writeFloatToEep(0x005C, (int16_t)devPars.voltFactor.get());
-  writeInt16ToEep(0x0060, (int16_t)devPars.sweepSpeed.get());
+  writeInt16ToEep(0x0060, 0);
   writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
   writeFloatToEep(0x0066, devStatus.height.get());
@@ -608,7 +597,6 @@ void MEMP cMenue::load()
     devPars.stopH.set(readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
     devPars.stopMin.set(readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
     devPars.voltFactor.set(readFloatFromEep(0x005C));
-    devPars.sweepSpeed.set(readInt16FromEep(0x0060));
     devPars.liveAmplitude.set(readInt16FromEep(0x0062));
     devPars.projectType.set(readInt16FromEep(0x0064));
     devStatus.height.set(readFloatFromEep(0x0066));

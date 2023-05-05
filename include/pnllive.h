@@ -13,7 +13,8 @@
 #include "cmenue.h"
 #include "pnlmain.h"
 
-int initLivePan(cPanel* pan, tCoord lf);
+int initLivePanHandheld(cPanel* pan, tCoord lf);
+int initLivePanRecorder(cPanel* pan, tCoord lf);
 void setSampleRateLivePan();
 cParGraph* getLiveFft();
 

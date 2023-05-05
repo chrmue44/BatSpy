@@ -20,6 +20,12 @@
 
 #include "startup_pic.c_"
 
+void setHeaderPanelText(cMenuesystem* pThis, thText t)
+{
+  hdrMainPanel = pThis->getHdrPanel();
+  pThis->getPan(hdrMainPanel)->clear();
+  pThis->getPan(hdrMainPanel)->addTextItem(t, LINE_HEIGHT, 1, 180, LINE_HEIGHT);
+}
 void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 {
   tft.fillScreen(ILI9341_BLACK);
@@ -179,6 +185,7 @@ void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
   switch (pThis->getFocusItem()) {
   case 0:
     pThis->setMainPanel(panGeo);
+    setHeaderPanelText(pThis, 100);
     pThis->setHdrPanel(hdrMainPanel);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
@@ -186,16 +193,20 @@ void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
     devStatus.grafLive.initPlot(true);
     setSampleRateLivePan();
     pThis->setMainPanel(pnlLive);
-    pThis->setHdrPanel(hdrPanWaterfall);
+    setHeaderPanelText(pThis, 101);
+    pThis->setHdrPanel(hdrMainPanel);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
   case 2:
     pThis->setMainPanel(panFileBrowser);
-    pThis->setHdrPanel(hdrPanWaterfall);
+    setHeaderPanelText(pThis, 102);
+    pThis->setHdrPanel(hdrMainPanel);
     pThis->setFkeyPanel(fkeyFilePan);
     break;
   case 3:
+    setHeaderPanelText(pThis, 105);
     pThis->setMainPanel(panInfo);
+    pThis->setHdrPanel(hdrMainPanel);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
   case 4:
@@ -358,13 +369,15 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
     
     case 3:
       pThis->setMainPanel(panParams);
-      pThis->setHdrPanel(hdrParams);
+      setHeaderPanelText(pThis, 1030);
+      pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
     case 4:
       pThis->setMainPanel(panParRec);
-      pThis->setHdrPanel(hdrParams);
+      setHeaderPanelText(pThis, 1034);
+      pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
@@ -375,7 +388,8 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       devStatus.hour.set((float)devStatus.time.getHour());
       devStatus.minute.set((float)devStatus.time.getMin());
       pThis->setMainPanel(panDateTime);
-      pThis->setHdrPanel(hdrParams);
+      setHeaderPanelText(pThis, 1031);
+      pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
 
@@ -395,7 +409,8 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       else
         devStatus.lonSign.set(1);
       pThis->setMainPanel(panPosition);
-      pThis->setHdrPanel(hdrParams);
+      setHeaderPanelText(pThis, 1033);
+      pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
   }

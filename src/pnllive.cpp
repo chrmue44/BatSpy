@@ -46,7 +46,7 @@ void MEMP funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 }
 
-int MEMP initLivePan(cPanel* pan, tCoord lf)
+int MEMP initLivePanHandheld(cPanel* pan, tCoord lf)
 {
   int h = 128;
   int p1 = 32;
@@ -56,11 +56,7 @@ int MEMP initLivePan(cPanel* pan, tCoord lf)
      err |= pan->addNumItem(&devStatus.freqMin,     5,  p2 + 128,          25, lf, false);
      err |= pan->addNumItem(&devStatus.freq1Tick,   5,  p2 + 128 - h/Y_TICK_CNT, 30, lf, false);
      err |= pan->addGraphItem(&devStatus.grafLive, 38,  p2 + 5,           280, h);
-     err |= pan->addTextItem(480,                 280,  p2 + h + lf - 3,   30, lf);
-     err |= pan->addNumItem(&devStatus.msPerDiv,  250,  p2 + h + lf - 3,   30, lf, false);
-
-     err |= pan->addTextItem(470,                   5,  p1 + h + 1 * lf,   80, lf);
-     err |= pan->addNumItem(&devPars.sweepSpeed,  125,  p1 + h + 1 * lf,   25, lf, true);
+     err |= pan->addListItem(&devStatus.liveMsPerDiv, 250,  p2 + h + lf - 3,   65, lf, true);
      err |= pan->addTextItem(475,                 190,  p1 + h + 1 * lf,   80, lf);
      err |= pan->addNumItem(&devPars.liveAmplitude,280, p1 + h + 1 * lf,   25, lf, true);
      err |= pan->addTextItem(203,                   5,  p1 + h + 2 * lf,   80, lf);
@@ -71,6 +67,29 @@ int MEMP initLivePan(cPanel* pan, tCoord lf)
      err |= pan->addEnumItem(&devPars.preAmpGain, 125,  p1 + h + 3 * lf,   33, lf, true);
      err |= pan->addTextItem(1338,                190,  p1 + h + 4 * lf,   80, lf);
      err |= pan->addNumItem(&devStatus.lastCallF, 280,  p1 + h + 4 * lf,   40, lf, false);
+
+  return err;
+}
+
+
+int MEMP initLivePanRecorder(cPanel* pan, tCoord lf)
+{
+  int h = 128;
+  int p1 = 32;
+  int p2 = 18;
+  int err = pan->addNumItem(&devStatus.freqMax,      5, p2, 25, lf, true, funcFmax);
+  err |= pan->addTextItem(300,                       5, p2 + 1 * lf, 25, lf);
+  err |= pan->addNumItem(&devStatus.freqMin,         5, p2 + 128, 25, lf, false);
+  err |= pan->addNumItem(&devStatus.freq1Tick,       5, p2 + 128 - h / Y_TICK_CNT, 30, lf, false);
+  err |= pan->addGraphItem(&devStatus.grafLive,     38, p2 + 5, 280, h);
+  err |= pan->addListItem(&devStatus.liveMsPerDiv, 250, p2 + h + lf - 3, 65, lf, true);
+
+  err |= pan->addTextItem(475,                       5, p1 + h + 1 * lf, 80, lf);
+  err |= pan->addNumItem(&devPars.liveAmplitude,   125, p1 + h + 1 * lf, 25, lf, true);
+  err |= pan->addTextItem(1325,                      5, p1 + h + 2 * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,     125, p1 + h + 2 * lf, 33, lf, true);
+  err |= pan->addTextItem(1338,                    190, p1 + h + 4 * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.lastCallF,     280, p1 + h + 4 * lf, 40, lf, false);
 
   return err;
 }

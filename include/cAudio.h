@@ -121,6 +121,9 @@ private:
   void setAudioConnections(int i) {}
   void calcLiveFft();
   void startRec();
+  void addLiveMsPerDiv(int waitTick, int sampleRate);
+  int getLiveMsPerDiv(int waitTick, int sampleRate);
+
 };
 
 #endif   //#ifndef _CAUDIO_H

@@ -173,7 +173,6 @@ void loop()
       float temp = readTemperature();
       devStatus.temperature.set(temp);
       cParGraph* g = getLiveFft();
-      devStatus.msPerDiv.set(g->getMsPerDiv());
       devStatus.time.set(rtc.getTime());
       devStatus.date.set(rtc.getTime());
       devStatus.time.update(true);

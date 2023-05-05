@@ -27,7 +27,6 @@ extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 extern thPanel panWaterfall;
 extern thPanel hdrPanWaterfall;
 extern thPanel hdrBatInfo;
-extern thPanel hdrParams;
 extern thPanel panFileBrowser;
 extern thPanel fkeyFilePan;
 extern thPanel panParams;      ///< panel for general parameter settings
@@ -56,5 +55,7 @@ void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);
 void showSplashScreen(ILI9341_t3& tft, bool waitBtn);
 void setGpsLog(cMenuesystem* pThis, bool on);
+void setHeaderPanelText(cMenuesystem* pThis, thText t);
+
 
 #endif // PANMAIN_H

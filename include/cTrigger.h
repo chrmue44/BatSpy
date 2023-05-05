@@ -19,13 +19,13 @@ enum enTrigState
 
 #define FREQ_THRESHOLD    150     ///< threshold value for intensity to detect a frequency
 
-// some variables to handles FFT operation
+// some variables to handle FFT operation
 struct stFftInfo
 {
-  uint32_t lastFftTime;           // last time when fft was calculated
   int liveCnt = 0;                // counter to extend scrolling of live display when signal stopped 
   uint16_t lastMaxAmpl;           // max amplitude of last fft
   float lastMaxFreq;              // max frequency of last fft
+  uint32_t sweepDelayCnt = 0;          // delay counter to slow down sweep speed 
 };
 
 class cTrigger

@@ -326,6 +326,9 @@ void cAudio::setup()
     m_trigger.setMinEventLength(devPars.minEventLen.get(), m_sampleRate);
     m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
     setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
+    devStatus.liveMsPerDiv.clear();
+    for(int i = 0; i < 4; i++)
+      addLiveMsPerDiv(i, m_sampleRate);
     delay(100);
     AudioInterrupts();
     delay(20);
@@ -503,29 +506,32 @@ void cAudio::operate(bool liveFft)
 
 void cAudio::calcLiveFft()
 {
-  if(millis() > (m_fftInfo.lastFftTime + devPars.sweepSpeed.get()))
+  if (m_fftInfo.sweepDelayCnt >= devStatus.liveMsPerDiv.get())
   {
-    m_fftInfo.lastFftTime = millis();
-    if(m_fftInfo.liveCnt == 0)
+    m_fftInfo.sweepDelayCnt = 0;
+    if (m_fftInfo.liveCnt == 0)
     {
-      if(m_trigger.getLiveTrigger())
+      if (m_trigger.getLiveTrigger())
         m_fftInfo.liveCnt = LIVE_CNT_EXTEND;
     }
     else
     {
-      if(m_fftInfo.lastMaxAmpl < 100)
+      if (m_fftInfo.lastMaxAmpl < 100)
         m_fftInfo.liveCnt--;
-      DPRINTF4("count %i\n",m_fftInfo.liveCnt);
-      if(m_fftInfo.liveCnt == 0)
+      DPRINTF4("count %i\n", m_fftInfo.liveCnt);
+      if (m_fftInfo.liveCnt == 0)
         m_trigger.releaseLiveTrigger();
     }
 
-    if(m_fftInfo.liveCnt > 0)
+    if (m_fftInfo.liveCnt > 0)
     {
       cParGraph* graph = getLiveFft();
       graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
     }
   }
+  else
+
+    m_fftInfo.sweepDelayCnt++;
 }
 
 void cAudio::startRec()
@@ -542,4 +548,19 @@ void cAudio::startRec()
     m_prj.createTimeFileName(fmt);
     m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get(), fmt);
   }
+}
+
+
+void cAudio::addLiveMsPerDiv(int waitTick, int sampleRate)
+{
+  char buf[LIST_ITEM_LEN];
+  int ms = getLiveMsPerDiv(waitTick, sampleRate);
+  sprintf_s(buf, sizeof(buf), "%i ms/div", ms);
+  devStatus.liveMsPerDiv.addItem(buf);
+}
+
+
+int cAudio::getLiveMsPerDiv(int waitTick, int sampleRate)
+{
+  return (int)(1000.0 / sampleRate * getFftOutputSize() / 2 * DISP_WIDTH / X_TICK_CNT * (1 + waitTick));
 }
