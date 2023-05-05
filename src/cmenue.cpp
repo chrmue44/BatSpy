@@ -231,6 +231,7 @@ void MEMP cMenue::initPars()
 
 void MEMP cMenue::initDialogs() 
 {
+  clearPanelList();
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
   // Header for main panel
@@ -413,17 +414,6 @@ int MEMP cMenue::initRecorderPanels(tCoord lf)
   // F-KEYs for waterfall panel
   fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
-
-  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
-  err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
-  err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
-
-  panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initWaterPan(getPan(panWaterfall), lf);
-
-  // x-t-diagram panel
-  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
-  err |= initTimePan(getPan(panTime), lf);
 
   pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
   err |= initLivePan(getPan(pnlLive), lf);

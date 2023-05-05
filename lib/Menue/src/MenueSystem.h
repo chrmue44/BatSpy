@@ -148,6 +148,7 @@ public:
   bool keyPauseLongEnough(uint32_t ms = 200);
   uint32_t getTimeAfterKeyPress();
   void resetTimer();
+  void clearPanelList() { m_panelList.clear(); }
   void initFocusOnPanel(cPanel* pan) {m_focus.item = pan->findFirstEditItem(); m_focus.state = enFocusState::DISP; };
 
 protected:

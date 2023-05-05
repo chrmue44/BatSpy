@@ -195,22 +195,10 @@ void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->setFkeyPanel(fkeyFilePan);
     break;
   case 3:
-    devStatus.graph.initPlot(true);
-    pThis->setMainPanel(panTime);
-    pThis->setHdrPanel(hdrPanWaterfall);;
-    pThis->setFkeyPanel(fkeyWaterPan);
-    break;
-  case 4:
-    devStatus.waterf.initPlot(true);
-    pThis->setMainPanel(panWaterfall);
-    pThis->setHdrPanel(hdrPanWaterfall);
-    pThis->setFkeyPanel(fkeyWaterPan);
-    break;
-  case 5:
     pThis->setMainPanel(panInfo);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
-  case 6:
+  case 4:
     pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
     break;
   }
@@ -263,8 +251,6 @@ void MEMP initFunctionItemsRecorder()
   f1MainItems.addItem(100);
   f1MainItems.addItem(101);
   f1MainItems.addItem(102);
-  f1MainItems.addItem(103);
-  f1MainItems.addItem(104);
   f1MainItems.addItem(105);
   f1MainItems.addItem(108);
 
@@ -442,8 +428,10 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   // Serial.println("initDialogs2");
  
   retVal = pan->addTextItem(1, 0, 227, 80, lf, true, f1Func);
-  retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
-  retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
+  if(devPars.menueType.get() != enMenueType::RECORDER)
+    retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
+  if(devPars.srcPosition.get() == enSrcPosition::GPS)
+    retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
 }
@@ -589,8 +577,10 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
     err |= pan->addTextItem(1345,               x + 145, 30 + r * lf, 10, lf);
     err |= pan->addNumItem(&devStatus.lonSec,   x + 150, 30 + r++ * lf, 25, lf, true, setPosFunc);
   }
-  err |= pan->addTextItem(193,                   3, 30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.height,      x, 30 + r * lf, 50, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
+  err |= pan->addTextItem(193,                  3,     30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.height,     x,     30 + r++ * lf, 50, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
+  err |= pan->addTextItem(440,                  3,     30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,  x,     30 + r * lf, 80, lf, false);
 
   err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
