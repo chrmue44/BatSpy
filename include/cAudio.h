@@ -36,7 +36,7 @@ class cMenue;
 struct stAudioSettings
 {
   uint32_t sampleRate = 352000;        ///< current sampling rate [Hz]
-  enSampleRate parSampleR = SR_352K;   ///< selected sample rate (enumerator)
+  enSampleRate parSampleR = SR_384K;   ///< selected sample rate (enumerator)
   float oscFrequency = 0.0;
   enOpMode opMode;
   float volume = 1.0;

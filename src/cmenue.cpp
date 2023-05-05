@@ -74,7 +74,7 @@ void MEMP cMenue::initPars()
   }
 
 
-  for(int t = 1300; t <= 1318; t++)
+  for(int t = 1300; t <= 1308; t++)
     devPars.sampleRate.addItem(t);
   devPars.sampleRate.set(SR_312K);  
   devPars.recTime.init(3, 30, 1, 0);
@@ -225,6 +225,42 @@ void MEMP cMenue::initPars()
     calcSunrise();
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
+}
+
+void cMenue::setFactoryDefaults(enMode mode)
+{
+  devPars.volume.set(6.0f);              ///< volume setting
+  devPars.mixFreq.set(40.0f);              ///< mixer frequency
+  devPars.recTime.set(3.0f);               ///< recording time
+  devPars.sampleRate.set(enSampleRate::SR_384K);    ///< sample rate
+  devPars.lang.set(enLang::LANG_GER);        ///< display language
+  devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
+  devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
+  devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
+  devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
+  devPars.deafTime.set(3.0);              ///< timeout after one recording
+  devPars.backLightTime.set(120.0);       ///< time for backlight
+  devPars.preAmpGain.set(1);           ///< gain of pre amplifier
+  devPars.preAmpType.set(enPreAmp::HIGH_PASS);      ///< type of pre amplifier
+  devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
+  devPars.knobRotation.set(enKnobRot::CLOCKWISE);   ///< knob rotation
+  devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
+  devPars.recFmt.set(enRecFmt::WAV);               ///< recording format
+  devPars.filtFreq.set(16.0);             ///< hight pass freq for recording trigger
+  devPars.filtType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
+  devPars.startH.set(21);               ///< hour of start time
+  devPars.startMin.set(0);              ///< minute of start time
+  devPars.stopH.set(6);                 ///< hour of start time
+  devPars.stopMin.set(0);               ///< minute of start time
+  devPars.voltFactor.set(1);            ///< factor digits to voltage
+  devPars.recAuto.set(0);              ///< mode for automatic recording
+  devPars.sendDelay.set(2);             ///< delay [ms] after sending 2048 Bytes on USB
+  devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
+  devPars.projectType.set(enProjType::ELEKON);          ///< type of project for automatic recording
+  devPars.srcPosition.set(enSrcPosition::FIX);  ///< source of position (fixed, GPS)
+  devPars.menueType.set(enMenueType::RECORDER);   ///< menue type
+  devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
+  devPars.minEventLen.set(1.0);         ///< minimal event length for trigger
 }
 
 void MEMP cMenue::initDialogs() 

@@ -150,6 +150,7 @@ public:
   void resetTimer();
   void clearPanelList() { m_panelList.clear(); }
   void initFocusOnPanel(cPanel* pan) {m_focus.item = pan->findFirstEditItem(); m_focus.state = enFocusState::DISP; };
+  virtual void setFactoryDefaults() {}
 
 protected:
   virtual void initPars() = 0;

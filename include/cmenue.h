@@ -132,9 +132,6 @@ struct stParams
   cParNum recTime = 3;               ///< recording time
   cParEnum sampleRate = enSampleRate::SR_384K;    ///< sample rate
   cParEnum lang   = LANG_GER;        ///< display language
-  cParList dirSel = 0;               ///< select directory
-  cParList fileSel = 0;              ///< select file
-  cParStr dir = "";                  ///< actual directory on SD card
   cParStr fileName = "";             ///< actual file name
   cParNum threshHold = 10;           ///< threshhold level graph, waterfall
   cParNum fftLevelMin = 3500;        ///< low (threshhold) level for FFT display
@@ -178,6 +175,7 @@ class cMenue : public cMenuesystem
   void printPars();
   void printStatus();
   static int16_t readInt16FromEep(int32_t addr);
+  virtual void setFactoryDefaults(enMode mode);
 
 protected:
   virtual void initPars();

@@ -23,25 +23,25 @@ enum enCassMode
 // selection of available sample rates
 enum enSampleRate 
 {
-  SR_17K =      0,
-  SR_19K =      1,
-  SR_23K =      2,
-  SR_28K =      3,
-  SR_32K =      4,
-  SR_35K =      5,
-  SR_38K =      6,
-  SR_44K =      7,
-  SR_48K =      8,
-  SR_88K =      9,
-  SR_96K =     10,
-  SR_176K =    11,
-  SR_192K =    12,
-  SR_234K =    13,
-  SR_281K =    14,
-  SR_312K =    15,
-  SR_352K =    16,
-  SR_384K =    17,
-  SR_480K =    18
+//  SR_17K =      0,
+  SR_19K =      0,
+//  SR_23K =      0,
+//  SR_28K =      3,
+  SR_32K =      1,
+//  SR_35K =      5,
+  SR_38K =      2,
+  SR_44K =      3,
+  SR_48K =      4,
+//  SR_88K =      9,
+//  SR_96K =     10,
+//  SR_176K =    11,
+  SR_192K =    5,
+//  SR_234K =    6,
+//  SR_281K =    14,
+  SR_312K =    6,
+//  SR_352K =    16,
+  SR_384K =    7,
+  SR_480K =    8
 };
 
 // available pre amp selections

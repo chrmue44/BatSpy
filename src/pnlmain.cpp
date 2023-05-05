@@ -235,6 +235,7 @@ void MEMP initFunctionItemsExpert()
   f4MainItems.addItem(1034);
   f4MainItems.addItem(1031);
   f4MainItems.addItem(1033);
+  f4MainItems.addItem(1035);
 }
 
 void MEMP initFunctionItemsHandheld()
@@ -255,6 +256,7 @@ void MEMP initFunctionItemsHandheld()
   f4MainItems.addItem(1034);
   f4MainItems.addItem(1031);
   f4MainItems.addItem(1033);
+  f4MainItems.addItem(1035);
 }
 
 void MEMP initFunctionItemsRecorder()
@@ -272,6 +274,7 @@ void MEMP initFunctionItemsRecorder()
   f4MainItems.addItem(1034);
   f4MainItems.addItem(1031);
   f4MainItems.addItem(1033);
+  f4MainItems.addItem(1035);
 }
 
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -347,6 +350,20 @@ void MEMP f4SaveFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP f4FactSetFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (key)
+  {
+  case enKey::YES:
+    pThis->setFactoryDefaults();
+    break;
+
+  case enKey::NO:
+  default:
+    break;
+  }
+}
+
 void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
 {
   switch (pThis->getFocusItem()) 
@@ -413,6 +430,10 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
       pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;
+    
+    case 7:
+      pThis->showMsg(enMsg::YESNO, f4FactSetFunc, Txt::get(1004), Txt::get(1006));
+
   }
 }
 
