@@ -557,7 +557,7 @@ void cAudio::addLiveMsPerDiv(int waitTick, int sampleRate)
 {
   char buf[LIST_ITEM_LEN];
   int ms = getLiveMsPerDiv(waitTick, sampleRate);
-  sprintf_s(buf, sizeof(buf), "%i ms/div", ms);
+  snprintf(buf, sizeof(buf), "%i ms/div", ms);
   devStatus.liveMsPerDiv.addItem(buf);
 }
 
