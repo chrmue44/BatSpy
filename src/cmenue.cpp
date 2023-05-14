@@ -566,7 +566,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0056, (int16_t)devPars.startMin.get());
   writeInt16ToEep(0x0058, (int16_t)devPars.stopH.get());
   writeInt16ToEep(0x005A, (int16_t)devPars.stopMin.get());
-  writeFloatToEep(0x005C, (int16_t)devPars.voltFactor.get());
+  writeFloatToEep(0x005C, devPars.voltFactor.get());
   writeInt16ToEep(0x0060, 0);
   writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
   writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
