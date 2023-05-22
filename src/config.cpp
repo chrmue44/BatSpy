@@ -78,6 +78,7 @@ void checkSupplyVoltage()
     digitalWrite(PIN_POWER_OFF, 0);
     sysLog.logf("power down voltage too low : %f \n ", volt);
     delay(1000);
+    audio.closeProject();
     cSdCard::inst().unmount();
   }    
 }

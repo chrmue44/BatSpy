@@ -12,27 +12,27 @@
 /*
                   +---------+    +---------+
                 --| GND     +----+     VIN |--
-                --| D0                 GND |--
-                --| D1   Teensy 4.1    3V3 |--
+      AMP3_REVB --| D0                 GND |--
+      AMP1_REVB --| D1   Teensy 4.1    3V3 |--
                 --| D2              A9 D23 |--
                 --| D3              A8 D22 |--
-                --| D4              A7 D21 |-- BCLK_ADC
-                --| D5              A6 D20 |-- LRCLK_ADC
+         ID_12V --| D4              A7 D21 |-- BCLK_ADC
+           REV1 --| D5              A6 D20 |-- LRCLK_ADC
          TFT_DC --| D6              A5 D19 |--
                 --| D7              A4 D18 |--
                 --| D8              A3 D17 |-- ROT_LEFT_B
-                --| D9              A2 D16 |-- AMP2
+           REV2 --| D9              A2 D16 |-- AMP2
          TX_ADC --| D10             A1 D15 |-- AMP0
        TFT_MOSI --| D11             A0 D14 |-- TFT_CS
-       TFT_MISO --| D12                D13 |--
-       TFT_SCLK --| 3V3                GND |--
+       TFT_MISO --| D12                D13 |-- TFT_SCLK
+                --| 3V3                GND |--
         TFT_RST --| D24 A10        A17 D41 |--
                 --| D25 A11        A16 D40 |-- SUPPLY_VOLT
                 --| D26 A12        A15 D39 |--
                 --| D27 A13        A14 D38 |-- POWER_OFF
-                --| D28                D37 |-- ROT_LEFT_S
-           AMP1 --| D29                D36 |-- ROT_LEFT_A
-           AMP3 --| D30                D35 |-- TX_GPS
+           REV3 --| D28                D37 |-- ROT_LEFT_S
+      AMP1_REVA --| D29                D36 |-- ROT_LEFT_A
+      AMP3_REVA --| D30                D35 |-- TX_GPS
         TFT_LED --| D31                D34 |-- TX_GPS
                 --| D32                D33 |--
                   +------------------------+
