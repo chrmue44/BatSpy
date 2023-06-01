@@ -98,7 +98,7 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1330,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deafTime,     190, 20 +  r++ * lf,  20, lf, true);
+  err |= pan->addNumItem(&devPars.deadTime,     190, 20 +  r++ * lf,  20, lf, true);
   err |= pan->addTextItem(1145,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1190,                  15, 20 +  r   * lf,  80, lf);

@@ -77,26 +77,26 @@ void MEMP cMenue::initPars()
   for(int t = 1300; t <= 1308; t++)
     devPars.sampleRate.addItem(t);
   devPars.sampleRate.set(SR_312K);  
-  devPars.recTime.init(3, 30, 1, 0);
+  devPars.recTime.init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devPars.filtFreq.init(5,70, 1, 0);
+  devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1, 0);
 
   devPars.filtType.addItem(1171);
   devPars.filtType.addItem(1172);
   devPars.filtType.addItem(1173);
 
-  devPars.recThreshhold.init(-24,0,1,0);
+  devPars.recThreshhold.init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
   devPars.recThreshhold.set(-12);
 
   devPars.recFmt.addItem(1146);   //enRecFmt::RAW
   devPars.recFmt.addItem(1147);   //enRecFmt::WAV
 
-  devPars.deafTime.set(0);
-  devPars.deafTime.init(0,30,1,0);
+  devPars.deadTime.set(0);
+  devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(5,300,1,0);
 
@@ -108,7 +108,7 @@ void MEMP cMenue::initPars()
   devPars.dispOrient.addItem(1161);
   devPars.dispOrient.addItem(1162);
 
-  devPars.preTrigger.init(0.0, 150.0, 1.0, 0);
+  devPars.preTrigger.init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, 1.0, 0);
   devPars.startH.init(0, 23, 1, 0, 2);
   devPars.startMin.init(0, 59, 10, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
@@ -137,7 +137,7 @@ void MEMP cMenue::initPars()
   devPars.triggerType.addItem(1362);
   devPars.triggerType.addItem(1363);
 
-  devPars.minEventLen.init(0.0f, 20.0f, 0.5f, 1);
+  devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
 
   notes1.initNotes(PATH_NOTES1, 2000, 2005);
   notes1.initListPar(devStatus.notes1);
@@ -238,7 +238,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
   devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
-  devPars.deafTime.set(3.0);              ///< timeout after one recording
+  devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.preAmpGain.set(1);           ///< gain of pre amplifier
   devPars.preAmpType.set(enPreAmp::HIGH_PASS);      ///< type of pre amplifier
@@ -554,7 +554,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0032, devPars.dispOrient.get());
   writeFloatToEep(0x0034, devPars.preTrigger.get());
   writeInt16ToEep(0x0038, devPars.recFmt.get());
-  writeFloatToEep(0x003A, devPars.deafTime.get());
+  writeFloatToEep(0x003A, devPars.deadTime.get());
   writeFloatToEep(0x003E, devPars.backLightTime.get());
   writeInt16ToEep(0x0042, devPars.lang.get());
   writeInt16ToEep(0x0044, devPars.preAmpType.get());
@@ -620,7 +620,7 @@ void MEMP cMenue::load()
     devPars.dispOrient.set(readInt16FromEep(0x0032));
     devPars.preTrigger.set(readFloatFromEep(0x0034));
     devPars.recFmt.set(readInt16FromEep(0x0038));
-    devPars.deafTime.set(readFloatFromEep(0x003A));
+    devPars.deadTime.set(readFloatFromEep(0x003A));
     devPars.backLightTime.set(readFloatFromEep(0x003E));
     devPars.lang.set(readInt16FromEep(0x0042));
     devPars.preAmpType.set(readInt16FromEep(0x0044));

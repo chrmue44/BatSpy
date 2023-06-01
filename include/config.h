@@ -10,32 +10,32 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 /*
-                  +---------+    +---------+
-                --| GND     +----+     VIN |--
-      AMP3_REVB --| D0                 GND |--
-      AMP1_REVB --| D1   Teensy 4.1    3V3 |--
-                --| D2              A9 D23 |--
-                --| D3              A8 D22 |--
-         ID_12V --| D4              A7 D21 |-- BCLK_ADC
-           REV1 --| D5              A6 D20 |-- LRCLK_ADC
-         TFT_DC --| D6              A5 D19 |--
-                --| D7              A4 D18 |--
-                --| D8              A3 D17 |-- ROT_LEFT_B
-           REV2 --| D9              A2 D16 |-- AMP2
-         TX_ADC --| D10             A1 D15 |-- AMP0
-       TFT_MOSI --| D11             A0 D14 |-- TFT_CS
-       TFT_MISO --| D12                D13 |-- TFT_SCLK
-                --| 3V3                GND |--
-        TFT_RST --| D24 A10        A17 D41 |--
-                --| D25 A11        A16 D40 |-- SUPPLY_VOLT
-                --| D26 A12        A15 D39 |--
-                --| D27 A13        A14 D38 |-- POWER_OFF
-           REV3 --| D28                D37 |-- ROT_LEFT_S
-      AMP1_REVA --| D29                D36 |-- ROT_LEFT_A
-      AMP3_REVA --| D30                D35 |-- TX_GPS
-        TFT_LED --| D31                D34 |-- TX_GPS
-                --| D32                D33 |--
-                  +------------------------+
+                    +---------+    +---------+
+                  --| GND     +----+     VIN |--
+        AMP3_REVB --| D0                 GND |--
+        AMP1_REVB --| D1   Teensy 4.1    3V3 |--
+                  --| D2              A9 D23 |--
+                  --| D3              A8 D22 |--
+           ID_12V --| D4              A7 D21 |-- BCLK_ADC
+             REV1 --| D5              A6 D20 |-- LRCLK_ADC  
+           TFT_DC --| D6              A5 D19 |--
+ (Serial2) RX_ESP --| D7              A4 D18 |--
+ (Serial2) TX_ESP --| D8              A3 D17 |-- ROT_LEFT_B
+             REV2 --| D9              A2 D16 |-- AMP2
+           TX_ADC --| D10             A1 D15 |-- AMP0
+         TFT_MOSI --| D11             A0 D14 |-- TFT_CS
+         TFT_MISO --| D12                D13 |-- TFT_SCLK
+                  --| 3V3                GND |--
+          TFT_RST --| D24 A10        A17 D41 |--
+                  --| D25 A11        A16 D40 |-- SUPPLY_VOLT
+                  --| D26 A12        A15 D39 |--
+                  --| D27 A13        A14 D38 |-- POWER_OFF
+             REV3 --| D28                D37 |-- ROT_LEFT_S
+        AMP1_REVA --| D29                D36 |-- ROT_LEFT_A
+        AMP3_REVA --| D30                D35 |-- TX_GPS (Serial8)
+          TFT_LED --| D31                D34 |-- RX_GPS (Serial8)
+                  --| D32                D33 |--
+                    +------------------------+
 */
 
 #include <cstdint>
@@ -48,7 +48,7 @@
 // voltage loss D1
 #define U_DIODE           0.29f
 #define SUPPLY_12V_MIN   11.5f     //min. required supply voltage lead 
-#define SUPPLY_4V_MIN     3.0f     //min. required supply voltage LiIon 
+#define SUPPLY_4V_MIN     3.2f     //min. required supply voltage LiIon 
 
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
 #define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
@@ -92,13 +92,15 @@
 #define PIN_MQS          10      // output for mono MQS signal
 
 // control TFT
-#define PIN_TFT_DC        6      // TFT D/C-Signal
+#define PIN_TFT_DC_REVA   6      // TFT D/C-Signal
+#define PIN_TFT_DC_REVB   8      // TFT D/C-Signal
 #define PIN_TFT_CS       14      // TFT CS
 #define PIN_TFT_RST      24      // TFT Reset
 #define PIN_TFT_MOSI     11      // TFT MOSI
 #define PIN_TFT_SCLK     13      // TFT SCLK
 #define PIN_TFT_MISO     12      // TFT MISO
-#define PIN_TFT_LED      31      // TFT backlight control
+#define PIN_TFT_LED_REVA 31      // TFT backlight control
+#define PIN_TFT_LED_REVB 39      // TFT backlight control
 
 // control SGTL5000
 #define PIN_DIN           7
@@ -110,6 +112,7 @@
 #define PIN_MCLK         23
 
 #define SERIAL_GPS       Serial8
+#define SERIAL_ESP       Serial2
 
 
 extern uint8_t pinAmp0;
@@ -122,10 +125,12 @@ void initPins();
 float calcVoltageFactor(float volt);
 void checkSupplyVoltage();
 float readTemperature();
+void setDispLight(uint8_t bright);
+
 inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
 inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
 inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
-inline bool hasAmpRevB() { return (is12V() && isRevisionA()) /* special version Rev A*/ || isRevisionB(); }
+inline bool hasAmpRevB() { return  isRevisionB(); }
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

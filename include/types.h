@@ -145,9 +145,9 @@ enum enMenueType
 /// type of recording trigger
 enum enTrigType
 {
-  LEVEL,       ///< trigger when level exceeded
-  FREQUENCY,   ///< trigger when frequency exceeded
-  FREQ_LEVEL   ///<trigger when frequency and level exceeded
+  LEVEL      = 0,  ///< trigger when level exceeded
+  FREQUENCY  = 1,  ///< trigger when frequency exceeded
+  FREQ_LEVEL = 2   ///<trigger when frequency and level exceeded
 };
 
 /// source of position information
