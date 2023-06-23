@@ -21,10 +21,19 @@ class cTerminal {
   void showCommands();
   void parseControlCmd(const char* buf);
   void parseSetCmd(const char* buf);
+  void parseGetCmd(const char* buf);
   enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
   
  private:
   void execCmd(char* buf, size_t& bufIdx);
+  bool parseRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
+  bool parseLocationParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
+  bool parseAutoRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
+  bool checkValI(int val, int min, int max) { return (min <= val) && (val <= max); }
+  bool checkValF(int val, int min, int max) { return (min <= val) && (val <= max); }
+  bool setValInt(const char* buf, int min, int max, cParNum& par);
+  bool setValEnum(const char* buf, int min, int max, cParEnum& par);
+  bool setValFloat(const char* buf, float min, float max, cParNum& par);
 
   char m_recbufUSB[256];
   char m_recbufESP[256];
@@ -33,5 +42,6 @@ class cTerminal {
   int m_sendIdx = 0;
   enKey m_key = NOKEY;
 };
+
 
 #endif //#ifndef CTERMINAL_H

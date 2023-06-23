@@ -95,8 +95,8 @@ void MEMP cMenue::initPars()
   devPars.recFmt.addItem(1146);   //enRecFmt::RAW
   devPars.recFmt.addItem(1147);   //enRecFmt::WAV
 
-  devPars.deafTime.set(0);
-  devPars.deafTime.init(0,30,1,0);
+  devPars.deadTime.set(0);
+  devPars.deadTime.init(0,30,1,0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(5,300,1,0);
 
@@ -238,7 +238,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
   devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
-  devPars.deafTime.set(3.0);              ///< timeout after one recording
+  devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.preAmpGain.set(1);           ///< gain of pre amplifier
   devPars.preAmpType.set(enPreAmp::HIGH_PASS);      ///< type of pre amplifier
@@ -554,7 +554,7 @@ void MEMP cMenue::save()
   writeInt16ToEep(0x0032, devPars.dispOrient.get());
   writeFloatToEep(0x0034, devPars.preTrigger.get());
   writeInt16ToEep(0x0038, devPars.recFmt.get());
-  writeFloatToEep(0x003A, devPars.deafTime.get());
+  writeFloatToEep(0x003A, devPars.deadTime.get());
   writeFloatToEep(0x003E, devPars.backLightTime.get());
   writeInt16ToEep(0x0042, devPars.lang.get());
   writeInt16ToEep(0x0044, devPars.preAmpType.get());
@@ -620,7 +620,7 @@ void MEMP cMenue::load()
     devPars.dispOrient.set(readInt16FromEep(0x0032));
     devPars.preTrigger.set(readFloatFromEep(0x0034));
     devPars.recFmt.set(readInt16FromEep(0x0038));
-    devPars.deafTime.set(readFloatFromEep(0x003A));
+    devPars.deadTime.set(readFloatFromEep(0x003A));
     devPars.backLightTime.set(readFloatFromEep(0x003E));
     devPars.lang.set(readInt16FromEep(0x0042));
     devPars.preAmpType.set(readInt16FromEep(0x0044));

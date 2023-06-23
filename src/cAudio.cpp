@@ -497,7 +497,7 @@ void cAudio::operate(bool liveFft)
 
   if (devStatus.playStatus.get() == enPlayStatus::TIMEOUT)
   {
-    if (m_timeout.runTime() > devPars.deafTime.get())
+    if (m_timeout.runTime() > devPars.deadTime.get())
     {
       devStatus.playStatus.set(enPlayStatus::ST_STOP);
       m_trigger.releaseLiveTrigger();

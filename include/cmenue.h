@@ -130,37 +130,60 @@ struct stParams
   cParNum volume =   6;              ///< volume setting
   cParNum mixFreq = 40;              ///< mixer frequency
   cParNum recTime = 3;               ///< recording time
+#define PAR_RECTIM_MIN  1.0f
+#define PAR_RECTIM_MAX  30.0f
   cParEnum sampleRate = enSampleRate::SR_384K;    ///< sample rate
+#define PAR_SR_MIN  enSampleRate::SR_19K
+#define PAR_SR_MAX  enSampleRate::SR_480K
   cParEnum lang   = LANG_GER;        ///< display language
   cParStr fileName = "";             ///< actual file name
   cParNum threshHold = 10;           ///< threshhold level graph, waterfall
   cParNum fftLevelMin = 3500;        ///< low (threshhold) level for FFT display
   cParNum fftLevelMax = 70000;       ///< high level for FFT display
   cParNum recThreshhold = -18;       ///< auto recording threshhold
-  cParNum deafTime = 3;              ///< timeout after one recording
+#define PAR_RECTHRESH_MIN -24.0f
+#define PAR_RECTHRESH_MAX -1.0f
+  cParNum deadTime = 3;              ///< timeout after one recording
+#define PAR_DEADTIM_MIN  0.0f
+#define PAR_DEADTIM_MAX  30.0f
   cParNum backLightTime = 120;       ///< time for backlight
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
   cParEnum preAmpType = enPreAmp::HIGH_PASS;      ///< type of pre amplifier
   cParEnum dispOrient = enDispOrient::RIGHT_HAND; ///< display orientation
   cParEnum knobRotation = enKnobRot::CLOCKWISE;   ///< knob rotation
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
+#define PAR_PRETRIG_MIN 0.0
+#define PAR_PRETRIG_MAX 150.0
   cParEnum recFmt = 0;               ///< recording format
   cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
+#define PAR_TRIGFILTFREQ_MIN   5.0f
+#define PAR_TRIGFILTFREQ_MAX  70.0f
   cParEnum filtType = 0;             ///< filter type for recording trigger
+#define PAR_TRIGFILTTYPE_MIN   0
+#define PAR_TRIGFILTTYPE_MAX   2
   cParNum startH = 21;               ///< hour of start time
   cParNum startMin = 0;              ///< minute of start time
   cParNum stopH = 6;                 ///< hour of start time
   cParNum stopMin = 0;               ///< minute of start time
   cParNum voltFactor = 1;            ///< factor digits to voltage
   cParEnum recAuto = 0;              ///< mode for automatic recording
+#define PAR_AUTOMODE_MIN  0
+#define PAR_AUTOMODE_MAX  3
   bool sunriseCalc = false;          ///< true if sunrise and sunset are calculated
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
   cParEnum projectType = 0;          ///< type of project for automatic recording
   cParEnum srcPosition = enSrcPosition::FIX;  ///< source of position (fixed, GPS)
+#define PAR_LOCSRC_MIN   0
+#define PAR_LOCSRC_MAX   1
   cParEnum menueType = enMenueType::EXPERT;   ///< menue type
   cParEnum triggerType = enTrigType::LEVEL;   ///< trigger type for recording
+#define PAR_TRIGTYPE_MIN  0
+#define PAR_TRIGTYPE_MAX  2
   cParNum minEventLen = 1.0;         ///< minimal event length for trigger
+#define PAR_TRIGEVENT_MIN  0.5f
+#define PAR_TRIGEVENT_MAX  50.0f
+
 };
 
 
