@@ -77,26 +77,26 @@ void MEMP cMenue::initPars()
   for(int t = 1300; t <= 1308; t++)
     devPars.sampleRate.addItem(t);
   devPars.sampleRate.set(SR_312K);  
-  devPars.recTime.init(3, 30, 1, 0);
+  devPars.recTime.init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devPars.filtFreq.init(5,70, 1, 0);
+  devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1, 0);
 
   devPars.filtType.addItem(1171);
   devPars.filtType.addItem(1172);
   devPars.filtType.addItem(1173);
 
-  devPars.recThreshhold.init(-24,0,1,0);
+  devPars.recThreshhold.init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
   devPars.recThreshhold.set(-12);
 
   devPars.recFmt.addItem(1146);   //enRecFmt::RAW
   devPars.recFmt.addItem(1147);   //enRecFmt::WAV
 
   devPars.deadTime.set(0);
-  devPars.deadTime.init(0,30,1,0);
+  devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(5,300,1,0);
 
@@ -108,7 +108,7 @@ void MEMP cMenue::initPars()
   devPars.dispOrient.addItem(1161);
   devPars.dispOrient.addItem(1162);
 
-  devPars.preTrigger.init(0.0, 150.0, 1.0, 0);
+  devPars.preTrigger.init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, 1.0, 0);
   devPars.startH.init(0, 23, 1, 0, 2);
   devPars.startMin.init(0, 59, 10, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
@@ -137,7 +137,7 @@ void MEMP cMenue::initPars()
   devPars.triggerType.addItem(1362);
   devPars.triggerType.addItem(1363);
 
-  devPars.minEventLen.init(0.0f, 20.0f, 0.5f, 1);
+  devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
 
   notes1.initNotes(PATH_NOTES1, 2000, 2005);
   notes1.initListPar(devStatus.notes1);

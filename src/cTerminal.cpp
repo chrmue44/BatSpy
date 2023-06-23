@@ -230,6 +230,13 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
   bool replyOk = true;
   int val = 0;
   switch(buf[0]) {
+    case 'a':
+      replyOk = parseAutoRecParams(&buf[1], true);
+      break;
+
+    case 'l':
+      replyOk = parseLocationParams(&buf[1], true);
+      break;
     case 'm':
       val = atoi(buf+1);
       if((val >= 0) && (val <= 80))
@@ -237,6 +244,11 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       else
         replyOk = false;
       break;
+      
+   case 'r':
+      replyOk = parseRecParams(&buf[1], true);
+      break;
+
     case 'v':
       val = atoi(buf+1);
       if((val > -30) && (val <= 18))
@@ -525,20 +537,61 @@ void MEMF cTerminal::showCommands()
   Serial.println("Available commands:");
   Serial.println("c<name>  change directory");
   Serial.println("Cf<name> set play name");  
-  Serial.println("Cm<mode> set display mode 0..3");       
+  Serial.println("Cm<mode> set display mode(0 = HEAR_DIRECT, 1 = HEAR_HET, 2 = PLAY_DIRECT,");
+  Serial.println("                          3 = PLAY_STRETCHED, 4 = PLAY_HET");
   Serial.println("Cr       record");
   Serial.println("Cp       play");
   Serial.println("Cs       stop");
   Serial.println("d        show directory");
   Serial.println("D0       Debug: force display activity off");
   Serial.println("D1       Debug: force display activity on");
-  Serial.println("g        GPS mode: Serial connected to GPS, terminate with 'q!'");
+  Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
+  Serial.println("L        load parameters from EEPROM");
   Serial.println("n<old> <new> rename file or directory");  
   Serial.println("o        key OK");
   Serial.println("p        print parameters");
+  Serial.println("Pao<val> set auto recording mode (0 = OFF, 1 = ON, 2 = TIME, 3 = TWILIGHT)");
+  Serial.println("pao<val> get auto recording mode");
+  Serial.println("Paf<val> set auto recording file format (0 = RAW, 1 = WAV)");
+  Serial.println("paf<val> get auto recording file");
+  Serial.println("Pap<val> set auto recording project format (0 = DATE_TIME, 1 = ELEKON");
+  Serial.println("pap<val> get auto recording project format");
+  Serial.println("Pah<val> set auto recording start hour (0 ... 23");
+  Serial.println("pah<val> get auto recording start hour");
+  Serial.println("Pam<val> set auto recording start minute (0 ... 59");
+  Serial.println("pam<val> get auto recording start minute");
+  Serial.println("PaH<val> set auto recording stop hour (0 ... 23");
+  Serial.println("paH<val> get auto recording stop hour");
+  Serial.println("PaM<val> set auto recording stop minute (0 ... 59");
+  Serial.println("paM<val> get auto recording stop minute");
+  Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
+  Serial.println("pls<val> get location source");
+  Serial.println("Pla<val> set location latitude (0 ... 90");
+  Serial.println("pla<val> get location latitude");
+  Serial.println("Plo<val> set location longitude (-180 ... 180");
+  Serial.println("plo<val> get location longitude");
+  Serial.println("Plh<val> set location heigth (0 ... 10000");
+  Serial.println("plh<val> get location heigth");
   Serial.println("Pm<val>  set mixer frequency [kHz] ( 1 .. 79)");
+  Serial.println("pm<val>  get mixer frequency [kHz]");
   Serial.println("Pv<val>  set volume [dB] (-30 .. 18 dB)");
+  Serial.println("pv<val>  get volume [dB]");
+  Serial.println("Prs<val> set sample rate (0 .. 8)");
+  Serial.println("prs<val> get sample rate");
+  Serial.println("Prt<val> set recording time [s] (1 .. 30)");
+  Serial.println("prt<val> get recording time [s]");
+  Serial.println("Prd<val> set dead time after recording [s] (1 .. 30)");
+  Serial.println("prd<val> get dead time after recording [s]");
+  Serial.println("Prh<val> set trig threshold [dB] (-24 ... -1)");
+  Serial.println("prh<val> get trig threshold [dB]");
+  Serial.println("Prr<val> set trig type (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
+  Serial.println("prr<val> get trig type");
+  Serial.println("Prf<val> set trig filter frequency [kHz] (5 .. 70)");
+  Serial.println("prf<val> get trig filter frequency [kHz]");
+  Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("pry<val> get trig filter type");
   Serial.println("s        print status");
+  Serial.println("S        save parameters to EEPROM");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 
