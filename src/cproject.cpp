@@ -35,11 +35,11 @@ void MEMF cPrjoject::openPrjFile(const char* pNotes)
 {
   char buf[FILENAME_LEN];
 
-  m_startY = year();
-  m_startM = month();
-  m_startD = day();
-  snprintf(m_prjName, sizeof(m_prjName),"%04i%02i%02i", m_startY, m_startM, m_startD);
-  snprintf(buf, sizeof (buf), "/prj/%04i%02i%02i", m_startY, m_startM, m_startD);
+  int startY = year();
+  int startM = month();
+  int startD = day();
+  snprintf(m_prjName, sizeof(m_prjName),"%04i%02i%02i", startY, startM, startD);
+  snprintf(buf, sizeof (buf), "/prj/%04i%02i%02i", startY, startM, startD);
   cSdCard::inst().mkDir("/prj");
   cSdCard::inst().mkDir(buf);
   cSdCard::inst().chdir(buf);
@@ -66,12 +66,11 @@ void MEMF cPrjoject::openPrjFile(const char* pNotes)
   m_xml.openTag("BatExplorerProjectFile", &attr);
 
   m_xml.simpleTag("Name", m_prjName);
-  snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", m_startY, m_startM, m_startD, hour(),  minute(), m_fSec);
+  snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", startY, startM, startD, hour(),  minute(), m_fSec);
   m_xml.simpleTag("Created", buf);
   m_xml.simpleTag("Notes",pNotes);
   m_xml.simpleTag("AutoProcess", "true");
   m_xml.openTag("Records");
-  m_counter = 1;
   m_isOpen = true;
 }
 
@@ -87,10 +86,9 @@ void MEMF cPrjoject::saveStartTime()
 
 const char* MEMF cPrjoject::createElekonFileName()
 {
-  snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%04i.wav", m_prjName, m_startY, m_startM, m_startD, m_counter);
-  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%04i", m_startY, m_startM, m_startD, m_counter);
   saveStartTime();
-  m_counter++;
+  snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%02i%02i%02i.wav", m_prjName, m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);
+  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%02i%02i%02i", m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);  
   return m_wavFile;
 }
 

@@ -23,6 +23,8 @@
 #define TAG_DATE_TIME    "DateTime"
 #define TAG_FILE_NAME    "FileName"
 #define TAG_POSITION     "Position"
+#define TAG_TRIG_TYPE    "TriggerType"
+#define TAG_TRIG_EV_LEN  "EventLength"
 #define TAG_TRIG_LEVEL   "Level"
 #define TAG_TRIG_FILT    "Filter"
 #define TAG_TRIG_FREQ    "Frequency"
