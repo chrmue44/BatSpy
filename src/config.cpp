@@ -48,8 +48,10 @@ void initPins()
   pinMode(pinAmp3, OUTPUT);
 
 
-
-  pinMode(PIN_TFT_LED, OUTPUT);
+  if(isRevisionB())
+    pinMode(PIN_TFT_LED_REVB, OUTPUT);
+  else
+    pinMode(PIN_TFT_LED_REVA, OUTPUT);
   pinMode(PIN_POWER_OFF, OUTPUT);
   digitalWrite(PIN_POWER_OFF, 1);
   wheels.init();
@@ -119,4 +121,17 @@ float readTemperature()
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
   else
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
+}
+
+void setDispLight(uint8_t bright)
+{
+  uint8_t pinLed;
+  if(isRevisionB())
+    pinLed = PIN_TFT_LED_REVB;
+  else
+    pinLed = PIN_TFT_LED_REVA;
+  if(bright > 128)
+    digitalWrite(pinLed, 1);
+  else
+    digitalWrite(pinLed, 0);  
 }

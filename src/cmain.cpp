@@ -32,17 +32,12 @@ const tChunkTab memChunks[] = {
 */
 //clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
 
-void setDispLight(uint8_t bright)
-{
-  if(bright > 128)
-    digitalWrite(PIN_TFT_LED, 1);
-  else
-    digitalWrite(PIN_TFT_LED, 0);  
-}
-
 // *********************** initialization **************************
 void initTft()
 {
+   if(isRevisionB())
+    tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, PIN_TFT_RST,
+                     PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
   tft.begin();
   tft.setRotation(3);
   tft.fillScreen(ILI9341_BLACK);
