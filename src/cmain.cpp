@@ -120,7 +120,7 @@ void loop()
   {
     // get new commands
     if (!cSdCard::inst().isFileTransferActive())
-      terminal.parseCmd();
+      terminal.parseCmdfromUSB();
     enKey key = terminal.getKey();
     if (key == NOKEY)
       key = wheels.getKey();

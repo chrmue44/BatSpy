@@ -18,31 +18,31 @@ cTerminal::cTerminal()
 {
 }
 
-void MEMF cTerminal::parseCmd() 
+void MEMF cTerminal::parseCmdfromUSB() 
 {
   int numBytes = Serial.available();
   if(numBytes <= 0)
     return;
-  while(numBytes > 0) 
+   while(numBytes > 0) 
   {
-    m_recbuf[m_recIdx] = Serial.read();
+    m_recbufUSB[m_recIdxUSB] = Serial.read();
     numBytes--;
-    if(m_recbuf[m_recIdx] == '\n')
-      execCmd();
+    if(m_recbufUSB[m_recIdxUSB] == '\n')
+      execCmd(m_recbufUSB, m_recIdxUSB);
     else
-      m_recIdx++;
+      m_recIdxUSB++;
   }
 }
 
-void MEMF cTerminal::execCmd() 
+void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 {
   enSdRes rc;
-  m_recbuf[m_recIdx] = 0;
+  buf[bufIdx] = 0;
   tDirInfo dirInfo;
   size_t dirIdx;
   char ret;
 
-  switch(m_recbuf[0]) 
+  switch(buf[0]) 
   {
     case 'h':
       Serial.println("");
@@ -50,7 +50,7 @@ void MEMF cTerminal::execCmd()
       break;
 
     case 'c': 
-      rc = cSdCard::inst().chdir(&m_recbuf[1]);
+      rc = cSdCard::inst().chdir(&buf[1]);
       if(rc != 0)
         Serial.printf("1\nerror changing directory: %i\n", rc);
       Serial.printf("0\n%s\n", cSdCard::inst().getActDir());
@@ -58,7 +58,7 @@ void MEMF cTerminal::execCmd()
       break;
 
     case 'C':
-      parseControlCmd(&m_recbuf[1]);
+      parseControlCmd(&buf[1]);
       break;
       
     case 'd':
@@ -66,9 +66,9 @@ void MEMF cTerminal::execCmd()
         Serial.println("");
         dirIdx = 0;
         char* p = NULL;
-        if((m_recbuf[1] == '*') && (m_recbuf[2] == '.')) {
-          p = &m_recbuf[3];
-          m_recbuf[6] = 0;
+        if((buf[1] == '*') && (buf[2] == '.')) {
+          p = &buf[3];
+          buf[6] = 0;
         }
         do {
           rc = cSdCard::inst().dir(dirInfo, true, p, dirIdx);
@@ -80,11 +80,11 @@ void MEMF cTerminal::execCmd()
       break;
       
     case 'D':
-      if(m_recbuf[1] == '0') {
+      if(buf[1] == '0') {
         devStatus.forceDisplay = 0;
         Serial.write('0');
       }
-      else if(m_recbuf[1] == '1') {
+      else if(buf[1] == '1') {
         devStatus.forceDisplay = 1;
         Serial.write('0');
       }
@@ -94,7 +94,7 @@ void MEMF cTerminal::execCmd()
 
           
     case 'm':
-      ret = cSdCard::inst().mkDir(&m_recbuf[1]);
+      ret = cSdCard::inst().mkDir(&buf[1]);
       if(ret == 0)
         Serial.write('0');
       else
@@ -111,10 +111,10 @@ void MEMF cTerminal::execCmd()
       {
         char oldName[FILENAME_LEN];
         char newName[FILENAME_LEN];
-        char* p = strchr(&m_recbuf[1], ' ');
+        char* p = strchr(&buf[1], ' ');
         *p = 0;
         if(p != NULL) {
-          strcpy(oldName, &m_recbuf[1]);    
+          strcpy(oldName, &buf[1]);    
           strcpy(newName, p + 1);
 //          ret = cSdCard::inst().rename(oldName, newName);
           ret = 0;  //TODO
@@ -138,11 +138,11 @@ void MEMF cTerminal::execCmd()
       break;
 
     case 'P':
-      parseSetCmd(&m_recbuf[1]);
+      parseSetCmd(&buf[1]);
       break;
     
     case 'r':
-      cSdCard::inst().sendFileToTerminal(&m_recbuf[1], devPars.sendDelay.get());
+      cSdCard::inst().sendFileToTerminal(&buf[1], devPars.sendDelay.get());
       break;
     
 
@@ -161,7 +161,7 @@ void MEMF cTerminal::execCmd()
       break;
       
     case 'w':
-      cSdCard::inst().readFileFromTerminal(&m_recbuf[1]);      
+      cSdCard::inst().readFileFromTerminal(&buf[1]);      
       break;
     case 'v':
       Serial.write(devStatus.version.get());      
@@ -170,7 +170,7 @@ void MEMF cTerminal::execCmd()
 
     case 'x':
     case 'X':
-      ret = (char)cSdCard::inst().del(&m_recbuf[1]);
+      ret = (char)cSdCard::inst().del(&buf[1]);
       ret += '0';
       if (ret > '9')
         ret += 7;
@@ -179,10 +179,10 @@ void MEMF cTerminal::execCmd()
       break;  
       
     default:
-      Serial.printf("unknown command: %c\n",m_recbuf[0]);
+      Serial.printf("unknown command: %c\n",buf[0]);
       break;
   }
-  m_recIdx = 0;
+  bufIdx = 0;
 }
 
 void MEMF cTerminal::parseControlCmd(const char* buf) 
