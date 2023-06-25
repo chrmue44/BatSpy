@@ -51,8 +51,8 @@ private:
 
   cXmlHelper m_xml;
   char m_prjName[16];
-  char m_wavFile[40];
-  char m_name[20];
+  char m_wavFile[80];
+  char m_name[30];
 };
 
 #endif // CEXPORTER_H
