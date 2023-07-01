@@ -28,6 +28,8 @@ void setHeaderPanelText(cMenuesystem* pThis, thText t)
 }
 void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
 {
+   char buf[80];
+
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_WHITE);
   tft.drawRect(2, 2, DISP_WIDTH - 2, DISP_HEIGHT - 2, ILI9341_YELLOW);
@@ -42,10 +44,11 @@ void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
   tft.print(Txt::get(1702));
   tft.print(devStatus.version.get());
   tft.setCursor(30, 210);
-  tft.print("(C) 2021 Christian M" CH_UEs "ller");
+  tft.print("(C) 2021..23 Christian M" CH_UEs "ller");
   tft.setTextColor(ILI9341_LIGHTGREY);
   tft.setCursor(140, 225);
-  tft.print(Txt::get(1704));
+  cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
+  tft.print(buf);
 
   bool exit = false;
   if(waitBtn)

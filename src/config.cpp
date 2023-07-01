@@ -51,7 +51,7 @@ void initPins()
   if(isRevisionB())
     pinMode(PIN_TFT_LED_REVB, OUTPUT);
   else
-    pinMode(PIN_TFT_LED_REVB, OUTPUT);
+    pinMode(PIN_TFT_LED_REVA, OUTPUT);
   pinMode(PIN_POWER_OFF, OUTPUT);
   digitalWrite(PIN_POWER_OFF, 1);
   wheels.init();

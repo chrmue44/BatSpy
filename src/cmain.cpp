@@ -31,16 +31,14 @@ const tChunkTab memChunks[] = {
 };
 */
 //clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
-
-
 // *********************** initialization **************************
-void initTft()
+void initTft(int orientation)
 {
-  if(isRevisionB())
+   if(isRevisionB())
     tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, PIN_TFT_RST,
                      PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
   tft.begin();
-  tft.setRotation(3);
+  tft.setRotation(orientation);
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_YELLOW);
   tft.setTextSize(3);
@@ -67,12 +65,14 @@ void setup()
   Serial.println("setting up bat detector");
 //  waitForSerial();
   Txt::setResource(Texts);
-  initTft();
+  int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
+  initTft(orientation);
   showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  
   menue.init();
+  menue.initFileRelatedParams();
   tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
@@ -120,6 +120,7 @@ void loop()
       terminal.parseCmdfromUSB();
       terminal.parseCmdfromESP();
     }
+
     enKey key = terminal.getKey();
     if (key == NOKEY)
       key = wheels.getKey();

@@ -199,6 +199,8 @@ class cMenue : public cMenuesystem
   void printStatus();
   static int16_t readInt16FromEep(int32_t addr);
   virtual void setFactoryDefaults(enMode mode);
+  void initFileRelatedParams();
+
 
 protected:
   virtual void initPars();

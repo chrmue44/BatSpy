@@ -25,7 +25,7 @@ class cTerminal {
   enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
   
  private:
-  void execCmd(char* buf, int& bufIdx);
+  void execCmd(char* buf, size_t& bufIdx);
   bool parseRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool parseLocationParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool parseAutoRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
@@ -37,10 +37,11 @@ class cTerminal {
 
   char m_recbufUSB[256];
   char m_recbufESP[256];
-  int m_recIdxUSB = 0;
-  int m_recIdxESP = 0;
+  size_t m_recIdxUSB = 0;
+  size_t m_recIdxESP = 0;
   int m_sendIdx = 0;
   enKey m_key = NOKEY;
 };
+
 
 #endif //#ifndef CTERMINAL_H

@@ -51,7 +51,6 @@ void MEMP cMenue::initPars()
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
-  initBats();
 
   if(hasAmpRevB())
   {
@@ -139,12 +138,8 @@ void MEMP cMenue::initPars()
 
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
 
-  notes1.initNotes(PATH_NOTES1, 2000, 2005);
-  notes1.initListPar(devStatus.notes1);
-  notes2.initNotes(PATH_NOTES2, 2010, 2013);
-  notes2.initListPar(devStatus.notes2);
+  devStatus.opMode.clear();
 
-    devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
   devStatus.opMode.addItem(21);
   devStatus.opMode.addItem(22);
@@ -225,6 +220,15 @@ void MEMP cMenue::initPars()
     calcSunrise();
   devStatus.time.set(rtc.getTime());
   devStatus.date.set(rtc.getTime());
+}
+
+void cMenue::initFileRelatedParams()
+{
+  initBats();
+  notes1.initNotes(PATH_NOTES1, 2000, 2005);
+  notes1.initListPar(devStatus.notes1);
+  notes2.initNotes(PATH_NOTES2, 2010, 2013);
+  notes2.initListPar(devStatus.notes2);
 }
 
 void cMenue::setFactoryDefaults(enMode mode)

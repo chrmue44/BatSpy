@@ -64,7 +64,7 @@ void MEMF cTerminal::parseCmdfromESP()
   }
 }
 
-void MEMF cTerminal::execCmd(char* buf, int& bufIdx )
+void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 {
   enSdRes rc;
   buf[bufIdx] = 0;
@@ -362,13 +362,13 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
       if (write)
         replyOk = setValEnum(buf + 1, 0, 1, devPars.recFmt);
       else
-        snprintf(reply, replySize, "%i", devPars.recFmt.get());
+        snprintf(reply, replySize, "%i", (int)devPars.recFmt.get());
       break;
     case 'o':
       if (write)
         replyOk = setValEnum(buf + 1, PAR_AUTOMODE_MIN, PAR_AUTOMODE_MAX, devPars.recAuto);
       else
-        snprintf(reply, replySize, "%u", devPars.recAuto.get());
+        snprintf(reply, replySize, "%u", (int)devPars.recAuto.get());
       break;
     case 'h':
       if (write)
@@ -398,7 +398,7 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
       if (write)
         replyOk = setValEnum(buf + 1, 0, 1, devPars.projectType);
       else
-        snprintf(reply, replySize, "%i", devPars.projectType.get());
+        snprintf(reply, replySize, "%i", (int)devPars.projectType.get());
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))
@@ -422,7 +422,7 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
       if(write)
         replyOk = setValEnum(buf + 1, PAR_LOCSRC_MIN, PAR_LOCSRC_MAX, devPars.srcPosition);
       else
-        snprintf(reply, replySize, "%i", devPars.srcPosition.get());
+        snprintf(reply, replySize, "%i", (int)devPars.srcPosition.get());
       break;
     case 'a':
       if (write)
