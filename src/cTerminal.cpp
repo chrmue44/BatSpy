@@ -25,7 +25,14 @@ void MEMF cTerminal::parseCmdfromUSB()
     return;
   while(numBytes > 0) 
   {
-    m_recbufUSB[m_recIdxUSB] = Serial.read();
+    if(m_recIdxUSB < sizeof(m_recbufUSB)/sizeof(m_recbufUSB[0]))
+      m_recbufUSB[m_recIdxUSB] = Serial.read();
+    else
+    {
+      m_recIdxUSB = sizeof(m_recbufUSB) / sizeof(m_recbufUSB[0] - 1);
+      m_recbufUSB[m_recIdxUSB] = '\n';
+    }
+
     numBytes--;
     if(m_recbufUSB[m_recIdxUSB] == '\n')
       execCmd(m_recbufUSB, m_recIdxUSB);
@@ -41,7 +48,14 @@ void MEMF cTerminal::parseCmdfromESP()
     return;
   while (numBytes > 0)
   {
-    m_recbufESP[m_recIdxESP] = SERIAL_ESP.read();
+    if(m_recIdxESP < sizeof(m_recbufESP)/sizeof(m_recbufESP[0]))
+      m_recbufESP[m_recIdxESP] = SERIAL_ESP.read();
+    else
+    {
+      m_recIdxESP = sizeof(m_recbufESP) / sizeof(m_recbufESP[0] - 1);
+      m_recbufESP[m_recIdxESP] = '\n';
+    }
+
     numBytes--;
     if (m_recbufESP[m_recIdxESP] == '\n')
       execCmd(m_recbufESP, m_recIdxESP);

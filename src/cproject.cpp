@@ -71,7 +71,6 @@ void MEMF cPrjoject::openPrjFile(const char* pNotes)
   m_xml.simpleTag("Notes",pNotes);
   m_xml.simpleTag("AutoProcess", "true");
   m_xml.openTag("Records");
-  m_counter = 1;
   m_isOpen = true;
 }
 
@@ -87,10 +86,9 @@ void MEMF cPrjoject::saveStartTime()
 
 const char* MEMF cPrjoject::createElekonFileName()
 {
-  snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%04i.wav", m_prjName, m_startY, m_startM, m_startD, m_counter);
-  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%04i", m_startY, m_startM, m_startD, m_counter);
   saveStartTime();
-  m_counter++;
+  snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%02i%02i%02i.wav", m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);
+  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%02i%02i%02i", m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);  
   return m_wavFile;
 }
 
