@@ -10,6 +10,7 @@
 //#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "pnllive.h"
+#include "cutils.h"
 
 #ifdef ARDUINO_TEENSY41
 #include <utility/imxrt_hw.h>
@@ -429,9 +430,11 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
           if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
           {
             char buf[2*PAR_STR_LEN+3];
-            strncpy(buf, devStatus.notes1.getActText(), sizeof(buf));
-            strncat(buf, ", ", 2);
-            strncat(buf, devStatus.notes2.getActText(), PAR_STR_LEN);
+            cUtils::replaceInternalCodingWithUTF8(devStatus.notes1.getActText(), buf, sizeof(buf));
+            strncat(buf, "\n", 2);
+            size_t len = strlen(buf);
+            if(len < sizeof(buf))
+              cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
             m_prj.openPrjFile(buf);
           }
           devStatus.recCount.set(devStatus.recCount.get() + 1);

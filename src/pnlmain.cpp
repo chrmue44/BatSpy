@@ -305,14 +305,15 @@ void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
       (devStatus.opMode.get() == enOpMode::HEAR_DIRECT))
   {
-    if(devPars.projectType.get() == enProjType::DATE_TIME)
+    if((devPars.projectType.get() == enProjType::DATE_TIME) ||
+       (devPars.recAuto.get() == enRecAuto::ON))
     {
       if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
         devStatus.playStatus.set(enPlayStatus::ST_REC);
       else
         devStatus.playStatus.set(enPlayStatus::ST_STOP);
     }
-    else
+    else 
       pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1015), Txt::get(1016));
   }
   else
@@ -467,8 +468,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   // Serial.println("initDialogs2");
  
   retVal = pan->addTextItem(1, 0, 227, 80, lf, true, f1Func);
-  if(devPars.menueType.get() != enMenueType::RECORDER)
-    retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
+  retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
   if(devPars.srcPosition.get() == enSrcPosition::GPS)
     retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);

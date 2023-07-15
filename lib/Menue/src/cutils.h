@@ -11,14 +11,14 @@
 #include <cstring>
 
 #ifdef SIMU_DISPLAY
-#define A_UML_CAP    "Ä"
-#define A_UML_SMALL  "ä"
-#define O_UML_CAP    "Ö"
-#define O_UML_SMALL  "ö"
-#define U_UML_CAP    "Ü"
-#define U_UML_SMALL  "ü"
-#define S_UML        "ß"
-#define DEG_SIGN     "°"
+#define A_UML_CAP    "ï¿½"
+#define A_UML_SMALL  "ï¿½"
+#define O_UML_CAP    "ï¿½"
+#define O_UML_SMALL  "ï¿½"
+#define U_UML_CAP    "ï¿½"
+#define U_UML_SMALL  "ï¿½"
+#define S_UML        "ï¿½"
+#define DEG_SIGN     "ï¿½"
 #else
 #define A_UML_CAP    "\xc3\x84"
 #define A_UML_SMALL  "\xc3\xa4"
@@ -40,6 +40,7 @@ class cUtils
   static void replaceCharsInPlace(char* str, size_t strSize, char toSearch, char replaceCh);
   static int replaceAll(const char* str, const char* toSearch, const char* replaceStr, char* result, size_t resultSize);
   static int replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize);
+  static int replaceInternalCodingWithUTF8(const char* str, char* result, size_t resultSize);
   static bool isWhiteSpace(char c);
   static bool match(const char *pattern, const char * str);
 

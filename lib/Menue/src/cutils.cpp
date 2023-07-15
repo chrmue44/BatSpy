@@ -146,6 +146,40 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
   return retVal;
 }
 
+int cUtils::replaceInternalCodingWithUTF8(const char* str, char* result, size_t resultSize) {
+  if(str == nullptr)
+     return 0;
+
+  bool found = false;
+  int retVal = replaceAll(str, CH_SS, S_UML,  result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_AE, A_UML_CAP,  result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_OE, O_UML_CAP, result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_UE, U_UML_CAP,  result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_AEs, A_UML_SMALL, result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_OEs, O_UML_SMALL,  result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_UEs, U_UML_SMALL, result, resultSize);
+  if(retVal == 0)
+    found = true; 
+  retVal = replaceAll(str, CH_DEG, DEG_SIGN, result, resultSize);
+  if(retVal == 0)
+    found = true;
+  if(!found)
+    strncpy(result, str, resultSize);
+  return retVal;
+}
+
 //https://www.geeksforgeeks.org/wildcard-character-matching/
 bool cUtils::isWhiteSpace(char c) 
 {
