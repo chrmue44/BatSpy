@@ -49,6 +49,7 @@ class cTrigger
   void checkTrigger();
   void releaseLiveTrigger();
   void releaseRecTrigger();
+ // void setRecTrigger() { m_recTrigger = true; m_stateRec = enTrigState::TRIGGERED; }
   //AudioAnalyzePeak& getPeakDetector() { return m_peak; } 
   bool getRecTrigger() { return m_recTrigger; }
   bool getLiveTrigger() { return m_liveTrigger; }

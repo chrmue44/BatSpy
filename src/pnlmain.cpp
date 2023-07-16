@@ -491,7 +491,13 @@ void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   setVisibilityRecCount(pThis);
   calcSunrise();
+  if (devPars.recAuto.get() == enRecAuto::ON)
+    audio.openProject();
+  if (devPars.recAuto.get() == enRecAuto::OFF)
+    audio.closeProject();
 }
+
+
 
 
 void MEMP setFileToDisplay(const char* buf)
@@ -579,6 +585,9 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   pan->itemList[visRecCntIndex].isVisible = false;
   err |= pan->addTextItem(25,                    3, 30 + r   * lf, 80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,      x, 30 + r++ * lf, 100, lf, true, dispModeFunc);
+  err |= pan->addTextItem(1365,                  3, 30 + r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devStatus.playStatus, x, 30 + r++ * lf, 120, lf, false);
+  r++;
   err |= pan->addTextItem(32,                    3, 30 + r   * lf, 120, lf);
   err |= pan->addListItem(&devStatus.notes1,     x, 30 + r++ * lf, 169, lf, true);
   err |= pan->addTextItem(33,                    3, 30 + r   * lf, 120, lf);
@@ -588,8 +597,9 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
     err |= pan->addTextItem(1320,                  3, 30 + r   * lf, 80, lf);
     err |= pan->addEnumItem(&devPars.preAmpType,   x, 30 + r++ * lf, 120, lf, true);
   }
-  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
+//  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
+//  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
+
   if (devPars.srcPosition.get() == enSrcPosition::GPS)
   {
     err |= pan->addTextItem(200, 3, 30 + r * lf, 80, lf);

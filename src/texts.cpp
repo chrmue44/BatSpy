@@ -222,6 +222,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1361, "Pegelüberschreitung",       "Exceed Level" },
   { 1362, "Frequenz",                  "Frequency" },
   { 1363, "Frequenz + Pegel",          "Frequency + Level" },
+  { 1365, "Status", 0},
   { 1370, "min. Dauer [ms]",           "min. period [ms]" },
   { 1400, "Aus",                       "Off"},
   { 1401, "Ein",                       "On"},

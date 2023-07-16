@@ -427,16 +427,8 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 
         if (m_trigger.getRecTrigger() && startRecording)
         {
-          if(startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
-          {
-            char buf[2*PAR_STR_LEN+3];
-            cUtils::replaceInternalCodingWithUTF8(devStatus.notes1.getActText(), buf, sizeof(buf));
-            strncat(buf, "\n", 2);
-            size_t len = strlen(buf);
-            if(len < sizeof(buf))
-              cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
-            m_prj.openPrjFile(buf);
-          }
+          if (startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
+            openProject();
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           startRec();
           devStatus.playStatus.set(enPlayStatus::ST_REC);
@@ -448,6 +440,17 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       m_prj.closePrjFile();
 
   }
+}
+
+void cAudio::openProject()
+{
+  char buf[2 * PAR_STR_LEN + 3];
+  cUtils::replaceInternalCodingWithUTF8(devStatus.notes1.getActText(), buf, sizeof(buf));
+  strncat(buf, "\n", 2);
+  size_t len = strlen(buf);
+  if (len < sizeof(buf))
+    cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
+  m_prj.openPrjFile(buf);
 }
 
 void cAudio::operate(bool liveFft)

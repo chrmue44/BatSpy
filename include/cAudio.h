@@ -114,6 +114,7 @@ private:
   float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
   void closeProject() { if (m_prj.getIsOpen()) m_prj.closePrjFile(); }
+  void openProject();
 
  private:
   void setMixOscFrequency(float freq);
