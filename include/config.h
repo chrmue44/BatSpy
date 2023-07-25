@@ -26,7 +26,7 @@
          TFT_MOSI --| D11             A0 D14 |-- TFT_CS
          TFT_MISO --| D12                D13 |-- TFT_SCLK
                   --| 3V3                GND |--
-          TFT_RST --| D24 A10        A17 D41 |--
+          TFT_RST --| D24 A10        A17 D41 |-- U_REF_ADC
                   --| D25 A11        A16 D40 |-- SUPPLY_VOLT
                   --| D26 A12        A15 D39 |--
                   --| D27 A13        A14 D38 |-- POWER_OFF
@@ -48,7 +48,8 @@
 // voltage loss D1
 #define U_DIODE           0.29f
 #define SUPPLY_12V_MIN   11.5f     //min. required supply voltage lead 
-#define SUPPLY_4V_MIN     3.2f     //min. required supply voltage LiIon 
+#define SUPPLY_4V_MIN     3.73f    //min. required supply voltage LiIon 
+#define U_REF_ADC         1.8f     //reference voltage ADC
 
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
 #define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
@@ -86,6 +87,7 @@
 #define PIN_ROT_RIGHT_S  57
 
 #define PIN_SUPPLY_VOLT  A16
+#define PIN_U_REF_ADC    A17
 #define PIN_SIG_LAMP     23      // external output
 
 // audio out

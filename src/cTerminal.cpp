@@ -350,7 +350,6 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
 bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply, size_t replySize)
 {
   bool replyOk = false;
-  float valf = 0.0;
   if (replySize >= 2)
   {
     reply[0] = '?';

@@ -251,6 +251,7 @@ struct stTxtList PROGMEM Texts[] =
   { 2011, "bewölkt trocken",           "cloudy no rain" },
   { 2012, "bewölkt Schauer",           "cloudy with rainshowers" },
   { 2013, "Regen",                     "rain" },
+  { 2100, "Schalte aus...",            "Shutting down..."},
 
   { 12000, TGE_ASC_0           ,0},
   { 12001, TGE_ASC_1           ,0},

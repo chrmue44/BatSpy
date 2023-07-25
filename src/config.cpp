@@ -16,6 +16,7 @@
 #include "globals.h"
 
 cMeanCalc<int16_t,10> digits;
+cMeanCalc<int16_t,10> uref;
 uint8_t pinAmp0;
 uint8_t pinAmp1;
 uint8_t pinAmp2;
@@ -77,11 +78,16 @@ void checkSupplyVoltage()
     ok = volt >= SUPPLY_4V_MIN;
   if(!ok)
   {
-    digitalWrite(PIN_POWER_OFF, 0);
     sysLog.logf("power down voltage too low : %f \n ", volt);
-    delay(1000);
+    sysLog.close();
+    setDispLight(1);
+    menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
+    delay(500);
     audio.closeProject();
+    delay(500);
     cSdCard::inst().unmount();
+    delay(500);
+    digitalWrite(PIN_POWER_OFF, 0);
   }    
 }
 
@@ -94,8 +100,10 @@ float readSupplyVoltage()
   if(is12V())
     volt = (float)digs * devPars.voltFactor.get();
   else
-    volt = (float)digs * devPars.voltFactor.get() + U_DIODE;
-
+  {
+    int digUref = uref.get(analogRead(PIN_U_REF_ADC));
+    volt = (float)digs / (float) digUref * U_REF_ADC  * 2 + U_DIODE;
+  }
   DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digs, volt,devPars.voltFactor.get());
   return volt;
 }
