@@ -109,9 +109,9 @@ void MEMP cMenue::initPars()
 
   devPars.preTrigger.init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, 1.0, 0);
   devPars.startH.init(0, 23, 1, 0, 2);
-  devPars.startMin.init(0, 59, 10, 0, 2);
+  devPars.startMin.init(0, 59, 1, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
-  devPars.stopMin.init(0, 59, 10, 0, 2);
+  devPars.stopMin.init(0, 59, 1, 0, 2);
   devPars.voltFactor.init(0, 1, 0.0000001f, 5);
 
   devPars.recAuto.addItem(1400),
@@ -202,7 +202,8 @@ void MEMP cMenue::initPars()
   
   devStatus.peakVal.init(0, 100, 0.1f, 2);
   devStatus.freeSpace.init(0, 256000, 1, 0);
-  devStatus.voltage.init(0, 20, 0.05f, 2);
+  devStatus.voltage.init(0, 20, 0.01f, 2);
+  devStatus.setVoltage.init(0,10, 0.05f, 2);
   devStatus.digits.init(0, 10000, 1, 0);
   devStatus.temperature.init(-50, 100, 0.1f, 1);
 

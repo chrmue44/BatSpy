@@ -29,7 +29,7 @@ void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  float fact = calcVoltageFactor(devStatus.voltage.get());
+  float fact = calcVoltageFactor(devStatus.setVoltage.get());
   devPars.voltFactor.set(fact);
 }
 
@@ -135,7 +135,7 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1160,                  15, 20 +  6 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  6 * lf,  80, lf, true);
   err |= pan->addTextItem(1165,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,    170, 20 +  7 * lf,  80, lf, true, voltageFunc);
+  err |= pan->addNumItem(&devStatus.setVoltage, 170, 20 +  7 * lf,  80, lf, true, voltageFunc);
   err |= pan->addTextItem(1167,                  15, 20 +  8 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.sendDelay,    170, 20 +  8 * lf,  80, lf, true);
 
