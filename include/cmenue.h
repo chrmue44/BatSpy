@@ -184,6 +184,9 @@ struct stParams
   cParNum minEventLen = 1.0;         ///< minimal event length for trigger
 #define PAR_TRIGEVENT_MIN  0.5f
 #define PAR_TRIGEVENT_MAX  50.0f
+  cParNum ShutoffVoltage = 5.4f;
+#define PAR_SHUTOFF_MIN  3.6f
+#define PAR_SHUTOFF_MAX  8.0f
 
 };
 

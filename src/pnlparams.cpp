@@ -29,15 +29,17 @@ void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  float fact = calcVoltageFactor(devStatus.setVoltage.get());
+  float voltage = devStatus.setVoltage.get();
+  float fact = calcVoltageFactor(voltage);
   devPars.voltFactor.set(fact);
+  sysLog.logf("voltage factor: %2.4f; voltage: %2.3f", devPars.voltFactor.get(), voltage); 
 }
 
 void MEMP calcSunrise()
 {
   int srH, srM, ssH, ssM;
   cSunRise::getSunSetSunRise(devStatus.geoPos.getLat(), devStatus.geoPos.getLon(),
-                                 year(), month(), day(), srH, srM, ssH, ssM);
+                             year(), month(), day(), srH, srM, ssH, ssM);
   devPars.startH.set(ssH);
   devPars.startMin.set(ssM);
   devPars.stopH.set(srH);
@@ -120,24 +122,26 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
 int MEMP initParPan(cPanel* pan, tCoord lf)
 {
   int  err = 0;
-  err |= pan->addTextItem(1100,                  15, 20,            80, lf);
-  err |= pan->addEnumItem(&devPars.lang,        170, 20,           100, lf, true, languageFunc);
-  err |= pan->addTextItem(1710,                  15, 20 +  1 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.menueType,   170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
-  err |= pan->addTextItem(1148,                  15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.backLightTime,170, 20 +  2 * lf,  25, lf, true);
-  err |= pan->addTextItem(1320,                  15, 20 +  3 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,  170, 20 +  3 * lf,  80, lf, true);
-  err |= pan->addTextItem(1325,                  15, 20 +  4 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,  170, 20 +  4 * lf,  80, lf, true);
-  err |= pan->addTextItem(1150,                  15, 20 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.knobRotation,170, 20 +  5 * lf, 100, lf, true);
-  err |= pan->addTextItem(1160,                  15, 20 +  6 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.dispOrient,  170, 20 +  6 * lf,  80, lf, true);
-  err |= pan->addTextItem(1165,                  15, 20 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.setVoltage, 170, 20 +  7 * lf,  80, lf, true, voltageFunc);
-  err |= pan->addTextItem(1167,                  15, 20 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.sendDelay,    170, 20 +  8 * lf,  80, lf, true);
+  err |= pan->addTextItem(1100,                    15, 20,            80, lf);
+  err |= pan->addEnumItem(&devPars.lang,          170, 20,           100, lf, true, languageFunc);
+  err |= pan->addTextItem(1710,                    15, 20 +  1 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.menueType,     170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
+  err |= pan->addTextItem(1148,                    15, 20 +  2 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.backLightTime,  170, 20 +  2 * lf,  25, lf, true);
+  err |= pan->addTextItem(1320,                    15, 20 +  3 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpType,    170, 20 +  3 * lf,  80, lf, true);
+  err |= pan->addTextItem(1325,                    15, 20 +  4 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,    170, 20 +  4 * lf,  80, lf, true);
+  err |= pan->addTextItem(1150,                    15, 20 +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.knobRotation,  170, 20 +  5 * lf, 100, lf, true);
+  err |= pan->addTextItem(1160,                    15, 20 +  6 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.dispOrient,    170, 20 +  6 * lf,  80, lf, true);
+  err |= pan->addTextItem(1165,                    15, 20 +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.setVoltage,   170, 20 +  7 * lf,  80, lf, true, voltageFunc);
+  err |= pan->addTextItem(1166,                    15, 20 +  8 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.ShutoffVoltage, 170, 20 +  8 * lf,  80, lf, true);
+  err |= pan->addTextItem(1167,                    15, 20 +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.sendDelay,      170, 20 +  9 * lf,  80, lf, true);
 
   return err;
 }

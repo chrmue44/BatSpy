@@ -148,6 +148,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1161, "Linkshänder"               ,"left handed" },
   { 1162, "Rechtshänder"              ,"right handed" },
   { 1165, "Kal. Spannung [V]"         ,"Cal. Voltage [V]" },
+  { 1166, "Abschaltspannung [V]"      ,"Shutoff Voltage [V]"},
   { 1167, "Verzögerung Tx USB [ms]"   ," Delay Tx USB [ms]" },
   { 1170, "Trig. Filter [kHz]"        ,0 },
   { 1171, "Hochpass"                  ,"High pass" },

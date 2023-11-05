@@ -80,7 +80,7 @@ void MEMF cLog::logf(const char* fmt, ...)
   va_start(args, fmt);
   vsnprintf(buf, sizeof(buf), fmt, args);
   va_end(args);
-  log(buf);
+  log(buf, true);
 }
 
 void MEMF cLog::close()

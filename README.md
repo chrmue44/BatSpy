@@ -20,3 +20,9 @@ Triggered by adjustable trigger functions, bat calls are recorded fully automati
 - support for Elekon project file format for easy post processing
 - stationary version rechargeable via solar panel
 - favorable price
+
+# TODO
+- version for Teensy 4.0
+- version without display and rotary encoder
+- reduce clock frequency to reduce power consumption
+- use sleep library to reduce power consumption

@@ -137,6 +137,7 @@ void MEMP cMenue::initPars()
   devPars.triggerType.addItem(1363);
 
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
+  devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
   devStatus.opMode.clear();
 
@@ -265,7 +266,8 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.srcPosition.set(enSrcPosition::FIX);  ///< source of position (fixed, GPS)
   devPars.menueType.set(enMenueType::RECORDER);   ///< menue type
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
-  devPars.minEventLen.set(1.0);         ///< minimal event length for trigger
+  devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger
+  devPars.ShutoffVoltage.set(5.4f);
 }
 
 void MEMP cMenue::initDialogs() 
@@ -578,8 +580,7 @@ void MEMP cMenue::save()
   writeFloatToEep(0x0066, devStatus.height.get());
   writeInt16ToEep(0x006A, (int16_t)devPars.triggerType.get());
   writeFloatToEep(0x006C, devPars.minEventLen.get());
-  writeInt16ToEep(0x0070, 0);
-  writeInt16ToEep(0x0072, 0);
+  writeFloatToEep(0x0070, devPars.ShutoffVoltage.get());
   writeInt16ToEep(0x0074, 0);
   writeInt16ToEep(0x0076, 0);
   writeInt16ToEep(0x0078, 0);
@@ -643,6 +644,10 @@ void MEMP cMenue::load()
     devStatus.height.set(readFloatFromEep(0x0066));
     devPars.triggerType.set(readInt16FromEep(0x006A));
     devPars.minEventLen.set(readFloatFromEep(0x006C));
+    devPars.ShutoffVoltage.set(readFloatFromEep(0x0070));
+    int digits = analogRead(PIN_SUPPLY_VOLT);
+    devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));
+
   }
 }
 

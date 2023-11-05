@@ -72,10 +72,7 @@ void checkSupplyVoltage()
 {
   float volt =readSupplyVoltage();
   bool ok = false;
-  if(is12V())
-    ok = volt >= SUPPLY_12V_MIN;
-  else 
-    ok = volt >= SUPPLY_4V_MIN;
+  ok = volt >= devPars.ShutoffVoltage.get();
   if(!ok)
   {
     sysLog.logf("power down voltage too low : %f \n ", volt);
@@ -97,13 +94,13 @@ float readSupplyVoltage()
   int digs = digits.get(analogRead(PIN_SUPPLY_VOLT));
   devStatus.digits.set((float)digs);
 
-  if(is12V())
+  //if(is12V())
     volt = (float)digs * devPars.voltFactor.get();
-  else
+  /* else
   {
     int digUref = uref.get(analogRead(PIN_U_REF_ADC));
     volt = (float)digs / (float) digUref * U_REF_ADC  * 2 + U_DIODE;
-  }
+  }*/
   DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digs, volt,devPars.voltFactor.get());
   return volt;
 }
@@ -114,10 +111,7 @@ float calcVoltageFactor(float volt)
   int digits = analogRead(PIN_SUPPLY_VOLT);
   if(digits > 0)
   {
-    if(is12V())
-      fact = (devStatus.voltage.get()) / digits;
-    else
-      fact = (devStatus.voltage.get() - U_DIODE) / digits;
+      fact = (devStatus.setVoltage.get()) / digits;
   }
   DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
   return fact;

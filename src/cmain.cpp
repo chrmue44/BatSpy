@@ -182,7 +182,7 @@ void loop()
     {
       if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
         calcSunrise();
-      sysLog.logf("supply voltage: %2.1f V, temperature: %2.1f °C", 
+      sysLog.logf("supply voltage: %2.2f V, temperature: %2.1f °C", 
                  devStatus.voltage.get(), devStatus.temperature.get());
       checkSupplyVoltage();
     }
