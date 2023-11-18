@@ -17,7 +17,6 @@ class cTerminal {
  public:
   cTerminal();
   void parseCmdfromUSB();
-  void parseCmdfromESP();
   void showCommands();
   void parseControlCmd(const char* buf);
   void parseSetCmd(const char* buf);

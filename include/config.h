@@ -46,9 +46,6 @@
 #define MEMF FLASHMEM     //memory region for user file handling functions
 
 // voltage loss D1
-#define U_DIODE           0.29f
-#define SUPPLY_12V_MIN   11.5f     //min. required supply voltage lead 
-#define SUPPLY_4V_MIN     3.73f    //min. required supply voltage LiIon 
 #define U_REF_ADC         1.8f     //reference voltage ADC
 
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
@@ -114,7 +111,7 @@
 #define PIN_MCLK         23
 
 #define SERIAL_GPS       Serial8
-#define SERIAL_ESP       Serial2
+//#define SERIAL_ESP       Serial2
 
 
 extern uint8_t pinAmp0;
@@ -131,7 +128,7 @@ void setDispLight(uint8_t bright);
 
 inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
 inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
-inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
+//inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
 inline bool hasAmpRevB() { return  isRevisionB(); }
 
 #define PATH_NOTES1  "/info/notes1.txt"

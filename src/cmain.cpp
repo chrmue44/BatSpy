@@ -116,10 +116,7 @@ void loop()
   {
     // get new commands
     if (!cSdCard::inst().isFileTransferActive())
-    {
       terminal.parseCmdfromUSB();
-      terminal.parseCmdfromESP();
-    }
 
     enKey key = terminal.getKey();
     if (key == NOKEY)

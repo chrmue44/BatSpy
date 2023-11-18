@@ -41,28 +41,6 @@ void MEMF cTerminal::parseCmdfromUSB()
   }
 }
 
-void MEMF cTerminal::parseCmdfromESP()
-{
-  int numBytes = SERIAL_ESP.available();
-  if (numBytes <= 0)
-    return;
-  while (numBytes > 0)
-  {
-    if(m_recIdxESP < sizeof(m_recbufESP)/sizeof(m_recbufESP[0]))
-      m_recbufESP[m_recIdxESP] = SERIAL_ESP.read();
-    else
-    {
-      m_recIdxESP = sizeof(m_recbufESP) / sizeof(m_recbufESP[0] - 1);
-      m_recbufESP[m_recIdxESP] = '\n';
-    }
-
-    numBytes--;
-    if (m_recbufESP[m_recIdxESP] == '\n')
-      execCmd(m_recbufESP, m_recIdxESP);
-    else
-      m_recIdxESP++;
-  }
-}
 
 void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 {
