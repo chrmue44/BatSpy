@@ -12,10 +12,11 @@
 #ifndef CCASSETTE_H
 #define CCASSETTE_H
 
-#include "types.h"
 //#define WAV
-#include "Audio.h"
-#include "cSdCard.h"
+#include <Audio.h>
+#include <cSdCard.h>
+
+#include "types.h"
 #ifdef WAV
 #include "play_fats_wav.h"
 #else
@@ -26,7 +27,7 @@
 #define WAV_DATACHUNK_POS  36
 
 //#define MXFN 100 // maximal number of files
-#if defined(ARDUINO_TEENSY41)
+#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_TEENSY40)
 #define N_BUFFER 8  // min. nr of buffers to write to SD card
 #ifdef SIMU_DISPLAY
 #define BUFFSIZE (384000 / 10 *sizeof (int16_t))

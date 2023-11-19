@@ -11,7 +11,7 @@
 #ifndef _CLOG_H_
 #define _CLOG_H_
 
-#include "cSdCard.h"
+#include <cSdCard.h>
 
 class cLog
 {

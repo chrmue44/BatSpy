@@ -179,7 +179,7 @@ typedef struct {
 class ILI9341_t3 : public Print
 {
   public:
-	ILI9341_t3(uint8_t _CS, uint8_t _DC, uint8_t _RST = 255, uint8_t _MOSI=11, uint8_t _SCLK=13, uint8_t _MISO=12);
+	ILI9341_t3(uint8_t _CS, uint8_t _DC/*, uint8_t _RST = 255*/, uint8_t _MOSI=11, uint8_t _SCLK=13, uint8_t _MISO=12);
 	void begin(void);
   	void sleep(bool enable);		
         void setClock(unsigned long clk) { _clock = clk;}
@@ -310,7 +310,7 @@ class ILI9341_t3 : public Print
   int16_t _clipW = 320;
   int16_t _clipH = 240;
 
-  	uint8_t  _rst;
+  //	uint8_t  _rst;
   	uint8_t _cs, _dc;
 	uint8_t pcs_data, pcs_command;
 	uint8_t _miso, _mosi, _sclk;

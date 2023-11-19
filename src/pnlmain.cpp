@@ -10,6 +10,7 @@
 #include "cutils.h"
 #include "debug.h"
 #include "cfileinfo.h"
+#include "config.h"
 #define OWN_H
 #include "pnlmain.h"
 #undef OWN_H
@@ -73,7 +74,7 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
     case enKey::YES:
       sysLog.close();
       gpsLog.close();
-      digitalWrite(PIN_POWER_OFF, 0);
+      powerOff();
       delay(1000);
       for(;;)
         ;

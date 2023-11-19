@@ -51,7 +51,7 @@ void MEMP cMenue::initPars()
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
-
+#ifdef ARDUINO_TEENSY41
   if(hasAmpRevB())
   {
     devPars.preAmpGain.addItem(1350);
@@ -71,8 +71,11 @@ void MEMP cMenue::initPars()
     devPars.preAmpType.addItem(1321);
     devPars.preAmpType.addItem(1322);
   }
-
-
+#endif
+#ifdef ARDUINO_TEENSY40
+    devPars.preAmpGain.addItem(1353);
+    devPars.preAmpGain.addItem(1355);
+#endif
   for(int t = 1300; t <= 1308; t++)
     devPars.sampleRate.addItem(t);
   devPars.sampleRate.set(SR_312K);  
@@ -272,6 +275,8 @@ void cMenue::setFactoryDefaults(enMode mode)
 
 void MEMP cMenue::initDialogs() 
 {
+  if(!hasDisplay())
+    return;
   clearPanelList();
   refreshFkeyPanel();
   tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text

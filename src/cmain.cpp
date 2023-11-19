@@ -34,16 +34,21 @@ const tChunkTab memChunks[] = {
 // *********************** initialization **************************
 void initTft(int orientation)
 {
-   if(isRevisionB())
-    tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, PIN_TFT_RST,
+  if(hasDisplay())
+  {
+    if(isRevisionB())
+      tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, 
                      PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
-  tft.begin();
-  tft.setRotation(orientation);
-  tft.fillScreen(ILI9341_BLACK);
-  tft.setTextColor(ILI9341_YELLOW);
-  tft.setTextSize(3);
-  tft.setFont(fnt8x11);  
-  setDispLight(255);
+    resetTft();
+    tft.begin();
+    tft.setRotation(orientation);
+    tft.fillScreen(ILI9341_BLACK);
+    tft.setTextColor(ILI9341_YELLOW);
+    tft.setTextSize(3);
+    tft.setFont(fnt8x11);  
+    setDispLight(255);
+    showSplashScreen(tft, true);
+  }
 }
 
 void waitForSerial()
@@ -67,7 +72,6 @@ void setup()
   Txt::setResource(Texts);
   int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);
-  showSplashScreen(tft, digitalRead(PIN_ID_12V) == 1);
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  
@@ -169,7 +173,7 @@ void loop()
       devStatus.freeSpace.set(freeSpace / 1024);
       float temp = readTemperature();
       devStatus.temperature.set(temp);
-      cParGraph* g = getLiveFft();
+      /*cParGraph* g =*/ getLiveFft();
       devStatus.time.set(rtc.getTime());
       devStatus.date.set(rtc.getTime());
       devStatus.time.update(true);

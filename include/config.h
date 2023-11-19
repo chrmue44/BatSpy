@@ -36,23 +36,88 @@
           TFT_LED --| D31                D34 |-- RX_GPS (Serial8)
                   --| D32                D33 |--
                     +------------------------+
+
+                    +---------+    +---------+
+                  --| GND     +----+     VIN |--
+              CS1 --| D0                 GND |--
+         TFT_MISO --| D1   Teensy 4.0    3V3 |--
+           ROT_SW --| D2              A9 D23 |-- CS_SDCARD
+           SPARE1 --| D3              A8 D22 |-- SUPPLY_VOLT
+             REV0 --| D4              A7 D21 |-- BCLK_ADC
+             REV1 --| D5              A6 D20 |-- LRCLK_ADC  
+           TFT_DC --| D6              A5 D19 |-- I2C_SCL
+              DIN --| D7              A4 D18 |-- I2C_SDA
+         TX_CODEC --| D8              A3 D17 |-- TX_GPS (Serial 4)
+             REV2 --| D9              A2 D16 |-- RX_GPS (Serial 4)
+           SPARE2 --| D10             A1 D15 |-- ROT_B
+        (SD) MOSI --| D11             A0 D14 |-- ROT_A
+        (SD) MISO --| D12                D13 |-- SCLK (SD)
+                    +------------------------+
+
 */
 
 #include <cstdint>
 #include "Arduino.h"
 
+
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
 #define MEMF FLASHMEM     //memory region for user file handling functions
-
-// voltage loss D1
-#define U_REF_ADC         1.8f     //reference voltage ADC
 
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
 #define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
 
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
+
+#ifdef ARDUINO_TEENSY40
+// ****************************************************************
+
+#define I2C_ADDR_PORT_EXT 0x20
+
+// *****   pin definitions *****
+#define SPIN_POWER_OFF   0x8010      // power off if voltage too low
+#define SPIN_LED_DISP    0x8002      // LED Display
+#define SPIN_LED_2       0x8001      // LED 2
+#define SPIN_AMP0        0x8004      // AMP0
+#define SPIN_TFT_RES     0x8008      // Reset TFT-Display
+#define SPIN_PWR_ANA     0x8020      // Poser supply analog stage
+#define SPIN_PWR_GPS     0x8040      // power supply GPS
+#define SPIN_SPAR3       0x8080      // spare pin
+
+#define PIN_REV0         4           // 
+#define PIN_REV1         5           // revision bit 0
+#define PIN_REV2         9           // revision bit 1
+
+#define PIN_ROT_LEFT_A   14          // encoder input A
+#define PIN_ROT_LEFT_B   15          // encoder input B
+#define PIN_ROT_LEFT_S   2           // encoder push button
+
+#define PIN_SUPPLY_VOLT  A8    
+
+// audio out
+#define PIN_MQS          10      // output for mono MQS signal
+
+// control TFT
+#define PIN_TFT_DC_REVA   6      // TFT D/C-Signal
+#define PIN_TFT_CS       0       // TFT CS
+#define PIN_TFT_MOSI     26      // TFT MOSI
+#define PIN_TFT_SCLK     27      // TFT SCLK
+#define PIN_TFT_MISO     3      // TFT MISO
+
+#define SERIAL_GPS       Serial4
+
+inline bool hasAmpRevB() { return  false; }
+inline bool isRevisionB() { return false; }
+void portExpSetBit(uint8_t port, uint8_t state);
+#endif //ARDUINO_TEENSY40
+
+#ifdef ARDUINO_TEENSY41
+// ****************************************************************
+extern uint8_t pinAmp0;
+extern uint8_t pinAmp1;
+extern uint8_t pinAmp2;
+extern uint8_t pinAmp3;
 
 // *****   pin definitions *****
 
@@ -111,25 +176,26 @@
 #define PIN_MCLK         23
 
 #define SERIAL_GPS       Serial8
-//#define SERIAL_ESP       Serial2
+
+inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
+inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
+inline bool hasAmpRevB() { return  isRevisionB(); }
 
 
-extern uint8_t pinAmp0;
-extern uint8_t pinAmp1;
-extern uint8_t pinAmp2;
-extern uint8_t pinAmp3;
+#define portExpSetBit(x, y)   digitalWrite(x, y)
 
+#endif // defined (ARDUINO_TEENSY41)
+bool hasDisplay();
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
 void checkSupplyVoltage();
 float readTemperature();
 void setDispLight(uint8_t bright);
+void digWrite(int pin, uint8_t stat);
+void resetTft();
+void powerOff();
 
-inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
-inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
-//inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
-inline bool hasAmpRevB() { return  isRevisionB(); }
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

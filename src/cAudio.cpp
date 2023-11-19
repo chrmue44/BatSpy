@@ -12,7 +12,7 @@
 #include "pnllive.h"
 #include "cutils.h"
 
-#ifdef ARDUINO_TEENSY41
+#if defined ARDUINO_TEENSY41 || defined ARDUINO_TEENSY40
 #include <utility/imxrt_hw.h>
 #endif
 
@@ -70,12 +70,16 @@ m_trigger(m_fftInfo, m_peak)
 
 void cAudio::init()
 {
+  #ifdef ARDUINO_TEENSY40
+  //TODO
+  #endif
+  #ifdef ARDUINO_TEENSY41
   // set pre amp to the lowest posible amplification
   digitalWrite(pinAmp0, 1);
   digitalWrite(pinAmp1, 1);
   digitalWrite(pinAmp2, 1);
   digitalWrite(pinAmp3, 0);
-
+#endif
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
   AudioMemory(600);
@@ -83,8 +87,6 @@ void cAudio::init()
   m_old.oscFrequency = 999;
   m_filtDisp.setHighpass(0, 50);
 }
-
-#ifdef ARDUINO_TEENSY41
 
 void cAudio::setSampleRate(enSampleRate sr)
 {
@@ -119,42 +121,21 @@ void cAudio::setSampleRate(enSampleRate sr)
   }
 }
 
-#else  //#ifdef ARDUINO_TEENSY41
-
-void cAudio::setSampleRate(enSampleRate sr)
+#ifdef ARDUINO_TEENSY40
+void cAudio::setPreAmpGain(enGainRevC gain)
 {
-  if (m_old.sampleRate != sr)
+  switch (gain)
   {
-    m_sampleRate = SR[sr].osc_frequency;
-    //  AudioNoInterrupts();
-    //set FS directly from the SR
-    while (I2S0_MCR & I2S_MCR_DUF)
-      ;
-    I2S0_MDR = I2S_MDR_FRACT((SR[sr].MUL_Fs - 1)) | I2S_MDR_DIVIDE((SR[sr].DIV_Fs - 1));
-    m_cass.setSamplingRate(m_sampleRate);
-    delay(200); // this delay seems to be very essential !
-    //  AudioInterrupts();
-    delay(20);
-    m_old.sampleRate = sr;
+    case enGainRevC::GAINC_48DB:
+      digWrite(SPIN_AMP0, 1);
+      break;
+    case enGainRevC::GAINC_58DB:
+      digWrite(SPIN_AMP0, 0);
+      break;
   }
 }
-#endif //#ifdef ARDUINO_TEENSY41
-
-
-void cAudio::setPreAmpType(enPreAmp type)
-{
-  switch (type)
-  {
-  case enPreAmp::LINEAR:
-    digitalWrite(pinAmp3, 1);
-    break;
-
-  case enPreAmp:: HIGH_PASS:
-    digitalWrite(pinAmp3, 0);
-    break;
-  }
-}
-
+#endif
+#ifdef ARDUINO_TEENSY41
 void cAudio::setPreAmpGain(enGain gain)
 {
   switch (gain)
@@ -224,6 +205,7 @@ void cAudio::setPreAmpGain(enGainRevB gain)
     break;
   }
 }
+#endif
 
 void cAudio::setTrigFilter(float freq, enFiltType type)
 {
@@ -279,6 +261,7 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
+  #ifdef ARDUINO_TEENSY41
   if(hasAmpRevB())  
     setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
   else
@@ -286,6 +269,10 @@ void cAudio::setup()
     setPreAmpType((enPreAmp)devPars.preAmpType.get());
     setPreAmpGain((enGain)devPars.preAmpGain.get());
   }
+  #endif
+  #ifdef ARDUINO_TEENSY40
+    setPreAmpGain((enGainRevC)devPars.preAmpGain.get());
+  #endif
   if (isSetupNeeded())
   {
     float vol = pow(10, (devPars.volume.get() / 10));

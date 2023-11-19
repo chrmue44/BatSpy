@@ -2,28 +2,26 @@
 #define CSDCARD_H
 
 #define CARDLIB_SDFAT
-//#define CARDLIB_SD
-//#define CARDLIB_USDFS
 
 #include <Arduino.h>
-#if defined(CARDLIB_SD)
-#define FILENAME_LEN        13   ///< max. length of a file name
-#elif defined(CARDLIB_USDFS) || defined(CARDLIB_SDFAT)
+
 #define FILENAME_LEN       256   ///< max. length of a file name
-#endif
 #define PATH_LEN           256   ///< max. length of a full path
 #define MAX_DIRENTRIES      50
 #define WRITE_BLOCK_SIZE  1024   ///< block size for file transfer from host to device
 
-#if defined(CARDLIB_SD)
-#include "SD.h"
-#elif defined(CARDLIB_USDFS)
-#include <wchar.h>
-#include "ff.h"
-#elif defined(CARDLIB_SDFAT)
+
 #include <SdFat.h>
 #define SD_FAT_TYPE 2
+#ifdef ARDUINO_TEENSY41
 #define SD_CONFIG SdioConfig(FIFO_SDIO)
+#endif
+#ifdef ARDUINO_TEENSY40
+const uint8_t SD_CS_PIN = 23;
+#define SPI_CLOCK SD_SCK_MHZ(40)
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SPI_CLOCK)
+#endif
+
 #if SD_FAT_TYPE == 0
 typedef SdFat sd_t;
 typedef File tFILE;
@@ -39,19 +37,6 @@ typedef FsFile tFILE;
 #else  // SD_FAT_TYPE
 #error Invalid SD_FAT_TYPE
 #endif  // SD_FAT_TYPE
-
-/*#define SPI_CLOCK SD_SCK_MHZ(50)
-// Try to select the best SD card configuration.
-#if HAS_SDIO_CLASS
-#define SD_CONFIG SdioConfig(FIFO_SDIO)
-#elif ENABLE_DEDICATED_SPI
-#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SPI_CLOCK)
-#else  // HAS_SDIO_CLASS
-#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SPI_CLOCK)
-#endif  // HAS_SDIO_CLASS
-*/
-#endif
-
 
 
 #include <my_vector.h>

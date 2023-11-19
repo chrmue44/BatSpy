@@ -8,18 +8,18 @@
  * ***********************************************************/
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
+#include <Audio.h>
+#include <cstdint>
+#include <cstddef>
 
+#include "types.h"
 #include "cCassette.h"
 #include "ctimer.h"
 #include "cRtc.h"
-#include <Audio.h>
-#include "types.h"
 #include "config.h"
 #include "cproject.h"
 #include "cTrigger.h"
 
-#include <cstdint>
-#include <cstddef>
 
 class cMenue;
 
@@ -105,8 +105,13 @@ private:
   static size_t getFftOutputSize() { return sizeof(AudioAnalyzeFFT1024::output) / sizeof(AudioAnalyzeFFT1024::output[0]); }
   void setSampleRate(enSampleRate sr);
   void setPreAmpType(enPreAmp type);
+  #ifdef ARDUINO_TEENSY40
+  void setPreAmpGain(enGainRevC gain);
+  #endif
+  #ifdef ARDUINO_TEENSY41
   void setPreAmpGain(enGain gain);
   void setPreAmpGain(enGainRevB gain);
+  #endif
   void setup();
   void updateCassMode();
   void checkAutoRecording(cMenue& menue, cRtc& rtc);

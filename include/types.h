@@ -71,6 +71,13 @@ enum enGainRevB
   GAIN_58DB            = 5
 };
 
+// available hardware gain settings for revision C
+enum enGainRevC
+{
+  GAINC_48DB            = 0,
+  GAINC_58DB            = 1
+};
+
 // recording format on SD card
 enum enRecFmt
 {

@@ -14,10 +14,15 @@
 #include "config.h"
 #include "cAudio.h"
 #include "cmenue.h"
-#include "Metro.h"
+#include <Metro.h>
 #include "cWheels.h"
 #include "cTerminal.h"
 #include "cnotes.h"
+
+#ifdef ARDUINO_TEENSY40
+#include <TCA9534.h>
+extern TCA9534 ioex;
+#endif
 
 extern cLog sysLog;
 extern cLog gpsLog;

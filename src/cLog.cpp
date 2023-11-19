@@ -6,14 +6,16 @@
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
 
+#include <Arduino.h>
+#include <TimeLib.h>
+#include <stdarg.h>
+
 #include "cLog.h"
 #include "config.h"
 //#define DEBUG_LEVEL 1
 #include "debug.h"
 
-#include <Arduino.h>
-#include <TimeLib.h>
-#include <stdarg.h>
+
 
 MEMF cLog::cLog(const char* name)
 :m_create(false)

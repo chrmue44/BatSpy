@@ -15,9 +15,9 @@
 //#define DEBUG_LEVEL 1
 #include "debug.h"
 
-#ifndef ARDUINO_TEENSY41
-extern "C" uint32_t usd_getError(void);
-#endif   //#ifndef ARDUINO_TEENSY41
+//#ifndef ARDUINO_TEENSY41
+//extern "C" uint32_t usd_getError(void);
+//#endif   //#ifndef ARDUINO_TEENSY41
 
 cCassette::cCassette() 
 {
