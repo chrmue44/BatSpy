@@ -31,8 +31,12 @@ class cTerminal {
   bool checkValI(int val, int min, int max) { return (min <= val) && (val <= max); }
   bool checkValF(int val, int min, int max) { return (min <= val) && (val <= max); }
   bool setValInt(const char* buf, int min, int max, cParNum& par);
+  void getValInt(const char* buf, cParNum& par, char* reply, size_t replySize);
   bool setValEnum(const char* buf, int min, int max, cParEnum& par);
+  void getValEnum(const char* buf, cParEnum& par, char* reply, size_t replySize);
   bool setValFloat(const char* buf, float min, float max, cParNum& par);
+  void getValFloat(const char* buf, cParNum& par, char* reply, size_t replySize);
+
 
   char m_recbufUSB[256];
   char m_recbufESP[256];
@@ -40,6 +44,7 @@ class cTerminal {
   size_t m_recIdxESP = 0;
   int m_sendIdx = 0;
   enKey m_key = NOKEY;
+  char m_endChar = 0x04; // '\n'
 };
 
 

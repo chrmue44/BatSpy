@@ -6,10 +6,12 @@
  * License: GNU GPLv3.0                                      *
  * ***********************************************************/
 
+#include "cTerminal.h"
 #include "globals.h"
 #include <Arduino.h>
 #include "cSdCard.h"
 #include "cmenue.h"
+#include "cutils.h"
 
 extern cMenue menue;
 
@@ -62,7 +64,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       if(rc != 0)
         Serial.printf("1\nerror changing directory: %i\n", rc);
       Serial.printf("0\n%s\n", cSdCard::inst().getActDir());
-      Serial.write(0x04);
+      Serial.write(m_endChar);
       break;
 
     case 'C':
@@ -83,7 +85,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
           dirIdx += MAX_DIRENTRIES;
         } while(dirInfo.size() >= MAX_DIRENTRIES);
       
-        Serial.write(0x04);
+        Serial.write(m_endChar);
       }
       break;
       
@@ -110,7 +112,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
         Serial.write('0');
       else
         Serial.write('1');
-      Serial.write(0x04);      
+      Serial.write(m_endChar);      
       break;
     
     case 'g':
@@ -133,7 +135,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
             Serial.write('0');
           else
             Serial.write('1');
-          Serial.write(0x04);      
+          Serial.write(m_endChar);      
         }
       }
       break;
@@ -148,7 +150,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
         menue.printPars();
       else
         parseGetCmd(&buf[1]);
-      Serial.write(0x04);
+      Serial.write(m_endChar);
       break;
 
     case 'P':
@@ -183,7 +185,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       break;
     case 'v':
       Serial.write(devStatus.version.get());      
-      Serial.write(0x04);
+      Serial.write(m_endChar);
       break;
 
     case 'x':
@@ -193,7 +195,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       if (ret > '9')
         ret += 7;
       Serial.write(ret);      
-      Serial.write(0x04);
+      Serial.write(m_endChar);
       break;  
       
     default:
@@ -234,7 +236,7 @@ void MEMF cTerminal::parseControlCmd(const char* buf)
     Serial.write('0');
   else  
     Serial.write('1');
-  Serial.write(0x04);
+  Serial.write(m_endChar);
 }
 
 
@@ -278,7 +280,7 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     Serial.write('0');
   else  
     Serial.write('1');
-  Serial.write(0x04);
+  Serial.write(m_endChar);
 }
 
 void MEMF cTerminal::parseGetCmd(const char* buf)
@@ -286,7 +288,7 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
   m_key = enKey::TER;
   bool replyOk = true;
   int val = 0;
-  char replyBuf[32];
+  char replyBuf[256];
   switch (buf[0])
   {
   case 'a':
@@ -304,7 +306,7 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
       replyOk = false;
     break;
   case 'r':
-    replyOk = parseRecParams(&buf[1], true, replyBuf, sizeof(replyBuf));
+    replyOk = parseRecParams(&buf[1], false, replyBuf, sizeof(replyBuf));
     break;
   case 'v':
     val = atoi(buf + 1);
@@ -319,10 +321,9 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     break;
   }
   if (replyOk)
-    Serial.write(replyBuf);
+    Serial.print(&replyBuf[0]);
   else
     Serial.write('?');
-  Serial.write(0x04);
 }
 
 bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply, size_t replySize)
@@ -345,37 +346,37 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
       if (write)
         replyOk = setValEnum(buf + 1, PAR_AUTOMODE_MIN, PAR_AUTOMODE_MAX, devPars.recAuto);
       else
-        snprintf(reply, replySize, "%u", (int)devPars.recAuto.get());
+        getValEnum(buf + 1, devPars.recAuto, reply, replySize);
       break;
     case 'h':
       if (write)
         replyOk = setValInt(buf + 1, 0, 23, devPars.startH);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.startH.get());
+        getValInt(buf + 1, devPars.startH, reply, replySize);
       break;
-    case 'H':
+    case 'i':
       if (write)
         replyOk = setValInt(buf + 1, 0, 23, devPars.stopH);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.stopH.get());
+        getValInt(buf + 1, devPars.stopH, reply, replySize);
       break;
     case 'm':
       if (write)
         replyOk = setValInt(buf + 1, 0, 59, devPars.startMin);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.startMin.get());
+        getValInt(buf + 1, devPars.startMin, reply, replySize);
       break;
-    case 'M':
+    case 'n':
       if (write)
-        replyOk = setValInt(buf + 1, 0, 59, devPars.stopMin);
+        setValInt(buf + 1, 0, 59, devPars.stopMin);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.stopMin.get());
+        getValInt(buf + 1, devPars.stopMin, reply, replySize);
       break;
     case 'p':
       if (write)
         replyOk = setValEnum(buf + 1, 0, 1, devPars.projectType);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.projectType.get());
+        getValEnum(buf + 1, devPars.projectType, reply, replySize);
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))
@@ -399,7 +400,7 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
       if(write)
         replyOk = setValEnum(buf + 1, PAR_LOCSRC_MIN, PAR_LOCSRC_MAX, devPars.srcPosition);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.srcPosition.get());
+        getValEnum(buf + 1, devPars.srcPosition, reply, replySize);
       break;
     case 'a':
       if (write)
@@ -427,7 +428,7 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
       if (write)
         replyOk = setValFloat(buf + 1, PAR_LOCSRC_MIN, PAR_LOCSRC_MAX, devStatus.height);
       else
-        snprintf(reply, replySize, "%f", devStatus.height.get());
+        getValFloat(buf + 1,devStatus.height, reply, replySize);
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))
@@ -445,60 +446,67 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
     reply[1] = 0;
   }
   switch (buf[0])
-  {
+  {	
     case 'd':
       if(write)
         replyOk = setValFloat(buf + 1, PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, devPars.deadTime);
       else
-        snprintf(reply, replySize, "%f", devPars.deadTime.get());
+        getValFloat(buf + 1, devPars.deadTime, reply, replySize);
       break;
+	case 'g':
+      if(write)
+        replyOk = setValEnum(buf + 1, PAR_GAIN_MIN, PAR_GAIN_MAX, devPars.preAmpGain);
+      else
+        getValEnum(buf + 1, devPars.preAmpGain, reply, replySize);
+      break;
+
     case 's':
       if (write)
         replyOk = setValEnum(buf + 1, PAR_SR_MIN, PAR_SR_MAX, devPars.sampleRate);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.sampleRate.get());
+        getValEnum(buf + 1, devPars.sampleRate, reply, replySize);
       break;
     case 't':
       if (write)
         replyOk = setValFloat(buf + 1, PAR_RECTIM_MIN, PAR_RECTIM_MAX, devPars.recTime);
       else
-        snprintf(reply, replySize, "%f", devPars.recTime.get());
+        getValFloat(buf + 1, devPars.recTime, reply, replySize);
       break;
     case 'h':
       if (write)
         replyOk = setValFloat(buf + 1, PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, devPars.recThreshhold);
       else
-        snprintf(reply, replySize, "%f", devPars.recThreshhold.get());
+        getValFloat(buf + 1, devPars.recThreshhold, reply, replySize);
       break;
     case 'r':
       if (write)
         replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.triggerType);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.triggerType.get());
+        getValEnum(buf + 1, devPars.triggerType, reply, replySize);
       break;
     case 'f':
       if (write)
         replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.filtFreq);
       else
-        snprintf(reply, replySize, "%f", devPars.filtFreq.get());
+        getValFloat(buf + 1, devPars.filtFreq, reply, replySize);
       break;
     case 'm':
       if (write)
         replyOk = setValFloat(buf + 1, PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, devPars.minEventLen);
       else
-        snprintf(reply, replySize, "%f", devPars.minEventLen.get());
+        getValFloat(buf + 1, devPars.minEventLen, reply, replySize);
       break;
     case 'y':
       if (write)
         replyOk = setValEnum(buf + 1, 0, 1, devPars.filtType);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.filtType.get());
+        getValEnum(buf + 1, devPars.filtType, reply, replySize);
       break;
     case 'p':
       if (write)
-        replyOk = setValInt(buf + 1, PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, devPars.preTrigger);
+        replyOk = setValFloat(buf + 1, PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, devPars.preTrigger);
       else
-        snprintf(reply, replySize, "%i", (int)devPars.preTrigger.get());
+        getValFloat(buf + 1, devPars.preTrigger, reply, replySize);
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))
@@ -518,6 +526,14 @@ bool MEMF cTerminal::setValInt(const char* buf, int min, int max, cParNum& par)
   return retVal;
 }
 
+void MEMF cTerminal::getValInt(const char* buf, cParNum& par, char* reply, size_t replySize)
+{
+  if(buf[0] == 'r')
+    par.getRange(reply, replySize);
+  else
+    snprintf(reply, replySize, "%i", (int)par.get());
+}
+
 bool MEMF cTerminal::setValFloat(const char* buf, float min, float max, cParNum& par)
 {
   int val = atof(buf);
@@ -528,6 +544,14 @@ bool MEMF cTerminal::setValFloat(const char* buf, float min, float max, cParNum&
     par.set(val);
   }
   return retVal;
+}
+
+void MEMF cTerminal::getValFloat(const char* buf, cParNum& par, char* reply, size_t replySize)
+{
+  if(buf[0] == 'r')
+    par.getRange(reply, replySize);
+  else
+    snprintf(reply, replySize, "%f", par.get());
 }
 
 bool MEMF cTerminal::setValEnum(const char* buf, int min, int max, cParEnum& par)
@@ -542,6 +566,17 @@ bool MEMF cTerminal::setValEnum(const char* buf, int min, int max, cParEnum& par
   return retVal;
 }
 
+void MEMF cTerminal::getValEnum(const char* buf, cParEnum& par, char* reply, size_t replySize)
+{
+  if(buf[0] == 'r')
+  {
+    char buf[512];
+    par.getRange(buf, sizeof(buf));
+    cUtils::replaceInternalCodingWithUTF8(buf, reply, replySize);
+  }
+  else
+    snprintf(reply, replySize, "%i", (int)par.get());
+}
 
 void MEMF cTerminal::showCommands() 
 {
@@ -568,35 +603,37 @@ void MEMF cTerminal::showCommands()
   Serial.println("Pap<val> set auto recording project format (0 = DATE_TIME, 1 = ELEKON");
   Serial.println("pap<val> get auto recording project format");
   Serial.println("Pah<val> set auto recording start hour (0 ... 23");
-  Serial.println("pah<val> get auto recording start hour");
+  Serial.println("pah      get auto recording start hour");
   Serial.println("Pam<val> set auto recording start minute (0 ... 59");
-  Serial.println("pam<val> get auto recording start minute");
-  Serial.println("PaH<val> set auto recording stop hour (0 ... 23");
-  Serial.println("paH<val> get auto recording stop hour");
-  Serial.println("PaM<val> set auto recording stop minute (0 ... 59");
-  Serial.println("paM<val> get auto recording stop minute");
+  Serial.println("pam      get auto recording start minute");
+  Serial.println("Pai<val> set auto recording stop hour (0 ... 23");
+  Serial.println("pai      get auto recording stop hour");
+  Serial.println("Pan<val> set auto recording stop minute (0 ... 59");
+  Serial.println("pan      get auto recording stop minute");
   Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
-  Serial.println("pls<val> get location source");
+  Serial.println("pls      get location source");
   Serial.println("Pla<val> set location latitude (0 ... 90");
-  Serial.println("pla<val> get location latitude");
+  Serial.println("pla      get location latitude");
   Serial.println("Plo<val> set location longitude (-180 ... 180");
-  Serial.println("plo<val> get location longitude");
+  Serial.println("plo      get location longitude");
   Serial.println("Plh<val> set location heigth (0 ... 10000");
-  Serial.println("plh<val> get location heigth");
+  Serial.println("plh      get location heigth");
   Serial.println("Pm<val>  set mixer frequency [kHz] ( 1 .. 79)");
-  Serial.println("pm<val>  get mixer frequency [kHz]");
+  Serial.println("pm       get mixer frequency [kHz]");
   Serial.println("Pv<val>  set volume [dB] (-30 .. 18 dB)");
-  Serial.println("pv<val>  get volume [dB]");
+  Serial.println("pv       get volume [dB]");
+  Serial.println("Prg<val> set gain (0 .. 1)");
+  Serial.println("prg      get gain");  
   Serial.println("Prs<val> set sample rate (0 .. 8)");
-  Serial.println("prs<val> get sample rate");
+  Serial.println("prs      get sample rate");
   Serial.println("Prt<val> set recording time [s] (1 .. 30)");
-  Serial.println("prt<val> get recording time [s]");
+  Serial.println("prt      get recording time [s]");
   Serial.println("Prd<val> set dead time after recording [s] (1 .. 30)");
-  Serial.println("prd<val> get dead time after recording [s]");
+  Serial.println("prd      get dead time after recording [s]");
   Serial.println("Prh<val> set trig threshold [dB] (-24 ... -1)");
-  Serial.println("prh<val> get trig threshold [dB]");
+  Serial.println("prh      get trig threshold [dB]");
   Serial.println("Prr<val> set trig type (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
-  Serial.println("prr<val> get trig type");
+  Serial.println("prr      get trig type");
   Serial.println("Prf<val> set trig filter frequency [kHz] (5 .. 70)");
   Serial.println("prf<val> get trig filter frequency [kHz]");
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");

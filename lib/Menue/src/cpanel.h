@@ -46,6 +46,10 @@ class cParNum : public cParBase {
   float getMax() { return m_max; }
   float getStep() {return m_step; }
   void init(float min, float max, float step, uint16_t dec, uint16_t leadZeros = 0) { m_min = min; m_max = max; m_step = step; m_decimals = dec; m_leadZeros = leadZeros; }
+  void getRange(char* pBuf, size_t size)
+  {
+    snprintf(pBuf, size, "min:%f, max:%f, step:%f, decimals:%i", m_min, m_max, m_step, m_decimals);
+  }
 
   float m_min;          ///< minimal allowed value
   float m_max;          ///< maximum allowed value
@@ -68,6 +72,10 @@ class cParStr : public cParBase {
   void set(const char* p) { strncpy(val, p, sizeof(val)); update(true); }
   void setColor(uint16_t col) { m_color = col; }
   uint16_t getColor() { return m_color; }
+  void getRange(char* pBuf, size_t size)
+  {
+    snprintf(pBuf, size, "STRING");
+  }
 private:
   char val[PAR_STR_LEN];
   uint16_t m_color;
@@ -345,6 +353,24 @@ class cParEnum : public cParBase {
     else
       m_val = 0;
     update(true);
+  }
+
+  void getRange(char* pBuf, size_t size)
+  {
+    char* p = pBuf;
+    size_t s = size;
+    for(size_t i = 0; i < m_enumeration.size(); i++)
+    {
+      snprintf(p, s, "%i:", i);
+      strcat(p, getText(i));
+      strcat(p,"\n");
+      size_t l = strlen(pBuf);
+      p = pBuf + l;
+      if(l < size)
+        s = size - l;
+      else
+        s = 0;
+    }
   }
 
  private:

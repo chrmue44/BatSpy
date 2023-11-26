@@ -68,7 +68,7 @@ void setup()
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
-//  waitForSerial();
+ // waitForSerial();
   Txt::setResource(Texts);
   int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);
@@ -77,33 +77,27 @@ void setup()
   delay(500);  
   menue.init();
   menue.initFileRelatedParams();
-  tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
+ // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
   audio.setup();
-  wheels.setDirection(true);  
-  setDispLight(255);
+  if(hasDisplay())
+  {
+    wheels.setDirection(true);  
+    setDispLight(255);
+    setVisibilityRecCount(&menue);
+  }
   devStatus.opMode.set(enOpMode::HEAR_HET);
-  setVisibilityRecCount(&menue);
   gps.init();
   if(devPars.recAuto.get() == 3)
     calcSunrise();
 }
 
 
-// *********************** main loop **************************
-int loopCount = 0;
-int loopFreq;
-void loop() 
+void handleDisplayAndWheel()
 {
-  loopCount++;
   static bool backLightOn = true;
-  
-  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
-              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
-  audio.operate( rtFft );
-  audio.checkAutoRecording(menue, rtc);
-  
+
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
@@ -149,43 +143,71 @@ void loop()
         wheels.setDirection(devPars.knobRotation.get() == 0);
       }
     }
-
-
-    if(tick1s.check())
-    {
-      if(devPars.srcPosition.get() == enSrcPosition::GPS)
-      {
-        float lat, lon;
-        gps.operate(lat, lon);
-        devStatus.geoPos.set(lat, lon);
-      }
-
-      loopFreq = loopCount;
-      loopCount = 0;
-      devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-      devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-      devStatus.audioMem.set(AudioMemoryUsage());
-      devStatus.peakVal.set(audio.getLastPeakVal() * 100);
-      size_t freeSpace;  size_t totSpace;
-      cSdCard::inst().getFreeMem(freeSpace, totSpace);
-      float volt = readSupplyVoltage();
-      devStatus.voltage.set(volt);
-      devStatus.freeSpace.set(freeSpace / 1024);
-      float temp = readTemperature();
-      devStatus.temperature.set(temp);
-      /*cParGraph* g =*/ getLiveFft();
-      devStatus.time.set(rtc.getTime());
-      devStatus.date.set(rtc.getTime());
-      devStatus.time.update(true);
-    }
-
-    if(tick15Min.check())
-    {
-      if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
-        calcSunrise();
-      sysLog.logf("supply voltage: %2.2f V, temperature: %2.1f °C", 
-                 devStatus.voltage.get(), devStatus.temperature.get());
-      checkSupplyVoltage();
-    }
   }
 }
+
+void handleButtonsAndLeds()
+{
+  if (!cSdCard::inst().isFileTransferActive())
+    terminal.parseCmdfromUSB();
+}
+
+
+// *********************** main loop **************************
+int loopCount = 0;
+int loopFreq;
+
+void loop() 
+{
+  loopCount++;
+  
+  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
+              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
+  audio.operate( rtFft );
+  audio.checkAutoRecording(menue, rtc);
+  
+  if (hasDisplay())
+    handleDisplayAndWheel();
+  else
+    handleButtonsAndLeds();
+
+  if(tick1s.check())
+  {
+    if(devPars.srcPosition.get() == enSrcPosition::GPS)
+    {
+      float lat, lon;
+      gps.operate(lat, lon);
+      devStatus.geoPos.set(lat, lon);
+    }
+
+    loopFreq = loopCount;
+    loopCount = 0;
+    devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+    devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+    devStatus.audioMem.set(AudioMemoryUsage());
+    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+    size_t freeSpace;  size_t totSpace;
+    cSdCard::inst().getFreeMem(freeSpace, totSpace);
+    float volt = readSupplyVoltage();
+    devStatus.voltage.set(volt);
+    devStatus.freeSpace.set(freeSpace / 1024);
+    float temp = readTemperature();
+    devStatus.temperature.set(temp);
+    if(hasDisplay())
+      /*cParGraph* g =*/ getLiveFft();
+    devStatus.time.set(rtc.getTime());
+    devStatus.date.set(rtc.getTime());
+    devStatus.time.update(true);
+  }
+
+  if(tick15Min.check())
+  {
+    if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
+      calcSunrise();
+    sysLog.logf("supply voltage: %2.2f V, temperature: %2.1f °C", 
+               devStatus.voltage.get(), devStatus.temperature.get());
+    checkSupplyVoltage();
+  }
+}
+
+

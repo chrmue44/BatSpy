@@ -150,7 +150,7 @@ void resetTft()
 void digWrite(int pin, uint8_t stat)
 {
   if(pin & 0x8000)
-    portExpSetBit(pin & 0x00FF, stat);
+    ;//   portExpSetBit(pin & 0x00FF, stat);
   else
     digitalWrite(pin, stat);
 }
