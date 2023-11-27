@@ -85,7 +85,7 @@ void MEMP cMenue::initPars()
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1, 0);
+  devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
 
   devPars.filtType.addItem(1171);
   devPars.filtType.addItem(1172);
@@ -210,6 +210,7 @@ void MEMP cMenue::initPars()
   devStatus.setVoltage.init(0,10, 0.05f, 2);
   devStatus.digits.init(0, 10000, 1, 0);
   devStatus.temperature.init(-50, 100, 0.1f, 1);
+  devStatus.mainLoop.init(0, 1e10, 1, 0);
 
   devStatus.freq1Tick.init(0, 300,0.1f, 1);
   devStatus.satCount.init(0, 24, 1, 0);
@@ -607,7 +608,7 @@ void MEMP cMenue::save()
   for(int i = 4; i <= maxAddr; i++)
     chks += readCharFromEep(i);
   writeInt16ToEep(0x0002, chks);
-  Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
+ // Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
 }
 
 void MEMP cMenue::load()

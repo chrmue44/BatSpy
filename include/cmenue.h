@@ -120,6 +120,7 @@ struct stStatus
   cParList notes2 = 0;
   cParNum lastCallF = 0.0;
   cParList liveMsPerDiv = 0;
+  cParNum mainLoop = 0;
 };
 
 
@@ -159,7 +160,7 @@ struct stParams
 #define PAR_PRETRIG_MAX 150.0
   cParEnum recFmt = 0;               ///< recording format
   cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
-#define PAR_TRIGFILTFREQ_MIN   5.0f
+#define PAR_TRIGFILTFREQ_MIN   1.0f
 #define PAR_TRIGFILTFREQ_MAX  70.0f
   cParEnum filtType = 0;             ///< filter type for recording trigger
 #define PAR_TRIGFILTTYPE_MIN   0

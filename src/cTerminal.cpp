@@ -104,6 +104,8 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 
     case 'L':
       menue.load();
+      Serial.write('0');      
+      Serial.write(m_endChar);
       break;
 
     case 'm':
@@ -163,11 +165,13 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
     
 
     case 's':
-      menue.printStatus();
+      parseStatusCmd(&buf[1]);
       break;
 
     case 'S':
       menue.save();
+      Serial.write('0');      
+      Serial.write(m_endChar);
       break;
 
     case 'u':
@@ -205,6 +209,40 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
   bufIdx = 0;
 }
 
+void MEMF cTerminal::parseStatusCmd(const char* buf)
+{
+  char replyBuf[256];
+  switch(buf[0])
+  {
+    case 'a':
+      getValFloat(buf, devStatus.audioMem, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;
+    case 'g':
+      getValFloat(buf, devStatus.cpuAudioAvg, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 
+    case 'l':
+      getValFloat(buf, devStatus.mainLoop, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 
+    case 't':
+      menue.printStatus();
+      break;
+    case 'v':
+      getValFloat(buf, devStatus.voltage, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;
+    case 'x':
+      getValFloat(buf, devStatus.cpuAudioMax, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 
+    default:
+      Serial.write('?');
+  }
+
+  Serial.write(m_endChar);
+}
 
 void MEMF cTerminal::parseControlCmd(const char* buf) 
 {
@@ -261,6 +299,9 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       else
         replyOk = false;
       break;
+    case 'n':
+      setValEnum(&buf[1], 0, 1, devPars.lang);
+      break;
     case 'r':
       replyOk = parseRecParams(&buf[1], true);
       break;
@@ -304,6 +345,9 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
       devPars.mixFreq.set(val);
     else
       replyOk = false;
+    break;
+  case 'n':
+    getValEnum(&buf[1], devPars.lang, replyBuf, sizeof(replyBuf));
     break;
   case 'r':
     replyOk = parseRecParams(&buf[1], false, replyBuf, sizeof(replyBuf));
@@ -411,7 +455,12 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
           devStatus.geoPos.setLat(valf);
       }
       else
-        snprintf(reply, replySize, "%f", devStatus.geoPos.getLat());
+      {
+        if(buf[1] == 'r')
+          devStatus.geoPos.getRangeLat(reply, replySize);
+        else
+          snprintf(reply, replySize, "%f", devStatus.geoPos.getLat());
+      }
       break;
     case 'o':
       if (write)
@@ -422,7 +471,12 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
           devStatus.geoPos.setLon(valf);
       }
       else
-        snprintf(reply, replySize, "%f", devStatus.geoPos.getLon());
+      {
+        if(buf[1] == 'r')
+          devStatus.geoPos.getRangeLon(reply, replySize);
+        else
+          snprintf(reply, replySize, "%f", devStatus.geoPos.getLon());
+      }
       break;
     case 'h':
       if (write)
@@ -597,11 +651,11 @@ void MEMF cTerminal::showCommands()
   Serial.println("o        key OK");
   Serial.println("p        print parameters");
   Serial.println("Pao<val> set auto recording mode (0 = OFF, 1 = ON, 2 = TIME, 3 = TWILIGHT)");
-  Serial.println("pao<val> get auto recording mode");
+  Serial.println("pao      get auto recording mode");
   Serial.println("Paf<val> set auto recording file format (0 = RAW, 1 = WAV)");
-  Serial.println("paf<val> get auto recording file");
+  Serial.println("paf      get auto recording file");
   Serial.println("Pap<val> set auto recording project format (0 = DATE_TIME, 1 = ELEKON");
-  Serial.println("pap<val> get auto recording project format");
+  Serial.println("pap      get auto recording project format");
   Serial.println("Pah<val> set auto recording start hour (0 ... 23");
   Serial.println("pah      get auto recording start hour");
   Serial.println("Pam<val> set auto recording start minute (0 ... 59");
@@ -620,6 +674,8 @@ void MEMF cTerminal::showCommands()
   Serial.println("plh      get location heigth");
   Serial.println("Pm<val>  set mixer frequency [kHz] ( 1 .. 79)");
   Serial.println("pm       get mixer frequency [kHz]");
+  Serial.println("Pn<val>  set language (0 .. 1)");
+  Serial.println("pn       get language");
   Serial.println("Pv<val>  set volume [dB] (-30 .. 18 dB)");
   Serial.println("pv       get volume [dB]");
   Serial.println("Prg<val> set gain (0 .. 1)");
@@ -638,7 +694,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("prf<val> get trig filter frequency [kHz]");
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
-  Serial.println("s        print status");
+  Serial.println("st       print status");
   Serial.println("S        save parameters to EEPROM");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");

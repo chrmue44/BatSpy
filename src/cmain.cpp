@@ -155,7 +155,6 @@ void handleButtonsAndLeds()
 
 // *********************** main loop **************************
 int loopCount = 0;
-int loopFreq;
 
 void loop() 
 {
@@ -180,7 +179,7 @@ void loop()
       devStatus.geoPos.set(lat, lon);
     }
 
-    loopFreq = loopCount;
+    devStatus.mainLoop.set(loopCount);
     loopCount = 0;
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
