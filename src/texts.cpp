@@ -57,7 +57,7 @@ struct stTxtList PROGMEM Texts[] =
   {   150, "Übersicht"                 ,"Overview"},
   {   190, "Anzahl Satelliten"         ,"Number of Satellites"},
   {   191, "GPS Log an"                ,"GPS Log on"},
-  {   193, "Höhe [m]"                  ,"Height [m]"},
+  {   193, "Höhe [m]"                  ,"Altitute [m]"},
   {   195, "Position gültig"           ,"Position valid"},
   {   200, "GPS Position"              ,0},
   {   201, "Zeit"                      ,"Time"},

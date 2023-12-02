@@ -23,8 +23,8 @@ class cStatus
    int _subStateLed1;
    uint32_t _lastT = 0;
    uint32_t _nextEndTime;
-   stStatusItem* _psubStateLed1;
-   stStatusItem* _psubStateStart1;
+   const stStatusItem* _psubStateLed1;
+   const stStatusItem* _psubStateStart1;
 
   public:
    cStatus() {}

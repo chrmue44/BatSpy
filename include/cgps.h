@@ -16,7 +16,7 @@ class cGps
 {
   public:
     void init();
-    void operate(float& lat, float& lon, bool testMode = false);
+    bool operate(float& lat, float& lon, float& height, bool testMode = false);
     int getLonDeg() { return static_cast<int>(m_lon); }
     float getLonMin() { return m_lon - static_cast<int>(m_lon); }
     int getLatDeg() { return static_cast<int>(m_lat); }

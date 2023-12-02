@@ -521,7 +521,8 @@ void cAudio::calcLiveFft()
     if (m_fftInfo.liveCnt > 0)
     {
       cParGraph* graph = getLiveFft();
-      graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+      if(hasDisplay())
+        graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
     }
   }
   else

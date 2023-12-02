@@ -21,10 +21,10 @@ void MEMF cGps::init()
 void MEMF cGps::test()
 {
   char esc[2] = {0,0};
-  float lat,lon;
+  float lat,lon, altitude;
   do
   {
-    operate(lat, lon, true);
+    operate(lat, lon, altitude, true);
     while(Serial.available() > 0)
     {
       char c = Serial.read();
@@ -39,7 +39,7 @@ void MEMF cGps::test()
 }
 
 
-void MEMF cGps::operate(float& lat, float& lon, bool testMode)
+bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
 {
   while (SERIAL_GPS.available())
   {
@@ -70,15 +70,18 @@ void MEMF cGps::operate(float& lat, float& lon, bool testMode)
         m_speed = m_gps.f_speed_kmph();
         m_heading = m_gps.f_course();
         m_altitude = m_gps.f_altitude();
+		    height = m_altitude;
         m_year = year;
         m_month = month;
         m_day = day;
         m_hour = hour;
         m_minute = minute;
         m_second = second;
+		m_valid = true;
         if(m_gpx.isOpen())
           m_gpx.log(lat, lon, m_altitude);
       }
     }
   }
+  return m_valid;
 }

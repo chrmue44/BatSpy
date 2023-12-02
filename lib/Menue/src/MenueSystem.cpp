@@ -34,7 +34,8 @@ cMenuesystem::~cMenuesystem()
   m_panelList.clear();
 }
 
-thPanel MMEM cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord width, tCoord height) {
+thPanel MMEM cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord width, tCoord height)
+{
   thPanel i;
   cPanel item;
   item.x = x;
@@ -227,6 +228,8 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
 
 void MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
 {
+  if(!m_isInitialized)
+    return;
   size_t size = pan->itemList.size();
   switch(pan->type)
   {
@@ -278,6 +281,9 @@ void MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
 
 void MMEM cMenuesystem::drawPanels()
 {
+  if(!m_isInitialized)
+    return;
+    
   // draw header panel
   if(m_hHeadrPanel < m_panelList.size())
   {
@@ -317,16 +323,21 @@ void MMEM cMenuesystem::drawPanels()
     cPanel* pan = &m_panelList[m_focus.panel];
     drawSubPanel(pan, m_focus.panel);
   }
-
 }
 
 
-void MMEM cMenuesystem::init()
+
+void MMEM cMenuesystem::init(bool withDialogs)
 {
   initPars();
-  initDialogs();
-  drawPanels();
-  refreshAll();
+  if(withDialogs)
+  {
+    initDialogs();
+    drawPanels();
+    refreshAll();
+    Serial.println("init with dialogs");
+    m_isInitialized = true;
+  }
 }
 
 void MMEM cMenuesystem::setFocus(thPanel pan, thItem item, enFocusState state)
@@ -741,6 +752,8 @@ void MMEM cMenuesystem::msgNoFunc(cMenuesystem* pThis, enKey key, cParBase* pIte
 void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* str2,
                                                   const char* str3, const char* str4)
 {
+  if(!m_isInitialized)
+    return;
   m_MsgPan = createPanel(PNL_MESSAGE, 30, 30, 260, 50);
 
   cParStr* parStr = new cParStr(str);
@@ -904,6 +917,8 @@ void MMEM cMenuesystem::destroyDropDown()
 
 void MMEM cMenuesystem::refreshMainPanel()
 {
+  if(!m_isInitialized)
+    return;
   m_refreshMain = true;
   if(m_mainPanel < m_panelList.size())
     m_panelList[m_mainPanel].refresh();
@@ -924,6 +939,8 @@ void MMEM cMenuesystem::refreshHdrPanel()
 
 void MMEM cMenuesystem::refreshAll()
 {
+  if(!m_isInitialized)
+    return;
   refreshFkeyPanel();
   refreshHdrPanel();
   refreshMainPanel();

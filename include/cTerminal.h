@@ -37,6 +37,7 @@ class cTerminal {
   void getValEnum(const char* buf, cParEnum& par, char* reply, size_t replySize);
   bool setValFloat(const char* buf, float min, float max, cParNum& par);
   void getValFloat(const char* buf, cParNum& par, char* reply, size_t replySize);
+  void getPosition(char* buf, size_t bufSize);
 
 
   char m_recbufUSB[256];

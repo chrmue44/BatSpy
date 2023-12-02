@@ -215,26 +215,58 @@ void MEMF cTerminal::parseStatusCmd(const char* buf)
   switch(buf[0])
   {
     case 'a':
-      getValFloat(buf, devStatus.audioMem, replyBuf, sizeof(replyBuf));
+      getValFloat(buf + 1, devStatus.audioMem, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;
+	case 'd':
+	  snprintf(replyBuf, sizeof(replyBuf), "%02lu.%02lu.%04lu", devStatus.date.getDay(), devStatus.date.getMonth(), devStatus.date.getYear());
+      Serial.print(&replyBuf[0]);
+      break;
+	case 'e':
+      getValEnum(buf + 1, devStatus.playStatus, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;	
+	case 'f':
+      getValFloat(buf + 1, devStatus.freeSpace, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;	
     case 'g':
-      getValFloat(buf, devStatus.cpuAudioAvg, replyBuf, sizeof(replyBuf));
+      getValFloat(buf + 1, devStatus.cpuAudioAvg, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 
+    case 'h':
+      getValFloat(buf + 1, devStatus.height, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
     case 'l':
-      getValFloat(buf, devStatus.mainLoop, replyBuf, sizeof(replyBuf));
+	    getPosition(replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+	    break;
+    case 'm':
+      getValFloat(buf + 1, devStatus.mainLoop, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
-    case 't':
+    case 'r':
+      getValFloat(buf + 1, devStatus.recCount, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 
+	case 's':
+      getValFloat(buf + 1, devStatus.satCount, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;
+	case 't':
+	  snprintf(replyBuf, sizeof(replyBuf), "%02lu:%02lu:%02lu", devStatus.time.getHour(), devStatus.time.getMin(), devStatus.time.getSec());
+      Serial.print(&replyBuf[0]);
+      break;
+    case 'u':
       menue.printStatus();
       break;
     case 'v':
-      getValFloat(buf, devStatus.voltage, replyBuf, sizeof(replyBuf));
+      getValFloat(buf + 1, devStatus.voltage, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;
     case 'x':
-      getValFloat(buf, devStatus.cpuAudioMax, replyBuf, sizeof(replyBuf));
+      getValFloat(buf + 1, devStatus.cpuAudioMax, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
     default:
@@ -243,6 +275,31 @@ void MEMF cTerminal::parseStatusCmd(const char* buf)
 
   Serial.write(m_endChar);
 }
+
+void MEMF cTerminal::getPosition(char* buf, size_t bufSize)
+{
+  int degLat = devStatus.geoPos.getDegLat();
+  char latStr[2];
+  char lonStr[2];
+  if(degLat < 0)
+	latStr[0] = 'S';
+  else
+    latStr[0] = 'N';
+  latStr[1] = 0;
+  int degLon = devStatus.geoPos.getDegLon();
+  if(degLon < 0)
+	lonStr[0] = 'W';
+  else
+	lonStr[0] = 'E';
+  lonStr[1] = 0;
+  char locBuf[128];
+  snprintf(locBuf, sizeof(locBuf), "%02i" CH_DEG " %02.3f %s  %03i" CH_DEG " %02.3f %s",  
+	       degLat, devStatus.geoPos.getMinfLat(), latStr,
+	       degLon, devStatus.geoPos.getMinfLon(), lonStr);
+  cUtils::replaceInternalCodingWithUTF8(locBuf, buf, bufSize);
+
+}
+
 
 void MEMF cTerminal::parseControlCmd(const char* buf) 
 {

@@ -66,7 +66,7 @@ public:
   /**
    * @brief initialize menue system
    */
-  void init();
+  void init(bool withDialogs = true);
 
   /**
    * @brief handle a keystroke and pass it to the item in focus
@@ -119,15 +119,6 @@ public:
    */
   thPanel createDropDown(stPanelItem item, tCoord x, tCoord y, tCoord width, fuFocus f);
 
-  void destroyDropDown();
-
-  /**
-   * @brief set focus
-   * @param pan handle to focus panel
-   * @param item handle to focus item
-   * @param state target state for focus item
-   */
-  void setFocus(thPanel pan, thItem item, enFocusState state);
   void setMainPanel(thPanel pan);
 
   /**
@@ -153,6 +144,16 @@ public:
   virtual void setFactoryDefaults() {}
 
 protected:
+/**
+   * @brief set focus
+   * @param pan handle to focus panel
+   * @param item handle to focus item
+   * @param state target state for focus item
+   */
+  void setFocus(thPanel pan, thItem item, enFocusState state);
+  
+  void destroyDropDown();
+
   virtual void initPars() = 0;
 
   /**
@@ -230,6 +231,7 @@ private:
   stPanelItem m_pDropDownEnum;    ///< enumeration to define dropdown panel
   thItem m_firstDropDownItem;     ///< first item actually displayed in drop down menue
   uint32_t m_lastKeyTime;         ///< last time key was pressed
+  bool m_isInitialized = false;   ///< true if menue system is initialized
 };
 
 

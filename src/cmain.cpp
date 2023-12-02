@@ -62,20 +62,21 @@ void waitForSerial()
   }
 }
 
+
 void setup()
 {
   initPins();
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
- // waitForSerial();
+  waitForSerial();
   Txt::setResource(Texts);
   int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  
-  menue.init();
+  menue.init(hasDisplay());
   menue.initFileRelatedParams();
  // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
@@ -174,8 +175,8 @@ void loop()
   {
     if(devPars.srcPosition.get() == enSrcPosition::GPS)
     {
-      float lat, lon;
-      gps.operate(lat, lon);
+      float lat, lon, altitude;
+      gps.operate(lat, lon, altitude);
       devStatus.geoPos.set(lat, lon);
     }
 
