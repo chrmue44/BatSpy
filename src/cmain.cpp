@@ -69,7 +69,7 @@ void setup()
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
-  waitForSerial();
+  //waitForSerial();
   Txt::setResource(Texts);
   int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);

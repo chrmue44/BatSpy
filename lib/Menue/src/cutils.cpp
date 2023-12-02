@@ -212,3 +212,23 @@ bool cUtils::match(const char *first, const char * second)
         return match(first+1, second) || match(first, second+1);
     return false;
 }
+
+size_t cUtils::splitStr(char* str, char s, my_vector<char*, 20>& out)
+{
+  size_t retVal = 1;
+  out.clear();
+  out.push_back(str);
+  char* p = str;
+
+  while(retVal < (out.maxSize() - 1)) 
+  {
+    p = strchr(p, s);
+    if(p == nullptr)
+      break;
+    *p = 0;
+    p++;
+    retVal++;
+    out.push_back(p);
+  }
+  return retVal;
+}

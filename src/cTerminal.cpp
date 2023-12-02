@@ -59,6 +59,12 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       showCommands();
       break;
 
+    case 'A':
+      menue.save();
+      Serial.write('0');      
+      Serial.write(m_endChar);
+      break;
+
     case 'c': 
       rc = cSdCard::inst().chdir(&buf[1]);
       if(rc != 0)
@@ -165,15 +171,13 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
     
 
     case 's':
-      parseStatusCmd(&buf[1]);
+      parseGetStatusCmd(&buf[1]);
       break;
 
     case 'S':
-      menue.save();
-      Serial.write('0');      
-      Serial.write(m_endChar);
+      parseSetStatusCmd(&buf[1]);
       break;
-
+      
     case 'u':
       m_key = enKey::UP;
       Serial.println("enKey::UP");
@@ -209,7 +213,50 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
   bufIdx = 0;
 }
 
-void MEMF cTerminal::parseStatusCmd(const char* buf)
+void MEMF cTerminal::parseSetStatusCmd(const char* buf)
+{
+  char locBuf[64];
+  strncpy(locBuf, buf, sizeof(locBuf));
+  my_vector<char*, 20> token;
+  int y, mo, d, h, mi, sec;
+  int cnt;
+
+  switch(buf[0])
+  {
+    case 'd':
+      cnt = cUtils::splitStr(&locBuf[1], '.', token);
+      if(cnt == 3)
+      {
+        rtc.getTime(y, mo, d, h, mi, sec);
+        d = atoi(token[0]);
+        mo = atoi(token[1]);
+        y = atoi(token[2]);
+        rtc.setTime(y, mo, d, h, mi, sec);
+        Serial.write('0');
+      }
+      else
+        Serial.write('?');
+      break;
+
+    case 't':
+      cnt = cUtils::splitStr(&locBuf[1], ':', token);
+      if(cnt == 3)
+      {
+        rtc.getTime(y, mo, d, h, mi, sec);
+        h = atoi(token[0]);
+        mi = atoi(token[1]);
+        sec = atoi(token[2]);
+        rtc.setTime(y, mo, d, h, mi, sec);
+        Serial.write('0');
+      }
+      else
+        Serial.write('?');
+      break;
+  }
+  Serial.write(m_endChar);
+}
+
+void MEMF cTerminal::parseGetStatusCmd(const char* buf)
 {
   char replyBuf[256];
   switch(buf[0])
@@ -272,7 +319,6 @@ void MEMF cTerminal::parseStatusCmd(const char* buf)
     default:
       Serial.write('?');
   }
-
   Serial.write(m_endChar);
 }
 
@@ -752,7 +798,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
   Serial.println("st       print status");
-  Serial.println("S        save parameters to EEPROM");
+  Serial.println("A        save parameters to EEPROM");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 

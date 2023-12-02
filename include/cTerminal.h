@@ -20,8 +20,9 @@ class cTerminal {
   void showCommands();
   void parseControlCmd(const char* buf);
   void parseSetCmd(const char* buf);
+  void parseSetStatusCmd(const char* buf);
   void parseGetCmd(const char* buf);
-  void parseStatusCmd(const char* buf);
+  void parseGetStatusCmd(const char* buf);
   enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
   
  private:

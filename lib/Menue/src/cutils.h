@@ -9,6 +9,7 @@
 #define C_UTILS_H
 
 #include <cstring>
+#include "my_vector.h"
 
 #ifdef SIMU_DISPLAY
 #define A_UML_CAP    "�"
@@ -43,7 +44,7 @@ class cUtils
   static int replaceInternalCodingWithUTF8(const char* str, char* result, size_t resultSize);
   static bool isWhiteSpace(char c);
   static bool match(const char *pattern, const char * str);
-
+  static size_t splitStr(char* str, char s, my_vector<char*, 20>& out);
 };
 
 #endif  //#ifndef C_UTILS_H
