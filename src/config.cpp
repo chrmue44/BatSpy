@@ -34,6 +34,9 @@ void initPins()
   pinMode(PIN_REV2, INPUT_PULLUP);
 #ifdef ARDUINO_TEENSY40
   pinMode(PIN_REV0, INPUT_PULLUP);
+  pinMode(PIN_ROT_LEFT_S, INPUT_PULLUP);
+  pinMode(SPIN_LED_DISP, OUTPUT); //@@@
+  pinMode(SPIN_LED_2, OUTPUT); //@@@
 
   Wire.begin();
   ioex.attach(Wire);
@@ -103,13 +106,17 @@ void checkSupplyVoltage()
   {
     sysLog.logf("power down voltage too low : %f \n ", volt);
     sysLog.close();
-    setDispLight(1);
-    menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
-    delay(500);
+    if(hasDisplay())
+    {
+      setDispLight(1);
+      menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
+      delay(500);
+    }
     audio.closeProject();
     delay(500);
     cSdCard::inst().unmount();
     delay(500);
+
     #ifdef ARDUINO_TEENSY41
     digitalWrite(PIN_POWER_OFF, 0);
     #endif
@@ -150,7 +157,7 @@ void resetTft()
 void digWrite(int pin, uint8_t stat)
 {
   if(pin & 0x8000)
-    ;//   portExpSetBit(pin & 0x00FF, stat);
+    ;//   portExpSetBit(pin & 0x00FF, stat);  //@@@
   else
     digitalWrite(pin, stat);
 }
@@ -204,11 +211,13 @@ bool hasDisplay()
 void setDispLight(uint8_t bright)
 {
 #ifdef ARDUINO_TEENSY40
-  if(bright > 128)
-    digWrite(SPIN_LED_DISP, 1);
-  else
-    digWrite(SPIN_LED_DISP, 0);
-
+  if(hasDisplay())
+  {
+    if(bright > 128)
+      digWrite(SPIN_LED_DISP, 1);
+    else
+      digWrite(SPIN_LED_DISP, 0);
+  }
 #endif
 #ifdef ARDUINO_TEENSY41  
   uint8_t pinLed;

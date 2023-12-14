@@ -20,6 +20,8 @@
 #include "cproject.h"
 #include "cTrigger.h"
 
+#define EXTFFT_H  128
+#define EXTFFT_W  256
 
 class cMenue;
 
@@ -74,6 +76,8 @@ private:
   AudioAnalyzePeak         m_peak;
   AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
   AudioFilterBiquad        m_filtDisp;  // high pass filter for live display
+  unsigned char            m_extFftBuf[EXTFFT_H*EXTFFT_W];  // fft buffer for external display
+  unsigned char*           m_extFftBufPtr = m_extFftBuf;
 
   AudioConnection m_cMi2Mx; // mic to mixer
   AudioConnection m_cCa2Mx; // player to mixer
@@ -97,6 +101,7 @@ private:
   cPrjoject m_prj;
   stFftInfo m_fftInfo;              // some variables to handle FFT operation
   cTrigger m_trigger;               // state machine to detect trigger
+  bool m_haltLiveFft = false;       // stop live FFT during ext readout of buffer
 
  public:
   cAudio();
@@ -120,6 +125,7 @@ private:
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
   void closeProject() { if (m_prj.getIsOpen()) m_prj.closePrjFile(); }
   void openProject();
+  void sendFftBuffer(int delayTime, int part);
 
  private:
   void setMixOscFrequency(float freq);
@@ -130,7 +136,7 @@ private:
   void startRec();
   void addLiveMsPerDiv(int waitTick, int sampleRate);
   int getLiveMsPerDiv(int waitTick, int sampleRate);
-
+  void updateExtFftBuf();
 };
 
 #endif   //#ifndef _CAUDIO_H

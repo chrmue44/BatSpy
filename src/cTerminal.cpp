@@ -20,11 +20,13 @@ cTerminal::cTerminal()
 {
 }
 
-void MEMF cTerminal::parseCmdfromUSB() 
+bool MEMF cTerminal::parseCmdfromUSB() 
 {
+  bool retVal = false;
   int numBytes = Serial.available();
   if(numBytes <= 0)
-    return;
+    return false;
+  m_onlineTime = millis();
   while(numBytes > 0) 
   {
     if(m_recIdxUSB < sizeof(m_recbufUSB)/sizeof(m_recbufUSB[0]))
@@ -37,17 +39,21 @@ void MEMF cTerminal::parseCmdfromUSB()
 
     numBytes--;
     if(m_recbufUSB[m_recIdxUSB] == '\n')
-      execCmd(m_recbufUSB, m_recIdxUSB);
+      retVal = execCmd(m_recbufUSB, m_recIdxUSB);
     else
       m_recIdxUSB++;
   }
+  return retVal;
 }
 
 
-void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
+bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 {
+  bool retVal = false;
   enSdRes rc;
   buf[bufIdx] = 0;
+  if(buf[bufIdx - 1] == '\r')  // for commands from Windows machines
+    buf[bufIdx - 1] = 0;
   tDirInfo dirInfo;
   size_t dirIdx;
   char ret;
@@ -107,6 +113,14 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       else
         Serial.write('1');      
       break;
+    
+    case 'f': 
+      if(buf[1] == '0')
+         audio.sendFftBuffer(devPars.sendDelay.get(), 0);
+      if(buf[1] == '1')
+         audio.sendFftBuffer(devPars.sendDelay.get(), 1);
+      Serial.write(m_endChar);
+      break;
 
     case 'L':
       menue.load();
@@ -163,6 +177,7 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 
     case 'P':
       parseSetCmd(&buf[1]);
+      retVal = true;
       break;
     
     case 'r':
@@ -211,6 +226,18 @@ void MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       break;
   }
   bufIdx = 0;
+  return retVal;
+}
+
+bool cTerminal::isOnline()
+{
+  uint32_t now = millis();
+  uint32_t dt;
+  if(now < m_onlineTime)
+    dt = 0xFFFFFFFF - m_onlineTime + now;
+  else
+    dt = now - m_onlineTime;
+  return (dt < MAX_ONLINE_PAUSE);
 }
 
 void MEMF cTerminal::parseSetStatusCmd(const char* buf)
@@ -738,6 +765,7 @@ void MEMF cTerminal::getValEnum(const char* buf, cParEnum& par, char* reply, siz
 void MEMF cTerminal::showCommands() 
 {
   Serial.println("Available commands:");
+  Serial.println("A        save parameters to EEPROM");
   Serial.println("c<name>  change directory");
   Serial.println("Cf<name> set play name");  
   Serial.println("Cm<mode> set display mode(0 = HEAR_DIRECT, 1 = HEAR_HET, 2 = PLAY_DIRECT,");
@@ -748,6 +776,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("d        show directory");
   Serial.println("D0       Debug: force display activity off");
   Serial.println("D1       Debug: force display activity on");
+  Serial.println("f        get live fft");
   Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
   Serial.println("L        load parameters from EEPROM");
   Serial.println("n<old> <new> rename file or directory");  
@@ -798,7 +827,6 @@ void MEMF cTerminal::showCommands()
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
   Serial.println("st       print status");
-  Serial.println("A        save parameters to EEPROM");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 

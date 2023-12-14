@@ -82,9 +82,9 @@ void setup()
   menue.refreshAll();
   menue.printPars();
   audio.setup();
+  wheels.setDirection(true);  
   if(hasDisplay())
   {
-    wheels.setDirection(true);  
     setDispLight(255);
     setVisibilityRecCount(&menue);
   }
@@ -150,7 +150,18 @@ void handleDisplayAndWheel()
 void handleButtonsAndLeds()
 {
   if (!cSdCard::inst().isFileTransferActive())
-    terminal.parseCmdfromUSB();
+  {
+    bool res = terminal.parseCmdfromUSB();
+    if(res)
+    {
+      audio.setup();
+    }
+  }
+  if(wheels.getKey() == enKey::KEY_OK)
+  {
+    statusDisplay.nextState();
+  }
+  statusDisplay.show();
 }
 
 
@@ -161,8 +172,12 @@ void loop()
 {
   loopCount++;
   
-  bool rtFft = (menue.getFocusPanel() == pnlLive) ||
+  bool rtFft;
+  if(hasDisplay())
+    rtFft = (menue.getFocusPanel() == pnlLive) ||
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
+  else
+    rtFft = terminal.isOnline();
   audio.operate( rtFft );
   audio.checkAutoRecording(menue, rtc);
   
@@ -193,8 +208,8 @@ void loop()
     devStatus.freeSpace.set(freeSpace / 1024);
     float temp = readTemperature();
     devStatus.temperature.set(temp);
-    if(hasDisplay())
-      /*cParGraph* g =*/ getLiveFft();
+    //  if(hasDisplay())
+    //    /*cParGraph* g =*/ getLiveFft();
     devStatus.time.set(rtc.getTime());
     devStatus.date.set(rtc.getTime());
     devStatus.time.update(true);
@@ -204,7 +219,7 @@ void loop()
   {
     if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
       calcSunrise();
-    sysLog.logf("supply voltage: %2.2f V, temperature: %2.1f °C", 
+    sysLog.logf("supply voltage: %2.3f V, temperature: %2.1f °C", 
                devStatus.voltage.get(), devStatus.temperature.get());
     checkSupplyVoltage();
   }

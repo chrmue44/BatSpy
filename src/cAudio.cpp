@@ -451,7 +451,7 @@ void cAudio::operate(bool liveFft)
     m_fftInfo.lastMaxFreq = (float)m_sampleRate * idx / getFftOutputSize() / 2.0;  
     m_trigger.checkTrigger();
   }
-  if(liveFft && fftAvailable)
+  if(liveFft && fftAvailable && !m_haltLiveFft)
     calcLiveFft();
   if (m_oldCassMode != m_cass.getMode())
   {
@@ -523,12 +523,66 @@ void cAudio::calcLiveFft()
       cParGraph* graph = getLiveFft();
       if(hasDisplay())
         graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
+      else
+        updateExtFftBuf();
     }
   }
   else
-
     m_fftInfo.sweepDelayCnt++;
 }
+
+void cAudio::updateExtFftBuf()
+{
+  int size = sizeof(m_fft.output)/sizeof(m_fft.output[0]) / 4;
+  for(int i = 0; i < size; i++)
+  {
+    int j = 4 * i;
+    uint32_t  sum = m_fft.output[j] + m_fft.output[j+1] + m_fft.output[j+2] + m_fft.output[j+3];
+    sum >>= 10;
+    *m_extFftBufPtr =(unsigned char)(sum & 0xFF);
+    m_extFftBufPtr++;
+    if(m_extFftBufPtr >= &m_extFftBuf[0] + sizeof(m_extFftBuf))
+      m_extFftBufPtr = &m_extFftBuf[0];
+  }
+}
+
+
+void cAudio::sendFftBuffer(int delayTime, int part)
+{
+  unsigned char* p = m_extFftBufPtr;
+  int cnt = 0;
+  int chunkSize = 128;
+  int chunkCnt = (EXTFFT_H * EXTFFT_W) / chunkSize / 2;
+
+  if(part == 0)
+    m_haltLiveFft = true;
+  else
+  {
+    size_t toEnd = m_extFftBuf + sizeof(m_extFftBuf) - m_extFftBufPtr;
+    size_t offs = chunkCnt * chunkSize / 2; 
+    if(offs < toEnd)
+      p += offs;
+    else
+      p = m_extFftBuf + (offs - toEnd);
+  }
+
+  for(int i = 0; i < chunkCnt; i++)
+  {
+    if(p >= &m_extFftBuf[0] + sizeof(m_extFftBuf))
+      p = &m_extFftBuf[0];
+    Serial.write(p, chunkSize);
+    p += chunkSize;
+    cnt++;
+    if(cnt >= 8)
+    {
+      cnt = 0;
+      delay(delayTime);
+    }
+  }
+  if(part == 1)
+    m_haltLiveFft = false;
+}
+
 
 void cAudio::startRec()
 {
