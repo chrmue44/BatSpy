@@ -130,6 +130,7 @@ void MEMP cMenue::initPars()
 
   devPars.srcPosition.addItem(1410);
   devPars.srcPosition.addItem(1412);
+  devPars.srcPosition.addItem(1413);
 
   devPars.menueType.addItem(1711),
   devPars.menueType.addItem(1712),
@@ -219,6 +220,10 @@ void MEMP cMenue::initPars()
   devStatus.posValid.addItem(15);
   devStatus.lastCallF.init(0.0f, 200.0f, 0.1f, 1);
 
+  devStatus.gpsStatus.addItem(1430); //enGpsStatus::GPS_STATUS_OFF
+  devStatus.gpsStatus.addItem(1431); //enGpsStatus::GPS_SEARCHING
+  devStatus.gpsStatus.addItem(1432); //enGpsStatus::GPS_FIXED
+  devStatus.gpsStatus.addItem(1433); //enGpsStatus::GPS_FIXED_OFF
   load();
   setPosFunc(this, enKey::NO, nullptr);
 
@@ -267,7 +272,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.sendDelay.set(2);             ///< delay [ms] after sending 2048 Bytes on USB
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
   devPars.projectType.set(enProjType::ELEKON);          ///< type of project for automatic recording
-  devPars.srcPosition.set(enSrcPosition::FIX);  ///< source of position (fixed, GPS)
+  devPars.srcPosition.set(enPositionMode::POS_FIX);  ///< source of position (fixed, GPS)
   devPars.menueType.set(enMenueType::RECORDER);   ///< menue type
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger

@@ -289,11 +289,12 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
   switch(buf[0])
   {
     case 'a':
+      devStatus.audioMem.set(AudioMemoryUsage());
       getValFloat(buf + 1, devStatus.audioMem, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;
 	case 'd':
-	  snprintf(replyBuf, sizeof(replyBuf), "%02lu.%02lu.%04lu", devStatus.date.getDay(), devStatus.date.getMonth(), devStatus.date.getYear());
+  	  snprintf(replyBuf, sizeof(replyBuf), "%02lu.%02lu.%04lu", devStatus.date.getDay(), devStatus.date.getMonth(), devStatus.date.getYear());
       Serial.print(&replyBuf[0]);
       break;
 	case 'e':
@@ -301,10 +302,14 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       Serial.print(&replyBuf[0]);
       break;	
 	case 'f':
+      size_t freeSpace;  size_t totSpace;
+      cSdCard::inst().getFreeMem(freeSpace, totSpace);
+      devStatus.freeSpace.set(freeSpace / 1024);
       getValFloat(buf + 1, devStatus.freeSpace, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;	
     case 'g':
+      devStatus.cpuAudioAvg.set(AudioProcessorUsage());
       getValFloat(buf + 1, devStatus.cpuAudioAvg, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
@@ -320,6 +325,13 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       getValFloat(buf + 1, devStatus.mainLoop, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
+
+    case 'p':
+      devStatus.gpsStatus.set(gps.getStatus());
+      getValEnum(buf + 1, devStatus.gpsStatus, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;
+
     case 'r':
       getValFloat(buf + 1, devStatus.recCount, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
@@ -340,6 +352,7 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       Serial.print(&replyBuf[0]);
       break;
     case 'x':
+      devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
       getValFloat(buf + 1, devStatus.cpuAudioMax, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
@@ -432,6 +445,9 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     case 'n':
       setValEnum(&buf[1], 0, 1, devPars.lang);
       break;
+    case 'p':
+      setValEnum(&buf[1], 0, devPars.srcPosition.size() - 1, devPars.srcPosition);
+      break;
     case 'r':
       replyOk = parseRecParams(&buf[1], true);
       break;
@@ -478,6 +494,9 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     break;
   case 'n':
     getValEnum(&buf[1], devPars.lang, replyBuf, sizeof(replyBuf));
+    break;
+  case 'p':
+    getValEnum(&buf[1], devPars.srcPosition, replyBuf, sizeof(replyBuf));
     break;
   case 'r':
     replyOk = parseRecParams(&buf[1], false, replyBuf, sizeof(replyBuf));

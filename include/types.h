@@ -158,9 +158,10 @@ enum enTrigType
 };
 
 /// source of position information
-enum enSrcPosition
+enum enPositionMode
 {
-  FIX = 0,
-  GPS = 1
+  POS_FIX = 0,
+  POS_GPS_ON = 1,
+  POS_GPS_AUTO = 2,
 };
 #endif    //#ifndef _TYPES_H

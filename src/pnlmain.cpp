@@ -470,7 +470,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
  
   retVal = pan->addTextItem(1, 0, 227, 80, lf, true, f1Func);
   retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
-  if(devPars.srcPosition.get() == enSrcPosition::GPS)
+  if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
     retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
@@ -601,7 +601,7 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
 //  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
 //  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
 
-  if (devPars.srcPosition.get() == enSrcPosition::GPS)
+  if (devPars.srcPosition.get() != enPositionMode::POS_FIX)
   {
     err |= pan->addTextItem(200, 3, 30 + r * lf, 80, lf);
     err |= pan->addGeoItem(&devStatus.geoPos,     x, 30 + r++ * lf, 150, lf, false);
@@ -627,13 +627,13 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
     err |= pan->addTextItem(1345,               x + 145, 30 + r * lf, 10, lf);
     err |= pan->addNumItem(&devStatus.lonSec,   x + 150, 30 + r++ * lf, 25, lf, true, setPosFunc);
   }
-  err |= pan->addTextItem(193,                  3,     30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.height,     x,     30 + r++ * lf, 50, lf, devPars.srcPosition.get() == enSrcPosition::FIX);
-  err |= pan->addTextItem(440,                  3,     30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.freeSpace,  x,     30 + r++ * lf, 80, lf, false);
-  err |= pan->addTextItem(450,                  3,     30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,    x,     30 + r * lf, 40, lf, false);
-  err |= pan->addNumItem(&devStatus.digits,   245,     30 + r * lf, 40, lf, false);
+  err |= pan->addTextItem(193,                  3,   30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.height,     x,   30 + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  err |= pan->addTextItem(440,                  3,   30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,  x,   30 + r++ * lf, 80, lf, false);
+  err |= pan->addTextItem(450,                  3,   30 + r * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,    x,   30 + r * lf, 40, lf, false);
+  err |= pan->addNumItem(&devStatus.digits,   245,   30 + r * lf, 40, lf, false);
   err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
   err |= pan->addTimeItem(&devStatus.time,     180, 200 + lf, 70, lf);

@@ -18,6 +18,7 @@
 #include "cCassette.h"
 #include "cAudio.h"
 #include "cRtc.h"
+#include "cgps.h"
 
 #define FREQ_MIN   0
 #define FREQ_MAX   150
@@ -121,6 +122,7 @@ struct stStatus
   cParNum lastCallF = 0.0;
   cParList liveMsPerDiv = 0;
   cParNum mainLoop = 0;
+  cParEnum gpsStatus = enGpsStatus::GPS_STATUS_OFF;
 };
 
 
@@ -177,7 +179,7 @@ struct stParams
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
   cParEnum projectType = 0;          ///< type of project for automatic recording
-  cParEnum srcPosition = enSrcPosition::FIX;  ///< source of position (fixed, GPS)
+  cParEnum srcPosition = enPositionMode::POS_FIX;  ///< source of position (fixed, GPS)
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1
   cParEnum menueType = enMenueType::EXPERT;   ///< menue type

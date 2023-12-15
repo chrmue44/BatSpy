@@ -66,6 +66,11 @@ void waitForSerial()
 void setup()
 {
   initPins();
+  if(!hasDisplay())
+  {
+    digWrite(SPIN_LED_DISP, 1);
+    digWrite(SPIN_LED_2, 1);
+  }
   audio.init();
   Serial.begin(9600);
   Serial.println("setting up bat detector");
@@ -88,6 +93,12 @@ void setup()
     setDispLight(255);
     setVisibilityRecCount(&menue);
   }
+  else
+  {
+    digWrite(SPIN_LED_DISP, 0);
+    digWrite(SPIN_LED_2, 0);
+  }
+
   devStatus.opMode.set(enOpMode::HEAR_HET);
   gps.init();
   if(devPars.recAuto.get() == 3)
@@ -95,7 +106,7 @@ void setup()
 }
 
 
-void handleDisplayAndWheel()
+void handleDisplayAndWheel(bool oneSec)
 {
   static bool backLightOn = true;
 
@@ -123,12 +134,7 @@ void handleDisplayAndWheel()
 
     //handle commands
     if(key != enKey::NOKEY)
-    {
-      // just update time and date here to minimize noise
-/*      devStatus.time.set(rtc.getTime());
-      devStatus.date.set(rtc.getTime());
-      devStatus.time.update(true); */
-      
+    {      
       if(!backLightOn)
       {
         backLightOn = true;
@@ -144,6 +150,16 @@ void handleDisplayAndWheel()
         wheels.setDirection(devPars.knobRotation.get() == 0);
       }
     }
+  }
+  if(oneSec)
+  {
+    devStatus.cpuAudioAvg.set(AudioProcessorUsage());
+    devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
+    devStatus.audioMem.set(AudioMemoryUsage());
+    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
+    size_t freeSpace;  size_t totSpace;
+    cSdCard::inst().getFreeMem(freeSpace, totSpace);
+    devStatus.freeSpace.set(freeSpace / 1024);
   }
 }
 
@@ -181,14 +197,16 @@ void loop()
   audio.operate( rtFft );
   audio.checkAutoRecording(menue, rtc);
   
+  bool tickOneSec = tick1s.check();
+
   if (hasDisplay())
-    handleDisplayAndWheel();
+    handleDisplayAndWheel(tickOneSec);
   else
     handleButtonsAndLeds();
 
-  if(tick1s.check())
+  if(tickOneSec)
   {
-    if(devPars.srcPosition.get() == enSrcPosition::GPS)
+    if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
     {
       float lat, lon, altitude;
       gps.operate(lat, lon, altitude);
@@ -197,15 +215,8 @@ void loop()
 
     devStatus.mainLoop.set(loopCount);
     loopCount = 0;
-    devStatus.cpuAudioAvg.set(AudioProcessorUsage());
-    devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
-    devStatus.audioMem.set(AudioMemoryUsage());
-    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
-    size_t freeSpace;  size_t totSpace;
-    cSdCard::inst().getFreeMem(freeSpace, totSpace);
     float volt = readSupplyVoltage();
     devStatus.voltage.set(volt);
-    devStatus.freeSpace.set(freeSpace / 1024);
     float temp = readTemperature();
     devStatus.temperature.set(temp);
     //  if(hasDisplay())
