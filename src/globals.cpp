@@ -31,3 +31,4 @@ cStatus statusDisplay;
 
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
+SHTSensor sht;

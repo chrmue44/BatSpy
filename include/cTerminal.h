@@ -27,11 +27,13 @@ class cTerminal {
   void parseSetCmd(const char* buf);
   void parseSetStatusCmd(const char* buf);
   void parseGetCmd(const char* buf);
+
   void parseGetStatusCmd(const char* buf);
   enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
   bool isOnline();
 
  private:
+  void parseDebugCmd(const char* buf);
   bool execCmd(char* buf, size_t& bufIdx);
   bool parseRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool parseLocationParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);

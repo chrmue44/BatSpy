@@ -1,3 +1,6 @@
+#ifndef _CSTATUS_H
+#define _CSTATUS_H
+
 /*
 *  Display mode | LED 1 |  LED2
 *  -------------+-------+---------------------------------------------
@@ -29,6 +32,7 @@ enum enLedMode
   DISP_BATT = 1,
   DISP_SD = 2,
   DISP_REC = 3,
+  DISP_GPS = 4
 };
 
 enum enShowState
@@ -66,3 +70,5 @@ class cStatus
    void setLedMode(enLedMode mode);
    void updateStatus();
 };
+
+#endif //#ifndef _CSTATUS_H

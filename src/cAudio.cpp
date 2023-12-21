@@ -71,7 +71,7 @@ m_trigger(m_fftInfo, m_peak)
 void cAudio::init()
 {
   #ifdef ARDUINO_TEENSY40
-  //TODO
+  //nothing to do here
   #endif
   #ifdef ARDUINO_TEENSY41
   // set pre amp to the lowest posible amplification

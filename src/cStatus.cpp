@@ -3,6 +3,8 @@
 
 #include "cStatus.h"
 #include "config.h"
+#include "globals.h"
+
 
 void cStatus::nextState()
 {
@@ -19,8 +21,11 @@ void cStatus::nextState()
       break;
     default:
     case enLedMode::DISP_REC:  
-      setLedMode(enLedMode::DISP_IDLE);
+      setLedMode(enLedMode::DISP_GPS);
       break;  
+    case enLedMode::DISP_GPS:
+      setLedMode(enLedMode::DISP_IDLE);
+      break;
   }
   _state = enShowState::INIT;
 }
@@ -138,6 +143,27 @@ void cStatus::updateStatus()
       setStateLed2(enStatLed::ON_75);  //@@@ TODO
       break;
     
+    case enLedMode::DISP_GPS:
+      {
+        enGpsStatus status = gps.getStatus();
+        switch(status)
+        {
+          case enGpsStatus::GPS_STATUS_OFF:
+            setStateLed2(enStatLed::ON_25);
+            break;
+          case enGpsStatus::GPS_SEARCHING:
+            setStateLed2(enStatLed::ON_50);
+            break;
+          case enGpsStatus::GPS_FIXED:
+            setStateLed2(enStatLed::ON_75);
+            break;
+          case enGpsStatus::GPS_FIXED_OFF:
+            setStateLed2(enStatLed::ON_100);
+            break;
+        }
+      }
+      break;
+
     case enLedMode::DISP_SD:
       {
         size_t total, free;
@@ -179,6 +205,9 @@ void cStatus::setLedMode(enLedMode mode)
       break;
     case enLedMode::DISP_REC:
       _maxBlinkCnt1 = 3;
+      break;
+    case enLedMode::DISP_GPS:
+      _maxBlinkCnt1 = 4;
       break;
   }
 }

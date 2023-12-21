@@ -20,6 +20,7 @@ cMeanCalc<int16_t,10> digits;
 //cMeanCalc<int16_t,10> uref;
 
 uint8_t ioexOut = 0;
+bool ioDebugMode = false;
 
 #ifdef ARDUINO_TEENSY41
 uint8_t pinAmp0;
@@ -35,11 +36,15 @@ void initPins()
 #ifdef ARDUINO_TEENSY40
   pinMode(PIN_REV0, INPUT_PULLUP);
   pinMode(PIN_ROT_LEFT_S, INPUT_PULLUP);
-  pinMode(SPIN_LED_DISP, OUTPUT); //@@@
-  pinMode(SPIN_LED_2, OUTPUT); //@@@
+ // pinMode(SPIN_LED_DISP, OUTPUT);
+ // pinMode(SPIN_LED_2, OUTPUT); 
 
   Wire.begin();
   ioex.attach(Wire);
+  bool ok = sht.init();
+  if(!ok)
+    Serial.println("error initializing humidity sensor");
+  sht.setAccuracy(SHTSensor::SHTAccuracy::SHT_ACCURACY_HIGH);
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
   ioex.config(TCA9534::Config::OUT); // set all port to output
   ioex.polarity(TCA9534::Polarity::ORIGINAL); // set all port polarity to original
@@ -156,10 +161,18 @@ void resetTft()
 
 void digWrite(int pin, uint8_t stat)
 {
-  if(pin & 0x8000)
-    ;//   portExpSetBit(pin & 0x00FF, stat);  //@@@
-  else
-    digitalWrite(pin, stat);
+  if(!ioDebugMode)
+  {
+    if(pin & 0x8000)
+      portExpSetBit(pin & 0x00FF, stat);
+    else
+      digitalWrite(pin, stat);
+  }
+}
+
+void setIoDebugMode(bool mode)
+{
+  ioDebugMode = mode;
 }
 
 float calcVoltageFactor(float volt)

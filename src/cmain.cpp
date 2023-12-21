@@ -65,6 +65,7 @@ void waitForSerial()
 
 void setup()
 {
+  Serial.begin(9600);
   initPins();
   if(!hasDisplay())
   {
@@ -72,7 +73,6 @@ void setup()
     digWrite(SPIN_LED_2, 1);
   }
   audio.init();
-  Serial.begin(9600);
   Serial.println("setting up bat detector");
   //waitForSerial();
   Txt::setResource(Texts);

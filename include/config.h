@@ -74,16 +74,18 @@
 // ****************************************************************
 
 #define I2C_ADDR_PORT_EXT 0x20
+#define I2C_ADDR_HUMID    0x44
+
 
 // *****   pin definitions *****
 #define SPIN_POWER_OFF   0x8010      // power off if voltage too low
-#define SPIN_LED_DISP    16 // @@@ 0x8002      // LED Display
-#define SPIN_LED_2       17  //@@@ 0x8001      // LED 2
+#define SPIN_LED_DISP    0x8002      // LED Display
+#define SPIN_LED_2       0x8001      // LED 2
 #define SPIN_AMP0        0x8004      // AMP0
 #define SPIN_TFT_RES     0x8008      // Reset TFT-Display
 #define SPIN_PWR_ANA     0x8020      // Poser supply analog stage
 #define SPIN_PWR_GPS     0x8040      // power supply GPS
-#define SPIN_SPAR3       0x8080      // spare pin
+#define SPIN_SPARE3      0x8080      // spare pin
 
 #define PIN_REV0         4           // 
 #define PIN_REV1         5           // revision bit 0
@@ -91,7 +93,7 @@
 
 #define PIN_ROT_LEFT_A   14          // encoder input A
 #define PIN_ROT_LEFT_B   15          // encoder input B
-#define PIN_ROT_LEFT_S   22   // @@@ 2           // encoder push button
+#define PIN_ROT_LEFT_S   2           // encoder push button
 
 #define PIN_SUPPLY_VOLT  A8    
 
@@ -195,7 +197,8 @@ void setDispLight(uint8_t bright);
 void digWrite(int pin, uint8_t stat);
 void resetTft();
 void powerOff();
-
+void setIoDebugMode(bool mode);
+void portExpSetBit(uint8_t port, uint8_t state);
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

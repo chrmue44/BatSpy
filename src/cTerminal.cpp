@@ -113,7 +113,12 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       else
         Serial.write('1');      
       break;
-    
+
+    case 'e':
+      parseDebugCmd(&buf[1]);
+      Serial.write(m_endChar);
+      break;
+
     case 'f': 
       if(buf[1] == '0')
          audio.sendFftBuffer(devPars.sendDelay.get(), 0);
@@ -293,11 +298,23 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       getValFloat(buf + 1, devStatus.audioMem, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;
-	case 'd':
+    case 'b':
+      {
+        bool ok = sht.readSample();
+        if(ok)
+          Serial.printf("%.1f", sht.getTemperature());
+        else
+          Serial.println("Error reading temperature");
+      }
+      break;
+    case 'c':
+      Serial.printf("%.1f",  sht.getHumidity());
+      break;
+	  case 'd':
   	  snprintf(replyBuf, sizeof(replyBuf), "%02lu.%02lu.%04lu", devStatus.date.getDay(), devStatus.date.getMonth(), devStatus.date.getYear());
       Serial.print(&replyBuf[0]);
       break;
-	case 'e':
+	  case 'e':
       getValEnum(buf + 1, devStatus.playStatus, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;	
@@ -781,6 +798,64 @@ void MEMF cTerminal::getValEnum(const char* buf, cParEnum& par, char* reply, siz
     snprintf(reply, replySize, "%i", (int)par.get());
 }
 
+void MEMF cTerminal::parseDebugCmd(const char* buf)
+{
+  int ioNr;
+  bool ok = true;
+  int inp;
+  switch(buf[0])
+  {
+    case '0':
+      setIoDebugMode(false);
+      break;
+
+    case '1':
+      setIoDebugMode(true);
+      break;
+
+    case 'a':
+      ioNr = atoi(&buf[1]);
+      inp = analogRead(ioNr);
+      Serial.printf("analog input %i: %i\n", ioNr, inp);
+      break;
+    
+    case 'i':
+      ioNr = atoi(&buf[1]);
+      inp = digitalRead(ioNr);
+      Serial.printf("digital input %i: %i\n", ioNr, inp);
+      break;
+
+    case 'o':
+      ioNr = atoi(&buf[2]);
+      if(ioNr < 99)
+        digitalWrite(ioNr,0);
+      else
+      {
+        ioNr -= 100;
+        int mask = 1 << ioNr;
+        portExpSetBit(mask, 0);
+      }
+      break;
+    case 'O':
+      ioNr = atoi(&buf[2]);
+      if(ioNr < 99)
+        digitalWrite(ioNr,1);
+      else
+      {
+        ioNr -= 100;
+        int mask = 1 << ioNr;
+        portExpSetBit(mask, 1);
+      }
+      break;
+    default:
+      ok = false;
+  }
+  if(ok)
+    Serial.print("0");
+  else
+    Serial.print("1");
+} 
+
 void MEMF cTerminal::showCommands() 
 {
   Serial.println("Available commands:");
@@ -795,6 +870,12 @@ void MEMF cTerminal::showCommands()
   Serial.println("d        show directory");
   Serial.println("D0       Debug: force display activity off");
   Serial.println("D1       Debug: force display activity on");
+  Serial.println("e0       Set debug IO off");
+  Serial.println("e1       Set Debug IO on");
+  Serial.println("ea<nr>   read analog value from pin (nr 0..30)");
+  Serial.println("ei<nr>   read digital value from pin (nr 0..30)");
+  Serial.println("eo<nr>   set digital output OFF (nr 0..30 direct IO, 100 .. 107 port extender)");
+  Serial.println("eO<nr>   set digital output ON (nr 0..30 direct IO, 100 .. 107 port extender)");
   Serial.println("f        get live fft");
   Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
   Serial.println("L        load parameters from EEPROM");
