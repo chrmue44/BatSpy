@@ -21,6 +21,7 @@
 #include "pnlinfo.h"
 #include "pnllive.h"
 #include "pnlfilebrowser.h"
+#include "cEeprom.h"
 
 #include "cSdCard.h"
 #include <Arduino.h>
@@ -491,208 +492,15 @@ int MEMP cMenue::initRecorderPanels(tCoord lf)
   return err;
 }
 
-void MEMP writeFloatToEep(int32_t addr, float val) 
+void cMenue::load()
 {
-  union 
-  {
-    float v;
-    char b[4];
-  } s;
-
-  s.v = val;
-  EEPROM.write(addr++, s.b[0]);
-  EEPROM.write(addr++, s.b[1]);  
-  EEPROM.write(addr++, s.b[2]);  
-  EEPROM.write(addr++, s.b[3]);
+  loadParsFromEep();
 }
 
-void MEMP writeInt16ToEep(int32_t addr, int16_t val) 
+void cMenue::save()
 {
-  union  
-  {
-    int16_t v;
-    unsigned char b[2];
-  } s;
-
-  s.v = val;
-  EEPROM.write(addr++, s.b[0]);
-  EEPROM.write(addr++, s.b[1]);  
+  saveParsToEep();
 }
-
-float MEMP readFloatFromEep(int addr) 
-{
-  union 
-  {
-    float v;
-    unsigned char b[4];
-  } s;
-  s.b[0] = EEPROM.read(addr++);  
-  s.b[1] = EEPROM.read(addr++);  
-  s.b[2] = EEPROM.read(addr++);  
-  s.b[3] = EEPROM.read(addr);
-  return s.v;
-}
-
-int16_t MEMP cMenue::readInt16FromEep(int32_t addr) 
-{
-  union 
-  {
-    int16_t v;
-    unsigned char b[2];
-  } s;
-
-  s.b[0] = EEPROM.read(addr++);  
-  s.b[1] = EEPROM.read(addr);
-  return s.v;
-}
-
-unsigned char MEMP readCharFromEep(int addr) 
-{
-  unsigned char retVal = 0;
-  retVal = EEPROM.read(addr++);
-  return retVal;
-}
-
-void MEMP cMenue::save() 
-{
-  writeFloatToEep(0x0004, devPars.volume.get());
-  writeFloatToEep(0x0008, devPars.mixFreq.get());
-  writeInt16ToEep(0x000C, devPars.recAuto.get());
-  writeInt16ToEep(0x000E, (int16_t)devPars.sendDelay.get());
-  writeInt16ToEep(0x0010, devPars.srcPosition.get());
-  writeInt16ToEep(0x0012, devPars.menueType.get());
-  writeFloatToEep(0x0014, devPars.recTime.get());
-  writeInt16ToEep(0x0018, devPars.sampleRate.get());
-  writeInt16ToEep(0x001A, devPars.preAmpGain.get());
-  writeFloatToEep(0x001C, devPars.threshHold.get());
-  writeFloatToEep(0x0020, devPars.fftLevelMin.get());
-  writeFloatToEep(0x0024, devPars.fftLevelMax.get());
-  writeFloatToEep(0x002C, devPars.recThreshhold.get());
-  writeInt16ToEep(0x0030, devPars.knobRotation.get());
-  writeInt16ToEep(0x0032, devPars.dispOrient.get());
-  writeFloatToEep(0x0034, devPars.preTrigger.get());
-  writeInt16ToEep(0x0038, devPars.recFmt.get());
-  writeFloatToEep(0x003A, devPars.deadTime.get());
-  writeFloatToEep(0x003E, devPars.backLightTime.get());
-  writeInt16ToEep(0x0042, devPars.lang.get());
-  writeInt16ToEep(0x0044, devPars.preAmpType.get());
-  writeFloatToEep(0x0046, devStatus.geoPos.getLat());
-  writeFloatToEep(0x004A, devStatus.geoPos.getLon());
-  writeFloatToEep(0x004E, devPars.filtFreq.get());
-  writeInt16ToEep(0x0052, devPars.filtType.get());
-  writeInt16ToEep(0x0054, (int16_t)devPars.startH.get());
-  writeInt16ToEep(0x0056, (int16_t)devPars.startMin.get());
-  writeInt16ToEep(0x0058, (int16_t)devPars.stopH.get());
-  writeInt16ToEep(0x005A, (int16_t)devPars.stopMin.get());
-  writeFloatToEep(0x005C, devPars.voltFactor.get());
-  writeInt16ToEep(0x0060, 0);
-  writeInt16ToEep(0x0062, (int16_t)devPars.liveAmplitude.get());
-  writeInt16ToEep(0x0064, (int16_t)devPars.projectType.get());
-  writeFloatToEep(0x0066, devStatus.height.get());
-  writeInt16ToEep(0x006A, (int16_t)devPars.triggerType.get());
-  writeFloatToEep(0x006C, devPars.minEventLen.get());
-  writeFloatToEep(0x0070, devPars.ShutoffVoltage.get());
-  writeInt16ToEep(0x0074, 0);
-  writeInt16ToEep(0x0076, 0);
-  writeInt16ToEep(0x0078, 0);
-  writeInt16ToEep(0x007A, 0);
-  writeInt16ToEep(0x007C, 0);
-  writeInt16ToEep(0x007E, 0);
-  writeInt16ToEep(0x0080, 0);
-  writeInt16ToEep(0x0082, 0);
-  writeInt16ToEep(0x0084, 0);
-  writeInt16ToEep(0x0086, 0);
-  writeInt16ToEep(0x0088, 0);
-  writeInt16ToEep(0x008A, 0);
-  writeInt16ToEep(0x008C, 0);
-  writeInt16ToEep(0x008E, 0);
-  int16_t maxAddr = 0x008F;
-  writeInt16ToEep(0, maxAddr);
-
-  int16_t chks = 0;
-  for(int i = 4; i <= maxAddr; i++)
-    chks += readCharFromEep(i);
-  writeInt16ToEep(0x0002, chks);
- // Serial.printf("  EEPROM written; max. Addr: %i; Checksum %i\n", maxAddr, chks);
-}
-
-void MEMP cMenue::load()
-{
-  if(checkCRC())
-  {
-    devPars.volume.set(readFloatFromEep(0x0004));
-    devPars.mixFreq.set(readFloatFromEep(0x0008));
-    devPars.recAuto.set(readInt16FromEep(0x000C));
-    devPars.sendDelay.set(readInt16FromEep(0x000E));
-    devPars.srcPosition.set(readInt16FromEep(0x0010));
-    devPars.menueType.set(readInt16FromEep(0x0012));
-    devPars.recTime.set(readFloatFromEep(0x0014));
-    devPars.sampleRate.set(readInt16FromEep(0x0018));
-    devPars.preAmpGain.set(readInt16FromEep(0x001A));
-    devPars.threshHold.set(readFloatFromEep(0x001C));
-    devPars.fftLevelMin.set(readFloatFromEep(0x0020));
-    devPars.fftLevelMax.set(readFloatFromEep(0x0024));
-    devPars.recThreshhold.set(readFloatFromEep(0x002C));
-    devPars.knobRotation.set(readInt16FromEep(0x0030));
-    devPars.dispOrient.set(readInt16FromEep(0x0032));
-    devPars.preTrigger.set(readFloatFromEep(0x0034));
-    devPars.recFmt.set(readInt16FromEep(0x0038));
-    devPars.deadTime.set(readFloatFromEep(0x003A));
-    devPars.backLightTime.set(readFloatFromEep(0x003E));
-    devPars.lang.set(readInt16FromEep(0x0042));
-    devPars.preAmpType.set(readInt16FromEep(0x0044));
-    devStatus.geoPos.setLat(readFloatFromEep(0x0046));
-    devStatus.geoPos.setLon(readFloatFromEep(0x004A));
-    devPars.filtFreq.set(readFloatFromEep(0x004E));
-    devPars.filtType.set(readInt16FromEep(0x0052));
-    devPars.startH.set(readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
-    devPars.startMin.set(readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
-    devPars.stopH.set(readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
-    devPars.stopMin.set(readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
-    devPars.voltFactor.set(readFloatFromEep(0x005C));
-    devPars.liveAmplitude.set(readInt16FromEep(0x0062));
-    devPars.projectType.set(readInt16FromEep(0x0064));
-    devStatus.height.set(readFloatFromEep(0x0066));
-    devPars.triggerType.set(readInt16FromEep(0x006A));
-    devPars.minEventLen.set(readFloatFromEep(0x006C));
-    devPars.ShutoffVoltage.set(readFloatFromEep(0x0070));
-    int digits = analogRead(PIN_SUPPLY_VOLT);
-    devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));
-
-  }
-}
-
-
-bool MEMP cMenue::checkCRC()
-{
-  int16_t rdCks = readInt16FromEep(2);
-  int16_t maxAddr = readInt16FromEep(0);
-  int16_t cks = 0;
-  if (maxAddr == 0)
-    return false;
-  for(int i = 4; i <= maxAddr; i++)
-  {
-    cks += readCharFromEep(i);
-  }
-  
-  bool retVal = (rdCks == cks);
-  if(!retVal)
-    DPRINTF1("checksum error in EEPROM, expected %i, read %i\n", rdCks, cks);
-  return retVal;
-}
-
-void MEMP cMenue::loadLanguage()
-{
-  if(checkCRC())
-  {
-    devPars.lang.set(readInt16FromEep(0x0042));
-    if(devPars.lang.get() == 1)
-      Txt::setLang(LANG_EN);
-    else
-      Txt::setLang(LANG_GER);
-  }
-}
-
 
 void MEMP cMenue::printPars()
 {

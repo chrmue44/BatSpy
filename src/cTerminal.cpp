@@ -12,6 +12,7 @@
 #include "cSdCard.h"
 #include "cmenue.h"
 #include "cutils.h"
+#include "cEeprom.h"
 
 extern cMenue menue;
 
@@ -66,8 +67,8 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       break;
 
     case 'A':
-      menue.save();
-      Serial.write('0');      
+      saveParsToEep();
+      Serial.write('0');
       Serial.write(m_endChar);
       break;
 
@@ -128,9 +129,14 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       break;
 
     case 'L':
-      menue.load();
-      Serial.write('0');      
-      Serial.write(m_endChar);
+      {
+        bool ok = loadParsFromEep();
+        if(ok)
+          Serial.write('0');
+        else
+          Serial.write('1');   
+        Serial.write(m_endChar);
+      }
       break;
 
     case 'm':
@@ -801,16 +807,17 @@ void MEMF cTerminal::getValEnum(const char* buf, cParEnum& par, char* reply, siz
 void MEMF cTerminal::parseDebugCmd(const char* buf)
 {
   int ioNr;
-  bool ok = true;
   int inp;
   switch(buf[0])
   {
     case '0':
       setIoDebugMode(false);
+      Serial.println("IO debug OFF");
       break;
 
     case '1':
       setIoDebugMode(true);
+      Serial.println("IO debug ON");
       break;
 
     case 'a':
@@ -826,7 +833,8 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
       break;
 
     case 'o':
-      ioNr = atoi(&buf[2]);
+      ioNr = atoi(&buf[1]);
+      Serial.printf("digital output %i OFF\n", ioNr);
       if(ioNr < 99)
         digitalWrite(ioNr,0);
       else
@@ -837,7 +845,8 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
       }
       break;
     case 'O':
-      ioNr = atoi(&buf[2]);
+      ioNr = atoi(&buf[1]);
+      Serial.printf("digital output %i ON\n", ioNr);
       if(ioNr < 99)
         digitalWrite(ioNr,1);
       else
@@ -848,12 +857,8 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
       }
       break;
     default:
-      ok = false;
+      Serial.print("1");
   }
-  if(ok)
-    Serial.print("0");
-  else
-    Serial.print("1");
 } 
 
 void MEMF cTerminal::showCommands() 

@@ -12,6 +12,7 @@
 #include "config.h"
 #include "csunrise.h"
 #include "pnlmain.h"
+#include "cEeprom.h"
 
 extern cRtc rtc;
 
@@ -52,10 +53,10 @@ void MEMP fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
     calcSunrise();
   else
   {
-    devPars.startH.set(cMenue::readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
-    devPars.startMin.set(cMenue::readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
-    devPars.stopH.set(cMenue::readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
-    devPars.stopMin.set(cMenue::readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
+    devPars.startH.set(readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
+    devPars.startMin.set(readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
+    devPars.stopH.set(readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
+    devPars.stopMin.set(readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
   }
 }
 

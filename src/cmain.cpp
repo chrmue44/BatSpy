@@ -16,6 +16,7 @@
 #include "pnllive.h"
 #include "pnlparams.h"
 #include "globals.h"
+#include "cEeprom.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -76,7 +77,7 @@ void setup()
   Serial.println("setting up bat detector");
   //waitForSerial();
   Txt::setResource(Texts);
-  int orientation = cMenue::readInt16FromEep(0x0032) == 0 ? 3 : 1;
+  int orientation = readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);
   cSdCard::inst().mount();
   sysLog.log("power on");
