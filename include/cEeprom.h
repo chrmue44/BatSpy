@@ -21,8 +21,14 @@ void writeCharToEep(int32_t addr, unsigned char val);
 void loadLanguage();
 void saveParsToEep();
 bool loadParsFromEep(); 
+bool setAndCheckPassword(const char* pw);
+bool isSystemLocked();
+bool setSerialNr(const char* serial);
+void getSerialNr(char* pBuf, size_t bufSize);
+bool setVoltageFactor(const char* p);
 
 
+#define UNLOCK_PW  "System889376"
 
 #define EEPADDR_MAX_ADDR      0x0000   // highest address for checksum calculation
 #define EEPADDR_CHKS_PAR      0x0002   // checksum parameter area
@@ -55,8 +61,9 @@ bool loadParsFromEep();
 #define EEPADDR_START_MIN     0x0056   // devPars.startMin,        INT16
 #define EEPADDR_STOP_H        0x0058   // devPars.stopH,           INT16
 #define EEPADDR_STOP_MIN      0x005A   // devPars.stopMin,         INT16
-#define EEPADDR_VOLT_FACT     0x005C   // devPars.voltFactor       float
-#define EEPADDR_FREE_INT16_0  0x0060
+#define EEPADDR_FREE_INT16_0  0x005C   
+#define EEPADDR_FREE_INT16_1  0x005E
+#define EEPADDR_FREE_INT16_2  0x0060
 #define EEPADDR_LIVE_AMPL     0x0062   // devPars.liveAmplitude,   INT16
 #define EEPADDR_PRJ_TYPE      0x0064   // devPars.projectType,     INT16
 #define EEPADDR_ALTITUDE      0x0066   // devStatus.height,        float
@@ -66,7 +73,8 @@ bool loadParsFromEep();
 #define EEPADDR_FIRSTFREE     0x0074
 
 #define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  
-
+#define EEP_SERIAL_SIZE       12       // size of the string
+#define EEPADDR_VOLT_FACT     0x0310   // devPars.voltFactor       float
 
 
 

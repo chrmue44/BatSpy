@@ -19,6 +19,7 @@
 #include "cTerminal.h"
 #include "cnotes.h"
 #include "cStatus.h"
+#include "cEeprom.h"
 #include "arduino-sht.h"
 
 #ifdef ARDUINO_TEENSY40
@@ -46,4 +47,5 @@ extern cnotes notes1;
 extern cnotes notes2;
 extern SHTSensor sht;
 extern cStatus statusDisplay;
+extern char serialNumber[EEP_SERIAL_SIZE];
 #endif //#ifndef GLOBALS_H

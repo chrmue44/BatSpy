@@ -117,17 +117,7 @@ void checkSupplyVoltage()
       menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
       delay(500);
     }
-    audio.closeProject();
-    delay(500);
-    cSdCard::inst().unmount();
-    delay(500);
-
-    #ifdef ARDUINO_TEENSY41
-    digitalWrite(PIN_POWER_OFF, 0);
-    #endif
-    #ifdef ARDUINO_TEENSY40
-    digWrite(SPIN_POWER_OFF, 0);
-    #endif
+    powerOff();
   }    
 }
 
@@ -178,7 +168,15 @@ void setIoDebugMode(bool mode)
 float calcVoltageFactor(float volt)
 {
   float fact = 1.0;
-  int digits = analogRead(PIN_SUPPLY_VOLT);
+  int32_t digits = 0;
+  int cnt = 20;
+  for(int i = 0; i < cnt; i++)
+  {
+    digits += analogRead(PIN_SUPPLY_VOLT);
+    delay(2);
+  }
+  digits /= cnt;
+  
   if(digits > 0)
   {
       fact = (devStatus.setVoltage.get()) / digits;
@@ -196,18 +194,48 @@ float readTemperature()
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
 #endif
 #ifdef ARDUINO_TEENSY40
-  return 22;  //TODO
+  sht.readSample();
+  return sht.getTemperature();
 #endif
+}
+
+void blink(int cnt)
+{
+  if(!hasDisplay())
+  {
+    for(int i = 0; i < cnt; i++)
+    {
+      digWrite(SPIN_LED_2, 1);
+      digWrite(SPIN_LED_DISP, 1);
+      delay(100);
+      digWrite(SPIN_LED_2, 0);
+      digWrite(SPIN_LED_DISP, 0);
+      delay(100);
+    }
+  }
+  else
+    delay(200 * cnt);
 }
 
 void powerOff()
 {
+  blink(5);
+  if(!hasDisplay() && !wheels.isKeyPressed())
+    return;
+
+  audio.closeProject();
+  blink(3);
+  sysLog.close();
+  gpsLog.close();
+  cSdCard::inst().unmount();
+  blink(3);
 #ifdef ARDUINO_TEENSY41
   digitalWrite(PIN_POWER_OFF, 0);
 #endif
 #ifdef ARDUINO_TEENSY40
   digWrite(SPIN_POWER_OFF, 0);
 #endif
+  for(;;)  { }
 }
 
 bool hasDisplay()

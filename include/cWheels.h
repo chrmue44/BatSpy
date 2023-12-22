@@ -27,7 +27,8 @@ class cWheels {
   void setDirection(bool ccw) { m_ccw = ccw; }
   SimpleEncoder* getEncoder() { return &m_enc; }     //for simulation
   Bounce* getBounce() { return &m_btn; }
-   
+  bool isKeyPressed() { return (digitalRead(m_btnPin) == 0); }
+
  protected:
   void checkEncoders();
   void increaseWrIdx();

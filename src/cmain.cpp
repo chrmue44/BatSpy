@@ -87,6 +87,7 @@ void setup()
  // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
+  getSerialNr(serialNumber, sizeof(serialNumber));
   audio.setup();
   wheels.setDirection(true);  
   if(hasDisplay())
@@ -164,6 +165,8 @@ void handleDisplayAndWheel(bool oneSec)
   }
 }
 
+cTimer switchOff;
+
 void handleButtonsAndLeds()
 {
   if (!cSdCard::inst().isFileTransferActive())
@@ -178,6 +181,13 @@ void handleButtonsAndLeds()
   {
     statusDisplay.nextState();
   }
+  if(wheels.isKeyPressed() && !switchOff.isRunning())
+    switchOff.setAlarm_ms(3000);
+  if(!wheels.isKeyPressed())
+    switchOff.stop();
+  if(switchOff.isAlarm())
+    powerOff();
+  
   statusDisplay.show();
 }
 

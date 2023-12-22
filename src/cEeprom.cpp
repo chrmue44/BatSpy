@@ -130,7 +130,6 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_START_MIN,    (int16_t)devPars.startMin.get());
   writeInt16ToEep(EEPADDR_STOP_H,       (int16_t)devPars.stopH.get());
   writeInt16ToEep(EEPADDR_STOP_MIN,     (int16_t)devPars.stopMin.get());
-  writeFloatToEep(EEPADDR_VOLT_FACT,    devPars.voltFactor.get());
   writeInt16ToEep(EEPADDR_FREE_INT16_0, 0);
   writeInt16ToEep(EEPADDR_LIVE_AMPL,    (int16_t)devPars.liveAmplitude.get());
   writeInt16ToEep(EEPADDR_PRJ_TYPE,     (int16_t)devPars.projectType.get());
@@ -187,13 +186,14 @@ bool MEMP loadParsFromEep()
     devPars.startMin.set(readInt16FromEep(EEPADDR_START_MIN)); //if addr changes see also pnlparams.cpp
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
     devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));  //if addr changes see also pnlparams.cpp
-    devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
     devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
     devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
+
+    devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     int digits = analogRead(PIN_SUPPLY_VOLT);
     devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));
     retVal = true;
@@ -214,30 +214,61 @@ void MEMP loadLanguage()
   }
 }
 
+char passwd[16];
+
+bool isSystemLocked()
+{
+  return (strlen(passwd) != strlen(UNLOCK_PW)) || strncmp(passwd, UNLOCK_PW, sizeof(UNLOCK_PW) != 0);
+}
+
+bool setVoltageFactor(const char* p)
+{
+  bool retVal = false;
+  if(!isSystemLocked())
+  {
+    float voltage = atof(p);
+    float fact = calcVoltageFactor(voltage);
+    devPars.voltFactor.set(fact);
+    writeFloatToEep(EEPADDR_VOLT_FACT, fact);
+    retVal = true;
+  }
+  return retVal;
+}
+
+bool setAndCheckPassword(const char* pw)
+{
+  strncpy(passwd, pw, sizeof(passwd));
+  return isSystemLocked();
+}
+
+
 /// @brief set a serial number
 /// @param serial string containing serial format should be 11 character as follows:
 ///               BS40-C-0001
 /// @param pwd 
-void setSerialNr(const char* serial, const char* pwd)
+bool MEMP setSerialNr(const char* serial)
 {
-  if(strcmp(pwd, "System889376") == 0)
+  if(!isSystemLocked())
   {
     const char* p = serial;
-    int addr = 0x300;
-    for (int i = 0; i < 11; i++)
+    int addr = EEPADDR_SERIAL;
+    for (int i = 0; i < EEP_SERIAL_SIZE; i++)
     {
       writeCharToEep(addr++, p[i]);
     }
+    return true;
   }
+  else 
+   return false;
 }
 
 void getSerialNr(char* pBuf, size_t bufSize)
 {
   int addr = 0x300;
-  if(bufSize >= 12)
+  if(bufSize >= EEP_SERIAL_SIZE)
   {
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < EEP_SERIAL_SIZE; i++)
       pBuf[i] = readCharFromEep(addr++);
-    pBuf[11] = 0;
+    pBuf[EEP_SERIAL_SIZE - 1] = 0;
   } 
 }

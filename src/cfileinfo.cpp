@@ -23,6 +23,8 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
     writeLine("<BatRecord>");
     writeTag(TAG_FILE_NAME, wavFile);
     writeTag(TAG_DATE_TIME, date);
+    writeTag(TAG_SN, serialNumber);
+    writeTag(TAG_FIRMWARE, devStatus.version.get());
     writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
     writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
     writeTag(TAG_INP_FILTER, devPars.preAmpType.getActText());

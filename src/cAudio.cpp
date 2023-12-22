@@ -464,6 +464,7 @@ void cAudio::operate(bool liveFft)
         break;
       case enPlayStatus::ST_REC:
         m_timeout.start();
+        statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
         m_trigger.releaseRecTrigger();
         m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
@@ -472,6 +473,7 @@ void cAudio::operate(bool liveFft)
       case enPlayStatus::ST_STOP:
         if(m_oldCassMode == enCassMode::REC)
         {
+          statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
         }
@@ -586,6 +588,7 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 
 void cAudio::startRec()
 {
+  statusDisplay.setRecRunning(true);
   if(devPars.projectType.get() == enProjType::ELEKON)
   {
     m_prj.createElekonFileName();

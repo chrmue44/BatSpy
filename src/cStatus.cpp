@@ -140,7 +140,10 @@ void cStatus::updateStatus()
       break;
     
     case enLedMode::DISP_REC:
-      setStateLed2(enStatLed::ON_75);  //@@@ TODO
+      if(_recRunning)
+        setStateLed2(enStatLed::LED_ON);
+      else
+        setStateLed2(enStatLed::LED_OFF);
       break;
     
     case enLedMode::DISP_GPS:

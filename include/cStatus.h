@@ -59,11 +59,13 @@ class cStatus
    bool _led2On = false;
    bool _oldLed2On = true;
    cTimer _timer;
+   bool _recRunning = false;
 
   public:
    cStatus() {}
    void show();
    void nextState();
+   void setRecRunning(bool on) {_recRunning = on; }
 
   private:
    void setStateLed2(enStatLed state);

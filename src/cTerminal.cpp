@@ -16,7 +16,6 @@
 
 extern cMenue menue;
 
-
 cTerminal::cTerminal() 
 {
 }
@@ -231,7 +230,26 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       Serial.write(ret);      
       Serial.write(m_endChar);
       break;  
-      
+    case 'Y':
+      Serial.write(setAndCheckPassword(&buf[1]) ? '1':'0');
+      Serial.write(m_endChar);
+      break;
+    case 'y':
+      Serial.write(isSystemLocked() ? '1' : '0');
+      Serial.write(m_endChar);
+      break;
+    case 'Z':
+      Serial.write(setSerialNr(&buf[1]) ? '0':'1');
+      Serial.write(m_endChar);
+      break;
+    case 'z':
+      {
+        char serial[EEP_SERIAL_SIZE];
+        getSerialNr(serial, EEP_SERIAL_SIZE);
+        Serial.print(serial);
+        Serial.write(m_endChar);
+      } 
+      break;
     default:
       Serial.printf("unknown command: %c\n",buf[0]);
       break;
@@ -454,7 +472,9 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     case 'a':
       replyOk = parseAutoRecParams(&buf[1], true);
       break;
-
+    case 'f':
+      replyOk = setVoltageFactor(&buf[1]);
+      break;
     case 'l':
       replyOk = parseLocationParams(&buf[1], true);
       break;
@@ -901,6 +921,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("pai      get auto recording stop hour");
   Serial.println("Pan<val> set auto recording stop minute (0 ... 59");
   Serial.println("pan      get auto recording stop minute");
+  Serial.println("Pf       set current voltage to calc voltage fact (unlock first)");
   Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
   Serial.println("pls      get location source");
   Serial.println("Pla<val> set location latitude (0 ... 90");
@@ -938,4 +959,8 @@ void MEMF cTerminal::showCommands()
   Serial.println("W        key cursor down"); 
   Serial.println("v        display software version"); 
   Serial.println("x<name>  delete file/dir <name>");
+  Serial.println("Y<Pwd>   set unlock password for system functions");
+  Serial.println("y<Pwd>   '1': system locked, '0': system unlocked");
+  Serial.println("Z<serNr> set serial nr (unlock first)");
+  Serial.println("z        get serial nr");
 }

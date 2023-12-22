@@ -21,6 +21,8 @@
 #define TAG_PEAK_VAL     "PeakValue"
 #define TAG_DURATION     "Duration"
 #define TAG_DATE_TIME    "DateTime"
+#define TAG_SN           "SN"
+#define TAG_FIRMWARE     "Firmware"
 #define TAG_FILE_NAME    "FileName"
 #define TAG_POSITION     "Position"
 #define TAG_TRIG_TYPE    "TriggerType"
