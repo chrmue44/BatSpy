@@ -67,15 +67,15 @@ void waitForSerial()
 void setup()
 {
   Serial.begin(9600);
+  delay(200);
   initPins();
   if(!hasDisplay())
   {
     digWrite(SPIN_LED_DISP, 1);
     digWrite(SPIN_LED_2, 1);
   }
+//  waitForSerial();
   audio.init();
-  Serial.println("setting up bat detector");
-  //waitForSerial();
   Txt::setResource(Texts);
   int orientation = readInt16FromEep(0x0032) == 0 ? 3 : 1;
   initTft(orientation);

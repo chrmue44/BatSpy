@@ -8,9 +8,6 @@
 
 #include "globals.h"
 
-#ifdef ARDUINO_TEENSY40
-TCA9534 ioex;
-#endif
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S);
 cLog sysLog("sys");
 cLog gpsLog("gps");
@@ -33,3 +30,7 @@ stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
 SHTSensor sht;
 char serialNumber[EEP_SERIAL_SIZE];
+
+#ifdef ARDUINO_TEENSY40
+TCA9534 ioex;
+#endif

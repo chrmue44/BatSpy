@@ -49,6 +49,8 @@ int32_t cAudio::getSampleRateHz(enSampleRate sr)
 }
 
 cAudio::cAudio() : 
+m_audioIn(),
+m_audioOut(),
 m_cass(),
 m_peak(),
 m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
@@ -80,6 +82,7 @@ void cAudio::init()
   digitalWrite(pinAmp2, 1);
   digitalWrite(pinAmp3, 0);
 #endif
+  m_audioIn.begin(); //@@@ Test: bringt das was?
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
   AudioMemory(600);
@@ -271,7 +274,8 @@ void cAudio::setup()
   }
   #endif
   #ifdef ARDUINO_TEENSY40
-    setPreAmpGain((enGainRevC)devPars.preAmpGain.get());
+  digWrite(SPIN_PWR_ANA, 1);
+  setPreAmpGain((enGainRevC)devPars.preAmpGain.get());
   #endif
   if (isSetupNeeded())
   {
