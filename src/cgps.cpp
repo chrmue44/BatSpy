@@ -12,10 +12,13 @@
 
 void MEMF cGps::init()
 { 
-  SERIAL_GPS.begin(9800, SERIAL_8N1);
-  cSdCard::inst().chdir("/log");
-  m_valid = false;
-  m_recIdx = 0;
+  if(m_power)
+  {
+    SERIAL_GPS.begin(9600, SERIAL_8N1);
+    cSdCard::inst().chdir("/log");
+    m_valid = false;
+    m_recIdx = 0;
+  }
 }
 
 void MEMF cGps::setMode(enGpsMode mode)
@@ -30,11 +33,13 @@ void MEMF cGps::setMode(enGpsMode mode)
     case enGpsMode::GPS_ON:
       digWrite(SPIN_PWR_GPS, 1);
       m_power = true;
+      gps.init();
       break;
     case enGpsMode::GPS_AUTO_OFF_AFTER_FIX:
       digWrite(SPIN_PWR_GPS, 1);
       m_timer.setAlarm_ms(MAX_ON_TIME_S * 1000);
       m_power = true;
+      gps.init();
       break;
     break;
   }

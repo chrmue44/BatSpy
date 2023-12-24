@@ -268,7 +268,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.startMin.set(0);              ///< minute of start time
   devPars.stopH.set(6);                 ///< hour of start time
   devPars.stopMin.set(0);               ///< minute of start time
-  devPars.voltFactor.set(1);            ///< factor digits to voltage
+ // devPars.voltFactor.set(1);            ///< factor digits to voltage
   devPars.recAuto.set(0);              ///< mode for automatic recording
   devPars.sendDelay.set(2);             ///< delay [ms] after sending 2048 Bytes on USB
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display

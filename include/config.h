@@ -107,7 +107,7 @@
 #define PIN_TFT_SCLK     27      // TFT SCLK
 #define PIN_TFT_MISO     3      // TFT MISO
 
-#define SERIAL_GPS       Serial5 // Serial4
+#define SERIAL_GPS       Serial4
 
 inline bool hasAmpRevB() { return  false; }
 inline bool isRevisionB() { return false; }

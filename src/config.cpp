@@ -16,7 +16,8 @@
 #include "InternalTemperature.h"
 #include "globals.h"
 
-cMeanCalc<int16_t,10> digits;
+
+cMeanCalc<int32_t,50> digits;
 //cMeanCalc<int16_t,10> uref;
 
 uint8_t ioexOut = 0;
@@ -124,12 +125,13 @@ void checkSupplyVoltage()
 float readSupplyVoltage()
 {
   float volt = 0;
-  int digs = digits.get(analogRead(PIN_SUPPLY_VOLT));
+  int32_t digSingle = analogRead(PIN_SUPPLY_VOLT);
+  int digs = digits.get(digSingle);
   devStatus.digits.set((float)digs);
 
   volt = (float)digs * devPars.voltFactor.get();
 
-  DPRINTF2("digits: %i  voltage: %f  factor: %f\n", digs, volt,devPars.voltFactor.get());
+  DPRINTF2("get Voltage: digits: %i single: %i  voltage: %f  factor: %f\n", digs, digSingle, volt,devPars.voltFactor.get());
   return volt;
 }
 
@@ -169,7 +171,7 @@ float calcVoltageFactor(float volt)
 {
   float fact = 1.0;
   int32_t digits = 0;
-  int cnt = 20;
+  int cnt = 50;
   for(int i = 0; i < cnt; i++)
   {
     digits += analogRead(PIN_SUPPLY_VOLT);
@@ -179,9 +181,9 @@ float calcVoltageFactor(float volt)
   
   if(digits > 0)
   {
-      fact = (devStatus.setVoltage.get()) / digits;
+      fact = volt / digits;
   }
-  DPRINTF2("digits: %i, voltage: %f, factor: %f\n", digits, devStatus.voltage.get(), fact);
+  DPRINTF2("calc factor: digits: %i, voltage: %f, factor: %f\n", digits, volt, fact);
   return fact;
 }
 
