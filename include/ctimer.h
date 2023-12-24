@@ -17,11 +17,25 @@ class cTimer
 {
  public:
   cTimer() :
-  m_startTime(0)
+  m_startTime(0),
+  m_alarmTime(0)
   {}
   
   void start() {
     m_startTime = millis();
+  }
+
+  /// @brief set alarm in <alarmtime_s> seconds
+  /// @param s time when alarm is signaled [ms]
+  void setAlarm_ms(uint32_t alarmtime)
+  {
+    m_startTime = millis();
+    m_alarmTime = alarmtime;
+  }
+
+  bool isAlarm()
+  {
+    return( runTimeMs() > m_alarmTime);
   }
 
   uint32_t runTimeMs() {
@@ -42,6 +56,7 @@ class cTimer
  
  private:
    uint32_t m_startTime;
+   uint32_t m_alarmTime;
 };
 
 #endif //#ifndef C_TIMER_H
