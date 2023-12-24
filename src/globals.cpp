@@ -27,7 +27,7 @@ Metro tick15Min(1000 * 60 * 15);
 cTerminal terminal;
 cnotes notes1;
 cnotes notes2;
-
+cStatus statusDisplay;
 
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
