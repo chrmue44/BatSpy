@@ -18,6 +18,7 @@
 #include "cWheels.h"
 #include "cTerminal.h"
 #include "cnotes.h"
+#include "cStatus.h"
 
 #ifdef ARDUINO_TEENSY40
 #include <TCA9534.h>
@@ -42,5 +43,6 @@ extern stStatus devStatus;          ///< status of the device
 extern stParams devPars;            ///< parameters of the device
 extern cnotes notes1;
 extern cnotes notes2;
+extern cStatus statusDisplay;
 
 #endif //#ifndef GLOBALS_H
