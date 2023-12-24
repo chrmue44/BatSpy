@@ -1,0 +1,13 @@
+1st teensy 4.0 commit   a6c320563939aafc0364a08ecb81a94b1fb6d27d
+works                   9a17d912c2f094770e03a7f6009214c1fa1edafe          27.11.
+OK                      7230c6871371896550ca1cd7d79b00a148989e44          02.12.
+OK                      91bf8e16a3c6d6801ff355b90e5e22cbf84ffacc          02.12.
+globals.h     OK
+globals.cpp   OK
+cTimer.h      OK
+cStatus.h     OK
+cStatus.cpp   OK
+config.h     NOK
+config.cpp   NOK
+NOK                     a6c9ebe3b95df85b8c68555569b8c0a9e1f6e7f4          14.12.
+HEAD (NOK)              dfb381122886760eeec3950876aa007da1089205

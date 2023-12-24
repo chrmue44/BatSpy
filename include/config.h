@@ -77,8 +77,8 @@
 
 // *****   pin definitions *****
 #define SPIN_POWER_OFF   0x8010      // power off if voltage too low
-#define SPIN_LED_DISP    0x8002      // LED Display
-#define SPIN_LED_2       0x8001      // LED 2
+#define SPIN_LED_DISP    16 // @@@ 0x8002      // LED Display
+#define SPIN_LED_2       17  //@@@ 0x8001      // LED 2
 #define SPIN_AMP0        0x8004      // AMP0
 #define SPIN_TFT_RES     0x8008      // Reset TFT-Display
 #define SPIN_PWR_ANA     0x8020      // Poser supply analog stage
@@ -91,7 +91,7 @@
 
 #define PIN_ROT_LEFT_A   14          // encoder input A
 #define PIN_ROT_LEFT_B   15          // encoder input B
-#define PIN_ROT_LEFT_S   2           // encoder push button
+#define PIN_ROT_LEFT_S   22   // @@@ 2           // encoder push button
 
 #define PIN_SUPPLY_VOLT  A8    
 
@@ -105,7 +105,7 @@
 #define PIN_TFT_SCLK     27      // TFT SCLK
 #define PIN_TFT_MISO     3      // TFT MISO
 
-#define SERIAL_GPS       Serial4
+#define SERIAL_GPS       Serial5 // Serial4
 
 inline bool hasAmpRevB() { return  false; }
 inline bool isRevisionB() { return false; }
