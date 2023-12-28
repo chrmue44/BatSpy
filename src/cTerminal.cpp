@@ -358,6 +358,10 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       getValFloat(buf + 1, devStatus.height, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
+    case 'k':
+      getValFloat(buf + 1, devStatus.peakVal, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break;
     case 'l':
 	    getPosition(replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
@@ -952,7 +956,8 @@ void MEMF cTerminal::showCommands()
   Serial.println("prf<val> get trig filter frequency [kHz]");
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
-  Serial.println("st       print status");
+  Serial.println("sk       print last peak value");  
+  Serial.println("su       print status");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 

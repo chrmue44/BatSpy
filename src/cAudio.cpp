@@ -82,7 +82,6 @@ void cAudio::init()
   digitalWrite(pinAmp2, 1);
   digitalWrite(pinAmp3, 0);
 #endif
-  m_audioIn.begin(); //@@@ Test: bringt das was?
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
   AudioMemory(600);

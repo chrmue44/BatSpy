@@ -230,7 +230,7 @@ private:
   thItem m_dropDownMaxSize;       ///< max. nr of items in drop down menu (geometrical constraint)
   stPanelItem m_pDropDownEnum;    ///< enumeration to define dropdown panel
   thItem m_firstDropDownItem;     ///< first item actually displayed in drop down menue
-  uint32_t m_lastKeyTime;         ///< last time key was pressed
+  uint32_t m_lastKeyTime = 0;     ///< last time key was pressed
   bool m_isInitialized = false;   ///< true if menue system is initialized
 };
 

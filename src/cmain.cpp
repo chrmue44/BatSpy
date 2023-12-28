@@ -158,7 +158,6 @@ void handleDisplayAndWheel(bool oneSec)
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
-    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     size_t freeSpace;  size_t totSpace;
     cSdCard::inst().getFreeMem(freeSpace, totSpace);
     devStatus.freeSpace.set(freeSpace / 1024);
@@ -225,6 +224,7 @@ void loop()
     }
 
     devStatus.mainLoop.set(loopCount);
+    devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     loopCount = 0;
     float volt = readSupplyVoltage();
     devStatus.voltage.set(volt);

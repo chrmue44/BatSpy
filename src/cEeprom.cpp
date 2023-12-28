@@ -173,7 +173,8 @@ bool MEMP loadParsFromEep()
     devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
-    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
+//    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
+    devPars.recFmt.set(enRecFmt::WAV);
     devPars.deadTime.set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
@@ -187,7 +188,8 @@ bool MEMP loadParsFromEep()
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
     devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));  //if addr changes see also pnlparams.cpp
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
-    devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
+  //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
+    devPars.projectType.set(enProjType::ELEKON);
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
