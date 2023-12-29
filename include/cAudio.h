@@ -109,7 +109,6 @@ private:
   static int32_t getSampleRateHz(enSampleRate sr);
   static size_t getFftOutputSize() { return sizeof(AudioAnalyzeFFT1024::output) / sizeof(AudioAnalyzeFFT1024::output[0]); }
   void setSampleRate(enSampleRate sr);
-  void setPreAmpType(enPreAmp type);
   #ifdef ARDUINO_TEENSY40
   void setPreAmpGain(enGainRevC gain);
   #endif

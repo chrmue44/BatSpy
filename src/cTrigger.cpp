@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "globals.h"
-//#define DEBUG_LEVEL  4
+#define DEBUG_LEVEL  4
 #include "debug.h"
 #include "cTrigger.h"
 
@@ -27,7 +27,7 @@ void cTrigger::checkTrigger()
 {
   float fFilter = devPars.filtFreq.get() * 1000.0;
   checkRecordingTrigger(fFilter);
-  checkLiveTrigger(fFilter);
+ // checkLiveTrigger(fFilter);
 }
 
 void cTrigger::releaseLiveTrigger()

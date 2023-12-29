@@ -188,10 +188,6 @@ struct stTxtList PROGMEM Texts[] =
   { 1307, "384"                       ,0 },
   { 1308, "480"                       ,0 },
 
-  { 1320, "Filter",                    0 },
-  { 1321, "aus",                       "off" },
-  { 1322, "HP 16kHz",                  0 },
-
   { 1325, "Verstärkung",               "Gain" },
   { 1330, "Pre Trigger [ms]",          0 },
   { 1331, "27 dB",                     0 },

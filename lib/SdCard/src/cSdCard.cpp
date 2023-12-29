@@ -108,6 +108,8 @@ enSdRes cSdCard::unmount() {
   #if defined(CARDLIB_SD)
    ;
    #elif defined(CARDLIB_SDFAT)
+   while(m_sd.isBusy())
+     delay(2);
    m_sd.begin(1);
 #elif defined(CARDLID_USDFS)
   TCHAR tdir[FILENAME_LEN];

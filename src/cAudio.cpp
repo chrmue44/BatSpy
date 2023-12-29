@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "globals.h"
-//#define DEBUG_LEVEL 4
+#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "pnllive.h"
 #include "cutils.h"
@@ -338,7 +338,6 @@ void cAudio::setup()
   }
   else
     DPRINTLN2("no setup needed");
-  DPRINTF4("  pre amp type: %s\n", devPars.preAmpType.getActText());
   DPRINTF4("  pre amp gain: %s\n", devPars.preAmpGain.getActText());
 }
 
@@ -346,12 +345,12 @@ void cAudio::updateCassMode()
 {
   switch (devStatus.playStatus.get())
   {
-  case 0:
-  case 3:
+  case enPlayStatus::ST_STOP:
+  case enPlayStatus::TIMEOUT:
     setAudioConnections(1);
     m_cass.stop();
     break;
-  case 1:
+  case enPlayStatus::ST_PLAY:
     if (m_cass.getMode() != enCassMode::PLAY)
     {
       m_cass.setFileName(devPars.fileName.get());
@@ -359,12 +358,13 @@ void cAudio::updateCassMode()
       delay(5);
     }
     break;
-  case 2:
+  case enPlayStatus::ST_REC:
     if (m_cass.getMode() != enCassMode::REC)
     {
       setAudioConnections(0);
       startRec();
       devStatus.recCount.set(devStatus.recCount.get() + 1);
+      DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
       delay(5);
     }
     break;
@@ -420,6 +420,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
           if (startRecording && !m_prj.getIsOpen())
             openProject();
           devStatus.recCount.set(devStatus.recCount.get() + 1);
+          DPRINTF4("checkAutoRec start recording: %i\n", (int)devStatus.recCount.get());
           startRec();
           devStatus.playStatus.set(enPlayStatus::ST_REC);
           delay(5);
@@ -466,12 +467,11 @@ void cAudio::operate(bool liveFft)
         devStatus.playStatus.set(enPlayStatus::ST_STOP);
         break;
       case enPlayStatus::ST_REC:
-        m_timeout.start();
+        m_timeout.setAlarm(devPars.deadTime.get());
         statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
-        m_trigger.releaseRecTrigger();
         m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
-        DPRINTLN1("start timeout");
+        DPRINTLN4("start timeout");
         break;
       case enPlayStatus::ST_STOP:
         if(m_oldCassMode == enCassMode::REC)
@@ -479,6 +479,7 @@ void cAudio::operate(bool liveFft)
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
+          DPRINTLN4("recording stopped");
         }
         break;
 
@@ -495,11 +496,13 @@ void cAudio::operate(bool liveFft)
 
   if (devStatus.playStatus.get() == enPlayStatus::TIMEOUT)
   {
-    if (m_timeout.runTime() > devPars.deadTime.get())
+    if (m_timeout.isAlarm())
     {
+      m_timeout.stop();
       devStatus.playStatus.set(enPlayStatus::ST_STOP);
       m_trigger.releaseLiveTrigger();
-      DPRINTF1("timeout over, timeout %f,  timer %f\n", devPars.deadTime.get(), m_timeout.runTime());
+      m_trigger.releaseRecTrigger();
+      DPRINTF4("timeout over, timeout %f,  timer %f\n", devPars.deadTime.get(), m_timeout.runTime());
     }
   }
 }

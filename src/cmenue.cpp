@@ -251,7 +251,6 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.preAmpGain.set(1);           ///< gain of pre amplifier
-  devPars.preAmpType.set(enPreAmp::HIGH_PASS);      ///< type of pre amplifier
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);   ///< knob rotation
   devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
@@ -502,7 +501,6 @@ void MEMP cMenue::printPars()
   Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate.getActText());
   Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger.get());
   Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold.get() * 100);
-  Serial.printf("pre amp type           : %s\n", devPars.preAmpType.getActText());
   Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain.getActText());
 }
 

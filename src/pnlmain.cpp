@@ -547,11 +547,6 @@ int MEMP initMainPanelExpert(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.mixFreq,       150,  30 + r++ * lf,  15, lf, true);
   err |= pan->addTextItem(204,                     3,  30 + r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.volume,        150,  30 + r++ * lf,  20, lf, true);
-  if (hasAmpRevB())
-  {
-    err |= pan->addTextItem(1320,                  3,  30 + r   * lf,   80, lf);
-    err |= pan->addEnumItem(&devPars.preAmpType, 150,  30 + r++ * lf,  120, lf, true);
-  }
   err |= pan->addTextItem(1325,                    3,  30 + r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   150,  30 + r++ * lf, 120, lf, true);
   err |= pan->addTextItem(200,                     3,  30 + r   * lf,  80, lf);
@@ -587,11 +582,6 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   err |= pan->addListItem(&devStatus.notes1,     x, 30 + r++ * lf, 169, lf, true);
   err |= pan->addTextItem(33,                    3, 30 + r   * lf, 120, lf);
   err |= pan->addListItem(&devStatus.notes2,     x, 30 + r++ * lf, 169, lf, true);
-  if (!hasAmpRevB())
-  {
-    err |= pan->addTextItem(1320,                  3, 30 + r   * lf, 80, lf);
-    err |= pan->addEnumItem(&devPars.preAmpType,   x, 30 + r++ * lf, 120, lf, true);
-  }
 //  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
 //  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
 

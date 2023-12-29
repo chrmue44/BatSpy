@@ -125,8 +125,6 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.menueType,     170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
   err |= pan->addTextItem(1148,                    15, 20 +  2 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.backLightTime,  170, 20 +  2 * lf,  25, lf, true);
-  err |= pan->addTextItem(1320,                    15, 20 +  3 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpType,    170, 20 +  3 * lf,  80, lf, true);
   err |= pan->addTextItem(1325,                    15, 20 +  4 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,    170, 20 +  4 * lf,  80, lf, true);
   err |= pan->addTextItem(1150,                    15, 20 +  5 * lf,  80, lf);

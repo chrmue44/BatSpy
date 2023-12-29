@@ -44,13 +44,6 @@ enum enSampleRate
   SR_480K =    8
 };
 
-// available pre amp selections
-enum enPreAmp
-{
-  LINEAR         = 0,
-  HIGH_PASS      = 1
-};
-
 // available hardware gain settings for pre amp
 enum enGain
 {

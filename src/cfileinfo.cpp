@@ -27,7 +27,7 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
     writeTag(TAG_FIRMWARE, devStatus.version.get());
     writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
     writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
-    writeTag(TAG_INP_FILTER, devPars.preAmpType.getActText());
+    writeTag(TAG_INP_FILTER, "None");
     writeLine("<Trigger>");
     writeTag(TAG_TRIG_TYPE, devPars.triggerType.getActText());
     writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");

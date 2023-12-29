@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <cSdCard.h>
-
+//#define DEBUG_LEVEL   4
+#include "debug.h"
 #include "cStatus.h"
 #include "config.h"
 #include "globals.h"
@@ -8,7 +9,7 @@
 
 void cStatus::nextState()
 {
-  switch (_ledMode)
+  switch (m_ledMode)
   {
     case enLedMode::DISP_IDLE:
       setLedMode(enLedMode::DISP_BATT);
@@ -27,112 +28,123 @@ void cStatus::nextState()
       setLedMode(enLedMode::DISP_IDLE);
       break;
   }
-  _state = enShowState::INIT;
+  m_state = enShowState::INIT;
 }
 
 void cStatus::show()
 {
-  switch(_state)
+  switch(m_state)
   {
     case enShowState::INIT:
     default:
       updateStatus();
-      _blinkCnt1 = 0;
-      _blinkCnt2 = 0;
-      _state = enShowState::BLINK_MODE;
-      if(_ledMode != enLedMode::DISP_IDLE)
+      m_blinkCnt1 = 0;
+      m_blinkCnt2 = 0;
+      m_state = enShowState::BLINK_MODE;
+      DPRINTLN4("cStatus  showState: BLINK_MODE");
+      if(m_ledMode != enLedMode::DISP_IDLE)
       {
-        _led1On = true;
-        _blinkCnt1++;
-        _timer.setAlarm_ms(LED_ON_TIME);
+        m_led1On = true;
+        m_blinkCnt1++;
+        m_timer.setAlarm_ms(LED_ON_TIME);
       }
       break;
       
     case enShowState::WAIT:
-      if(_timer.isAlarm())
+      if(m_timer.isAlarm())
       {
-        _state = enShowState::INIT;
+        m_state = enShowState::INIT;
+        DPRINTLN4("cStatus  showState: INIT");
       }
       break;
 
     case enShowState::BLINK_MODE:
-      if(_timer.isAlarm())
+      if(m_timer.isAlarm())
       {
-      if(_led1On)
+      if(m_led1On)
       {
-        _led1On = false;
-        _timer.setAlarm_ms(LED_OFF_TIME);            
+        m_led1On = false;
+        m_timer.setAlarm_ms(LED_OFF_TIME);            
       }
       else
       {
-        if(_blinkCnt1 < _maxBlinkCnt1)
+        if(m_blinkCnt1 < m_maxBlinkCnt1)
         {
-          _blinkCnt1++;
-          _led1On = true;
-          _timer.setAlarm_ms(LED_ON_TIME);            
+          m_blinkCnt1++;
+          m_led1On = true;
+          m_timer.setAlarm_ms(LED_ON_TIME);            
         }
-        else if((_maxBlinkCnt2 > 0) && (_statusLed2 != enStatLed::LED_OFF))
+        else if((m_maxBlinkCnt2 > 0) && (m_statusLed2 != enStatLed::LED_OFF))
         {
-          _led2On = true;
-          _blinkCnt2++;
-          _state = enShowState::BLINK_STATE;
-          _timer.setAlarm_ms(LED_ON_TIME);            
+          m_led2On = true;
+          m_blinkCnt2++;
+          m_state = enShowState::BLINK_STATE;
+          DPRINTLN4("cStatus  showState: BLINK_STATE");
+          m_timer.setAlarm_ms(LED_ON_TIME);            
         }
         else
         {
-          _timer.setAlarm_ms(REPEAT_TIME);
-          _state = enShowState::WAIT;
+          m_timer.setAlarm_ms(REPEAT_TIME);
+          m_state = enShowState::WAIT;
+          DPRINTLN4("cStatus showState: WAIT");
         }
       }
       }
       break;
 
     case enShowState::BLINK_STATE:
-      if(_timer.isAlarm())
+      if(m_timer.isAlarm())
       {
-        if(_led2On)
+        if(m_statusLed2 == enStatLed::LED_OFF)
+          m_led2On = false;
+        else if (m_statusLed2 == enStatLed::LED_ON)
+          m_led2On = true;
+        else if(m_led2On)
         {
-          _led2On = false;
-          _timer.setAlarm_ms(LED_OFF_TIME);            
+          m_led2On = false;
+          m_timer.setAlarm_ms(LED_OFF_TIME);            
         }
         else
         {
-          if(_statusLed2 == enStatLed::LED_OFF)
-            _led2On = false;
-          else if (_statusLed2 == enStatLed::LED_ON)
-            _led2On = true;
-          else if(_blinkCnt2 < _maxBlinkCnt2)
+          if(m_blinkCnt2 < m_maxBlinkCnt2)
           {
-            _blinkCnt2++;
-            _led2On = true;
+            m_blinkCnt2++;
+            m_led2On = true;
           }
-          if((_statusLed2 != enStatLed::LED_ON) && _led2On)
-            _timer.setAlarm_ms(LED_ON_TIME);
+          if((m_statusLed2 != enStatLed::LED_ON) && m_led2On)
+            m_timer.setAlarm_ms(LED_ON_TIME);
           else
           {
-            _timer.setAlarm_ms(REPEAT_TIME);
-            _state = enShowState::WAIT;
+            m_timer.setAlarm_ms(REPEAT_TIME);
+            m_state = enShowState::WAIT;
+            DPRINTLN4("cStatus  showState: WAIT");
           }
         }
       }
       break;  
   }
-  if(_oldLed1On != _led1On)
+  if(m_oldLed1On != m_led1On)
   {
-    digWrite(SPIN_LED_DISP, _led1On);
-    _oldLed1On = _led1On;
+    digWrite(SPIN_LED_DISP, m_led1On);
+    m_oldLed1On = m_led1On;
   }
-  if(_oldLed2On != _led2On)
+  if(m_oldLed2On != m_led2On)
   {
-    digWrite(SPIN_LED_2, _led2On);
-    _oldLed2On = _led2On;
+    digWrite(SPIN_LED_2, m_led2On);
+    m_oldLed2On = m_led2On;
   }
   return;
 }
 
+void cStatus::setRecRunning(bool on)
+{
+  m_recRunning = on;
+  updateStatus(); 
+}
+
 void cStatus::updateStatus()
 {
-  switch(_ledMode)
+  switch(m_ledMode)
   {
     default:
     case enLedMode::DISP_IDLE:
@@ -140,7 +152,7 @@ void cStatus::updateStatus()
       break;
     
     case enLedMode::DISP_REC:
-      if(_recRunning)
+      if(m_recRunning)
         setStateLed2(enStatLed::LED_ON);
       else
         setStateLed2(enStatLed::LED_OFF);
@@ -194,67 +206,69 @@ void cStatus::updateStatus()
 
 void cStatus::setLedMode(enLedMode mode)
 {
-  _ledMode = mode;
+  m_ledMode = mode;
   switch(mode)
   {
     case enLedMode::DISP_IDLE:
-      _maxBlinkCnt1 = 0;
+      m_maxBlinkCnt1 = 0;
       break;
     case enLedMode::DISP_BATT:
-      _maxBlinkCnt1 = 1;
+      m_maxBlinkCnt1 = 1;
       break;
     case enLedMode::DISP_SD:
-      _maxBlinkCnt1 = 2;
+      m_maxBlinkCnt1 = 2;
       break;
     case enLedMode::DISP_REC:
-      _maxBlinkCnt1 = 3;
+      m_maxBlinkCnt1 = 3;
       break;
     case enLedMode::DISP_GPS:
-      _maxBlinkCnt1 = 4;
+      m_maxBlinkCnt1 = 4;
       break;
   }
 }
 
 void cStatus::setStateLed2(enStatLed state)
 {
-  if(state == _statusLed2)
+  if(state == m_statusLed2)
     return;
-  _statusLed2 = state;
+  m_statusLed2 = state;
   switch (state)
   {
     case enStatLed::LED_OFF:
-      _maxBlinkCnt2 = 0;
-      if(_led2On)
+      m_maxBlinkCnt2 = 0;
+      if(m_led2On)
       {
-        digWrite(SPIN_LED_DISP, 0);
-        _led2On = false;
-        _oldLed2On = false;
+        DPRINTLN4("cStatus LED2 OFF");
+        digWrite(SPIN_LED_2, 0);
+        m_led2On = false;
+        m_oldLed2On = false;
       }
       break;
 
     case enStatLed::LED_ON:
-      if(!_led2On)
+      if(!m_led2On)
       {
-        digWrite(SPIN_LED_DISP, 1);
-        _led2On = true;
-        _oldLed2On = true;
+        DPRINTLN4("cStatus LED2 ON");
+        digWrite(SPIN_LED_2, 1);
+        m_led2On = true;
+        m_oldLed2On = true;
       }
       break;
 
     case enStatLed::ON_100:
-      _maxBlinkCnt2 = 4;
+      m_maxBlinkCnt2 = 4;
       break;
     
     case enStatLed::ON_75:
-      _maxBlinkCnt2 = 3;
+      m_maxBlinkCnt2 = 3;
       break;
     
     case enStatLed::ON_50:
-      _maxBlinkCnt2 = 2;
+      m_maxBlinkCnt2 = 2;
       break;
     
     case enStatLed::ON_25:
-      _maxBlinkCnt2 = 1;
+      m_maxBlinkCnt2 = 1;
       break;
   }
 }

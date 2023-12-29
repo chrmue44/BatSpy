@@ -35,7 +35,7 @@ class cTimer
 
   bool isRunning() {return m_running;}
 
-  /// @brief set alarm in <alarmtime_s> seconds
+  /// @brief set alarm in <alarmtime_ms> milli seconds
   /// @param s time when alarm is signaled [ms]
   void setAlarm_ms(uint32_t alarmtime)
   {
@@ -44,6 +44,13 @@ class cTimer
     m_alarmTime = alarmtime;
   }
 
+  /// @brief set alarm in <alarmtime> seconds
+  /// @param s time when alarm is signaled [s]
+  void setAlarm(float alarm)
+  {
+    setAlarm_ms(alarm * 1000);
+  }
+  
   bool isAlarm()
   {
     return m_running & ( runTimeMs() > m_alarmTime);

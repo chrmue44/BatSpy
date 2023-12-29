@@ -46,26 +46,26 @@ enum enShowState
 class cStatus
 {
   private:
-   enStatLed _statusLed2 = enStatLed::LED_OFF;
-   enLedMode _ledMode = enLedMode::DISP_IDLE;
-   uint32_t _lastT = 0;
-   uint32_t _maxBlinkCnt1 = 0;   
-   uint32_t _maxBlinkCnt2 = 0;   
-   uint32_t _blinkCnt1 = 0;   
-   uint32_t _blinkCnt2 = 0;
-   enShowState _state = enShowState::INIT; 
-   bool _led1On = false;
-   bool _oldLed1On = true;
-   bool _led2On = false;
-   bool _oldLed2On = true;
-   cTimer _timer;
-   bool _recRunning = false;
+   enStatLed m_statusLed2 = enStatLed::LED_OFF;
+   enLedMode m_ledMode = enLedMode::DISP_IDLE;
+   uint32_t m_lastT = 0;
+   uint32_t m_maxBlinkCnt1 = 0;   
+   uint32_t m_maxBlinkCnt2 = 0;   
+   uint32_t m_blinkCnt1 = 0;   
+   uint32_t m_blinkCnt2 = 0;
+   enShowState m_state = enShowState::INIT; 
+   bool m_led1On = false;
+   bool m_oldLed1On = true;
+   bool m_led2On = false;
+   bool m_oldLed2On = true;
+   cTimer m_timer;
+   bool m_recRunning = false;
 
   public:
    cStatus() {}
    void show();
    void nextState();
-   void setRecRunning(bool on) {_recRunning = on; }
+   void setRecRunning(bool on);
 
   private:
    void setStateLed2(enStatLed state);

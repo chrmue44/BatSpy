@@ -144,7 +144,6 @@ struct stParams
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1
-  cParEnum preAmpType = enPreAmp::HIGH_PASS;      ///< type of pre amplifier
   cParEnum dispOrient = enDispOrient::RIGHT_HAND; ///< display orientation
   cParEnum knobRotation = enKnobRot::CLOCKWISE;   ///< knob rotation
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
