@@ -168,22 +168,14 @@ enSdRes MEMF cPrjoject::createRecordingDir(char* out, size_t outBufSize)
   return ret;
 }
 
-enSdRes MEMF cPrjoject::createTimeFileName(enRecFmt recFmt)
+enSdRes MEMF cPrjoject::createTimeFileName()
 {
   enSdRes ret = createRecordingDir(m_wavFile, sizeof (m_wavFile));
   if(ret == OK)
   {
     char buf[16];
     char ext[5];
-    switch(recFmt)
-    {
-      case enRecFmt::RAW:
-        strncpy(ext, "raw", sizeof(ext));
-        break;
-      case enRecFmt::WAV:
-        strncpy(ext, "wav", sizeof(ext));
-        break;
-    }
+    strncpy(ext, "wav", sizeof(ext));
     saveStartTime();
     snprintf(buf,sizeof(buf),"/%02i%02i.%s",m_fMin, m_fSec, ext);
     strcat(m_wavFile, buf);
@@ -192,28 +184,17 @@ enSdRes MEMF cPrjoject::createTimeFileName(enRecFmt recFmt)
 }
 
 
-void MEMF cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt)
+void MEMF cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt)
 {
   cFileInfo info;
   char date [32];
   char infoFile[80];
 
  // strncpy(infoFile, m_wavFile, sizeof(infoFile));
-  if (recFmt == enRecFmt::RAW)
-    cUtils::replace(m_wavFile, ".raw", ".xml", infoFile, sizeof(infoFile));
-  if (recFmt == enRecFmt::WAV)
-    cUtils::replace(m_wavFile, ".wav", ".xml", infoFile, sizeof(infoFile));
+  cUtils::replace(m_wavFile, ".wav", ".xml", infoFile, sizeof(infoFile));
 
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_fDay, m_fMo, m_fy, m_fh, m_fMin, m_fSec);
   float duration = (float)sampleCnt/ cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate.get());
   info.write(infoFile, duration, date, cUtils::getFileName(m_wavFile),
               devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal);
-}
-
-enRecFmt MEMF cPrjoject::getFileFmt()
-{
-  if(devPars.projectType.get() == enProjType::ELEKON)
-    return enRecFmt::WAV;
-  else
-    return (enRecFmt)devPars.recFmt.get();
 }

@@ -117,7 +117,6 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_KNOB_ROT,     devPars.knobRotation.get());
   writeInt16ToEep(EEPADDR_DISP_ORIENT,  devPars.dispOrient.get());
   writeFloatToEep(EEPADDR_PRE_TRIGGER,  devPars.preTrigger.get());
-  writeInt16ToEep(EEPADDR_REC_FMT,      devPars.recFmt.get());
   writeFloatToEep(EEPADDR_DEAD_TIME,    devPars.deadTime.get());
   writeFloatToEep(EEPADDR_BACKLIGHT,    devPars.backLightTime.get());
   writeInt16ToEep(EEPADDR_LANGUAGE,     devPars.lang.get());
@@ -132,7 +131,6 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_STOP_MIN,     (int16_t)devPars.stopMin.get());
   writeInt16ToEep(EEPADDR_FREE_INT16_0, 0);
   writeInt16ToEep(EEPADDR_LIVE_AMPL,    (int16_t)devPars.liveAmplitude.get());
-  writeInt16ToEep(EEPADDR_PRJ_TYPE,     (int16_t)devPars.projectType.get());
   writeFloatToEep(EEPADDR_ALTITUDE,     devStatus.height.get());
   writeInt16ToEep(EEPADDR_TRIG_TYPE,    (int16_t)devPars.triggerType.get());
   writeFloatToEep(EEPADDR_MIN_EV_LEN,   devPars.minEventLen.get());
@@ -174,7 +172,6 @@ bool MEMP loadParsFromEep()
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
 //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
-    devPars.recFmt.set(enRecFmt::WAV);
     devPars.deadTime.set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
@@ -189,7 +186,6 @@ bool MEMP loadParsFromEep()
     devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));  //if addr changes see also pnlparams.cpp
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
   //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
-    devPars.projectType.set(enProjType::ELEKON);
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));

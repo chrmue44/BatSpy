@@ -19,7 +19,8 @@
 /**
  * @brief The stParNum struct
  */
-class cParNum : public cParBase {
+class cParNum : public cParBase 
+{
  public:
   cParNum(float v) :
     m_min(0.0),
@@ -29,13 +30,15 @@ class cParNum : public cParBase {
     m_leadZeros(0),
     m_val(v) {}
   
-  void set(float v) {
-    if((v >= m_min) && (v <= m_max))
-      m_val = v;
-    else if(v < m_min)
+  void set(float v) 
+  {
+    if(v < m_min)
       m_val = m_min;
-    else
+    else if(v > m_max)
       m_val = m_max;
+    else
+      m_val = v;
+
     update(true);
   }
 
@@ -60,7 +63,8 @@ private:
   float m_val;          ///< actual value
 };
 
-class cParStr : public cParBase {
+class cParStr : public cParBase 
+{
  public:
     cParStr() :
     m_color(0) 
@@ -89,7 +93,8 @@ typedef void (* fuFocus)(cMenuesystem*, enKey, cParBase*);
 /**
  * @brief represents a date
  */
-class cParDate : public cParBase{
+class cParDate : public cParBase
+{
  public:
   uint32_t getDay() { return m_day; }
   uint32_t getMonth() { return m_month; }
@@ -107,7 +112,8 @@ class cParDate : public cParBase{
 /**
  * @brief represents a time
  */
-class cParTime : public cParBase{
+class cParTime : public cParBase
+{
  public:
   uint32_t getHour() { return m_hour; }
   uint32_t getMin() { return m_min; }
@@ -126,8 +132,8 @@ class cParTime : public cParBase{
 /**
  * @brief represents a position
  */
-class cParGeoPos : public cParBase {
-
+class cParGeoPos : public cParBase 
+{
  public:
   float getLat() {return m_lat;}
   float getLon() {return m_lon;}
@@ -160,7 +166,8 @@ class cParGeoPos : public cParBase {
 /**
  * @brief represents a button
  */
-class cParBtn : public cParBase {
+class cParBtn : public cParBase 
+{
  public:
   cParBtn() {}
   const char* getText() { return m_text; }
@@ -176,7 +183,8 @@ class cParBtn : public cParBase {
 /**
  * @brief The stEnumItem struct one item to display an enum parameter
  */
-class cListItem : public cParBase {
+class cListItem : public cParBase 
+{
  public:
    cListItem() :
      m_id(0)
@@ -199,7 +207,8 @@ typedef my_vector<cListItem, CNT_ENUM_ITEM> tList;
 /**
  * @brief The stEnumItem struct one item to display an enum parameter
  */
-class cEnumItem : public cParBase {
+class cEnumItem : public cParBase 
+{
  public:
    cEnumItem() :
      m_id(0),
@@ -222,7 +231,8 @@ typedef my_vector<cEnumItem, CNT_ENUM_ITEM> tEnum;
 class cParEnum;
 class cParList;
 
-class cParText : public cParBase {
+class cParText : public cParBase 
+{
  public:
   void setText(const char* p) {m_text = p; update(true); }
   const char* getText() {return m_text; }
@@ -248,7 +258,8 @@ class cParText : public cParBase {
 /**
  * @brief item in a panel
  */
-struct stPanelItem {
+struct stPanelItem 
+{
   tCoord x;             ///< x coordinate [px]
   tCoord y;             ///< y coordinate [px]
   tCoord width;         ///< width [px]
@@ -263,7 +274,8 @@ struct stPanelItem {
 
 typedef my_vector<stPanelItem, CNT_PANEL_ITEM> tItemList;
 
-struct cPanel {
+struct cPanel 
+{
   cPanel();
   virtual ~cPanel() {}
 
@@ -321,7 +333,8 @@ struct cPanel {
 /**
  * parameter type enumaration
  */
-class cParEnum : public cParBase {
+class cParEnum : public cParBase 
+{
  public:
   cParEnum() :
     m_enumeration(),
@@ -333,14 +346,16 @@ class cParEnum : public cParBase {
 
   }
 
-  int addItem(thText text) {
+  int addItem(thText text) 
+  {
     cEnumItem item;
     item.setId ((uint16_t)m_enumeration.size());
     item.setText(Txt::get(text));
     return m_enumeration.push_back(item);
   }
 
-  int addItem(const char* text) {
+  int addItem(const char* text) 
+  {
     cEnumItem item;
     item.setId((uint16_t)m_enumeration.size());
     item.setText(text);
@@ -390,7 +405,8 @@ class cParEnum : public cParBase {
 /**
  * parameter type list
  */
-class cParList : public cParBase {
+class cParList : public cParBase 
+{
  public:
   cParList(uint32_t v) :
     m_enumeration(),
@@ -398,14 +414,16 @@ class cParList : public cParBase {
 
   }
 
-  int addItem(thText text) {
+  int addItem(thText text) 
+  {
     cListItem item;
     item.setId ((uint16_t)m_enumeration.size());
     item.setText(Txt::get(text));
     return m_enumeration.push_back(item);
   }
 
-  int addItem(const char* text) {
+  int addItem(const char* text) 
+  {
     cListItem item;
     item.setId((uint16_t)m_enumeration.size());
     item.setText(text);

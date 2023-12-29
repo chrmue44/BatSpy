@@ -301,8 +301,7 @@ void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   if ((devStatus.opMode.get() == enOpMode::HEAR_HET) ||
       (devStatus.opMode.get() == enOpMode::HEAR_DIRECT))
   {
-    if((devPars.projectType.get() == enProjType::DATE_TIME) ||
-       (devPars.recAuto.get() == enRecAuto::ON))
+    if(devPars.recAuto.get() == enRecAuto::ON)
     {
       if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
         devStatus.playStatus.set(enPlayStatus::ST_REC);

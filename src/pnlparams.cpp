@@ -102,10 +102,6 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.deadTime,     190, 20 +  r++ * lf,  20, lf, true);
-  err |= pan->addTextItem(1145,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFmt,      190, 20 +  r++ * lf,  40, lf, true);
-  err |= pan->addTextItem(1190,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.projectType, 190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(25,                    15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf,  80, lf, true, fuCalcSunrise);
   err |= pan->addTextItem(1180,                  15, 20 +  r   * lf,  80, lf);

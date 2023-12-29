@@ -576,12 +576,6 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
   }
   switch (buf[0])
   {
-    case 'f':
-      if (write)
-        replyOk = setValEnum(buf + 1, 0, 1, devPars.recFmt);
-      else
-        snprintf(reply, replySize, "%i", (int)devPars.recFmt.get());
-      break;
     case 'o':
       if (write)
         replyOk = setValEnum(buf + 1, PAR_AUTOMODE_MIN, PAR_AUTOMODE_MAX, devPars.recAuto);
@@ -611,12 +605,6 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
         setValInt(buf + 1, 0, 59, devPars.stopMin);
       else
         getValInt(buf + 1, devPars.stopMin, reply, replySize);
-      break;
-    case 'p':
-      if (write)
-        replyOk = setValEnum(buf + 1, 0, 1, devPars.projectType);
-      else
-        getValEnum(buf + 1, devPars.projectType, reply, replySize);
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))
@@ -913,10 +901,6 @@ void MEMF cTerminal::showCommands()
   Serial.println("p        print parameters");
   Serial.println("Pao<val> set auto recording mode (0 = OFF, 1 = ON, 2 = TIME, 3 = TWILIGHT)");
   Serial.println("pao      get auto recording mode");
-  Serial.println("Paf<val> set auto recording file format (0 = RAW, 1 = WAV)");
-  Serial.println("paf      get auto recording file");
-  Serial.println("Pap<val> set auto recording project format (0 = DATE_TIME, 1 = ELEKON");
-  Serial.println("pap      get auto recording project format");
   Serial.println("Pah<val> set auto recording start hour (0 ... 23");
   Serial.println("pah      get auto recording start hour");
   Serial.println("Pam<val> set auto recording start minute (0 ... 59");

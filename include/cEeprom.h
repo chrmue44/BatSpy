@@ -48,7 +48,7 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_KNOB_ROT      0x0030   // devPars.knobRotation,  INT16
 #define EEPADDR_DISP_ORIENT   0x0032   // devPars.dispOrient,    INT16
 #define EEPADDR_PRE_TRIGGER   0x0034   // devPars.preTrigger,    float
-#define EEPADDR_REC_FMT       0x0038   // devPars.recFmt,        INT16
+#define EEPADDR_FREE_INT      0x0038   
 #define EEPADDR_DEAD_TIME     0x003A   // devPars.deadTime,      float
 #define EEPADDR_BACKLIGHT     0x003E   // devPars.backLightTime  float
 #define EEPADDR_LANGUAGE      0x0042   // devPars.lang,          INT16
@@ -65,7 +65,7 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_FREE_INT16_1  0x005E
 #define EEPADDR_FREE_INT16_2  0x0060
 #define EEPADDR_LIVE_AMPL     0x0062   // devPars.liveAmplitude,   INT16
-#define EEPADDR_PRJ_TYPE      0x0064   // devPars.projectType,     INT16
+#define EEPADDR_FREE_INT16_3  0x0064   
 #define EEPADDR_ALTITUDE      0x0066   // devStatus.height,        float
 #define EEPADDR_TRIG_TYPE     0x006A   // devPars.triggerType,     INT16
 #define EEPADDR_MIN_EV_LEN    0x006C   // devPars.minEventLen,     float

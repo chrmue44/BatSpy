@@ -28,13 +28,12 @@ public:
   void openPrjFile(const char* pNotes);
   void closePrjFile();
   void addFile();
-  void writeInfoFile(float peakVal, size_t sampleCnt, enRecFmt recFmt);
+  void writeInfoFile(float peakVal, size_t sampleCnt);
 
   bool getIsOpen() { return m_isOpen; }
   const char* getWavFileName() { return m_wavFile; }
   const char* createElekonFileName();
-  enSdRes createTimeFileName(enRecFmt recFmt);
-  static enRecFmt getFileFmt();
+  enSdRes createTimeFileName();
 
 private:
   static enSdRes createRecordingDir(char* out, size_t outBufSize);

@@ -138,7 +138,7 @@ struct stParams
 #define PAR_RECTHRESH_MIN -24.0f
 #define PAR_RECTHRESH_MAX -1.0f
   cParNum deadTime = 3;              ///< timeout after one recording
-#define PAR_DEADTIM_MIN  0.0f
+#define PAR_DEADTIM_MIN  0.3f
 #define PAR_DEADTIM_MAX  30.0f
   cParNum backLightTime = 120;       ///< time for backlight
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
@@ -150,7 +150,6 @@ struct stParams
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
 #define PAR_PRETRIG_MIN 0.0
 #define PAR_PRETRIG_MAX 150.0
-  cParEnum recFmt = 0;               ///< recording format
   cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
 #define PAR_TRIGFILTFREQ_MIN   1.0f
 #define PAR_TRIGFILTFREQ_MAX  70.0f
@@ -168,7 +167,6 @@ struct stParams
   bool sunriseCalc = false;          ///< true if sunrise and sunset are calculated
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
-  cParEnum projectType = 0;          ///< type of project for automatic recording
   cParEnum srcPosition = enPositionMode::POS_FIX;  ///< source of position (fixed, GPS)
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1

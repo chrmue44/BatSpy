@@ -95,10 +95,7 @@ void MEMP cMenue::initPars()
   devPars.recThreshhold.init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
   devPars.recThreshhold.set(-12);
 
-  devPars.recFmt.addItem(1146);   //enRecFmt::RAW
-  devPars.recFmt.addItem(1147);   //enRecFmt::WAV
-
-  devPars.deadTime.set(0);
+  devPars.deadTime.set(PAR_DEADTIM_MIN);
   devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(5,300,1,0);
@@ -122,9 +119,6 @@ void MEMP cMenue::initPars()
   devPars.recAuto.addItem(1401),
   devPars.recAuto.addItem(1402),
   devPars.recAuto.addItem(1403),
-
-  devPars.projectType.addItem(1191);
-  devPars.projectType.addItem(1192);
 
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
@@ -261,7 +255,6 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);   ///< knob rotation
   devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
-  devPars.recFmt.set(enRecFmt::WAV);               ///< recording format
   devPars.filtFreq.set(16.0);             ///< hight pass freq for recording trigger
   devPars.filtType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.startH.set(21);               ///< hour of start time
@@ -272,7 +265,6 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.recAuto.set(0);              ///< mode for automatic recording
   devPars.sendDelay.set(2);             ///< delay [ms] after sending 2048 Bytes on USB
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
-  devPars.projectType.set(enProjType::ELEKON);          ///< type of project for automatic recording
   devPars.srcPosition.set(enPositionMode::POS_FIX);  ///< source of position (fixed, GPS)
   devPars.menueType.set(enMenueType::RECORDER);   ///< menue type
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording

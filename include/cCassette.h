@@ -48,8 +48,8 @@ class cCassette
   public:
     cCassette();
 //    int startRec(float recTime, enRecFmt recFmt);
-    int startRec(const char* name, float recTime, enRecFmt recFmt);
-    int startRec(enRecFmt recFmt);
+    int startRec(const char* name, float recTime);
+    int startRec();
     int stop();
     void startPlay();
     int operate();
@@ -97,7 +97,6 @@ class cCassette
     uint32_t m_nj = 0;
     size_t m_wr;
     uint32_t m_sampleRate;
-    enRecFmt m_recFmt;
     uint32_t m_sampleCnt;
     uint32_t m_maxRecSamples;
 

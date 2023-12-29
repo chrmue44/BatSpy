@@ -417,7 +417,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 
         if (m_trigger.getRecTrigger() && startRecording)
         {
-          if (startRecording && (devPars.projectType.get() == enProjType::ELEKON) && !m_prj.getIsOpen())
+          if (startRecording && !m_prj.getIsOpen())
             openProject();
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           startRec();
@@ -470,7 +470,7 @@ void cAudio::operate(bool liveFft)
         statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
         m_trigger.releaseRecTrigger();
-        m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+        m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
         DPRINTLN1("start timeout");
         break;
       case enPlayStatus::ST_STOP:
@@ -478,7 +478,7 @@ void cAudio::operate(bool liveFft)
         {
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
-          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), cPrjoject::getFileFmt());
+          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
         }
         break;
 
@@ -592,18 +592,9 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 void cAudio::startRec()
 {
   statusDisplay.setRecRunning(true);
-  if(devPars.projectType.get() == enProjType::ELEKON)
-  {
-    m_prj.createElekonFileName();
-    m_prj.addFile();
-    m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get(), enRecFmt::WAV);
-  }
-  else
-  {
-    enRecFmt fmt = static_cast<enRecFmt>(devPars.recFmt.get());
-    m_prj.createTimeFileName(fmt);
-    m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get(), fmt);
-  }
+  m_prj.createElekonFileName();
+  m_prj.addFile();
+  m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
 }
 
 

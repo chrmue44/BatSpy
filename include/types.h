@@ -78,12 +78,6 @@ enum enGainRevC
   GAINC_58DB            = 1
 };
 
-// recording format on SD card
-enum enRecFmt
-{
-  RAW = 0,
-  WAV = 1
-};
 
 // display orientation
 enum enDispOrient
@@ -134,11 +128,6 @@ enum enPlayStatus
   TIMEOUT = 3,
 };
 
-enum enProjType
-{
-  DATE_TIME = 0,
-  ELEKON = 1
-};
 
 /// menu level
 enum enMenueType
