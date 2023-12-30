@@ -32,10 +32,11 @@ public:
   void simpleTag(const char* tagName, const char* val, tAttrList* attr = NULL);
   void simpleTag(const char* tagName, float val, tAttrList* attr = NULL);
   void simpleTagNoValue(const char* tagName, tAttrList* attr = NULL);
+  void writeString(const char* str);
+  tFILE& getFile() { return m_file; }
 
 private:
   void newLine(bool nl = true);
-  void writeString(const char* str);
   void indent(bool open = false);
   tFILE m_file;
   int m_indent;

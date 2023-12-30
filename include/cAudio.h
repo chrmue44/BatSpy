@@ -98,7 +98,7 @@ private:
   stAudioSettings m_old;            // old settings
   cTimer m_timeout;                 // blocking time out after recording 
   int m_oldCassMode = -1;
-  cPrjoject m_prj;
+  cProject m_prj;
   stFftInfo m_fftInfo;              // some variables to handle FFT operation
   cTrigger m_trigger;               // state machine to detect trigger
   bool m_haltLiveFft = false;       // stop live FFT during ext readout of buffer
@@ -125,7 +125,8 @@ private:
   void closeProject() { if (m_prj.getIsOpen()) m_prj.closePrjFile(); }
   void openProject();
   void sendFftBuffer(int delayTime, int part);
-
+  void stopRecording();
+  
  private:
   void setMixOscFrequency(float freq);
   void setTrigFilter(float freq, enFiltType type);

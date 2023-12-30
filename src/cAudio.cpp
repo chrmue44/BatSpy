@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "globals.h"
-#define DEBUG_LEVEL 4
+//#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "pnllive.h"
 #include "cutils.h"
@@ -442,6 +442,7 @@ void cAudio::openProject()
   if (len < sizeof(buf))
     cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
   m_prj.openPrjFile(buf);
+  devStatus.recCount.set(m_prj.getRecCount());
 }
 
 void cAudio::operate(bool liveFft)
@@ -505,6 +506,12 @@ void cAudio::operate(bool liveFft)
       DPRINTF4("timeout over, timeout %f,  timer %f\n", devPars.deadTime.get(), m_timeout.runTime());
     }
   }
+}
+
+void cAudio::stopRecording()
+{
+  m_cass.stop();
+  devStatus.playStatus.set(enPlayStatus::ST_STOP);
 }
 
 void cAudio::calcLiveFft()

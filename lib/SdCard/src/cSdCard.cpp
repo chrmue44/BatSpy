@@ -383,7 +383,19 @@ enSdRes cSdCard::del(const char* name) {
   return retVal;
 }
 
-enSdRes cSdCard::deldir(const char* name) {
+enSdRes cSdCard::rename (const char* oldName, const char* newName)
+{
+  enSdRes retVal = enSdRes::OK;
+#if defined(CARDLIB_SDFAT)
+  bool ok = m_sd.rename(oldName, newName);
+  if(!ok)
+    retVal = enSdRes::RENAME_ERR;
+  return retVal;
+#endif
+}
+
+enSdRes cSdCard::deldir(const char* name) 
+{
 #if defined(CARDLIB_SD)  
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);    
@@ -515,7 +527,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
       ok = file.open(buf, FILE_WRITE);
       break;
     case enMode::APPEND:
-      ok = file.open(buf, FILE_WRITE);
+      ok = file.open(buf, (O_WRONLY | O_APPEND));
       break;
   }
   retVal = ok ? enSdRes::OK : enSdRes::OPEN_FILE_ERR;
@@ -556,8 +568,12 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
   char* pBuf = (char*)buf;
   bytesRead = 0;
   size_t count;
-  while (pBuf < ((char*)buf + bufSize)) {
-    enSdRes res = readFile(file, pBuf, count, 1);
+  enSdRes res;
+  while (pBuf < ((char*)buf + bufSize))
+  {
+    res = readFile(file, pBuf, count, 1);
+    if(res != enSdRes::OK)
+      break;
     if((count == 0 ) || (res != OK))
       break;
     bytesRead += count;
@@ -569,10 +585,10 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
   {
     pBuf++;
     *pBuf = 0;
-    return OK;
   }
   else
-    return LINE_ERR;
+    res = LINE_ERR;
+  return res;
 }
 
 
@@ -600,6 +616,21 @@ enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, s
   
   return retVal;  
 }
+
+bool cSdCard::fileExists(char* fName)
+{
+  tFILE file;
+  bool retVal = false;
+  enSdRes res = openFile(fName, file, enMode::READ);
+  if(res == enSdRes::OK)
+  {
+    retVal = true;
+    closeFile(file);
+  }
+  return retVal;
+  //return m_sd.exists(fName);
+}
+
 
 enSdRes cSdCard::closeFile(tFILE& file) {
   enSdRes retVal = OK;  

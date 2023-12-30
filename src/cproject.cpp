@@ -3,8 +3,9 @@
 #include "cutils.h"
 #include "cfileinfo.h"
 #include "globals.h"
-
-cPrjoject::cPrjoject() :
+//#define DEBUG_LEVEL  4
+#include "debug.h"
+cProject::cProject() :
 m_isOpen(false)
 {
 
@@ -30,11 +31,80 @@ int MEMF getNumberOfDays(int month, int year)
 }
 
 
+void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int startM, int startD)
+{
+  DPRINTF4("open existing file %s\n", fName);
+  cSdCard& sd = cSdCard::inst();
+  tFILE file;
+  char buf[256]; 
+  char tmpFileName[64];
+  size_t bytesRead;
+  m_recCount = 0;
+  cUtils::replace(fName, ".bpr",".tmp", tmpFileName, sizeof(tmpFileName));
 
-void MEMF cPrjoject::openPrjFile(const char* pNotes)
+  DPRINTF4("rename file: old: %s, new: %s\n", fName, tmpFileName);
+  enSdRes res = sd.rename(fName, tmpFileName);
+  if(res != enSdRes::OK)
+    DPRINTF4("error renaming file: old: %s, new: %s\n",fName, tmpFileName);
+
+  res = sd.openFile(tmpFileName, file, enMode::READ);
+  
+  char notes[128]; 
+  notes[0] = 0;
+
+  while(res == enSdRes::OK)
+  {
+    enSdRes res = sd.readLine(file, buf, sizeof(buf), bytesRead);
+//    DPRINTF4("line: %s", buf);
+    if(res != enSdRes::OK)
+    {
+      DPRINTLN4("end of file reached");
+      break;
+    }
+    char* p = strstr(buf, "<Record ");
+    if(p != nullptr)
+    {
+      DPRINTLN4("found tag <Record>");
+      m_xml.writeString(buf);
+      m_recCount++;
+      continue;
+    }
+    p = strstr(buf, "</Records>");
+    if(p != nullptr)
+      break;
+    p = strstr(buf, "<Notes>");
+    if (p != nullptr)
+    {
+      p += 7;
+      strncpy(notes, p, sizeof(notes));
+      DPRINTLN4("found tag <Notes>");
+      continue;
+    }
+    p = strstr(buf, "</Notes>");
+    if (p != nullptr)
+    {
+      *p = 0;
+      strcat(notes, buf);
+      continue;
+    }
+    p = strstr(buf, "<Records>");
+    if(p != nullptr)
+    {
+      DPRINTLN4("found tag <Records>");
+      initializePrjFile(fName, notes, startY, startM, startD);
+    }
+  }
+
+  DPRINTF4("found %i records\n", m_recCount);
+  sd.closeFile(file);
+  sd.del(tmpFileName);
+}
+
+
+void MEMF cProject::openPrjFile(const char* pNotes)
 {
   char buf[FILENAME_LEN];
-
+  
   int startY = year();
   int startM = month();
   int startD = day();
@@ -50,8 +120,22 @@ void MEMF cPrjoject::openPrjFile(const char* pNotes)
   strcat(buf, m_prjName);
   strcat(buf, ".bpr");
 
+  DPRINTF4("open project %s \n", buf);
+  if(cSdCard::inst().fileExists(buf))
+    openExistingPrjFile(buf, startY, startM, startD);
+  else
+  {
+    DPRINTF4("Create new project file %s\n", buf);
+    initializePrjFile(buf, pNotes, startY, startM, startD);
+    m_recCount = 0;
+  }
+  m_isOpen = true;
+}
+
+void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
+{
   tAttrList attr;
-  m_xml.openFile(buf);
+  m_xml.openFile(fName);
   m_xml.initXml();
   stAttr item;
   strncpy(item.name, "xmlns:xsi", sizeof(item.name));
@@ -66,15 +150,15 @@ void MEMF cPrjoject::openPrjFile(const char* pNotes)
   m_xml.openTag("BatExplorerProjectFile", &attr);
 
   m_xml.simpleTag("Name", m_prjName);
+  char buf[128];
   snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", startY, startM, startD, hour(),  minute(), m_fSec);
   m_xml.simpleTag("Created", buf);
   m_xml.simpleTag("Notes",pNotes);
   m_xml.simpleTag("AutoProcess", "true");
   m_xml.openTag("Records");
-  m_isOpen = true;
 }
 
-void MEMF cPrjoject::saveStartTime()
+void MEMF cProject::saveStartTime()
 {
   m_fy = year();
   m_fMo = month();
@@ -84,7 +168,7 @@ void MEMF cPrjoject::saveStartTime()
   m_fSec = second();
 }
 
-const char* MEMF cPrjoject::createElekonFileName()
+const char* MEMF cProject::createElekonFileName()
 {
   saveStartTime();
   snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%02i%02i%02i.wav", m_prjName, m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);
@@ -92,7 +176,7 @@ const char* MEMF cPrjoject::createElekonFileName()
   return m_wavFile;
 }
 
-void MEMF cPrjoject::addFile()
+void MEMF cProject::addFile()
 {
   tAttrList attr;
   stAttr item;
@@ -107,84 +191,20 @@ void MEMF cPrjoject::addFile()
   m_xml.simpleTagNoValue("Record", &attr);
 }
 
-void MEMF cPrjoject::closePrjFile()
+void MEMF cProject::closePrjFile()
 {
   if(m_isOpen)
   {
+    DPRINTLN4("close prj file");
     m_xml.closeTag("Records");
     m_xml.closeTag("BatExplorerProjectFile");
-
-//  std::cout << "writing prj file " << name << std::endl;
     m_xml.closeFile();
     m_isOpen = false;
   }
 }
 
 
-enSdRes MEMF cPrjoject::createRecordingDir(char* out, size_t outBufSize)
-{
-  char buf[80];
-
-  int y = year();
-  int mo = month();
-  int d = day();
-  int h = hour();
-
-  snprintf(out, outBufSize,"/rec/%02i/%02i/%02i/%02i",y, mo, d, h);
-  enSdRes ret = cSdCard::inst().chdir(out);
-  if(ret != OK)
-  {
-    ret = cSdCard::inst().chdir("/rec");
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir("/rec");
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i",y);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i",y, mo);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i",y ,mo ,d);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }
-    snprintf(buf, sizeof(buf),"/rec/%02i/%02i/%02i/%02i",y ,mo, d, h);
-    ret = cSdCard::inst().chdir(buf);
-    if(ret != OK)
-    {
-      ret = cSdCard::inst().mkDir(buf);
-    }
-    ret = cSdCard::inst().chdir(out);
-  }
-  return ret;
-}
-
-enSdRes MEMF cPrjoject::createTimeFileName()
-{
-  enSdRes ret = createRecordingDir(m_wavFile, sizeof (m_wavFile));
-  if(ret == OK)
-  {
-    char buf[16];
-    char ext[5];
-    strncpy(ext, "wav", sizeof(ext));
-    saveStartTime();
-    snprintf(buf,sizeof(buf),"/%02i%02i.%s",m_fMin, m_fSec, ext);
-    strcat(m_wavFile, buf);
-  }
-  return ret;
-}
-
-
-void MEMF cPrjoject::writeInfoFile(float peakVal, size_t sampleCnt)
+void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
 {
   cFileInfo info;
   char date [32];

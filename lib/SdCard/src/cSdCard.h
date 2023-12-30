@@ -156,18 +156,8 @@ class cSdCard {
      return available(f) == 0;
    }
   
-   bool fileExists(char* fName)
-   {
-     bool retVal = false;
-     tFILE f;
-     enSdRes res = openFile(fName, f, enMode::READ);
-     if(res == enSdRes::OK)
-     {
-         closeFile(f);
-         retVal = true;
-     }
-     return retVal;
-   }
+   bool fileExists(char* fName);
+
    /* 
     * set file position
     */

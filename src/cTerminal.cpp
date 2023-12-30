@@ -578,7 +578,11 @@ bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply
   {
     case 'o':
       if (write)
+      {
+        if(buf[1] == '0')
+          audio.stopRecording();
         replyOk = setValEnum(buf + 1, PAR_AUTOMODE_MIN, PAR_AUTOMODE_MAX, devPars.recAuto);
+      }
       else
         getValEnum(buf + 1, devPars.recAuto, reply, replySize);
       break;

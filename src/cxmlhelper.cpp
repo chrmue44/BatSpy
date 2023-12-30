@@ -9,6 +9,8 @@
 #include "cxmlhelper.h"
 #include "config.h"
 #include <string.h>
+//#define DEBUG_LEVEL 4
+#include "debug.h"
 
 cXmlHelper::cXmlHelper() :
 m_fileIsOpen(false),
@@ -24,6 +26,8 @@ enSdRes MEMF cXmlHelper::openFile(const char* name)
   enSdRes res = cSdCard::inst().openFile(name, m_file, enMode::WRITE);
   if(res == enSdRes::OK)
     m_fileIsOpen = true;
+  else
+    DPRINTF4("error opening file '%s', error: %i\n", name, (int)res);
   return res;
 }
 
@@ -33,13 +37,16 @@ void MEMF cXmlHelper::closeFile()
     cSdCard::inst().closeFile(m_file);
   m_fileIsOpen = false;
 }
+
 void MEMF cXmlHelper::writeString(const char* str)
 {
   if(m_fileIsOpen)
   {
     size_t strLen = strlen(str);
     size_t written;
-    cSdCard::inst().writeFile(m_file, str, written, strLen);
+    enSdRes res = cSdCard::inst().writeFile(m_file, str, written, strLen);
+    if(res != enSdRes::OK)
+      DPRINTF4("error writing string: %i\n", (int) res);
   }
 }
 

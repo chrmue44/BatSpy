@@ -126,13 +126,11 @@ int cCassette::stop()
     
     finalizeWavFile();
 
-    //close file
     rc = sd.closeFile(m_fil);
-    if (rc)
-      return 1;
-    //
-    m_isRecFileOpen = false;
     DPRINTLN1(" Recording stopped!");
+    if (rc != enSdRes::OK)
+      return 1;
+    m_isRecFileOpen = false;
   }
   
   else if(m_mode == enCassMode::PLAY)

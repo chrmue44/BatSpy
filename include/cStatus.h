@@ -12,8 +12,8 @@
 #include "stdint.h"
 #include "cTimer.h"
 
-#define LED_ON_TIME  70
-#define LED_OFF_TIME 300
+#define LED_ON_TIME  30
+#define LED_OFF_TIME 350
 #define REPEAT_TIME  3000
 
 enum enStatLed

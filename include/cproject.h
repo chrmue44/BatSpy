@@ -21,22 +21,23 @@ struct stRecord
   char name[40];
 };
 
-class cPrjoject
+class cProject
 {
 public:
-  cPrjoject();
+  cProject();
   void openPrjFile(const char* pNotes);
   void closePrjFile();
   void addFile();
   void writeInfoFile(float peakVal, size_t sampleCnt);
 
   bool getIsOpen() { return m_isOpen; }
+  size_t getRecCount() { return m_recCount;}
   const char* getWavFileName() { return m_wavFile; }
   const char* createElekonFileName();
-  enSdRes createTimeFileName();
 
 private:
-  static enSdRes createRecordingDir(char* out, size_t outBufSize);
+  void openExistingPrjFile(const char* fName, int startY, int startM, int startD);
+  void initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD);
   void saveStartTime();
 
   bool m_isOpen;
@@ -47,6 +48,7 @@ private:
   int m_fh;
   int m_fMin;
   int m_fSec;
+  size_t m_recCount = 0;
 
   cXmlHelper m_xml;
   char m_prjName[16];

@@ -7,7 +7,7 @@
  * ***********************************************************/
 
 #include "globals.h"
-#define DEBUG_LEVEL  4
+//#define DEBUG_LEVEL  4
 #include "debug.h"
 #include "cTrigger.h"
 

@@ -30,7 +30,7 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter" //disable because fuFocus functions may not use the parameters
 
-#define DEBUG_LEVEL  1
+//#define DEBUG_LEVEL  1
 
 
 cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
