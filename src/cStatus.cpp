@@ -136,6 +136,33 @@ void cStatus::show()
   return;
 }
 
+void cStatus::execFunction()
+{
+  switch (m_ledMode)
+  {
+  case enLedMode::DISP_BATT:
+  case enLedMode::DISP_IDLE:
+  case enLedMode::DISP_SD:
+  default:
+    break;
+
+  case enLedMode::DISP_GPS:
+    if(gps.getStatus() == enGpsStatus::GPS_STATUS_OFF)
+      gps.setMode(enGpsMode::GPS_ON);
+    else
+      gps.setMode(enGpsMode::GPS_OFF);
+    break;
+
+  case enLedMode::DISP_REC:
+    if(m_recRunning)
+      audio.stopRecording();
+    else
+      audio.startRecording();
+    break;
+  }
+  m_state = enShowState::INIT;
+}
+
 void cStatus::setRecRunning(bool on)
 {
   m_recRunning = on;

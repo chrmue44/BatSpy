@@ -362,7 +362,7 @@ void cAudio::updateCassMode()
     if (m_cass.getMode() != enCassMode::REC)
     {
       setAudioConnections(0);
-      startRec();
+      startRecording();
       devStatus.recCount.set(devStatus.recCount.get() + 1);
       DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
       delay(5);
@@ -395,33 +395,33 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       {
         devStatus.time.set(rtc.getTime());
         devStatus.time.update(false);
-        bool startRecording = false;
+        bool startRec = false;
         if (devPars.recAuto.get() == enRecAuto::ON)
-          startRecording = true;
+          startRec = true;
         else
         {
           if(devPars.startH.get() > devPars.stopH.get())
           {
-             startRecording = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+             startRec = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
                        (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
           }
           else
           {
-             startRecording = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+             startRec = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
                      (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
           }
         }
 
-        if (!startRecording && m_prj.getIsOpen())
+        if (!startRec && m_prj.getIsOpen())
           m_prj.closePrjFile();
 
-        if (m_trigger.getRecTrigger() && startRecording)
+        if (m_trigger.getRecTrigger() && startRec)
         {
-          if (startRecording && !m_prj.getIsOpen())
+          if (startRec && !m_prj.getIsOpen())
             openProject();
           devStatus.recCount.set(devStatus.recCount.get() + 1);
           DPRINTF4("checkAutoRec start recording: %i\n", (int)devStatus.recCount.get());
-          startRec();
+          startRecording();
           devStatus.playStatus.set(enPlayStatus::ST_REC);
           delay(5);
         }
@@ -599,7 +599,7 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 }
 
 
-void cAudio::startRec()
+void cAudio::startRecording()
 {
   statusDisplay.setRecRunning(true);
   m_prj.createElekonFileName();

@@ -31,6 +31,7 @@ enum enKey {
   RIGHT =      0x8016,
   TICK =       0x8020,
   TER =        0x8030,
+  KEY_RELEASED = 0x8800,
 };
 
 typedef uint32_t tCoord;

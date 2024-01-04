@@ -43,29 +43,39 @@ enum enShowState
   BLINK_STATE = 3
 };
 
+/// @brief class to display several status functions with 2 LEDs
 class cStatus
 {
   private:
-   enStatLed m_statusLed2 = enStatLed::LED_OFF;
-   enLedMode m_ledMode = enLedMode::DISP_IDLE;
-   uint32_t m_lastT = 0;
-   uint32_t m_maxBlinkCnt1 = 0;   
-   uint32_t m_maxBlinkCnt2 = 0;   
-   uint32_t m_blinkCnt1 = 0;   
-   uint32_t m_blinkCnt2 = 0;
-   enShowState m_state = enShowState::INIT; 
-   bool m_led1On = false;
-   bool m_oldLed1On = true;
-   bool m_led2On = false;
-   bool m_oldLed2On = true;
+   enStatLed m_statusLed2 = enStatLed::LED_OFF;    // status od LED2
+   enLedMode m_ledMode = enLedMode::DISP_IDLE;     // function or mode to display
+   uint32_t m_lastT = 0;                           // last wait time
+   uint32_t m_maxBlinkCnt1 = 0;                    // nr of blinks to display for LED1
+   uint32_t m_maxBlinkCnt2 = 0;                    // nr of blinks to display for LED2
+   uint32_t m_blinkCnt1 = 0;                       // number of blinks executed for LED1
+   uint32_t m_blinkCnt2 = 0;                       // number of blinks executed for LED2
+   enShowState m_state = enShowState::INIT;        // state of state machine to display 
+   bool m_led1On = false;                          // current status LED1
+   bool m_oldLed1On = true;                        // previous status LED1
+   bool m_led2On = false;                          // current status LED2
+   bool m_oldLed2On = true;                        // previous status LED1
    cTimer m_timer;
    bool m_recRunning = false;
 
   public:
    cStatus() {}
+   /// @brief show currently selected function (runs the state machine)
    void show();
+
+   /// @brief switch to next display mode
    void nextState();
+   
+   /// @brief set recording status ON or OFF
+   /// @param on recording status
    void setRecRunning(bool on);
+   
+   /// @brief execute function associated to current display mode
+   void execFunction();
 
   private:
    void setStateLed2(enStatLed state);

@@ -165,6 +165,8 @@ void handleDisplayAndWheel(bool oneSec)
 }
 
 cTimer switchOff;
+cTimer function;
+bool functionExecuted = false;
 
 void handleButtonsAndLeds()
 {
@@ -176,20 +178,37 @@ void handleButtonsAndLeds()
       audio.setup();
     }
   }
-  if(wheels.getKey() == enKey::KEY_OK)
-  {
-    statusDisplay.nextState();
+  if(wheels.getKey() == enKey::KEY_RELEASED)
+  { 
+    if(functionExecuted)
+      functionExecuted = false;
+    else
+      statusDisplay.nextState();
   }
-  if(wheels.isKeyPressed() && !switchOff.isRunning())
-    switchOff.setAlarm_ms(3000);
-  if(!wheels.isKeyPressed())
+  if(wheels.isKeyPressed())
+  { 
+    if(!switchOff.isRunning())
+      switchOff.setAlarm_ms(3000);
+    if(!function.isRunning() && !functionExecuted)
+      function.setAlarm_ms(500);
+  }
+  else
+  {
     switchOff.stop();
+    function.stop();
+  }
+  
   if(switchOff.isAlarm())
   {
     audio.stopRecording();
     powerOff();
   }
-  
+  if(function.isAlarm())
+  {
+    functionExecuted = true;
+    function.stop();
+    statusDisplay.execFunction();
+  }
   statusDisplay.show();
 }
 

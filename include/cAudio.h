@@ -126,6 +126,7 @@ private:
   void openProject();
   void sendFftBuffer(int delayTime, int part);
   void stopRecording();
+  void startRecording();
   
  private:
   void setMixOscFrequency(float freq);
@@ -133,7 +134,6 @@ private:
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
   void calcLiveFft();
-  void startRec();
   void addLiveMsPerDiv(int waitTick, int sampleRate);
   int getLiveMsPerDiv(int waitTick, int sampleRate);
   void updateExtFftBuf();

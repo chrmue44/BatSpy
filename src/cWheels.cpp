@@ -77,6 +77,12 @@ void cWheels::checkEncoders()
     increaseWrIdx();
     DPRINTLN1("encoder left: enKey::KEY_OK");
   }
+  if(m_btn.risingEdge())
+  {
+    m_keys[m_wrIdx] = enKey::KEY_RELEASED;
+    increaseWrIdx();
+    DPRINTLN1("encoder left: enKey::KEY_RELEASED");
+  }
 }
 
 enKey cWheels::getKey()
