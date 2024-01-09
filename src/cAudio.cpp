@@ -70,6 +70,7 @@ m_trigger(m_fftInfo, m_peak)
   DPRINTLN4("Audio connections initialized");
 }
 
+
 void cAudio::init()
 {
   #ifdef ARDUINO_TEENSY40
@@ -89,6 +90,7 @@ void cAudio::init()
   m_old.oscFrequency = 999;
   m_filtDisp.setHighpass(0, 50);
 }
+
 
 void cAudio::setSampleRate(enSampleRate sr)
 {
@@ -122,6 +124,7 @@ void cAudio::setSampleRate(enSampleRate sr)
     m_old.parSampleR = sr;
   }
 }
+
 
 #ifdef ARDUINO_TEENSY40
 void cAudio::setPreAmpGain(enGainRevC gain)
@@ -164,6 +167,7 @@ void cAudio::setPreAmpGain(enGain gain)
     break;
   }
 }
+
 
 void cAudio::setPreAmpGain(enGainRevB gain)
 {
@@ -209,6 +213,7 @@ void cAudio::setPreAmpGain(enGainRevB gain)
 }
 #endif
 
+
 void cAudio::setTrigFilter(float freq, enFiltType type)
 {
   float maxFreq = m_sampleRate/2;
@@ -229,6 +234,7 @@ void cAudio::setTrigFilter(float freq, enFiltType type)
       break;
   }
 }
+
 
 bool cAudio::isSetupNeeded()
 {
@@ -260,6 +266,7 @@ bool cAudio::isSetupNeeded()
   }
   return retVal;
 }
+
 
 void cAudio::setup()
 {
@@ -341,6 +348,7 @@ void cAudio::setup()
   DPRINTF4("  pre amp gain: %s\n", devPars.preAmpGain.getActText());
 }
 
+
 void cAudio::updateCassMode()
 {
   switch (devStatus.playStatus.get())
@@ -363,13 +371,13 @@ void cAudio::updateCassMode()
     {
       setAudioConnections(0);
       startRecording();
-      devStatus.recCount.set(devStatus.recCount.get() + 1);
       DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
       delay(5);
     }
     break;
   }
 }
+
 
 void cAudio::setMixOscFrequency(float freq)
 {
@@ -384,6 +392,7 @@ void cAudio::setMixOscFrequency(float freq)
     m_sineHet.phase(90);
   m_old.oscFrequency = devPars.mixFreq.get();
 }
+
 
 void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 {
@@ -417,21 +426,16 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 
         if (m_trigger.getRecTrigger() && startRec)
         {
-          if (startRec && !m_prj.getIsOpen())
-            openProject();
-          devStatus.recCount.set(devStatus.recCount.get() + 1);
-          DPRINTF4("checkAutoRec start recording: %i\n", (int)devStatus.recCount.get());
           startRecording();
-          devStatus.playStatus.set(enPlayStatus::ST_REC);
           delay(5);
         }
       }
     }
     else
       m_prj.closePrjFile();
-
   }
 }
+
 
 void cAudio::openProject()
 {
@@ -444,6 +448,7 @@ void cAudio::openProject()
   m_prj.openPrjFile(buf);
   devStatus.recCount.set(m_prj.getRecCount());
 }
+
 
 void cAudio::operate(bool liveFft)
 {
@@ -508,11 +513,13 @@ void cAudio::operate(bool liveFft)
   }
 }
 
+
 void cAudio::stopRecording()
 {
   m_cass.stop();
   devStatus.playStatus.set(enPlayStatus::ST_STOP);
 }
+
 
 void cAudio::calcLiveFft()
 {
@@ -545,6 +552,7 @@ void cAudio::calcLiveFft()
   else
     m_fftInfo.sweepDelayCnt++;
 }
+
 
 void cAudio::updateExtFftBuf()
 {
@@ -601,10 +609,15 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 
 void cAudio::startRecording()
 {
+  if (!m_prj.getIsOpen())
+    openProject();
+  devStatus.recCount.set(devStatus.recCount.get() + 1);
+  DPRINTF4("checkAutoRec start recording: %i\n", (int)devStatus.recCount.get());
   statusDisplay.setRecRunning(true);
   m_prj.createElekonFileName();
   m_prj.addFile();
   m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
+  devStatus.playStatus.set(enPlayStatus::ST_REC);
 }
 
 
