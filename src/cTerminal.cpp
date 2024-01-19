@@ -358,6 +358,10 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       getValFloat(buf + 1, devStatus.height, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break; 
+	case 'i':
+      getValFloat(buf + 1, devStatus.chargeLevel, replyBuf, sizeof(replyBuf));
+      Serial.print(&replyBuf[0]);
+      break; 	
     case 'k':
       getValFloat(buf + 1, devStatus.peakVal, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
@@ -944,8 +948,25 @@ void MEMF cTerminal::showCommands()
   Serial.println("prf<val> get trig filter frequency [kHz]");
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
-  Serial.println("sk       print last peak value");  
-  Serial.println("su       print status");
+  Serial.println("sa       get audio mem usage [%]");
+  Serial.println("sb       get temperature [°C]");
+  Serial.println("sc       get humidity [%]");
+  Serial.println("sd       get date [YY.MM:DD] of internal clock");
+  Serial.println("se       get play status [0=STOP, 1=PLAY, 2=REC, 3=DEAD_TIME");
+  Serial.println("sf       get free disk space [MB]");
+  Serial.println("sg       get audio processur usage [%]");
+  Serial.println("sh       get current altitude [m]");
+  Serial.println("si       get battery charge level [%]");
+  Serial.println("sk       get last peak value [%]");
+  Serial.println("sl       get current position (lat, lon)");
+  Serial.println("sm       get main loop count [Hz]");
+  Serial.println("sp       get GPS status (0=GPS_OFF , 1=GPS_SEARCHING, 2=GPS_FIXED, 3=GPS_FIXED_OFF");
+  Serial.println("sr       get current count of recordings in project");
+  Serial.println("ss       get number of satellites");
+  Serial.println("st       get time [hh:mm:ss] of internal clock");
+  Serial.println("su       get summarized status");
+  Serial.println("sv       get battery voltage [V]");
+  Serial.println("sx       get max. audio processor usage [%]");
   Serial.println("r<name>  dump file <name>");
   Serial.println("u        key cursor up");
   Serial.println("w<name>  write file <name> in curr. directory"); 

@@ -4,7 +4,6 @@
  * Copyright (C) 2021 Christian Mueller                      *
  *                    chrmue44(AT)gmail{DOT}com              *
  * License: GNU GPLv3.0                                      *
- * ***********************************************************
  * ***********************************************************/
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
