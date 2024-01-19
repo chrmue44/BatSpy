@@ -17,6 +17,7 @@
 #include "pnlparams.h"
 #include "globals.h"
 #include "cEeprom.h"
+#include "cBattery.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -63,6 +64,13 @@ void waitForSerial()
   }
 }
 
+void logStatus()
+{
+  devStatus.voltage.set(readSupplyVoltage());
+  devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+  sysLog.logf("supply voltage: %2.3f V, Battery %.0f %%, temperature: %2.1f °C, Humidity: %.0f\n", 
+               devStatus.voltage.get(), devStatus.chargeLevel.get(), devStatus.temperature.get(), sht.getHumidity());
+}
 
 void setup()
 {
@@ -105,6 +113,7 @@ void setup()
   gps.init();
   if(devPars.recAuto.get() == 3)
     calcSunrise();
+  logStatus();
 }
 
 
@@ -248,8 +257,10 @@ void loop()
     devStatus.mainLoop.set(loopCount);
     devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     loopCount = 0;
-    float volt = readSupplyVoltage();
-    devStatus.voltage.set(volt);
+    devStatus.voltage.set(readSupplyVoltage());
+    devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+
+    //Serial.printf("volt %f, level: %f  factor:%f\n", devStatus.voltage.get(), devStatus.chargeLevel.get(),devPars.voltFactor.get());
     float temp = readTemperature();
     devStatus.temperature.set(temp);
     //  if(hasDisplay())
@@ -263,8 +274,7 @@ void loop()
   {
     if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
       calcSunrise();
-    sysLog.logf("supply voltage: %2.3f V, temperature: %2.1f °C", 
-               devStatus.voltage.get(), devStatus.temperature.get());
+    logStatus();
     checkSupplyVoltage();
   }
 }

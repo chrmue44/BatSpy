@@ -219,6 +219,8 @@ void MEMP cMenue::initPars()
   devStatus.gpsStatus.addItem(1431); //enGpsStatus::GPS_SEARCHING
   devStatus.gpsStatus.addItem(1432); //enGpsStatus::GPS_FIXED
   devStatus.gpsStatus.addItem(1433); //enGpsStatus::GPS_FIXED_OFF
+  
+  devStatus.chargeLevel.init(0.0, 100.0, 0.1, 0);
   load();
   setPosFunc(this, enKey::NO, nullptr);
 

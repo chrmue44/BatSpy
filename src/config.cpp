@@ -226,10 +226,12 @@ void powerOff()
     return;
 
   audio.closeProject();
+  delay(300);
   blink(3);
   sysLog.close();
   gpsLog.close();
   cSdCard::inst().unmount();
+  delay(300);
   blink(3);
 #ifdef ARDUINO_TEENSY41
   digitalWrite(PIN_POWER_OFF, 0);

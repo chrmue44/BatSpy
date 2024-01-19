@@ -226,7 +226,19 @@ void cStatus::updateStatus()
       break;
 
     case enLedMode::DISP_BATT:
-      setStateLed2(enStatLed::ON_50);  //@@@ TODO
+      {
+        float level = devStatus.chargeLevel.get(); 
+          if(level > 80.0)
+            setStateLed2(enStatLed::ON_100);
+          else if (level > 60.0)
+            setStateLed2(enStatLed::ON_75);
+          else if (level > 30.0)
+            setStateLed2(enStatLed::ON_50);
+          else if (level > 10.0)
+            setStateLed2(enStatLed::ON_25);
+          else 
+            setStateLed2(enStatLed::LED_OFF);
+      }
       break; 
   }
 }
