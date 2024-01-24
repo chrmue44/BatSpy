@@ -113,6 +113,7 @@ struct stStatus
   cParList liveMsPerDiv = 0;
   cParNum mainLoop = 0;
   cParEnum gpsStatus = enGpsStatus::GPS_STATUS_OFF;
+  cParNum chargeLevel = 0;
 };
 
 
