@@ -20,9 +20,13 @@
 #define Y_TICK_CNT     5   ///< number of Y ticks in waterfall diagram
 #define X_TICK_CNT     4   ///< number of X ticks in live diagram 
 
+#define DISP_WIDTH_TFT     320
+#define DISP_HEIGHT_TFT    240
+
+
 struct stTime {
-  int16_t yMin[DISP_WIDTH];
-  int16_t yMax[DISP_WIDTH];
+  int16_t yMin[DISP_WIDTH_TFT];
+  int16_t yMax[DISP_WIDTH_TFT];
   int32_t lastX;        ///< last X-value of partial graph
   int32_t lastY;        ///< last X-value of partial graph
 
@@ -47,7 +51,7 @@ struct stFft {
 
 struct stRtFft
 {
-  uint16_t line_buffer[DISP_HEIGHT];
+  uint16_t line_buffer[DISP_HEIGHT_TFT];
   uint16_t count = SCALE_WIDTH;
   int16_t squeeze = 1;    ///< factor to display: 1: each freq of fft, 2: each 3nd freq, ...
   uint16_t x_tick[X_TICK_CNT];

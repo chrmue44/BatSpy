@@ -19,7 +19,7 @@ namespace arduino
 
         enum class Reg { INPUT_PORT, OUTPUT_PORT, POLARITY, CONFIG };
         enum class Config { OUT, IN };
-        enum class Polarity { ORIGINAL, INVERSE };
+        enum class Polarity { POL_ORIGINAL, POL_INVERSE };
         enum Level { L = 0x00, H = 0xFF };
 
         void attach(WireType& w) { wire = &w; }
@@ -54,7 +54,7 @@ namespace arduino
         }
         uint8_t polarity(const Polarity pol)
         {
-            uint8_t d = (pol == Polarity::ORIGINAL) ? 0x00 : 0xFF;
+            uint8_t d = (pol == Polarity::POL_ORIGINAL) ? 0x00 : 0xFF;
             return writeByte(I2C_ADDR, (uint8_t)Reg::POLARITY, (uint8_t)d);
         }
         uint8_t polarity()

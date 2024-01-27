@@ -30,7 +30,8 @@
 */
 
 #include <Audio.h>
-#include <ILI9341_t3.h>
+//#include <ILI9341_t3.h>
+#include <SH1106.h>
 #include <SD.h>
 #include <SerialFlash.h>
 #include <SPI.h>

@@ -8,13 +8,13 @@
 #ifndef MENUEDEFS_H
 #define MENUEDEFS_H
 
+#include "Adafruit_GFX.h"
 #include <cSdCard.h>
 #include <cstdint>
-#include <ILI9341_t3.h>
-
+//#include <ILI9341_t3.h>
 #define MMEM FLASHMEM
 
-extern ILI9341_t3* gpDisplay;
+extern Adafruit_GFX* gpDisplay;
 
 enum enKey {
   NOKEY =      0x8000,
@@ -63,22 +63,27 @@ enum enItemType {
 #define GRAPH_DIVX_COUNT     5     ///< number of divs in x direction
 #define GRAPH_PIXEL_PER_TICK 160    ///< pixel plotted per tick
 
-#define COL_TEXT            0xFFFF
-#define COL_TEXT_PAR        0xFFC0
-#define COL_TEXT_DIR        0x07E0
-#define COL_TEXTBACK        0x0000
-#define COL_TEXTSEL         0x0000
-#define COL_TEXTSELBACK     0xFFFF
-#define COL_TEXTEDIT        0x0000
-#define COL_TEXTEDITBACK    0x0FC0
-#define COL_MSGSHADOW       0x8410
-#define COL_TEXTHDR         0xFFFF
-#define COL_TEXTHDRBACK     0x000F
-#define COL_TEXTDROPBACK    0x0004
-//0011 1000 1110 0111
-#define COL_GRID            0x79E7
-#define COL_GRAPH           0xFFC0
-#define COL_CURSOR          0x7C1F
+struct stColors
+{
+  uint16_t text;
+  uint16_t textPar;
+  uint16_t textDir;
+  uint16_t textBack;
+  uint16_t textSel;
+  uint16_t textSelBack;
+  uint16_t textEdit;
+  uint16_t textEditBack;
+  uint16_t msgShadow;
+  uint16_t textHdr;
+  uint16_t textHdrBack;
+  uint16_t textDropBack;
+  uint16_t menuLine;
+  uint16_t grid;
+  uint16_t graph;
+  uint16_t cursor;
+};
+
+ extern const stColors* pColors;
 
 #define PAR_STR_LEN         80      ///< max. ln of string par
 #define CNT_PANEL_ITEM      35      ///< max. count of panel items
@@ -86,11 +91,6 @@ enum enItemType {
 #define LIST_ITEM_LEN       25      ///< max. length of list item text
 #define CNT_PANEL_LIST      25      ///< max. number of panels in list
 
-#define DISP_WIDTH          320
-#define DISP_HEIGHT         240
-#define LINE_HEIGHT         13               ///< distance between 2 text lines
-#define FKEYPAN_HEIGHT      (LINE_HEIGHT + 2)  ///< Height of FKEY-Panel
-#define HDR_HEIGHT          (LINE_HEIGHT + 2)  ///< height of header panel
 
 class cParBase {
  public:

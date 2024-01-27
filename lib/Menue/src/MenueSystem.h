@@ -16,7 +16,7 @@
 
 #include "cpanel.h"
 
-class ILI9341_t3;
+class Adafruit_GFX;
 
 
 enum enStatFocus {
@@ -57,11 +57,13 @@ public:
    * @param height height of the used display [px]
    * @param pDisplay pointer to base class of display
    */
-  cMenuesystem(int width, int height, ILI9341_t3* pDisplay);
+  cMenuesystem(int width, int height, Adafruit_GFX* pDisplay);
   virtual ~cMenuesystem();
   virtual void initDialogs() = 0;
   virtual void save() = 0;
   virtual void load() = 0;
+  void setPdisplay(int width, int height, Adafruit_GFX* pDisplay, int lineHeight, 
+                   int nrFkeys, const stColors* pColors);
 
   /**
    * @brief initialize menue system
@@ -142,6 +144,11 @@ public:
   void clearPanelList() { m_panelList.clear(); }
   void initFocusOnPanel(cPanel* pan) {m_focus.item = pan->findFirstEditItem(); m_focus.state = enFocusState::DISP; };
   virtual void setFactoryDefaults() {}
+  int getFkeypanHeight() { return m_lineHeight + 2; }  ///< Height of FKEY-Panel
+  int getHdrHeight() { return m_lineHeight + 2; }  ///< height of header panel
+  int getWidth() { return m_width; }
+  int getHeight() { return m_height; }
+ 
 
 protected:
 /**
@@ -179,6 +186,10 @@ protected:
 
   void printText(const char* txt, stPanelItem& item);
   void printText(const char* txt, int16_t x, int16_t y, int16_t w, int16_t h);
+  /**
+   *  refresh the display if something has changed 
+   */
+  virtual void refreshDisplay() = 0;   
 
 private:
   static void msgYesFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
@@ -187,14 +198,14 @@ private:
   /**
    * @brief draw complete panel consisting of header main-panel and FKEY bar
    */
-  void drawPanels();
+  bool drawPanels();
 
   /**
    * @brief draw a sub panel (hdr, main, fkey)
    * @param pan
    * @param hPanel
    */
-  void drawSubPanel(cPanel* pan, thPanel hPanel);
+  bool drawSubPanel(cPanel* pan, thPanel hPanel);
 
   /**
    * @brief draw a single item of a 
@@ -202,7 +213,7 @@ private:
    * @param hPanel handle to the panel the item consists to
    * @param itemId id if the item
    */
-  void drawItem( stPanelItem& item, thPanel hPanel, thItem itemId, enPanel panType);
+  bool drawItem( stPanelItem& item, thPanel hPanel, thItem itemId, enPanel panType);
 
   void handleEditMode(cPanel& pan, enKey key);
   void editPar(stPanelItem& item, enKey key);
@@ -232,6 +243,8 @@ private:
   thItem m_firstDropDownItem;     ///< first item actually displayed in drop down menue
   uint32_t m_lastKeyTime = 0;     ///< last time key was pressed
   bool m_isInitialized = false;   ///< true if menue system is initialized
+  int m_lineHeight = 8;           ///< distance between 2 text lines
+  uint32_t m_nrFkeys = 2;         ///< nr of Fkeys
 };
 
 

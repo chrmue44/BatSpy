@@ -93,12 +93,12 @@ int MMEM cPanel::addGeoItem(cParGeoPos* pPar,tCoord x, tCoord y, tCoord w, tCoor
   return addItem(item, x, y, w, h,isEdit, f);
 }
 
-int MMEM cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, uint16_t color, fuFocus f)
+int MMEM cPanel::addStrItem(cParStr* pPar,tCoord x, tCoord y, tCoord w, tCoord h, bool isEdit, fuFocus f)
 {
   stPanelItem item;
   item.p = pPar;
   item.type = ITEM_STRING;
-  pPar->setColor(color);
+  pPar->setColor(pColors->text);
   return addItem(item, x, y, w, h,isEdit, f);
 }
 

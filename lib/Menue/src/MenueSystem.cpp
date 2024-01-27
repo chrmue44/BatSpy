@@ -6,15 +6,16 @@
 #include <stdint.h>
 #include "MenueSystem.h"
 #include "cutils.h"
-#include <ILI9341_t3.h>
+//#include <ILI9341_t3.h>
+#include "Adafruit_GFX.h"
 #include <Arduino.h>
 
 //#define DEBUG_LEVEL 1
 #include <debug.h>
 
-ILI9341_t3* gpDisplay;
+Adafruit_GFX* gpDisplay;
 
-cMenuesystem::cMenuesystem(int width, int height, ILI9341_t3* pDisplay) :
+cMenuesystem::cMenuesystem(int width, int height, Adafruit_GFX* pDisplay) :
     m_width(width),
     m_height(height),
     m_panelList()
@@ -34,6 +35,20 @@ cMenuesystem::~cMenuesystem()
   m_panelList.clear();
 }
 
+void cMenuesystem::setPdisplay(int width, int height, Adafruit_GFX* pDisplay, int lineHeight, 
+                               int nrFkeys, const stColors* colors)
+{
+  gpDisplay = pDisplay;
+  m_width = width;
+  m_height = height;
+  m_lineHeight = lineHeight;
+  m_nrFkeys = nrFkeys;
+  pColors = colors;
+}
+
+const stColors* pColors = nullptr;   ///< set of colors
+
+
 thPanel MMEM cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord width, tCoord height)
 {
   thPanel i;
@@ -49,35 +64,36 @@ thPanel MMEM cMenuesystem::createPanel(enPanel type, tCoord x, tCoord y, tCoord 
 }
 
 
-void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId, enPanel panType)
+bool MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t itemId, enPanel panType)
 {
     char str[32];
     char fmt[12];
     char lon, lat;
     uint16_t colTxt, colTxtBack;
+    bool retVal = false;
     if(!item.isVisible)
     {
-      gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
-      return;
+      gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textBack);
+      return true;
     }
     if(!item.p->isUpdate())
-      return;
+      return false;
     switch(panType) {
       case PNL_HEADER:
       case PNL_FKEYS:
-        colTxt =COL_TEXTHDR;
-        colTxtBack = COL_TEXTHDRBACK;
+        colTxt = pColors->textHdr;
+        colTxtBack = pColors->textHdrBack;
         break;
     case PNL_DROPDOWN:
-        colTxt = COL_TEXT;
-        colTxtBack = COL_TEXTDROPBACK;
+        colTxt = pColors->text;;
+        colTxtBack = pColors->textDropBack;
         break;
       default:
         if(item.isEdit)
-          colTxt = COL_TEXT_PAR;
+          colTxt = pColors->textPar;
         else
-          colTxt = COL_TEXT;
-        colTxtBack = COL_TEXTBACK;
+          colTxt = pColors->text;
+        colTxtBack = pColors->textBack;
         break;
     }
     gpDisplay->setTextColor(colTxt, colTxtBack);
@@ -86,24 +102,32 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
     {
       if (m_focus.state == enFocusState::SELECT)
       {
-        gpDisplay->setTextColor(COL_TEXTSEL, COL_TEXTSELBACK);
-        gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTSELBACK);
+        gpDisplay->setTextColor(pColors->textSel, pColors->textSelBack);
+        gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textSelBack);
+        retVal = true;
       }
       else if (m_focus.state == enFocusState::EDIT)
       {
-        gpDisplay->setTextColor(COL_TEXTEDIT, COL_TEXTEDITBACK);
-        gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTEDITBACK);
+        gpDisplay->setTextColor(pColors->textEdit, pColors->textEditBack);
+        gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textEditBack);
+        retVal = true;
       }
     }
     else
     {
       if((item.type != ITEM_GRAPH))
+      {
         gpDisplay->fillRect(item.x, item.y, item.width, item.height, colTxtBack);
+        retVal = true;
+      }
       else
       {
         cParGraph* p = reinterpret_cast<cParGraph*>(item.p);
         if (p->getInitPlot())
+        {
           gpDisplay->fillRect(item.x, item.y, item.width, item.height, colTxtBack);
+          retVal = true;
+        }
       }
     }
     gpDisplay->setCursor(item.x + 1, item.y + 1);
@@ -116,7 +140,10 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           cParText* p = reinterpret_cast<cParText*>(item.p);
           if(p)
+          {
             printText(p->getText(), item);
+            retVal = true;
+          }
         }
         break;
 
@@ -125,6 +152,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
           cParEnum* p = reinterpret_cast<cParEnum*>(item.p);
        // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           printText(p->getActText(), item);
+          retVal = true;
         }
         break;
 
@@ -133,6 +161,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
           cParList* p = reinterpret_cast<cParList*>(item.p);
          // gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
           printText(p->getActText(), item);
+          retVal = true;
         }
         break;
 
@@ -148,6 +177,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
               snprintf(fmt, sizeof(fmt), "%%0%lu.%luf",p->getLeadingZeros(), p->getDecimals());
             snprintf(str, sizeof(str), fmt,p->get());
             printText(str, item);
+            retVal = true;
           }
         }
         break;
@@ -162,6 +192,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
             y-= 100;
           snprintf(str, sizeof(str), "%02lu.%02lu.%02u", p->getDay(), p->getMonth(), y);
           printText(str, item);
+          retVal = true;
         }
         break;
 
@@ -170,6 +201,7 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
          cParTime* p = reinterpret_cast<cParTime*>(item.p);
          snprintf(str, sizeof(str), "%02lu:%02lu:%02lu", p->getHour(), p->getMin(), p->getSec());
          printText(str, item);
+         retVal = true;
        }
        break;
 
@@ -188,14 +220,16 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
                   lat, p->getDegLat(), p->getMinfLat(),
                   lon, p->getDegLon(), p->getMinfLon());
          printText(str, item);
+         retVal = true;
        }
        break;
 
      case ITEM_STRING:
         {
           cParStr* p = reinterpret_cast<cParStr*>(item.p);
-          gpDisplay->setTextColor(p->getColor(), COL_TEXTBACK);
+          gpDisplay->setTextColor(pColors->text, pColors->textBack);
           printText(p->get(), item);
+          retVal = true;
         }
         break;
 
@@ -204,9 +238,10 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
           cParBtn* p = reinterpret_cast<cParBtn*>(item.p);
           gpDisplay->setCursor(item.x + 2, item.y + 2);
           printText(p->getText(), item);
-          gpDisplay->drawRect(item.x, item.y, item.width - 2, item.height - 2, COL_TEXT);
-          gpDisplay->fillRect(item.x + item.width - 2, item.y + 2, 2, item.height  - 2, COL_MSGSHADOW);
-          gpDisplay->fillRect(item.x + 2, item.y + item.height - 2, item.width -2 , 2, COL_MSGSHADOW);
+          gpDisplay->drawRect(item.x, item.y, item.width - 2, item.height - 2, pColors->text);
+          gpDisplay->fillRect(item.x + item.width - 2, item.y + 2, 2, item.height  - 2, pColors->msgShadow);
+          gpDisplay->fillRect(item.x + 2, item.y + item.height - 2, item.width -2 , 2, pColors->msgShadow);
+          retVal = true;
         }
         break;
 
@@ -217,43 +252,48 @@ void MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
           if(item.f)
             item.f(this, NO, item.p);
           p->plotGraph();
+          retVal = true;
         }
         break;
 
      default:
         break;
     }
-
+  return retVal;
 }
 
-void MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
+bool MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
 {
+  bool retVal = false;
   if(!m_isInitialized)
-    return;
+    return false;
   size_t size = pan->itemList.size();
   switch(pan->type)
   {
     case PNL_FKEYS:
       if(m_refreshFkey)
       {
-        gpDisplay->drawLine(pan->x, pan->y, m_width - 1, pan->y, COL_TEXT);
-        for(uint32_t i = 1; i < 4; i++)
+        gpDisplay->drawLine(pan->x, pan->y, m_width - 1, pan->y, pColors->menuLine);
+        for(uint32_t i = 1; i < m_nrFkeys; i++)
         {
-           int x = m_width * i / 4;
-           gpDisplay->drawLine(x, pan->y, x, m_height - 1, COL_TEXT);
+           int x = m_width * i / m_nrFkeys;
+           gpDisplay->drawLine(x, pan->y, x, m_height - 1, pColors->menuLine);
         }
+        retVal = true;
       }
       break;
     case PNL_HEADER:
-      gpDisplay->drawLine(pan->x, pan->height-1, m_width - 1, pan->height-1, COL_TEXT);
+      gpDisplay->drawLine(pan->x, pan->height - 1, m_width - 1, pan->height - 1, pColors->menuLine);
+      retVal = true;
       break;
 
     case PNL_DROPDOWN:
       if(pan->isRefresh())
       {
         pan->refresh();
-        gpDisplay->fillRect(pan->x, pan->y, pan->width, pan->height, COL_TEXTBACK);
-        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
+        gpDisplay->fillRect(pan->x, pan->y, pan->width, pan->height, pColors->text);
+        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, pColors->text);
+        retVal = true;
       }
       break;
 
@@ -264,26 +304,29 @@ void MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
       if(pan->isRefresh())
       {
         pan->refresh();
-        gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, COL_TEXTHDRBACK);
+        gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, pColors->textBack);
         gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4);
-        gpDisplay->setTextColor(COL_TEXTHDR, COL_TEXTHDRBACK);
+        gpDisplay->setTextColor(pColors->textHdr, pColors->textBack);
         printText(Txt::get(11), pan->x, pan->y, pan->width, 15);
-        gpDisplay->fillRect(pan->x, pan->y + 15, pan->width, pan->height, COL_TEXTBACK);
-        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, COL_TEXT);
-        gpDisplay->fillRect(pan->x + pan->width, pan->y + 3, 3, pan->height, COL_MSGSHADOW);
-        gpDisplay->fillRect(pan->x + 3, pan->y + pan->height, pan->width, 3, COL_MSGSHADOW);
+        gpDisplay->fillRect(pan->x, pan->y + 15, pan->width, pan->height, pColors->textBack);
+        gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, pColors->text);
+        gpDisplay->fillRect(pan->x + pan->width, pan->y + 3, 3, pan->height, pColors->msgShadow);
+        gpDisplay->fillRect(pan->x + 3, pan->y + pan->height, pan->width, 3, pColors->msgShadow);
+        retVal = true;
       }
       break;
   }
   for(uint32_t i = 0; i < size; i++)
-     drawItem(pan->itemList[i], hPanel, i, pan->type);
+     retVal |= drawItem(pan->itemList[i], hPanel, i, pan->type);
+  return retVal;
 }
 
-void MMEM cMenuesystem::drawPanels()
+bool MMEM cMenuesystem::drawPanels()
 {
+  bool retVal = false;
   if(!m_isInitialized)
-    return;
-    
+    return false;
+  
   // draw header panel
   if(m_hHeadrPanel < m_panelList.size())
   {
@@ -291,8 +334,9 @@ void MMEM cMenuesystem::drawPanels()
     {
       m_refreshHdr = false;
       cPanel* pan = &m_panelList[m_hHeadrPanel];
-      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
+      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height - 2, pColors->textHdrBack);
       drawSubPanel(pan, m_fKeyPanel);
+      retVal = true;
     }
   }
 
@@ -302,27 +346,34 @@ void MMEM cMenuesystem::drawPanels()
     if(m_refreshFkey)
     {
       cPanel* pan = &m_panelList[m_fKeyPanel];
-      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, COL_TEXTHDRBACK);
-      drawSubPanel(pan, m_fKeyPanel);
+      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, pColors->textHdrBack);
+      retVal |= drawSubPanel(pan, m_fKeyPanel);
       m_refreshFkey = false;
     }
   }
+
   // draw main panel
   if(m_refreshMain)
   {
     m_refreshMain = false;
     cPanel& p = m_panelList[m_mainPanel];
-    gpDisplay->fillRect(p.x, p.y, p.width, p.height, COL_TEXTBACK);
+    gpDisplay->fillRect(p.x, p.y, p.width, p.height, pColors->textBack);
 
     if(!m_msgActive)
       drawSubPanel(&m_panelList[m_mainPanel], m_mainPanel);
+    retVal = true;
   }
+
   // draw focus panel
   if ((m_focus.panel < m_panelList.size() ) && (m_focus.panel != m_hHeadrPanel))
   {
     cPanel* pan = &m_panelList[m_focus.panel];
-    drawSubPanel(pan, m_focus.panel);
+    retVal |= drawSubPanel(pan, m_focus.panel);
   }
+
+  if(retVal)
+    refreshDisplay();
+  return retVal;
 }
 
 
@@ -472,7 +523,7 @@ void MMEM cMenuesystem::handleEditMode(cPanel& pan, enKey key)
 
         case enFocusState::EDIT:
           m_focus.state = enFocusState::SELECT;
-          gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
+          gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textBack);
           pan.itemList[m_focus.item].p->update(true);
           if(pan.type == PNL_MESSAGE)
             destroyMsg();
@@ -487,7 +538,7 @@ void MMEM cMenuesystem::handleEditMode(cPanel& pan, enKey key)
           }
           else if (pan.type == PNL_DROPDOWN)
           {
-            gpDisplay->fillRect(pan.x, pan.y, pan.width, pan.height, COL_TEXTBACK);
+            gpDisplay->fillRect(pan.x, pan.y, pan.width, pan.height, pColors->textBack);
             if(item.f)
               item.f(this, key, item.p);
             destroyDropDown();
@@ -537,7 +588,7 @@ void MMEM cMenuesystem::handleEditMode(cPanel& pan, enKey key)
 
         case enFocusState::SELECT:
           DPRINTLN1("FST_SELECT\n");
-          gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
+          gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textBack);
           pan.itemList[m_focus.item].p->update(true);
           if (pan.type != PNL_DROPDOWN)
           {
@@ -599,7 +650,7 @@ void MMEM cMenuesystem::handleEditMode(cPanel& pan, enKey key)
           // fall through intended
 
         case enFocusState::SELECT:
-          gpDisplay->fillRect(item.x, item.y, item.width, item.height, COL_TEXTBACK);
+          gpDisplay->fillRect(item.x, item.y, item.width, item.height, pColors->textBack);
           pan.itemList[m_focus.item].p->update(true);
           if(pan.type != PNL_DROPDOWN)
           {
@@ -851,15 +902,15 @@ thPanel MMEM cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, 
   {
 //    Serial.printf("Dropdown, size: %u\n", s);
     m_pDropDownEnum = item;
-    m_dropDownMaxSize = (m_height - FKEYPAN_HEIGHT - y) / LINE_HEIGHT;
+    m_dropDownMaxSize = (m_height - getFkeypanHeight() - y) / m_lineHeight;
     m_firstDropDownItem = 0;
     bool shorted = false;
     if(m_dropDownMaxSize < s)
     {
       if(y > (tCoord)(m_height / 2))
       {
-        if(y > ((s - m_dropDownMaxSize) * LINE_HEIGHT))
-          y -= (s - m_dropDownMaxSize) * LINE_HEIGHT;
+        if(y > ((s - m_dropDownMaxSize) * m_lineHeight))
+          y -= (s - m_dropDownMaxSize) * m_lineHeight;
         else
           shorted = true;
       }
@@ -868,25 +919,25 @@ thPanel MMEM cMenuesystem::createDropDown(stPanelItem item, tCoord x, tCoord y, 
     }
     if(shorted)
     {
-      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, m_dropDownMaxSize * LINE_HEIGHT + 2);
+      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, m_dropDownMaxSize * m_lineHeight+ 2);
       s = m_dropDownMaxSize -1;
     }
     else
-      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, s * LINE_HEIGHT + 2);
+      m_dropDownPan = createPanel(PNL_DROPDOWN, x - 1, y - 1, width + 2, s * m_lineHeight + 2);
 
     tCoord yi = y;
 
     for(size_t i = 0; i < s; i++)
     {
       if(item.type == ITEM_ENUM)
-        m_panelList[m_dropDownPan].addTextItem(pE->getText(i), x,yi,width, LINE_HEIGHT, true, f);
+        m_panelList[m_dropDownPan].addTextItem(pE->getText(i), x,yi,width, m_lineHeight, true, f);
       else if(item.type == ITEM_LIST)
-        m_panelList[m_dropDownPan].addTextItem(pL->getText(i), x,yi,width, LINE_HEIGHT, true, f);
-      yi += LINE_HEIGHT;
+        m_panelList[m_dropDownPan].addTextItem(pL->getText(i), x,yi,width, m_lineHeight, true, f);
+      yi += m_lineHeight;
     }
 
     if(shorted)
-      m_panelList[m_dropDownPan].addTextItem("   \x1f", x,yi,width, LINE_HEIGHT, true, f);
+      m_panelList[m_dropDownPan].addTextItem("   \x1f", x,yi,width, m_lineHeight, true, f);
 
     m_focusSaveDrop = m_focus;
     setFocus(m_dropDownPan,0,enFocusState::SELECT);
@@ -969,7 +1020,7 @@ void MMEM cMenuesystem::printText(const char* txt, int16_t x, int16_t y, int16_t
 {
   char buf[512];
   cUtils::replaceUTF8withInternalCoding(txt, buf, sizeof(buf));
-  gpDisplay->setClipFrame(x, y, w, h);
+ // gpDisplay->setClipFrame(x, y, w, h);  //TODO
   gpDisplay->print(buf);
 }
 
