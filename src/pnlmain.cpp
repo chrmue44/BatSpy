@@ -7,6 +7,7 @@
  * ***********************************************************/
 
 #include <Arduino.h>
+#include "Adafruit_ILI9341.h"
 #include "cutils.h"
 #include "debug.h"
 #include "cfileinfo.h"
@@ -25,22 +26,24 @@ void setHeaderPanelText(cMenuesystem* pThis, thText t)
 {
   hdrMainPanel = pThis->getHdrPanel();
   pThis->getPan(hdrMainPanel)->clear();
-  pThis->getPan(hdrMainPanel)->addTextItem(t, LINE_HEIGHT, 1, 180, LINE_HEIGHT);
+  pThis->getPan(hdrMainPanel)->addTextItem(t, 5, 1, pThis->getWidth() - 5, pThis->getHdrHeight() - 3);
 }
-void MEMP showSplashScreen(ILI9341_t3& tft, bool waitBtn)
+
+void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
 {
    char buf[80];
 
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_WHITE);
-  tft.drawRect(2, 2, DISP_WIDTH - 2, DISP_HEIGHT - 2, ILI9341_YELLOW);
-  tft.fillRect(3, 3, DISP_WIDTH - 4, DISP_HEIGHT - 4, COL_TEXTDROPBACK);
+  tft.drawRect(2, 2, DISP_WIDTH_TFT - 2, DISP_HEIGHT_TFT - 2, ILI9341_YELLOW);
+  tft.fillRect(3, 3, DISP_WIDTH_TFT - 4, DISP_HEIGHT_TFT - 4, COL_TFT_TEXTDROPBACK);
 
   tft.setCursor(140, 10);
   tft.print("BatSpy");
   tft.setCursor(30, 25);
   tft.print(Txt::get(1700));
-  tft.writeRect(96,55,128, 128, startup_pic);
+  //tft.writeRect(96,55,128, 128, startup_pic);
+  tft.drawRGBBitmap(96,55,startup_pic, 128,128);
   tft.setCursor(30, 195);
   tft.print(Txt::get(1702));
   tft.print(devStatus.version.get());
@@ -276,6 +279,24 @@ void MEMP initFunctionItemsRecorder()
   f4MainItems.addItem(1035);
 }
 
+void MEMP initFunctionsCompact()
+{
+  f1MainItems.addItem(100);
+  f1MainItems.addItem(101);
+  f1MainItems.addItem(102);
+  f1MainItems.addItem(105);
+  f1MainItems.addItem(108);
+
+  f4MainItems.addItem(1000);
+  f4MainItems.addItem(1001);
+  f4MainItems.addItem(1021);
+  f4MainItems.addItem(1030);
+  f4MainItems.addItem(1034);
+  f4MainItems.addItem(1031);
+  f4MainItems.addItem(1033);
+  f4MainItems.addItem(1035);
+}
+
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -285,13 +306,16 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   switch (devPars.menueType.get())
   {
   case enMenueType::EXPERT:
-    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncExpert);
+    pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncExpert);
     break;
   case enMenueType::RECORDER:
-    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncRecorder);
+    pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncRecorder);
     break;
   case enMenueType::HANDHELD:
-    pThis->createDropDown(item, 1, DISP_HEIGHT - f1MainItems.size() * LINE_HEIGHT - 15, 120, f1DropFuncHandheld);
+    pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncHandheld);
+    break;
+  case enMenueType::COMPACT:
+    pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 15, 90, f1DropFuncHandheld);
     break;
   }
 }
@@ -453,7 +477,7 @@ void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f4MainItems;
-  pThis->createDropDown(item, DISP_WIDTH - 120 - 1, DISP_HEIGHT - f4MainItems.size() * LINE_HEIGHT - 15, 120, f4DropFunc);
+  pThis->createDropDown(item, DISP_WIDTH_TFT - 120 - 1, DISP_HEIGHT_TFT - f4MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f4DropFunc);
 }
 
 
@@ -467,6 +491,15 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
   if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
     retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
+  return retVal;
+}
+
+int MEMP initCompactFkeyPanel(cPanel* pan, tCoord lf)
+{
+  int retVal;
+
+  retVal =  pan->addTextItem(7,  0, DISP_HEIGHT_OLED - lf - 1, 63, lf, true, f1Func);
+  retVal |= pan->addTextItem(4, 65, DISP_HEIGHT_OLED - lf - 1, 63, lf, true, f4Func);
   return retVal;
 }
 
@@ -622,5 +655,45 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);
   err |= pan->addTimeItem(&devStatus.time,     180, 200 + lf, 70, lf);
   //setGpsStatus(&menue);
+  return err;
+}
+
+int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
+{
+  int err = 0;
+  visRecCntIndex = 2;
+  int r = 0;
+  int x = 70;
+  int xg = 10;
+  int y = lf + 5;
+  err |= pan->addTextItem(26,                    1,      y + r * lf,   80, lf);
+  err |= pan->addEnumItem(&devPars.recAuto,      x,      y + r++ * lf,100, lf, true, dispModeFunc);
+  err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 40, lf, false);
+  pan->itemList[visRecCntIndex].isVisible = false;
+  err |= pan->addTextItem(1365,                  1,      y + r * lf,   80, lf);
+  err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
+
+  err |= pan->addEnumItem(&devStatus.latSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
+  err |= pan->addNumItem(&devStatus.latDeg,     xg + 10, y + r * lf,   17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                 xg + 25, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.latMin,     xg + 30, y + r * lf,   17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1345,                 xg + 45, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.latSec,     xg + 50, y + r++ * lf, 25, lf, true, setPosFunc);
+  err |= pan->addEnumItem(&devStatus.lonSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
+  err |= pan->addNumItem(&devStatus.lonDeg,     xg + 10, y + r * lf,   25, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                 xg + 25, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.lonMin,     xg + 30, y + r * lf,   17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1345,                 xg + 45, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.lonSec,     xg + 50, y + r++ * lf, 25, lf, true, setPosFunc);
+
+ // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
+ // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  err |= pan->addTextItem(441,                   1,      y + r * lf,   80, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,   x + 20, y + r++ * lf, 80, lf, false);
+  err |= pan->addTextItem(451,                   1,      y + r * lf,   80, lf);
+  err |= pan->addNumItem(&devStatus.voltage,     x + 20, y + r++ * lf, 40, lf, false);
+  err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
+  err |= pan->addTimeItem(&devStatus.time,       x,      y + r * lf,   70, lf);
+
   return err;
 }

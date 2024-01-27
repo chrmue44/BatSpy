@@ -543,7 +543,7 @@ void cAudio::calcLiveFft()
     if (m_fftInfo.liveCnt > 0)
     {
       cParGraph* graph = getLiveFft();
-      if(hasDisplay())
+      if(hasDisplay() == enDisplayType::TFT_320)
         graph->updateLiveData(m_fft.output, devPars.liveAmplitude.get());
       else
         updateExtFftBuf();
@@ -593,7 +593,7 @@ void cAudio::sendFftBuffer(int delayTime, int part)
   {
     if(p >= &m_extFftBuf[0] + sizeof(m_extFftBuf))
       p = &m_extFftBuf[0];
-    Serial.write(p, chunkSize);
+    Serial.write((const char*)p, chunkSize);
     p += chunkSize;
     cnt++;
     if(cnt >= 8)
@@ -632,5 +632,5 @@ void cAudio::addLiveMsPerDiv(int waitTick, int sampleRate)
 
 int cAudio::getLiveMsPerDiv(int waitTick, int sampleRate)
 {
-  return (int)(1000.0 / sampleRate * getFftOutputSize() / 2 * DISP_WIDTH / X_TICK_CNT * (1 + waitTick));
+  return (int)(1000.0 / sampleRate * getFftOutputSize() / 2 * DISP_WIDTH_TFT / X_TICK_CNT * (1 + waitTick));
 }

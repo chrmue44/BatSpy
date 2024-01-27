@@ -58,7 +58,7 @@
 
 #include <cstdint>
 #include "Arduino.h"
-
+#include "types.h"
 
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
@@ -74,6 +74,7 @@
 // ****************************************************************
 
 #define I2C_ADDR_PORT_EXT 0x20
+#define I2C_ADDR_OLED     0x3C
 #define I2C_ADDR_HUMID    0x44
 
 
@@ -187,7 +188,7 @@ inline bool hasAmpRevB() { return  isRevisionB(); }
 #define portExpSetBit(x, y)   digitalWrite(x, y)
 
 #endif // defined (ARDUINO_TEENSY41)
-bool hasDisplay();
+int hasDisplay();
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
@@ -199,6 +200,7 @@ void resetTft();
 void powerOff();
 void setIoDebugMode(bool mode);
 void portExpSetBit(uint8_t port, uint8_t state);
+void initDisplay();
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

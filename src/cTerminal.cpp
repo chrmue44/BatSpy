@@ -498,6 +498,7 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       break;
     case 'p':
       setValEnum(&buf[1], 0, devPars.srcPosition.size() - 1, devPars.srcPosition);
+      gps.setMode((enGpsMode)devPars.srcPosition.get());
       break;
     case 'r':
       replyOk = parseRecParams(&buf[1], true);

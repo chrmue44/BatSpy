@@ -71,22 +71,5 @@ static const unsigned char fnt8x11_index[] = {
 };
 /* Size: 142 bytes */
 
-const ILI9341_t3_font_t fnt8x11 = {
-    fnt8x11_index,
-    0,
-    fnt8x11_data,
-    1,
-    0,
-    24,
-    27,
-    30,
-    138,
-    10,
-    4,
-    4,
-    3,
-    4,
-    4,
-    0,
-    6
+const GFXfont fnt8x11 = {
 };

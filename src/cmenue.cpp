@@ -11,7 +11,9 @@
 
 #include "ctext.h"
 #include "cutils.h"
-#include <ILI9341_t3.h>
+//#include <ILI9341_t3.h>
+#include "Adafruit_GFX.h"
+#include "Adafruit_SSD1327.h"
 #include "debug.h"
 #include "cfileinfo.h"
 #include "pnlmain.h"
@@ -33,7 +35,7 @@
 //#define DEBUG_LEVEL  1
 
 
-cMenue::cMenue(int width, int height, ILI9341_t3* pDisplay) :
+cMenue::cMenue(int width, int height, Adafruit_GFX* pDisplay) :
   cMenuesystem(width, height, pDisplay) {
 }
 
@@ -232,6 +234,12 @@ void MEMP cMenue::initPars()
   devStatus.date.set(rtc.getTime());
 }
 
+extern Adafruit_SSD1327 oled;
+void cMenue::refreshDisplay()
+{
+  if(hasDisplay() == enDisplayType::OLED_128)
+    oled.display();
+}
 void cMenue::initFileRelatedParams()
 {
   initBats();
@@ -277,19 +285,26 @@ void cMenue::setFactoryDefaults(enMode mode)
 
 void MEMP cMenue::initDialogs() 
 {
-  if(!hasDisplay())
+  if(hasDisplay() == enDisplayType::NO_DISPLAY)
     return;
   clearPanelList();
   refreshFkeyPanel();
-  tCoord lf = LINE_HEIGHT;     ///< distance between two lines of text
+  tCoord lf = LINE_HEIGHT_TFT;     ///< distance between two lines of text
+  switch (hasDisplay())
+  {
+    break;
+    case enDisplayType::OLED_128:
+      lf = LINE_HEIGHT_OLED;
+      break;
+    case enDisplayType::TFT_320:
+      lf = LINE_HEIGHT_TFT;
+
+  }
   // Header for main panel
-  setHdrPanel(createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT));
+  setHdrPanel(createPanel(PNL_HEADER, 0, 0, getWidth(), getHdrHeight()));
   setHeaderPanelText(this, 100);
 
-  // F-KEYs for main panel
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
-  setFkeyPanel(fkeyMainPan);
-
+ 
   switch (devPars.menueType.get())
   {
     default:
@@ -305,36 +320,42 @@ void MEMP cMenue::initDialogs()
       initFunctionItemsHandheld();
       initHandheldPanels(lf);
       break;
+    case enMenueType::COMPACT:
+      initFunctionsCompact();
+      initComactPanels(lf);
+      break;
   }
 }
 
 int MEMP cMenue::initExpertPanels(tCoord lf)
 {
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
+  setFkeyPanel(fkeyMainPan);
   int err = initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() - getHdrHeight() + 1);
   err |= initMainPanelExpert(getPan(panGeo), lf);
 
   // F-KEYs for waterfall panel
-  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
-  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
   err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
   err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
 
-  panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panWaterfall = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initWaterPan(getPan(panWaterfall), lf);
 
   // x-t-diagram panel
-  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initTimePan(getPan(panTime), lf);
 
-  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initLivePanHandheld(getPan(pnlLive), lf);
 
-  panFont = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panFont = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= getPan(panFont)->addTextItem(12000, 15, 20, 200, lf);
   err |= getPan(panFont)->addTextItem(12001, 15, 20 + lf, 200, lf);
   err |= getPan(panFont)->addTextItem(12002, 15, 20 + 2 * lf, 200, lf);
@@ -345,34 +366,34 @@ int MEMP cMenue::initExpertPanels(tCoord lf)
   err |= getPan(panFont)->addTextItem(12007, 15, 20 + 7 * lf, 200, lf);
   err |= getPan(panFont)->addTextItem(12010, 15, 20 + 8 * lf, 200, 2 * lf, false, NULL, 2);
 
-  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
   err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
   err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
 
 
-  panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initInfoPanExpert(getPan(panInfo), lf);
 
   // parameter panel
-  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParRec(getPan(panParRec), lf);
 
-  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
 
-  panBats = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panBats = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initBatPan(getPan(panBats), lf);
 
-  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initDateTimePan(getPan(panDateTime), lf);
 
-  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
 
-  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panFileBrowser = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");
 
@@ -383,58 +404,60 @@ int MEMP cMenue::initExpertPanels(tCoord lf)
 
 int MEMP cMenue::initHandheldPanels(tCoord lf)
 {
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
+  setFkeyPanel(fkeyMainPan);
   int err = initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() - getHdrHeight() + 1);
   err |= initMainPanelExpert(getPan(panGeo), lf);
 
   // F-KEYs for waterfall panel
-  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
-  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
   err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
   err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
 
-  panWaterfall = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panWaterfall = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initWaterPan(getPan(panWaterfall), lf);
 
   // x-t-diagram panel
-  panTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initTimePan(getPan(panTime), lf);
 
-  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initLivePanHandheld(getPan(pnlLive), lf);
 
-  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH, HDR_HEIGHT);
+  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
   err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
   err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
 
 
-  panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initInfoPanRecorder(getPan(panInfo), lf);
 
   // parameter panel
-  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParRec(getPan(panParRec), lf);
 
-  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
 
-  panBats = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panBats = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initBatPan(getPan(panBats), lf);
 
-  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initDateTimePan(getPan(panDateTime), lf);
 
-  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
 
-  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panFileBrowser = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");
 
@@ -443,42 +466,58 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
   return err;
 }
 
+int MEMP cMenue::initComactPanels(tCoord lf)
+{
+  // F-KEYs for main panel
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, getHeight() - getHdrHeight(), DISP_WIDTH_TFT, getFkeypanHeight());
+  int err = initCompactFkeyPanel(getPan(fkeyMainPan), lf);
+
+  // main panel
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight()- 5);
+  err |= initMainPanelCompact(getPan(panGeo), lf);
+  setMainPanel(panGeo);
+
+  setFkeyPanel(fkeyMainPan);
+  return err;
+}
 
 int MEMP cMenue::initRecorderPanels(tCoord lf)
 {
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
+  setFkeyPanel(fkeyMainPan);
   int err = initFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, HDR_HEIGHT, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT - HDR_HEIGHT + 1);
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() - getHdrHeight() + 1);
   err |= initMainPanelRecorder(getPan(panGeo), lf);
 
   // F-KEYs for waterfall panel
-  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
 
-  pnlLive = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initLivePanRecorder(getPan(pnlLive), lf);
   
-  panInfo = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initInfoPanRecorder(getPan(panInfo), lf);
 
   // parameter panel
-  panParams = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParRec(getPan(panParRec), lf);
 
-  panPosition = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
 
-  panDateTime = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initDateTimePan(getPan(panDateTime), lf);
 
-  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH, FKEYPAN_HEIGHT);
+  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
   err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
 
-  panFileBrowser = createPanel(PNL_MAIN, 0, FKEYPAN_HEIGHT + 1, DISP_WIDTH, DISP_HEIGHT - FKEYPAN_HEIGHT * 2 - 1);
+  panFileBrowser = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initFileBrowserPan(getPan(panFileBrowser), lf);
   initFileBrowser(getPan(panFileBrowser), "/");
 

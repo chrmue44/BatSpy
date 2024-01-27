@@ -128,6 +128,7 @@ enum enMenueType
   EXPERT = 0,
   RECORDER = 1,
   HANDHELD = 2,
+  COMPACT = 3
 };
 
 
@@ -146,4 +147,12 @@ enum enPositionMode
   POS_GPS_ON = 1,
   POS_GPS_AUTO = 2,
 };
+
+enum enDisplayType
+{
+  NO_DISPLAY = 0,
+  OLED_128 = 1,
+  TFT_320 = 2
+};
+
 #endif    //#ifndef _TYPES_H

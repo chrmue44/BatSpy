@@ -8,9 +8,14 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#ifdef ARDUINO_TEENSY40
+#include <TCA9534.h>
+extern TCA9534 ioex;
+#endif
+
 #include "cLog.h"
 #include "cgps.h"
-#include "ILI9341_t3.h"
+#include "Adafruit_GFX.h"
 #include "config.h"
 #include "cAudio.h"
 #include "cmenue.h"
@@ -22,15 +27,11 @@
 #include "cEeprom.h"
 #include "arduino-sht.h"
 
-#ifdef ARDUINO_TEENSY40
-#include <TCA9534.h>
-extern TCA9534 ioex;
-#endif
 
 extern cLog sysLog;
 extern cLog gpsLog;
 extern cGps gps;
-extern ILI9341_t3 tft;
+extern Adafruit_GFX* pDisplay;
 extern cAudio audio;  // audio control
 extern cRtc rtc;
 extern cMenue menue;

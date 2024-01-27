@@ -9,6 +9,8 @@
 #include "config.h"
 #include <Arduino.h>
 #include <Wire.h>
+#include "Adafruit_SSD1327.h"
+#include "Adafruit_ILI9341.h"
 
 #include "debug.h"
 #include "cmenue.h"
@@ -48,7 +50,7 @@ void initPins()
   sht.setAccuracy(SHTSensor::SHTAccuracy::SHT_ACCURACY_HIGH);
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
   ioex.config(TCA9534::Config::OUT); // set all port to output
-  ioex.polarity(TCA9534::Polarity::ORIGINAL); // set all port polarity to original
+  ioex.polarity(TCA9534::Polarity::POL_ORIGINAL); // set all port polarity to original
   ioex.output(ioexOut);
   digWrite(SPIN_POWER_OFF, 1);
 #endif
@@ -103,6 +105,71 @@ strncpy(buf, "RevC, ", sizeof(buf));
   devStatus.hwVersion.set(buf);
 }
 
+Adafruit_ILI9341 tft = Adafruit_ILI9341(PIN_TFT_CS, PIN_TFT_DC_REVA,
+                            PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
+Adafruit_SSD1327 oled(128, 128, &Wire, -1, 400000, 100000);
+
+const MEMP stColors TftColors
+{
+  COL_TFT_TEXT,         //uint16_t text;
+  COL_TFT_TEXT_PAR,     //uint16_t textPar;
+  COL_TFT_TEXT_DIR,     //uint16_t textDir;
+  COL_TFT_TEXTBACK,     //uint16_t textBack;
+  COL_TFT_TEXTSEL,      //uint16_t textSel;
+  COL_TFT_TEXTSELBACK,  //uint16_t textSelBack;
+  COL_TFT_TEXTEDIT,     //uint16_t textEdit;
+  COL_TFT_TEXTEDITBACK, //uint16_t textEditBack;
+  COL_TFT_MSGSHADOW,    //uint16_t msgShadow;
+  COL_TFT_TEXTHDR,      //uint16_t textHdr;
+  COL_TFT_TEXTHDRBACK,  //uint16_t textHdrBack;
+  COL_TFT_TEXTDROPBACK, //uint16_t textDropBack;
+  COL_TFT_MENULINE,     //uint16_t menuLine
+  COL_TFT_GRID,         //uint16_t grid;
+  COL_TFT_GRAPH,        //uint16_t graph;
+  COL_TFT_CURSOR        //uint16_t cursor;
+};
+
+const MEMP stColors OledColors
+{
+  COL_OLED_TEXT,         //uint16_t text;
+  COL_OLED_TEXT_PAR,     //uint16_t textPar;
+  COL_OLED_TEXT_DIR,     //uint16_t textDir;
+  COL_OLED_TEXTBACK,     //uint16_t textBack;
+  COL_OLED_TEXTSEL,      //uint16_t textSel;
+  COL_OLED_TEXTSELBACK,  //uint16_t textSelBack;
+  COL_OLED_TEXTEDIT,     //uint16_t textEdit;
+  COL_OLED_TEXTEDITBACK, //uint16_t textEditBack;
+  COL_OLED_MSGSHADOW,    //uint16_t msgShadow;
+  COL_OLED_TEXTHDR,      //uint16_t textHdr;
+  COL_OLED_TEXTHDRBACK,  //uint16_t textHdrBack;
+  COL_OLED_TEXTDROPBACK, //uint16_t textDropBack;
+  COL_OLED_MENULINE,     //uint16_t menuLine
+  COL_OLED_GRID,         //uint16_t grid;
+  COL_OLED_GRAPH,        //uint16_t graph;
+  COL_OLED_CURSOR        //uint16_t cursor;
+};
+
+
+void initDisplay()
+{
+  switch (hasDisplay())
+  {
+    case enDisplayType::OLED_128:
+      pDisplay = &oled;
+      oled.begin(0x3C);
+      oled.clearDisplay();
+      oled.display();
+      menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors);
+      break;
+    case enDisplayType::TFT_320:
+      pDisplay = &tft;
+      tft.begin();
+      menue.setPdisplay(DISP_WIDTH_TFT, DISP_HEIGHT_TFT, pDisplay, LINE_HEIGHT_TFT, 4, &TftColors);
+      break;
+  }
+}
+
+
 void checkSupplyVoltage()
 {
   float volt =readSupplyVoltage();
@@ -112,7 +179,7 @@ void checkSupplyVoltage()
   {
     sysLog.logf("power down voltage too low : %f \n ", volt);
     sysLog.close();
-    if(hasDisplay())
+    if(hasDisplay() != enDisplayType::NO_DISPLAY)
     {
       setDispLight(1);
       menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
@@ -203,7 +270,7 @@ float readTemperature()
 
 void blink(int cnt)
 {
-  if(!hasDisplay())
+  if(hasDisplay() == enDisplayType::NO_DISPLAY)
   {
     for(int i = 0; i < cnt; i++)
     {
@@ -222,7 +289,7 @@ void blink(int cnt)
 void powerOff()
 {
   blink(5);
-  if(!hasDisplay() && !wheels.isKeyPressed())
+  if((hasDisplay() == enDisplayType::NO_DISPLAY) && !wheels.isKeyPressed())
     return;
 
   audio.closeProject();
@@ -242,13 +309,18 @@ void powerOff()
   for(;;)  { }
 }
 
-bool hasDisplay()
+int hasDisplay()
 {
 #ifdef ARDUINO_TEENSY40
-  return (digitalRead(PIN_REV0) == 0);
+  if (digitalRead(PIN_REV0) == 0)
+    return enDisplayType::OLED_128;
+  else if (digitalRead(PIN_REV1) == 0)
+    return enDisplayType::TFT_320;
+  else
+    return enDisplayType::NO_DISPLAY;
 #endif
 #ifdef ARDUINO_TEENSY41
-  return true;
+  return enDisplyType::TFT_320;
 #endif
 }
 
@@ -256,7 +328,7 @@ bool hasDisplay()
 void setDispLight(uint8_t bright)
 {
 #ifdef ARDUINO_TEENSY40
-  if(hasDisplay())
+  if(hasDisplay() != enDisplayType::NO_DISPLAY)
   {
     if(bright > 128)
       digWrite(SPIN_LED_DISP, 1);

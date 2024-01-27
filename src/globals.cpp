@@ -12,11 +12,11 @@ cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S);
 cLog sysLog("sys");
 cLog gpsLog("gps");
 cGps gps;
-ILI9341_t3 tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA,
-                            PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
+Adafruit_GFX* pDisplay = nullptr;
 cAudio audio;  // audio control
 cRtc rtc;
-cMenue menue(320, 240, &tft);
+//cMenue menue(320, 240, &tft);
+cMenue menue(320, 240, pDisplay);
 
 Metro tick300ms(300);
 Metro tick1s(1000);

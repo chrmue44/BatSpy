@@ -9,6 +9,7 @@
 //#define DEBUG_LEVEL 4
 #include "debug.h"
 #include "fnt8x11.h"
+#include "Adafruit_SSD1327.h"
 #include "debug.h"
 //#include "clFixMemPool.h"
 #include "pnlmain.h"
@@ -36,8 +37,10 @@ const tChunkTab memChunks[] = {
 // *********************** initialization **************************
 void initTft(int orientation)
 {
-  if(hasDisplay())
+  if(hasDisplay() != enDisplayType::NO_DISPLAY)
   {
+    initDisplay();
+  /*  
     if(isRevisionB())
       tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, 
                      PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
@@ -50,6 +53,13 @@ void initTft(int orientation)
     tft.setFont(fnt8x11);  
     setDispLight(255);
     showSplashScreen(tft, true);
+  */
+    resetTft();
+    pDisplay->setRotation(orientation);
+    pDisplay->fillScreen(SSD1327_BLACK);
+    pDisplay->setTextColor(SSD1327_WHITE);
+    pDisplay->setTextSize(3);
+    setDispLight(255);
   }
 }
 
@@ -77,28 +87,28 @@ void setup()
   Serial.begin(9600);
   delay(200);
   initPins();
-  if(!hasDisplay())
+  if(hasDisplay() == enDisplayType::NO_DISPLAY)
   {
     digWrite(SPIN_LED_DISP, 1);
     digWrite(SPIN_LED_2, 1);
   }
-  //waitForSerial();
+//  waitForSerial();
   audio.init();
   Txt::setResource(Texts);
-  int orientation = readInt16FromEep(0x0032) == 0 ? 3 : 1;
+  int orientation = readInt16FromEep(0x0032) == 0 ? 0 : 2;
   initTft(orientation);
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  
-  menue.init(hasDisplay());
+  menue.init(hasDisplay() != enDisplayType::NO_DISPLAY);
   menue.initFileRelatedParams();
- // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
+  // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
   menue.printPars();
   getSerialNr(serialNumber, sizeof(serialNumber));
   audio.setup();
   wheels.setDirection(true);  
-  if(hasDisplay())
+  if(hasDisplay() != enDisplayType::NO_DISPLAY)
   {
     setDispLight(255);
     setVisibilityRecCount(&menue);
@@ -111,6 +121,7 @@ void setup()
 
   devStatus.opMode.set(enOpMode::HEAR_HET);
   gps.init();
+  gps.setMode((enGpsMode)devPars.srcPosition.get());
   if(devPars.recAuto.get() == 3)
     calcSunrise();
   logStatus();
@@ -157,7 +168,8 @@ void handleDisplayAndWheel(bool oneSec)
         menue.handleKey(key);
         audio.setup();
         audio.updateCassMode();
-        tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
+//        tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
+        pDisplay->setRotation(devPars.dispOrient.get() == 0 ? 0 : 2);
         wheels.setDirection(devPars.knobRotation.get() == 0);
       }
     }
@@ -230,7 +242,7 @@ void loop()
   loopCount++;
   
   bool rtFft;
-  if(hasDisplay())
+  if(hasDisplay() == enDisplayType::TFT_320)
     rtFft = (menue.getFocusPanel() == pnlLive) ||
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
   else

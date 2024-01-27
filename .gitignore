@@ -13,3 +13,13 @@ lib/Snooze/images
 lib/ILI9341_t3/examples
 lib/ILI9341_t3/extras
 lib/ILI9341_t3/docs
+/lib/Adafruit_SSD1327/examples
+/lib/Adafruit_SSD1327/.github
+/lib/Adafruit-GFX/examples
+/lib/Adafruit-GFX/.github
+/lib/Adafruit-GFX/fontconvert
+/lib/Adafruit-GFX/Fonts
+/lib/Adafruit_BusIO/examples
+/lib/Adafruit_BusIO/.github
+/lib/Adafruit_ILI9341/examples
+/lib/Adafruit_ILI9341/.github

@@ -152,14 +152,17 @@ void MEMP saveParsToEep()
 bool MEMP loadParsFromEep()
 {
   bool retVal = false;
-  if(checkCRC())
+  if (checkCRC())
   {
     devPars.volume.set(readFloatFromEep(EEPADDR_VOLUME));
     devPars.mixFreq.set(readFloatFromEep(EEPADDR_MIXFREQ));
     devPars.recAuto.set(readInt16FromEep(EEPADDR_RECAUTO));
     devPars.sendDelay.set(readInt16FromEep(EEPADDR_SEND_DELAY));
     devPars.srcPosition.set(readInt16FromEep(EEPADDR_SRC_POSITION));
-    devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
+    if (hasDisplay() == enDisplayType::OLED_128)
+      devPars.menueType.set(enMenueType::COMPACT);
+    else
+      devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
     devPars.recTime.set(readFloatFromEep(EEPADDR_REC_TIME));
     devPars.sampleRate.set(readInt16FromEep(EEPADDR_SAMPLE_RATE));
     devPars.preAmpGain.set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN));
@@ -170,7 +173,7 @@ bool MEMP loadParsFromEep()
     devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
-//    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
+    //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
     devPars.deadTime.set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
@@ -183,7 +186,7 @@ bool MEMP loadParsFromEep()
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
     devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));  //if addr changes see also pnlparams.cpp
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
-  //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
+    //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
@@ -194,6 +197,8 @@ bool MEMP loadParsFromEep()
     devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));
     retVal = true;
   }
+  else
+    saveParsToEep();
   return retVal;
 }
 

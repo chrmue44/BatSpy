@@ -49,9 +49,9 @@ void MEMP fillFileList(cPanel* pan)
         pan->itemList[getItemIndexDel(idxPnl)].isVisible = true;
         cParStr* p = static_cast<cParStr*>(pan->itemList[getItemIndexFile(idxPnl)].p);
         if(devStatus.dir[idxDir].isDir)
-          p->setColor(COL_TEXT_DIR);
+          p->setColor(pColors->textDir);
         else
-          p->setColor(COL_TEXT);
+          p->setColor(pColors->text); 
         idxPnl++;
       }
     }
