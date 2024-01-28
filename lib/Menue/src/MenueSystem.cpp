@@ -36,7 +36,7 @@ cMenuesystem::~cMenuesystem()
 }
 
 void cMenuesystem::setPdisplay(int width, int height, Adafruit_GFX* pDisplay, int lineHeight, 
-                               int nrFkeys, const stColors* colors)
+                               int nrFkeys, const stColors* colors, int fontOffset)
 {
   gpDisplay = pDisplay;
   m_width = width;
@@ -44,6 +44,7 @@ void cMenuesystem::setPdisplay(int width, int height, Adafruit_GFX* pDisplay, in
   m_lineHeight = lineHeight;
   m_nrFkeys = nrFkeys;
   pColors = colors;
+  m_fontOffset = fontOffset;
 }
 
 const stColors* pColors = nullptr;   ///< set of colors
@@ -130,7 +131,8 @@ bool MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         }
       }
     }
-    gpDisplay->setCursor(item.x + 1, item.y + 1);
+    
+    gpDisplay->setCursor(item.x + 1, item.y + 1 + m_fontOffset);
     gpDisplay->setTextSize(item.textSize);
 
     item.p->update(false);
@@ -334,7 +336,7 @@ bool MMEM cMenuesystem::drawPanels()
     {
       m_refreshHdr = false;
       cPanel* pan = &m_panelList[m_hHeadrPanel];
-      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height - 2, pColors->textHdrBack);
+      gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height - 1, pColors->textHdrBack);
       drawSubPanel(pan, m_fKeyPanel);
       retVal = true;
     }

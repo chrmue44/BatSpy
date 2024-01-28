@@ -469,7 +469,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 int MEMP cMenue::initComactPanels(tCoord lf)
 {
   // F-KEYs for main panel
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, getHeight() - getHdrHeight(), DISP_WIDTH_TFT, getFkeypanHeight());
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, getHeight() - getFkeypanHeight(), DISP_WIDTH_TFT, getFkeypanHeight());
   int err = initCompactFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel

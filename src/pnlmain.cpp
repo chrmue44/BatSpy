@@ -498,8 +498,8 @@ int MEMP initCompactFkeyPanel(cPanel* pan, tCoord lf)
 {
   int retVal;
 
-  retVal =  pan->addTextItem(7,  0, DISP_HEIGHT_OLED - lf - 1, 63, lf, true, f1Func);
-  retVal |= pan->addTextItem(4, 65, DISP_HEIGHT_OLED - lf - 1, 63, lf, true, f4Func);
+  retVal =  pan->addTextItem(7,  1, DISP_HEIGHT_OLED - lf , 63, lf, true, f1Func);
+  retVal |= pan->addTextItem(4, 65, DISP_HEIGHT_OLED - lf , 63, lf, true, f4Func);
   return retVal;
 }
 
@@ -674,17 +674,17 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
 
   err |= pan->addEnumItem(&devStatus.latSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
-  err |= pan->addNumItem(&devStatus.latDeg,     xg + 10, y + r * lf,   17, lf, true, setPosFunc);
-  err |= pan->addTextItem(1340,                 xg + 25, y + r * lf,   10, lf);
-  err |= pan->addNumItem(&devStatus.latMin,     xg + 30, y + r * lf,   17, lf, true, setPosFunc);
-  err |= pan->addTextItem(1345,                 xg + 45, y + r * lf,   10, lf);
-  err |= pan->addNumItem(&devStatus.latSec,     xg + 50, y + r++ * lf, 25, lf, true, setPosFunc);
+  err |= pan->addNumItem(&devStatus.latDeg,     xg + 10, y + r * lf,   25, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                 xg + 38, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.latMin,     xg + 50, y + r * lf,   17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1345,                 xg + 65, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.latSec,     xg + 70, y + r++ * lf, 25, lf, true, setPosFunc);
   err |= pan->addEnumItem(&devStatus.lonSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
-  err |= pan->addNumItem(&devStatus.lonDeg,     xg + 10, y + r * lf,   25, lf, true, setPosFunc);
-  err |= pan->addTextItem(1340,                 xg + 25, y + r * lf,   10, lf);
-  err |= pan->addNumItem(&devStatus.lonMin,     xg + 30, y + r * lf,   17, lf, true, setPosFunc);
-  err |= pan->addTextItem(1345,                 xg + 45, y + r * lf,   10, lf);
-  err |= pan->addNumItem(&devStatus.lonSec,     xg + 50, y + r++ * lf, 25, lf, true, setPosFunc);
+  err |= pan->addNumItem(&devStatus.lonDeg,     xg + 10, y + r * lf,   28, lf, true, setPosFunc);
+  err |= pan->addTextItem(1340,                 xg + 35, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.lonMin,     xg + 50, y + r * lf,   17, lf, true, setPosFunc);
+  err |= pan->addTextItem(1345,                 xg + 65, y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.lonSec,     xg + 70, y + r++ * lf, 25, lf, true, setPosFunc);
 
  // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
  // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);

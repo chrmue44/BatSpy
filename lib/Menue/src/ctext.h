@@ -14,7 +14,8 @@
 #ifndef size_t
 typedef  std::size_t size_t;
 #endif
-
+/*
+// special characters CHM font
 #define CH_AE   "\x80"
 #define CH_OE   "\x81"
 #define CH_UE   "\x82"
@@ -23,6 +24,16 @@ typedef  std::size_t size_t;
 #define CH_UEs  "\x85"
 #define CH_SS   "\x86"
 #define CH_DEG  "\x09"
+*/
+// special characters Adafruit font
+#define CH_AE   "\xC4"
+#define CH_OE   "\xD6"
+#define CH_UE   "\xDC"
+#define CH_AEs  "\xE4"
+#define CH_OEs  "\xF6"
+#define CH_UEs  "\xFC"
+#define CH_SS   "\xDF"
+#define CH_DEG  "\xBA"
 
 enum enLang {
     LANG_GER = 1,

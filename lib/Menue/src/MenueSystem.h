@@ -63,7 +63,7 @@ public:
   virtual void save() = 0;
   virtual void load() = 0;
   void setPdisplay(int width, int height, Adafruit_GFX* pDisplay, int lineHeight, 
-                   int nrFkeys, const stColors* pColors);
+                   int nrFkeys, const stColors* pColors, int fontOffset);
 
   /**
    * @brief initialize menue system
@@ -145,7 +145,7 @@ public:
   void initFocusOnPanel(cPanel* pan) {m_focus.item = pan->findFirstEditItem(); m_focus.state = enFocusState::DISP; };
   virtual void setFactoryDefaults() {}
   int getFkeypanHeight() { return m_lineHeight + 2; }  ///< Height of FKEY-Panel
-  int getHdrHeight() { return m_lineHeight + 2; }  ///< height of header panel
+  int getHdrHeight() { return m_lineHeight + 1; }  ///< height of header panel
   int getWidth() { return m_width; }
   int getHeight() { return m_height; }
  
@@ -245,6 +245,7 @@ private:
   bool m_isInitialized = false;   ///< true if menue system is initialized
   int m_lineHeight = 8;           ///< distance between 2 text lines
   uint32_t m_nrFkeys = 2;         ///< nr of Fkeys
+  int m_fontOffset = 0;           ///< offset in Y pixels for setting cursor to print character
 };
 
 

@@ -17,7 +17,7 @@
 #include "cMeanCalc.h"
 #include "InternalTemperature.h"
 #include "globals.h"
-
+#include "chmfont.h"
 
 cMeanCalc<int32_t,50> digits;
 //cMeanCalc<int16_t,10> uref;
@@ -150,6 +150,7 @@ const MEMP stColors OledColors
 };
 
 
+
 void initDisplay()
 {
   switch (hasDisplay())
@@ -157,14 +158,15 @@ void initDisplay()
     case enDisplayType::OLED_128:
       pDisplay = &oled;
       oled.begin(0x3C);
+      oled.setFont(&chmFont);
       oled.clearDisplay();
       oled.display();
-      menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors);
+      menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 6);
       break;
     case enDisplayType::TFT_320:
       pDisplay = &tft;
       tft.begin();
-      menue.setPdisplay(DISP_WIDTH_TFT, DISP_HEIGHT_TFT, pDisplay, LINE_HEIGHT_TFT, 4, &TftColors);
+      menue.setPdisplay(DISP_WIDTH_TFT, DISP_HEIGHT_TFT, pDisplay, LINE_HEIGHT_TFT, 4, &TftColors, 0);
       break;
   }
 }
@@ -328,12 +330,26 @@ int hasDisplay()
 void setDispLight(uint8_t bright)
 {
 #ifdef ARDUINO_TEENSY40
-  if(hasDisplay() != enDisplayType::NO_DISPLAY)
+  
+  switch(hasDisplay())
   {
-    if(bright > 128)
-      digWrite(SPIN_LED_DISP, 1);
-    else
-      digWrite(SPIN_LED_DISP, 0);
+    case enDisplayType::TFT_320:
+      if(bright > 128)
+        digWrite(SPIN_LED_DISP, 1);
+      else
+        digWrite(SPIN_LED_DISP, 0);
+      break;
+    case enDisplayType::OLED_128:
+      if(bright > 128)
+      {
+        menue.refreshAll();
+      }
+      else
+      {
+        oled.clearDisplay();
+        oled.display();
+      }
+
   }
 #endif
 #ifdef ARDUINO_TEENSY41  
