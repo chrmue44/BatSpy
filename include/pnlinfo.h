@@ -14,5 +14,6 @@
 #include "cmenue.h"
 int initInfoPanExpert(cPanel* pan, tCoord lf);
 int initInfoPanRecorder(cPanel* pan, tCoord lf);
+int initInfoPanCompact(cPanel* pan, tCoord lf);
 
 #endif // PNLBATS_H

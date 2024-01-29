@@ -193,7 +193,7 @@ float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);
 void checkSupplyVoltage();
-float readTemperature();
+float readTemperature(float& humidity);
 void setDispLight(uint8_t bright);
 void digWrite(int pin, uint8_t stat);
 void resetTft();

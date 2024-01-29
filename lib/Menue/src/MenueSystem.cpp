@@ -237,12 +237,13 @@ bool MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
 
      case ITEM_BUTTON:
         {
+          int yb = item.y;
           cParBtn* p = reinterpret_cast<cParBtn*>(item.p);
-          gpDisplay->setCursor(item.x + 2, item.y + 2);
+          gpDisplay->setCursor(item.x + 2, item.y + 3 + m_fontOffset);
           printText(p->getText(), item);
-          gpDisplay->drawRect(item.x, item.y, item.width - 2, item.height - 2, pColors->text);
-          gpDisplay->fillRect(item.x + item.width - 2, item.y + 2, 2, item.height  - 2, pColors->msgShadow);
-          gpDisplay->fillRect(item.x + 2, item.y + item.height - 2, item.width -2 , 2, pColors->msgShadow);
+          gpDisplay->drawRect(item.x, yb, item.width - 2, item.height - 1, pColors->text);
+          gpDisplay->fillRect(item.x + item.width - 2, yb + 2, 2, item.height  - 1, pColors->msgShadow);
+          gpDisplay->fillRect(item.x + 2, yb + item.height - 1, item.width -2 , 2, pColors->msgShadow);
           retVal = true;
         }
         break;
@@ -306,11 +307,11 @@ bool MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
       if(pan->isRefresh())
       {
         pan->refresh();
-        gpDisplay->fillRect(pan->x, pan->y, pan->width, 15, pColors->textBack);
-        gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4);
-        gpDisplay->setTextColor(pColors->textHdr, pColors->textBack);
-        printText(Txt::get(11), pan->x, pan->y, pan->width, 15);
-        gpDisplay->fillRect(pan->x, pan->y + 15, pan->width, pan->height, pColors->textBack);
+        gpDisplay->fillRect(pan->x, pan->y, pan->width, getHdrHeight(), pColors->textHdrBack);
+        gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4 + m_fontOffset);
+        gpDisplay->setTextColor(pColors->textHdr, pColors->textHdrBack);
+        printText(Txt::get(11), pan->x, pan->y + m_fontOffset, pan->width, getHdrHeight());
+        gpDisplay->fillRect(pan->x, pan->y + getHdrHeight(), pan->width, pan->height - getHdrHeight(), pColors->textBack);
         gpDisplay->drawRect(pan->x, pan->y, pan->width, pan->height, pColors->text);
         gpDisplay->fillRect(pan->x + pan->width, pan->y + 3, 3, pan->height, pColors->msgShadow);
         gpDisplay->fillRect(pan->x + 3, pan->y + pan->height, pan->width, 3, pColors->msgShadow);
@@ -326,7 +327,7 @@ bool MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
 bool MMEM cMenuesystem::drawPanels()
 {
   bool retVal = false;
-  if(!m_isInitialized)
+  if(!m_isInitialized || !m_enabled)
     return false;
   
   // draw header panel
@@ -802,32 +803,61 @@ void MMEM cMenuesystem::msgNoFunc(cMenuesystem* pThis, enKey key, cParBase* pIte
 }
 
 
-void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const char* str2,
+void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, bool isSmall, const char *str, const char* str2,
                                                   const char* str3, const char* str4)
 {
   if(!m_isInitialized)
     return;
-  m_MsgPan = createPanel(PNL_MESSAGE, 30, 30, 260, 50);
+  int xp, yp, wp, hp, xb1, xb21, xb22, wb, hb, lf;
+  if (isSmall)
+  {
+    xp = 10;
+    yp = 30;
+    wp = 108;
+    hp = 60;
+    xb1 = 64;
+    xb21 = 20;
+    xb22 = 68;
+      wb = 40;
+      hb = 12;
+      lf = 9;
+  }
+  else
+  {
+    xp = 30;
+    yp = 30;
+    wp = 260;
+    hp = 50;
+    xb1 = 130;
+    xb21 = 60;
+    xb22 = 180;
+    wb = 60;
+    hb = 16;
+    lf = 12;
+  }
+
+
+  m_MsgPan = createPanel(PNL_MESSAGE, xp, yp, wp, hp);
 
   cParStr* parStr = new cParStr(str);
-  tCoord x = 40;
-  tCoord y = 60;
-  tCoord w = 240;
+  tCoord x = xp + 5;
+  tCoord y = yp + 20;
+  tCoord w = wp - 20;
   m_msgCallBack = f;
-  m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, 12);
+  m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, lf);
   if(str2)
   {
-    y += 12;
+    y += lf;
     parStr = new cParStr(str2);
-    m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, 12);
+    m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, lf);
     if(str3) {
-      y += 12;
+      y += lf;
       parStr = new cParStr(str3);
-      m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, 12);
+      m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, lf);
       if(str4) {
-        y += 12;
+        y += lf;
         parStr = new cParStr(str4);
-        m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, 12);
+        m_panelList[m_MsgPan].addStrItem(parStr, x, y, w, lf);
       }
     }
   }
@@ -840,12 +870,12 @@ void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, const char *str, const ch
   switch (type)
   {
     case enMsg::INFO:
-      m_panelList[m_MsgPan].addBtnItem(10, 130, y, 60, 16, msgFunc);
+      m_panelList[m_MsgPan].addBtnItem(10, xb1, y, wb, 16, msgFunc);
       setFocus(m_MsgPan,btn, enFocusState::EDIT);
       break;
     case enMsg::YESNO:
-      m_panelList[m_MsgPan].addBtnItem(15,  60, y, 60, 16, msgYesFunc);
-      m_panelList[m_MsgPan].addBtnItem(16, 180, y, 60, 16, msgNoFunc);
+      m_panelList[m_MsgPan].addBtnItem(15, xb21, y, wb, hb, msgYesFunc);
+      m_panelList[m_MsgPan].addBtnItem(16, xb22, y, wb, hb, msgNoFunc);
       setFocus(m_MsgPan,btn, enFocusState::SELECT);
       break;
   }

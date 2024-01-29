@@ -43,6 +43,24 @@ int MEMP initInfoPanExpert(cPanel* pan, tCoord lf)
   return err;
 }
 
+int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
+{
+  int r = 0;
+  int x = 80;
+  int err = 0;
+  err |= pan->addTextItem(430,                   1, 20 + r++ * lf, x, lf);
+  err |= pan->addStrItem(&devStatus.version,     1, 20 + r++ * lf, x, lf);
+  r++;
+  err |= pan->addTextItem(435,                   1, 20 + r++ * lf, x, lf);
+  err |= pan->addStrItem(&devStatus.hwVersion,   1, 20 + r++ * lf, x, lf);
+  err |= pan->addTextItem(455,                   1, 20 + r   * lf, x, lf);
+  err |= pan->addNumItem(&devStatus.temperature, x, 20 + r++ * lf,  30, lf, false);
+  err |= pan->addTextItem(456,                   1, 20 + r   * lf,   x, lf);
+  err |= pan->addNumItem(&devStatus.humidity,    x, 20 + r++ * lf, 30, lf, false);
+
+  return err;
+}
+
 int MEMP initInfoPanRecorder(cPanel* pan, tCoord lf)
 {
   int err = pan->addTextItem(430, 3,                   30 + 4 * lf, 80, lf);

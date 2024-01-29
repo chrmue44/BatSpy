@@ -208,6 +208,7 @@ void MEMP cMenue::initPars()
   devStatus.setVoltage.init(0,10, 0.05f, 2);
   devStatus.digits.init(0, 10000, 1, 0);
   devStatus.temperature.init(-50, 100, 0.1f, 1);
+  devStatus.humidity.init(0, 100, 1, 0);
   devStatus.mainLoop.init(0, 1e10, 1, 0);
 
   devStatus.freq1Tick.init(0, 300,0.1f, 1);
@@ -217,11 +218,20 @@ void MEMP cMenue::initPars()
   devStatus.posValid.addItem(15);
   devStatus.lastCallF.init(0.0f, 200.0f, 0.1f, 1);
 
-  devStatus.gpsStatus.addItem(1430); //enGpsStatus::GPS_STATUS_OFF
-  devStatus.gpsStatus.addItem(1431); //enGpsStatus::GPS_SEARCHING
-  devStatus.gpsStatus.addItem(1432); //enGpsStatus::GPS_FIXED
-  devStatus.gpsStatus.addItem(1433); //enGpsStatus::GPS_FIXED_OFF
-
+  if(hasDisplay() == enDisplayType::OLED_128)
+  { 
+    devStatus.gpsStatus.addItem(1430); //enGpsStatus::GPS_STATUS_OFF
+    devStatus.gpsStatus.addItem(1434); //enGpsStatus::GPS_SEARCHING
+    devStatus.gpsStatus.addItem(1435); //enGpsStatus::GPS_FIXED
+    devStatus.gpsStatus.addItem(1436); //enGpsStatus::GPS_FIXED_OFF
+  }
+  else
+  {
+    devStatus.gpsStatus.addItem(1430); //enGpsStatus::GPS_STATUS_OFF
+    devStatus.gpsStatus.addItem(1431); //enGpsStatus::GPS_SEARCHING
+    devStatus.gpsStatus.addItem(1432); //enGpsStatus::GPS_FIXED
+    devStatus.gpsStatus.addItem(1433); //enGpsStatus::GPS_FIXED_OFF
+  }
   devStatus.chargeLevel.init(0,100,1,0);
   
   devStatus.chargeLevel.init(0.0, 100.0, 0.1, 0);
@@ -468,9 +478,13 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 
 int MEMP cMenue::initComactPanels(tCoord lf)
 {
+  int err = 0;
+  panInfo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 5);
+  err |= initInfoPanCompact(getPan(panInfo), lf);
+
   // F-KEYs for main panel
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, getHeight() - getFkeypanHeight(), DISP_WIDTH_TFT, getFkeypanHeight());
-  int err = initCompactFkeyPanel(getPan(fkeyMainPan), lf);
+  fkeyMainPan = createPanel(PNL_FKEYS, 0, getHeight() - getFkeypanHeight(), DISP_WIDTH_OLED, getFkeypanHeight());
+  err |= initCompactFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
   panGeo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight()- 5);

@@ -273,8 +273,11 @@ void loop()
     devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
 
     //Serial.printf("volt %f, level: %f  factor:%f\n", devStatus.voltage.get(), devStatus.chargeLevel.get(),devPars.voltFactor.get());
-    float temp = readTemperature();
+    float humidity;
+    float temp = readTemperature(humidity);
     devStatus.temperature.set(temp);
+    devStatus.humidity.set(humidity);
+    
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
     devStatus.time.set(rtc.getTime());

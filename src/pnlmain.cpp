@@ -130,7 +130,7 @@ void MEMP f1DropFuncExpert(cMenuesystem* pThis, enKey key, cParBase* pItem)
       pThis->setFkeyPanel(fkeyMainPan);
       break;
     case 8:
-      pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+      pThis->showMsg(enMsg::YESNO, powerOffFunc, hasDisplay() == enDisplayType::OLED_128, Txt::get(1010));
       break;
   }
 }
@@ -177,7 +177,26 @@ void MEMP f1DropFuncHandheld(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->setFkeyPanel(fkeyMainPan);
     break;
   case 7:
-    pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+    pThis->showMsg(enMsg::YESNO, powerOffFunc, hasDisplay() == enDisplayType::OLED_128, Txt::get(1010));
+    break;
+  }
+}
+
+void MEMP f1DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (pThis->getFocusItem()) {
+  case 0:
+    pThis->setMainPanel(panGeo);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+  case 1:
+    pThis->setMainPanel(panInfo);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+    break;
+  case 2:
+    pThis->showMsg(enMsg::YESNO, powerOffFunc, hasDisplay() == enDisplayType::OLED_128, Txt::get(1011), Txt::get(1012));
     break;
   }
 }
@@ -212,7 +231,7 @@ void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->setFkeyPanel(fkeyMainPan);
     break;
   case 4:
-    pThis->showMsg(enMsg::YESNO, powerOffFunc, Txt::get(1010));
+    pThis->showMsg(enMsg::YESNO, powerOffFunc, hasDisplay() == enDisplayType::OLED_128, Txt::get(1010));
     break;
   }
 }
@@ -282,8 +301,6 @@ void MEMP initFunctionItemsRecorder()
 void MEMP initFunctionsCompact()
 {
   f1MainItems.addItem(100);
-  f1MainItems.addItem(101);
-  f1MainItems.addItem(102);
   f1MainItems.addItem(105);
   f1MainItems.addItem(108);
 
@@ -315,7 +332,7 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncHandheld);
     break;
   case enMenueType::COMPACT:
-    pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 15, 90, f1DropFuncHandheld);
+    pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 15, 90, f1DropFuncCompact);
     break;
   }
 }
@@ -507,12 +524,15 @@ int visRecCntIndex = 0;
 
 void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 {
-  thPanel i = pThis->getMainPanel();
-  cPanel* p = pThis->getPan(i);
-  if(devPars.recAuto.get() > 0)
-    p->itemList[visRecCntIndex].isVisible = true; 
-  else
-    p->itemList[visRecCntIndex].isVisible = false;
+  if (hasDisplay() == enDisplayType::TFT_320)
+  {
+    thPanel i = pThis->getMainPanel();
+    cPanel* p = pThis->getPan(i);
+    if (devPars.recAuto.get() > 0)
+      p->itemList[visRecCntIndex].isVisible = true;
+    else
+      p->itemList[visRecCntIndex].isVisible = false;
+  }
 }
 
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -666,12 +686,28 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   int x = 70;
   int xg = 10;
   int y = lf + 5;
-  err |= pan->addTextItem(26,                    1,      y + r * lf,   80, lf);
+  err |= pan->addTextItem(26,                    1,      y + r * lf,   70, lf);
   err |= pan->addEnumItem(&devPars.recAuto,      x,      y + r++ * lf,100, lf, true, dispModeFunc);
+  err |= pan->addTextItem(27,                    1,      y + r * lf,   70, lf);
   err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 40, lf, false);
-  pan->itemList[visRecCntIndex].isVisible = false;
+ // pan->itemList[visRecCntIndex].isVisible = false;
   err |= pan->addTextItem(1365,                  1,      y + r * lf,   80, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
+
+ // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
+ // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  err |= pan->addTextItem(441,                   1,      y + r * lf,   70, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,   x,      y + r++ * lf, 80, lf, false);
+  err |= pan->addTextItem(451,                   1,      y + r * lf,   70, lf);
+  err |= pan->addNumItem(&devStatus.chargeLevel, x,      y + r * lf,   12, lf, false);
+  err |= pan->addTextItem(453,                   x + 13, y + r * lf,    6, lf);
+  err |= pan->addNumItem(&devStatus.voltage,     x + 22, y + r * lf,   20, lf, false);
+  err |= pan->addTextItem(452,                   x + 44, y + r++ * lf,  8, lf);
+  err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
+  err |= pan->addTimeItem(&devStatus.time,       x,      y + r++ * lf, 70, lf);
+  err |= pan->addTextItem(460,                   1,      y + r * lf,   70, lf);
+  err |= pan->addEnumItem(&devStatus.gpsStatus,  x,      y + r * lf,   35, lf, false);
+  err |= pan->addNumItem(&devStatus.satCount,    x + 35, y + r++ * lf, 15, lf, false);
 
   err |= pan->addEnumItem(&devStatus.latSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
   err |= pan->addNumItem(&devStatus.latDeg,     xg + 10, y + r * lf,   25, lf, true, setPosFunc);
@@ -685,15 +721,6 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.lonMin,     xg + 50, y + r * lf,   17, lf, true, setPosFunc);
   err |= pan->addTextItem(1345,                 xg + 65, y + r * lf,   10, lf);
   err |= pan->addNumItem(&devStatus.lonSec,     xg + 70, y + r++ * lf, 25, lf, true, setPosFunc);
-
- // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
- // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
-  err |= pan->addTextItem(441,                   1,      y + r * lf,   80, lf);
-  err |= pan->addNumItem(&devStatus.freeSpace,   x + 20, y + r++ * lf, 80, lf, false);
-  err |= pan->addTextItem(451,                   1,      y + r * lf,   80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,     x + 20, y + r++ * lf, 40, lf, false);
-  err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
-  err |= pan->addTimeItem(&devStatus.time,       x,      y + r * lf,   70, lf);
 
   return err;
 }

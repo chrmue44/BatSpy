@@ -184,7 +184,7 @@ void checkSupplyVoltage()
     if(hasDisplay() != enDisplayType::NO_DISPLAY)
     {
       setDispLight(1);
-      menue.showMsg(enMsg::INFO, nullptr, Txt::get(2100));
+      menue.showMsg(enMsg::INFO, nullptr, hasDisplay() == enDisplayType::OLED_128, Txt::get(2100));
       delay(500);
     }
     powerOff();
@@ -256,17 +256,19 @@ float calcVoltageFactor(float volt)
   return fact;
 }
 
-float readTemperature()
+float readTemperature(float& humidity)
 {
 #ifdef ARDUINO_TEENSY41
   if(is12V())
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
   else
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
+  humidity = 0.0;
 #endif
 #ifdef ARDUINO_TEENSY40
   sht.readSample();
   return sht.getTemperature();
+  humidity = sht.getHumidity();
 #endif
 }
 
@@ -342,12 +344,14 @@ void setDispLight(uint8_t bright)
     case enDisplayType::OLED_128:
       if(bright > 128)
       {
+        menue.enable(true);
         menue.refreshAll();
       }
       else
       {
         oled.clearDisplay();
         oled.display();
+        menue.enable(false);
       }
 
   }

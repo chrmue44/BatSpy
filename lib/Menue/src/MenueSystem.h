@@ -103,7 +103,7 @@ public:
    * @param str3  display message 3rd line (optional)
    * @param str4  display message 4th line (optional)
    */
-  void showMsg(enMsg type, fuFocus f, const char* str, const char* str2 = NULL, const char* str3 = NULL, const char* str4 = NULL);
+  void showMsg(enMsg type, fuFocus f, bool isSmall, const char* str, const char* str2 = NULL, const char* str3 = NULL, const char* str4 = NULL);
 
   /**
    * @brief destroy message if displayed
@@ -148,7 +148,7 @@ public:
   int getHdrHeight() { return m_lineHeight + 1; }  ///< height of header panel
   int getWidth() { return m_width; }
   int getHeight() { return m_height; }
- 
+  void enable(bool on) { m_enabled = on; }
 
 protected:
 /**
@@ -246,6 +246,7 @@ private:
   int m_lineHeight = 8;           ///< distance between 2 text lines
   uint32_t m_nrFkeys = 2;         ///< nr of Fkeys
   int m_fontOffset = 0;           ///< offset in Y pixels for setting cursor to print character
+  bool m_enabled = true;          ///< display is enabled
 };
 
 
