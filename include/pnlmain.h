@@ -58,7 +58,6 @@ int initMainPanelCompact(cPanel* pan, tCoord lf);
 void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);
-void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
 void setGpsLog(cMenuesystem* pThis, bool on);
 void setHeaderPanelText(cMenuesystem* pThis, thText t);
 

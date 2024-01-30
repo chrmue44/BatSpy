@@ -18,6 +18,10 @@
 #include "InternalTemperature.h"
 #include "globals.h"
 #include "chmfont.h"
+#include "fnt8x11.h"
+#include "cutils.h"
+
+#include "startup_pic.c_"
 
 cMeanCalc<int32_t,50> digits;
 //cMeanCalc<int16_t,10> uref;
@@ -149,27 +153,113 @@ const MEMP stColors OledColors
   COL_OLED_CURSOR        //uint16_t cursor;
 };
 
-
-
-void initDisplay()
+void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
 {
-  switch (hasDisplay())
+  char buf[80];
+
+  if (hasDisplay() == enDisplayType::OLED_128)
   {
-    case enDisplayType::OLED_128:
+    oled.clearDisplay();
+    oled.setTextColor(SSD1327_WHITE);
+    oled.drawRect(2, 2, DISP_WIDTH_OLED - 2, DISP_HEIGHT_OLED - 2, COL_OLED_TEXTHDRBACK);
+    oled.fillRect(3, 3, DISP_WIDTH_OLED - 4, DISP_HEIGHT_OLED - 4, COL_OLED_TEXTDROPBACK);
+
+    oled.setCursor(45, 10);
+    oled.print("BatSpy");
+    oled.setCursor(10, 25);
+    oled.print(Txt::get(1702));
+    oled.setCursor(1, 34);
+    oled.print(devStatus.version.get());
+    oled.setCursor(1, 80);
+    oled.print("(C) 2021..24 Christian M" CH_UEs "ller");
+    oled.setCursor(1, 100);
+    cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
+    oled.print(buf);
+    oled.display();
+  }
+  else
+  {
+    tft.fillScreen(ILI9341_BLACK);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.drawRect(2, 2, DISP_WIDTH_TFT - 2, DISP_HEIGHT_TFT - 2, ILI9341_YELLOW);
+    tft.fillRect(3, 3, DISP_WIDTH_TFT - 4, DISP_HEIGHT_TFT - 4, COL_TFT_TEXTDROPBACK);
+
+    tft.setCursor(140, 10);
+    tft.print("BatSpy");
+    tft.setCursor(30, 25);
+    tft.print(Txt::get(1700));
+    //tft.writeRect(96,55,128, 128, startup_pic);
+    tft.drawRGBBitmap(96, 55, startup_pic, 128, 128);
+    tft.setCursor(30, 195);
+    tft.print(Txt::get(1702));
+    tft.print(devStatus.version.get());
+    tft.setCursor(30, 210);
+    tft.print("(C) 2021..23 Christian M" CH_UEs "ller");
+    tft.setTextColor(ILI9341_LIGHTGREY);
+    tft.setCursor(140, 225);
+    cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
+    tft.print(buf);
+  }
+
+  bool exit = false;
+  if (waitBtn)
+  {
+    do
+    {
+      exit = !digitalRead(PIN_ROT_LEFT_S);
+    } while (!exit);
+  }
+  else
+    delay(1000);
+  if (hasDisplay() == enDisplayType::TFT_320)
+    tft.fillScreen(ILI9341_BLACK);
+  else
+    oled.clearDisplay();
+}
+
+
+void initDisplay(int orientation)
+{
+  enDisplayType dType = (enDisplayType)hasDisplay();
+  if (dType != enDisplayType::NO_DISPLAY)
+  {
+    if (dType == enDisplayType::TFT_320)
+    {
+      pDisplay = &tft;
+      tft.begin();  //TODO
+      menue.setPdisplay(DISP_WIDTH_TFT, DISP_HEIGHT_TFT, pDisplay, LINE_HEIGHT_TFT, 4, &TftColors, 0);
+//      if (isRevisionB())
+//        tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA,
+//          PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
+      resetTft();
+      tft.begin();
+      tft.setRotation(orientation);
+      tft.fillScreen(ILI9341_BLACK);
+      tft.setTextColor(ILI9341_YELLOW);
+      tft.setTextSize(3);
+//      tft.setFont(fnt8x11);
+    }
+    if (dType == enDisplayType::OLED_128)
+    {
       pDisplay = &oled;
       oled.begin(0x3C);
       oled.setFont(&chmFont);
       oled.clearDisplay();
       oled.display();
-      menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 6);
-      break;
-    case enDisplayType::TFT_320:
-      pDisplay = &tft;
-      tft.begin();
-      menue.setPdisplay(DISP_WIDTH_TFT, DISP_HEIGHT_TFT, pDisplay, LINE_HEIGHT_TFT, 4, &TftColors, 0);
-      break;
+      menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 7);
+    }
+    setDispLight(255);
+    showSplashScreen(tft, true);
+    resetTft();
+    pDisplay->setRotation(orientation);
+    pDisplay->fillScreen(SSD1327_BLACK);
+    pDisplay->setTextColor(SSD1327_WHITE);
+    pDisplay->setTextSize(3);
+    setDispLight(255);
   }
 }
+
+
 
 
 void checkSupplyVoltage()
@@ -183,9 +273,9 @@ void checkSupplyVoltage()
     sysLog.close();
     if(hasDisplay() != enDisplayType::NO_DISPLAY)
     {
-      setDispLight(1);
+      setDispLight(255);
       menue.showMsg(enMsg::INFO, nullptr, hasDisplay() == enDisplayType::OLED_128, Txt::get(2100));
-      delay(500);
+      delay(1000);
     }
     powerOff();
   }    

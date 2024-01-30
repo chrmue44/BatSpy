@@ -8,7 +8,6 @@
 
 //#define DEBUG_LEVEL 4
 #include "debug.h"
-#include "fnt8x11.h"
 #include "Adafruit_SSD1327.h"
 #include "debug.h"
 //#include "clFixMemPool.h"
@@ -35,33 +34,6 @@ const tChunkTab memChunks[] = {
 */
 //clFixMemPool* mem = clFixMemPool::getInstance(memChunks, sizeof(memChunks)/sizeof(memChunks[0]));
 // *********************** initialization **************************
-void initTft(int orientation)
-{
-  if(hasDisplay() != enDisplayType::NO_DISPLAY)
-  {
-    initDisplay();
-  /*  
-    if(isRevisionB())
-      tft = ILI9341_t3(PIN_TFT_CS, PIN_TFT_DC_REVA, 
-                     PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
-    resetTft();
-    tft.begin();
-    tft.setRotation(orientation);
-    tft.fillScreen(ILI9341_BLACK);
-    tft.setTextColor(ILI9341_YELLOW);
-    tft.setTextSize(3);
-    tft.setFont(fnt8x11);  
-    setDispLight(255);
-    showSplashScreen(tft, true);
-  */
-    resetTft();
-    pDisplay->setRotation(orientation);
-    pDisplay->fillScreen(SSD1327_BLACK);
-    pDisplay->setTextColor(SSD1327_WHITE);
-    pDisplay->setTextSize(3);
-    setDispLight(255);
-  }
-}
 
 void waitForSerial()
 {
@@ -96,7 +68,7 @@ void setup()
   audio.init();
   Txt::setResource(Texts);
   int orientation = readInt16FromEep(0x0032) == 0 ? 0 : 2;
-  initTft(orientation);
+  initDisplay(orientation);
   cSdCard::inst().mount();
   sysLog.log("power on");
   delay(500);  

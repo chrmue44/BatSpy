@@ -182,10 +182,10 @@ void MEMP cMenue::initPars()
   devStatus.recCount.init(0,99999,1,0);
 
   devStatus.year.init(2020, 2030, 1, 0);
-  devStatus.month.init(1,12,1,0);
-  devStatus.day.init(1,31,1,0);
-  devStatus.hour.init(0,23,1,0);
-  devStatus.minute.init(0,59,1,0);
+  devStatus.month.init(1,12,1,0, 2);
+  devStatus.day.init(1,31,1,0, 2);
+  devStatus.hour.init(0,23,1,0, 2);
+  devStatus.minute.init(0,59,1,0, 2);
 
   devStatus.freqMax.init(1, 300, 1, 0);
   devStatus.freqMin.init(1, 300, 1, 0);
@@ -479,7 +479,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 int MEMP cMenue::initComactPanels(tCoord lf)
 {
   int err = 0;
-  panInfo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 5);
+  panInfo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
   err |= initInfoPanCompact(getPan(panInfo), lf);
 
   // F-KEYs for main panel
@@ -487,11 +487,20 @@ int MEMP cMenue::initComactPanels(tCoord lf)
   err |= initCompactFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight()- 5);
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight()- 4);
   err |= initMainPanelCompact(getPan(panGeo), lf);
   setMainPanel(panGeo);
-
   setFkeyPanel(fkeyMainPan);
+
+  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  err |= initParPanCompact(getPan(panParams), lf);
+
+  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  err |= initParRecCompact(getPan(panParRec), lf);
+
+  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  err |= initDateTimePanCompact(getPan(panDateTime), lf);
+
   return err;
 }
 

@@ -239,7 +239,7 @@ bool MMEM cMenuesystem::drawItem( stPanelItem& item, thPanel hPanel, uint32_t it
         {
           int yb = item.y;
           cParBtn* p = reinterpret_cast<cParBtn*>(item.p);
-          gpDisplay->setCursor(item.x + 2, item.y + 3 + m_fontOffset);
+          gpDisplay->setCursor(item.x + 2, item.y + 2 + m_fontOffset);
           printText(p->getText(), item);
           gpDisplay->drawRect(item.x, yb, item.width - 2, item.height - 1, pColors->text);
           gpDisplay->fillRect(item.x + item.width - 2, yb + 2, 2, item.height  - 1, pColors->msgShadow);
@@ -308,7 +308,7 @@ bool MMEM cMenuesystem::drawSubPanel(cPanel* pan, thPanel hPanel)
       {
         pan->refresh();
         gpDisplay->fillRect(pan->x, pan->y, pan->width, getHdrHeight(), pColors->textHdrBack);
-        gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 4 + m_fontOffset);
+        gpDisplay->setCursor(pan->x + pan->width/2 - 40, pan->y + 2 + m_fontOffset);
         gpDisplay->setTextColor(pColors->textHdr, pColors->textHdrBack);
         printText(Txt::get(11), pan->x, pan->y + m_fontOffset, pan->width, getHdrHeight());
         gpDisplay->fillRect(pan->x, pan->y + getHdrHeight(), pan->width, pan->height - getHdrHeight(), pColors->textBack);
@@ -713,7 +713,7 @@ void MMEM cMenuesystem::editPar(stPanelItem &item, enKey key)
       case ITEM_NR:
         {
           cParNum* p = reinterpret_cast<cParNum*>(item.p);
-          if(key == DOWN)
+          if(key == UP)
           {
             float newVal = p->get() + p->getStep();
             if (newVal > p->getMax())
@@ -721,7 +721,7 @@ void MMEM cMenuesystem::editPar(stPanelItem &item, enKey key)
             else
               p->set(newVal);
           }
-          if(key == UP)
+          if(key == DOWN)
           {
             float newVal = p->get() - p->getStep();
             if(newVal < p->getMin())
@@ -811,9 +811,9 @@ void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, bool isSmall, const char 
   int xp, yp, wp, hp, xb1, xb21, xb22, wb, hb, lf;
   if (isSmall)
   {
-    xp = 10;
-    yp = 30;
-    wp = 108;
+    xp = 5;
+    yp = 25;
+    wp = 118;
     hp = 60;
     xb1 = 64;
     xb21 = 20;
@@ -861,7 +861,7 @@ void MMEM cMenuesystem::showMsg(enMsg type, fuFocus f, bool isSmall, const char 
       }
     }
   }
-  y += 20;
+  y += 15;
   thItem btn = m_panelList[m_MsgPan].itemList.size();
   m_focusSaveMsg = m_focus;
   if(getPan(m_focus.panel)->itemList[m_focus.item].type == enItemType::ITEM_BUTTON)

@@ -12,8 +12,11 @@
 #include "cmenue.h"
 
 int initParPan(cPanel* pan, tCoord lf);
+int initParPanCompact(cPanel* pan, tCoord lf);
 int initParRec(cPanel* pan, tCoord lf);
+int initParRecCompact(cPanel* pan, tCoord lf);
 int initDateTimePan(cPanel* pan, tCoord lf);
+int initDateTimePanCompact(cPanel* pan, tCoord lf);
 int initPositionPan(cPanel* pan, tCoord lf);
 void setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void calcSunrise();

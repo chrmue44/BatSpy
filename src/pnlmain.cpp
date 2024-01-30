@@ -20,7 +20,7 @@
 #include "pnlparams.h"
 
 
-#include "startup_pic.c_"
+
 
 void setHeaderPanelText(cMenuesystem* pThis, thText t)
 {
@@ -29,43 +29,6 @@ void setHeaderPanelText(cMenuesystem* pThis, thText t)
   pThis->getPan(hdrMainPanel)->addTextItem(t, 5, 1, pThis->getWidth() - 5, pThis->getHdrHeight() - 3);
 }
 
-void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
-{
-   char buf[80];
-
-  tft.fillScreen(ILI9341_BLACK);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.drawRect(2, 2, DISP_WIDTH_TFT - 2, DISP_HEIGHT_TFT - 2, ILI9341_YELLOW);
-  tft.fillRect(3, 3, DISP_WIDTH_TFT - 4, DISP_HEIGHT_TFT - 4, COL_TFT_TEXTDROPBACK);
-
-  tft.setCursor(140, 10);
-  tft.print("BatSpy");
-  tft.setCursor(30, 25);
-  tft.print(Txt::get(1700));
-  //tft.writeRect(96,55,128, 128, startup_pic);
-  tft.drawRGBBitmap(96,55,startup_pic, 128,128);
-  tft.setCursor(30, 195);
-  tft.print(Txt::get(1702));
-  tft.print(devStatus.version.get());
-  tft.setCursor(30, 210);
-  tft.print("(C) 2021..23 Christian M" CH_UEs "ller");
-  tft.setTextColor(ILI9341_LIGHTGREY);
-  tft.setCursor(140, 225);
-  cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
-  tft.print(buf);
-
-  bool exit = false;
-  if(waitBtn)
-  {
-    do
-    {
-      exit = !digitalRead(PIN_ROT_LEFT_S);
-    } while (!exit);
-  }
-  else
-    delay(1000);
-  tft.fillScreen(ILI9341_BLACK);
-}
 
 // *******************************************
 // drop down panel F1 for main panel
@@ -187,10 +150,13 @@ void MEMP f1DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
   switch (pThis->getFocusItem()) {
   case 0:
     pThis->setMainPanel(panGeo);
+    setHeaderPanelText(pThis, 100);
     pThis->setHdrPanel(hdrMainPanel);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
   case 1:
+    pThis->setHdrPanel(hdrMainPanel);
+    setHeaderPanelText(pThis, 105);
     pThis->setMainPanel(panInfo);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
@@ -310,7 +276,6 @@ void MEMP initFunctionsCompact()
   f4MainItems.addItem(1030);
   f4MainItems.addItem(1034);
   f4MainItems.addItem(1031);
-  f4MainItems.addItem(1033);
   f4MainItems.addItem(1035);
 }
 
@@ -332,7 +297,7 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncHandheld);
     break;
   case enMenueType::COMPACT:
-    pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 15, 90, f1DropFuncCompact);
+    pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 13, 90, f1DropFuncCompact);
     break;
   }
 }
@@ -477,6 +442,59 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+
+void MEMP f4DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (pThis->getFocusItem())
+  {
+  case 0:
+#ifndef SIMU_DISPLAY
+    while (digitalRead(PIN_ROT_LEFT_S) == 0);
+#endif
+    showSplashScreen(*gpDisplay, true);
+    pThis->refreshAll();
+    break;
+
+  case 1:
+    pThis->showMsg(enMsg::YESNO, f4LoadFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1006));
+    break;
+
+  case 2:
+    pThis->showMsg(enMsg::YESNO, f4SaveFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1025));
+    break;
+
+  case 3:
+    pThis->setMainPanel(panParams);
+    setHeaderPanelText(pThis, 1030);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 4:
+    pThis->setMainPanel(panParRec);
+    setHeaderPanelText(pThis, 1034);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 5:
+    devStatus.year.set((float)devStatus.date.getYear());
+    devStatus.month.set((float)devStatus.date.getMonth());
+    devStatus.day.set((float)devStatus.date.getDay());
+    devStatus.hour.set((float)devStatus.time.getHour());
+    devStatus.minute.set((float)devStatus.time.getMin());
+    pThis->setMainPanel(panDateTime);
+    setHeaderPanelText(pThis, 1031);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 6:
+    pThis->showMsg(enMsg::YESNO, f4FactSetFunc, true, Txt::get(1007), Txt::get(1009), Txt::get(1006));
+
+  }
+}
+
 void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -494,7 +512,17 @@ void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   stPanelItem item;
   item.type = ITEM_ENUM;
   item.p = &f4MainItems;
-  pThis->createDropDown(item, DISP_WIDTH_TFT - 120 - 1, DISP_HEIGHT_TFT - f4MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f4DropFunc);
+  switch ((enMenueType)devPars.menueType.get())
+  {
+    case enMenueType::EXPERT:
+    case enMenueType::HANDHELD:
+    case enMenueType::RECORDER:
+      pThis->createDropDown(item, DISP_WIDTH_TFT - 120 - 1, DISP_HEIGHT_TFT - f4MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f4DropFunc);
+      break;
+    case enMenueType::COMPACT:
+      pThis->createDropDown(item, DISP_WIDTH_OLED - 110, DISP_HEIGHT_OLED - f4MainItems.size() * LINE_HEIGHT_OLED - 13, 107, f4DropFuncCompact);
+      break;
+  }
 }
 
 
@@ -687,7 +715,7 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   int xg = 10;
   int y = lf + 5;
   err |= pan->addTextItem(26,                    1,      y + r * lf,   70, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      x,      y + r++ * lf,100, lf, true, dispModeFunc);
+  err |= pan->addEnumItem(&devPars.recAuto,      x - 17, y + r++ * lf, 73, lf, true, dispModeFunc);
   err |= pan->addTextItem(27,                    1,      y + r * lf,   70, lf);
   err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 40, lf, false);
  // pan->itemList[visRecCntIndex].isVisible = false;
@@ -706,8 +734,9 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
   err |= pan->addTimeItem(&devStatus.time,       x,      y + r++ * lf, 70, lf);
   err |= pan->addTextItem(460,                   1,      y + r * lf,   70, lf);
-  err |= pan->addEnumItem(&devStatus.gpsStatus,  x,      y + r * lf,   35, lf, false);
-  err |= pan->addNumItem(&devStatus.satCount,    x + 35, y + r++ * lf, 15, lf, false);
+  err |= pan->addEnumItem(&devStatus.gpsStatus,  x - 40, y + r * lf,   35, lf, false);
+  err |= pan->addTextItem(461,                   x + 15, y + r * lf,   23, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    x + 40, y + r++ * lf, 15, lf, false);
 
   err |= pan->addEnumItem(&devStatus.latSign,   xg,      y + r * lf,   10, lf, true, setPosFunc);
   err |= pan->addNumItem(&devStatus.latDeg,     xg + 10, y + r * lf,   25, lf, true, setPosFunc);

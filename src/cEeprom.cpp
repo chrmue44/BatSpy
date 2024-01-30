@@ -160,9 +160,15 @@ bool MEMP loadParsFromEep()
     devPars.sendDelay.set(readInt16FromEep(EEPADDR_SEND_DELAY));
     devPars.srcPosition.set(readInt16FromEep(EEPADDR_SRC_POSITION));
     if (hasDisplay() == enDisplayType::OLED_128)
+    {
       devPars.menueType.set(enMenueType::COMPACT);
+      devPars.knobRotation.set(enKnobRot::CLOCKWISE);
+    }
     else
+    {
       devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
+      devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
+    }
     devPars.recTime.set(readFloatFromEep(EEPADDR_REC_TIME));
     devPars.sampleRate.set(readInt16FromEep(EEPADDR_SAMPLE_RATE));
     devPars.preAmpGain.set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN));
@@ -170,7 +176,6 @@ bool MEMP loadParsFromEep()
     devPars.fftLevelMin.set(readFloatFromEep(EEPADDR_FFT_LEV_MIN));
     devPars.fftLevelMax.set(readFloatFromEep(EEPADDR_FFT_LEV_MAX));
     devPars.recThreshhold.set(readFloatFromEep(EEPADDR_REC_TRESH));
-    devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
     //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));

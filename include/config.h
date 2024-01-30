@@ -59,6 +59,7 @@
 #include <cstdint>
 #include "Arduino.h"
 #include "types.h"
+#include "Adafruit_GFX.h"
 
 // memeory control
 #define MEMP FLASHMEM     //memory region for user panel functions
@@ -200,7 +201,9 @@ void resetTft();
 void powerOff();
 void setIoDebugMode(bool mode);
 void portExpSetBit(uint8_t port, uint8_t state);
-void initDisplay();
+void initDisplay(int orientation);
+void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
+
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

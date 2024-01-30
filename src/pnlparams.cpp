@@ -115,6 +115,30 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   return err;
 }
 
+int MEMP initParRecCompact(cPanel* pan, tCoord lf)
+{
+  int  err = 0;
+  int r = 0;
+  int x = 80;
+  err |= pan->addTextItem(1141,                  1,      30 + r * lf,    80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold, x + 10, 30 + r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1360,                  1,      30 + r * lf,    80, lf);
+  err |= pan->addEnumItem(&devPars.triggerType,  x - 27, 30 + r++ * lf, 110, lf, true);
+  err |= pan->addTextItem(1370,                  1,      30 + r * lf,    80, lf);
+  err |= pan->addNumItem(&devPars.minEventLen,   x + 10, 30 + r++ * lf,  40, lf, true);
+  err |= pan->addTextItem(1176,                  1,      30 + r * lf,    80, lf);
+  err |= pan->addNumItem(&devPars.filtFreq,      x + 10, 30 + r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1180,                  1,      30 + r * lf,    80, lf);
+  err |= pan->addNumItem(&devPars.startH,        x - 23, 30 + r * lf,    14, lf, true);
+  err |= pan->addTextItem(1182,                  x  - 8, 30 + r * lf,     5, lf);
+  err |= pan->addNumItem(&devPars.startMin,      x  - 2, 30 + r++ * lf,  14, lf, true);
+  err |= pan->addTextItem(1181,                  1,      30 + r * lf,     5, lf);
+  err |= pan->addNumItem(&devPars.stopH,         x - 23, 30 + r * lf,    14, lf, true);
+  err |= pan->addTextItem(1182,                  x -  8, 30 + r * lf,     5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,       x -  2, 30 + r++ * lf,  14, lf, true);
+  return err;
+}
+
 
 int MEMP initParPan(cPanel* pan, tCoord lf)
 {
@@ -141,6 +165,23 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   return err;
 }
 
+int MEMP initParPanCompact(cPanel* pan, tCoord lf)
+{
+  int  err = 0;
+  int x = 70;
+  int r = 0;
+  err |= pan->addTextItem(1100,                  1,      30 + r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.lang,         x,      30 + r++ * lf,  50, lf, true, languageFunc);
+  err |= pan->addTextItem(1148,                  1,      30 + r   * lf,   x, lf);
+  err |= pan->addNumItem(&devPars.backLightTime, x + 30, 30 + r++ * lf,  25, lf, true);
+  err |= pan->addTextItem(1325,                  1,      30 + r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      30 + r++ * lf,  45, lf, true);
+  err |= pan->addTextItem(1421,                  1,      30 + r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true);
+
+  return err;
+}
+
 
 
 void MEMP setTimeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -161,6 +202,24 @@ int MEMP initDateTimePan(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.hour,       155, 20 + 5 * lf,  20, lf, true);
   err |= pan->addNumItem(&devStatus.minute,     180, 20 + 5 * lf,  20, lf, true);
   err |= pan->addBtnItem(1032,                  120, 20 + 7 * lf,  50, lf + 3, setTimeFunc);
+  return err;
+}
+
+int MEMP initDateTimePanCompact(cPanel* pan, tCoord lf)
+{
+  int r = 3;
+  int err = pan->addTextItem(1142,              10, 20 + r * lf, 50, lf);
+  err |= pan->addNumItem(&devStatus.day,        60, 20 + r * lf, 13, lf, true);
+  err |= pan->addTextItem(1345,                 74, 20 + r * lf, 3, lf);
+  err |= pan->addNumItem(&devStatus.month,      78, 20 + r * lf, 13, lf, true);
+  err |= pan->addTextItem(1345,                 91, 20 + r * lf, 3, lf);
+  err |= pan->addNumItem(&devStatus.year,       95, 20 + r++ * lf, 25, lf, true);
+  err |= pan->addTextItem(1143,                 10, 20 + r * lf, 13, lf);
+  err |= pan->addNumItem(&devStatus.hour,       61, 20 + r * lf, 13, lf, true);
+  err |= pan->addTextItem(1182,                 74, 20 + r * lf, 3, lf);
+  err |= pan->addNumItem(&devStatus.minute,     78, 20 + r++ * lf, 13, lf, true);
+  r++;
+  err |= pan->addBtnItem(1032,                 40,  20 + r * lf, 50, lf + 3, setTimeFunc);
   return err;
 }
 
