@@ -113,7 +113,7 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(PIN_TFT_CS, PIN_TFT_DC_REVA,
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
 Adafruit_SSD1327 oled(128, 128, &Wire, -1, 400000, 100000);
 
-const MEMP stColors TftColors
+const stColors PROGMEM TftColors
 {
   COL_TFT_TEXT,         //uint16_t text;
   COL_TFT_TEXT_PAR,     //uint16_t textPar;
@@ -133,7 +133,7 @@ const MEMP stColors TftColors
   COL_TFT_CURSOR        //uint16_t cursor;
 };
 
-const MEMP stColors OledColors
+const stColors PROGMEM OledColors
 {
   COL_OLED_TEXT,         //uint16_t text;
   COL_OLED_TEXT_PAR,     //uint16_t textPar;
@@ -155,8 +155,7 @@ const MEMP stColors OledColors
 
 void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
 {
-  char buf[80];
-
+  char buf[20];
   if (hasDisplay() == enDisplayType::OLED_128)
   {
     oled.clearDisplay();
@@ -170,11 +169,17 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.print(Txt::get(1702));
     oled.setCursor(1, 34);
     oled.print(devStatus.version.get());
-    oled.setCursor(1, 80);
-    oled.print("(C) 2021..24 Christian M" CH_UEs "ller");
-    oled.setCursor(1, 100);
-    cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
+    oled.setCursor(1, 43);
+    oled.print(devStatus.hwVersion.get());
+    memset(buf, 0, sizeof(buf));
+    getSerialNr(buf, sizeof(buf));
+    oled.setCursor(1, 52);
     oled.print(buf);
+    
+    oled.setCursor(1, 90);
+    oled.print("(C) 2021..24 Christian M" CH_UEs "ller");
+    oled.setCursor(1, 110);
+    oled.print(Txt::get(1704));
     oled.display();
   }
   else
@@ -197,8 +202,7 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     tft.print("(C) 2021..23 Christian M" CH_UEs "ller");
     tft.setTextColor(ILI9341_LIGHTGREY);
     tft.setCursor(140, 225);
-    cUtils::replaceUTF8withInternalCoding(Txt::get(1704), buf, sizeof(buf));
-    tft.print(buf);
+    tft.print(Txt::get(1704));
   }
 
   bool exit = false;
@@ -243,6 +247,7 @@ void initDisplay(int orientation)
     {
       pDisplay = &oled;
       oled.begin(0x3C);
+      oled.cp437(true);
       oled.setFont(&chmFont);
       oled.clearDisplay();
       oled.display();
@@ -357,8 +362,8 @@ float readTemperature(float& humidity)
 #endif
 #ifdef ARDUINO_TEENSY40
   sht.readSample();
-  return sht.getTemperature();
   humidity = sht.getHumidity();
+  return sht.getTemperature();
 #endif
 }
 

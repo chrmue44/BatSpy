@@ -58,9 +58,9 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {    35,   2,   7,   3,    0,   -7 },   // 0x29 ')'
   {    38,   5,   7,   6,    0,   -7 },   // 0x2A '*'
   {    43,   5,   7,   6,    0,   -7 },   // 0x2B '+'
-  {    48,   2,   7,   3,    0,   -7 },   // 0x2C ','
+  {    48,   2,   7,   4,    0,   -7 },   // 0x2C ','
   {     0,   0,   0,   0,    0,    0 },   // 0x2D '-'
-  {    51,   2,   7,   3,    0,   -7 },   // 0x2E '.'
+  {    51,   2,   7,   4,    0,   -7 },   // 0x2E '.'
   {    54,   5,   7,   6,    0,   -7 },   // 0x2F '/'
   {    59,   5,   7,   6,    0,   -7 },   // 0x30 '0'
   {    64,   5,   7,   6,    0,   -7 },   // 0x31 '1'
@@ -72,8 +72,8 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {    94,   5,   7,   6,    0,   -7 },   // 0x37 '7'
   {    99,   5,   7,   6,    0,   -7 },   // 0x38 '8'
   {   104,   5,   7,   6,    0,   -7 },   // 0x39 '9'
-  {   109,   2,   7,   3,    0,   -7 },   // 0x3A ':'
-  {   112,   3,   7,   4,    0,   -7 },   // 0x3B ';'
+  {   109,   2,   7,   4,    0,   -7 },   // 0x3A ':'
+  {   112,   3,   7,   5,    0,   -7 },   // 0x3B ';'
   {   116,   4,   7,   5,    0,   -7 },   // 0x3C '<'
   {   120,   4,   7,   5,    0,   -7 },   // 0x3D '='
   {   124,   4,   7,   5,    0,   -7 },   // 0x3E '>'
@@ -269,4 +269,4 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {   432,   5,   7,   6,    0,   -7 }    // 0xFC 'ü'
 };
 
-const GFXfont chmFont PROGMEM = { (uint8_t*)chmFont_Bitmaps,    (GFXglyph*)chmFont_Glyphs, 0x1E, 0xFC,    7 };
+const GFXfont chmFont PROGMEM = { (uint8_t*)chmFont_Bitmaps,     (GFXglyph*)chmFont_Glyphs, 0x1E, 0xFC,     7 };

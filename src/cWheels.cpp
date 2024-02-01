@@ -8,12 +8,15 @@
 
 #include "cWheels.h"
 //#define DEBUG_LEVEL  1
+#include "config.h"
 #include "debug.h"
 
 cWheels::cWheels(int la, int lb, int btnL):
 m_enc(la, lb),
 m_pos(0),
 m_btn(btnL, DEBOUNCE_TIME),
+m_btnUp(la, DEBOUNCE_TIME),
+m_btnDown(lb,DEBOUNCE_TIME),
 m_ccw(false),
 m_wrIdx(0),
 m_rdIdx(0),
@@ -35,6 +38,31 @@ void cWheels::increaseWrIdx()
   m_wrIdx++;
   if(m_wrIdx >= KEYBUF_SIZE)
     m_wrIdx = 0;
+}
+
+void cWheels::checkButtons()
+{
+  m_btn.update();
+  if (m_btn.fallingEdge())
+  {
+    m_keys[m_wrIdx] = enKey::KEY_OK;
+    increaseWrIdx();
+    DPRINTLN1("enKey::KEY_OK");
+  }
+  m_btnUp.update();
+  if (m_btnUp.fallingEdge())
+  {
+    m_keys[m_wrIdx] = enKey::UP;
+    increaseWrIdx();
+    DPRINTLN1("enKey::UP");
+  }
+  m_btnDown.update();
+  if (m_btnDown.fallingEdge())
+  {
+    m_keys[m_wrIdx] = enKey::DOWN;
+    increaseWrIdx();
+    DPRINTLN1("enKey::DOWN");
+  }
 }
 
 void cWheels::checkEncoders()
@@ -87,7 +115,11 @@ void cWheels::checkEncoders()
 
 enKey cWheels::getKey()
 {
-  checkEncoders();
+  if (hasDisplay() == enDisplayType::OLED_128)
+    checkButtons();
+  else
+    checkEncoders();
+
   if(m_wrIdx != m_rdIdx)
   {
     enKey retVal = m_keys[m_rdIdx];

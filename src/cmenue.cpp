@@ -491,6 +491,7 @@ int MEMP cMenue::initComactPanels(tCoord lf)
   err |= initMainPanelCompact(getPan(panGeo), lf);
   setMainPanel(panGeo);
   setFkeyPanel(fkeyMainPan);
+  enableEditPosition(this, devPars.srcPosition.get() == enPositionMode::POS_FIX);
 
   panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
   err |= initParPanCompact(getPan(panParams), lf);

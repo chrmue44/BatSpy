@@ -256,7 +256,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1600, "Datei wirklich löschen?:",  "Really delete file?:"},
   { 1700, "Open Source Fledermausdetektor", "Open Source bat recording and detection device"},
   { 1702, "Software Version: "         ,0 },
-  { 1704, "Taste drücken, um fortzufahren", "press button to continue!"},
+  { 1704, "weiter mit Taste..."       ,"go on with button..."},
   { 1710, "Bedienebene",               "Dialog Level"},
   { 1711, "Experte",                   "Expert"},
   { 1712, "Recorder",                  "Recorder"},

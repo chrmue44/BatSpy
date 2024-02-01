@@ -36,6 +36,28 @@ void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   sysLog.logf("voltage factor: %2.4f; voltage: %2.3f", devPars.voltFactor.get(), voltage); 
 }
 
+
+void MEMP positionModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch(devPars.srcPosition.get())
+  { 
+    case enPositionMode::POS_FIX:
+      enableEditPosition(pThis, true);
+      gps.setMode(enGpsMode::GPS_OFF);
+      break;
+    
+    case enPositionMode::POS_GPS_ON:
+      enableEditPosition(pThis, false);
+      gps.setMode(enGpsMode::GPS_ON);
+      break;
+
+    case enPositionMode::POS_GPS_AUTO:
+      enableEditPosition(pThis, false);
+      gps.setMode(enGpsMode::GPS_AUTO_OFF_AFTER_FIX);
+      break;
+  }
+}
+
 void MEMP calcSunrise()
 {
   int srH, srM, ssH, ssM;
@@ -177,7 +199,7 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1325,                  1,      30 + r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   x,      30 + r++ * lf,  45, lf, true);
   err |= pan->addTextItem(1421,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true);
+  err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true, positionModeFunc);
 
   return err;
 }

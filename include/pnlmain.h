@@ -60,6 +60,6 @@ void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void setVisibilityRecCount(cMenuesystem* pThis);
 void setGpsLog(cMenuesystem* pThis, bool on);
 void setHeaderPanelText(cMenuesystem* pThis, thText t);
-
+void enableEditPosition(cMenuesystem* pThis, bool on);
 
 #endif // PANMAIN_H

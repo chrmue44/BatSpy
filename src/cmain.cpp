@@ -54,6 +54,20 @@ void logStatus()
                devStatus.voltage.get(), devStatus.chargeLevel.get(), devStatus.temperature.get(), sht.getHumidity());
 }
 
+
+void initDisplayVars()
+{
+  size_t freeSpace;  size_t totSpace;
+  cSdCard::inst().getFreeMem(freeSpace, totSpace);
+  devStatus.freeSpace.set(freeSpace / 1024);
+  float humidity;
+  float temp = readTemperature(humidity);
+  devStatus.temperature.set(temp);
+  devStatus.humidity.set(humidity);
+  devStatus.voltage.set(readSupplyVoltage());
+  devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -96,6 +110,7 @@ void setup()
   gps.setMode((enGpsMode)devPars.srcPosition.get());
   if(devPars.recAuto.get() == 3)
     calcSunrise();
+  initDisplayVars();
   logStatus();
 }
 
@@ -151,9 +166,6 @@ void handleDisplayAndWheel(bool oneSec)
     devStatus.cpuAudioAvg.set(AudioProcessorUsage());
     devStatus.cpuAudioMax.set(AudioProcessorUsageMax());
     devStatus.audioMem.set(AudioMemoryUsage());
-    size_t freeSpace;  size_t totSpace;
-    cSdCard::inst().getFreeMem(freeSpace, totSpace);
-    devStatus.freeSpace.set(freeSpace / 1024);
   }
 }
 
@@ -235,21 +247,27 @@ void loop()
     {
       float lat, lon, altitude;
       gps.operate(lat, lon, altitude);
+      devStatus.gpsStatus.set(gps.getStatus());
       devStatus.geoPos.set(lat, lon);
     }
 
     devStatus.mainLoop.set(loopCount);
     devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     loopCount = 0;
-    devStatus.voltage.set(readSupplyVoltage());
-    devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
-
+    int sec = second();
+    if((sec % 10) == 1)
+    {
+      devStatus.voltage.set(readSupplyVoltage());
+      devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+    }
+    else if((sec % 10) == 2)
+    {
     //Serial.printf("volt %f, level: %f  factor:%f\n", devStatus.voltage.get(), devStatus.chargeLevel.get(),devPars.voltFactor.get());
-    float humidity;
-    float temp = readTemperature(humidity);
-    devStatus.temperature.set(temp);
-    devStatus.humidity.set(humidity);
-    
+      float humidity;
+      float temp = readTemperature(humidity);
+      devStatus.temperature.set(temp);
+      devStatus.humidity.set(humidity);
+    }
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
     devStatus.time.set(rtc.getTime());
@@ -259,11 +277,12 @@ void loop()
 
   if(tick15Min.check())
   {
+    size_t freeSpace;  size_t totSpace;
+    cSdCard::inst().getFreeMem(freeSpace, totSpace);
+    devStatus.freeSpace.set(freeSpace / 1024);
     if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
       calcSunrise();
     logStatus();
     checkSupplyVoltage();
   }
 }
-
-

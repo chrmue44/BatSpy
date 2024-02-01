@@ -31,11 +31,15 @@ void MEMF cGps::setMode(enGpsMode mode)
       m_power = false;
       break;
     case enGpsMode::GPS_ON:
+      if (m_mode == enGpsMode::GPS_OFF)
+        m_status = enGpsStatus::GPS_SEARCHING;
       digWrite(SPIN_PWR_GPS, 1);
       m_power = true;
       gps.init();
       break;
     case enGpsMode::GPS_AUTO_OFF_AFTER_FIX:
+      if (m_mode == enGpsMode::GPS_OFF)
+        m_status = enGpsStatus::GPS_SEARCHING;
       digWrite(SPIN_PWR_GPS, 1);
       m_timer.setAlarm_ms(MAX_ON_TIME_S * 1000);
       m_power = true;
@@ -43,6 +47,7 @@ void MEMF cGps::setMode(enGpsMode mode)
       break;
     break;
   }
+  m_mode = mode;
 }
 
 void MEMF cGps::test()

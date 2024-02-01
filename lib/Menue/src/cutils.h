@@ -12,14 +12,14 @@
 #include "my_vector.h"
 
 #ifdef SIMU_DISPLAY
-#define A_UML_CAP    "�"
-#define A_UML_SMALL  "�"
-#define O_UML_CAP    "�"
-#define O_UML_SMALL  "�"
-#define U_UML_CAP    "�"
-#define U_UML_SMALL  "�"
-#define S_UML        "�"
-#define DEG_SIGN     "�"
+#define A_UML_CAP    "Ä"
+#define A_UML_SMALL  "ä"
+#define O_UML_CAP    "Ö"
+#define O_UML_SMALL  "ö"
+#define U_UML_CAP    "Ü"
+#define U_UML_SMALL  "ü"
+#define S_UML        "ß"
+#define DEG_SIGN     "°"
 #else
 #define A_UML_CAP    "\xc3\x84"
 #define A_UML_SMALL  "\xc3\xa4"
