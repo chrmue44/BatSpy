@@ -9,6 +9,7 @@
 #include "debug.h"
 #include "globals.h"
 #include "config.h"
+#include <cmath>
 
 void MEMF cGps::init()
 { 
@@ -78,7 +79,15 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
     m_status = enGpsStatus::GPS_STATUS_OFF;
   if(m_power)
   {
-    while (SERIAL_GPS.available())
+#ifdef SIMU_DISPLAY
+    lat = 49 + (float)std::rand() / RAND_MAX;
+    lon = 8 + (float)std::rand() / RAND_MAX;
+    satCount = 3 + 3 * (float)std::rand() / RAND_MAX;
+    m_status = enGpsStatus::GPS_FIXED;
+    m_valid = true;
+#else
+
+    while (SERIAL_GPS.available()) 
     {
       int c = SERIAL_GPS.read();
       if((c == '$') || (m_recIdx >= (sizeof(m_recLine) - 1))) 
@@ -93,7 +102,7 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
         Serial.print((char)c);
       DPRINT1((char)c);
       if (m_gps.encode(c))
-      {
+      {     
         int year;
         byte month, day, hour, minute, second, hundredths;
         m_gps.f_get_position(&m_lat, &m_lon, &m_age);
@@ -114,7 +123,7 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
           m_second = second;
 		      m_valid = true;
           if(m_gpx.isOpen())
-            m_gpx.log(lat, lon, m_altitude);
+            m_gpx.log(m_lat, m_lon, m_altitude);
           
           altitude = m_altitude;
           satCount = m_gps.satellites();
@@ -137,7 +146,9 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
           m_status = enGpsStatus::GPS_SEARCHING;
       }
     }
+#endif  //#ifdef SIMU_DISPLAY
   }
+
   gpsStatus = m_status;
   return m_valid;
 }

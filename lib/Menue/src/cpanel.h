@@ -171,6 +171,9 @@ class cParGeoPos : public cParBase
   float getMinfLon() { return (m_lon - (int)m_lon) * 60.0f; }
   int getSecLat() { return static_cast<int>((m_lat - (int)m_lat - (float)getMinLat()/60.0) * 60000.0); }
   int getSecLon() { return static_cast<int>((m_lon - (int)m_lon - (float)getMinLon()/60.0) * 60000.0); }
+  int getSignLon() { return m_lon >= 0 ? 0 : 1; }
+  int getSignLat() { return m_lat >= 0 ? 0 : 1; }
+
   void getRangeLat(char* pBuf, size_t size)
   {
     snprintf(pBuf, size, "min:-90, max:90, step:0.001, decimals:3");

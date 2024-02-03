@@ -241,16 +241,30 @@ void loop()
   else
     handleButtonsAndLeds();
 
-  float lat, lon, altitude, satCount;
-  enGpsStatus gpsStatus;
+  float lat = 0, lon = 0, altitude = 0, satCount = 0;
+  enGpsStatus gpsStatus  = enGpsStatus::GPS_STATUS_OFF;
+  bool valid = false;
   if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
-    gps.operate(lat, lon, altitude, satCount, gpsStatus);
+    valid = gps.operate(lat, lon, altitude, satCount, gpsStatus);
 
   if(tickOneSec)
   {
-    devStatus.geoPos.set(lat, lon);
-    devStatus.height.set(altitude);
-    devStatus.satCount.set(satCount);
+    if(valid)
+    {
+      devStatus.geoPos.set(lat, lon);
+      devStatus.lonSign.set(devStatus.geoPos.getSignLon());
+      devStatus.lonDeg.set(devStatus.geoPos.getDegLon());
+      devStatus.lonMin.set(devStatus.geoPos.getMinLon());
+      devStatus.lonSec.set(devStatus.geoPos.getSecLon());
+      devStatus.height.set(altitude);
+      devStatus.latSign.set(devStatus.geoPos.getSignLat());
+      devStatus.latDeg.set(devStatus.geoPos.getDegLat());
+      devStatus.latMin.set(devStatus.geoPos.getMinLat());
+      devStatus.latSec.set(devStatus.geoPos.getSecLat());
+      devStatus.height.set(altitude);
+    }
+    if (devPars.srcPosition.get() != enPositionMode::POS_FIX)
+      devStatus.satCount.set(satCount);
     devStatus.gpsStatus.set(gpsStatus);
 
     devStatus.mainLoop.set(loopCount);
