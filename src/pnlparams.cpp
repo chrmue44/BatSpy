@@ -200,6 +200,8 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.preAmpGain,   x,      30 + r++ * lf,  45, lf, true);
   err |= pan->addTextItem(1421,                  1,      30 + r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true, positionModeFunc);
+  err |= pan->addTextItem(1380,                  1,      30 + r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.debugLevel,   x,      30 + r++ * lf,  48, lf, true);
 
   return err;
 }

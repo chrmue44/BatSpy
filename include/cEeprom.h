@@ -52,7 +52,7 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_DEAD_TIME     0x003A   // devPars.deadTime,      float
 #define EEPADDR_BACKLIGHT     0x003E   // devPars.backLightTime  float
 #define EEPADDR_LANGUAGE      0x0042   // devPars.lang,          INT16
-#define EEPADDR_FREE_INT16_5  0x0044   
+#define EEPADDR_DEBUG_LEVEL   0x0044   // devPars.debugLevel     INT16
 #define EEPADDR_LAT           0x0046   // devStatus.geoPos.getLat, float
 #define EEPADDR_LON           0x004A   // devStatus.geoPos.getLon, float
 #define EEPADDR_FILT_FREQ     0x004E   // devPars.filtFreq,        float

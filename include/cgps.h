@@ -35,7 +35,7 @@ class cGps
   public:
     void init();
     void setMode(enGpsMode mode);
-    bool operate(float& lat, float& lon, float& height, bool testMode = false);
+    bool operate(float& lat, float& lon, float& height, float& satCount, enGpsStatus& status, bool testMode = false);
     int getLonDeg() { return static_cast<int>(m_lon); }
     enGpsStatus getStatus() { return m_status; }
     float getLonMin() { return m_lon - static_cast<int>(m_lon); }

@@ -140,6 +140,12 @@ void MEMP cMenue::initPars()
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
+  devPars.debugLevel.addItem(1400);
+  devPars.debugLevel.addItem(1381);
+  devPars.debugLevel.addItem(1382);
+  devPars.debugLevel.addItem(1383);
+  devPars.debugLevel.addItem(1384);
+
   devStatus.opMode.clear();
 
   devStatus.opMode.addItem(20);

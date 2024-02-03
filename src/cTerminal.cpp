@@ -853,6 +853,11 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
       Serial.printf("digital input %i: %i\n", ioNr, inp);
       break;
 
+    case 'l':
+      ioNr = atoi(&buf[1]);
+      sysLog.setLogLevel(ioNr);
+      break;
+
     case 'o':
       ioNr = atoi(&buf[1]);
       Serial.printf("digital output %i OFF\n", ioNr);

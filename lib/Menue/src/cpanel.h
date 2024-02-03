@@ -32,14 +32,17 @@ class cParNum : public cParBase
   
   void set(float v) 
   {
-    if(v < m_min)
-      m_val = m_min;
-    else if(v > m_max)
-      m_val = m_max;
-    else
-      m_val = v;
+    if(v != m_val)
+    {
+      if(v < m_min)
+        m_val = m_min;
+      else if(v > m_max)
+        m_val = m_max;
+      else
+        m_val = v;
 
-    update(true);
+      update(true);
+    }
   }
 
   float get() { return m_val; }
@@ -69,11 +72,18 @@ class cParStr : public cParBase
     cParStr() :
     m_color(0) 
     {
-      val[0] = 0;
+      m_val[0] = 0;
     }
   cParStr(const char* p) { set(p); }
-  char* get() {return val;}
-  void set(const char* p) { strncpy(val, p, sizeof(val)); update(true); }
+  char* get() {return m_val;}
+  void set(const char* p)
+  { 
+    if(strcmp(p, m_val) != 0)
+    {
+      strncpy(m_val, p, sizeof(m_val));
+      update(true);
+    } 
+  }
 void setColor(uint16_t col) { m_color = col; }
   uint16_t getColor() { return m_color; }
   void getRange(char* pBuf, size_t size)
@@ -81,7 +91,7 @@ void setColor(uint16_t col) { m_color = col; }
     snprintf(pBuf, size, "STRING");
   }
 private:
-  char val[PAR_STR_LEN];
+  char m_val[PAR_STR_LEN];
   uint16_t m_color;
 };
 
@@ -99,8 +109,18 @@ class cParDate : public cParBase
   uint32_t getDay() { return m_day; }
   uint32_t getMonth() { return m_month; }
   uint32_t getYear() { return m_year; }
-  void set(uint32_t y, uint32_t m, uint32_t d) { m_day = d; m_month = m; m_year = y; update(true);}
-  void set(time_t t) {
+  void set(uint32_t y, uint32_t m, uint32_t d)
+  {
+    if((m_day != d) || (m_month != m) || (m_year != y))
+    { 
+      m_day = d;
+      m_month = m; 
+      m_year = y; 
+      update(true);
+    }
+  }
+  void set(time_t t) 
+  {
      m_day = day(); m_month = month(); m_year = year(); update(true);
   }
  private:
@@ -119,7 +139,13 @@ class cParTime : public cParBase
   uint32_t getMin() { return m_min; }
   uint32_t getMinOfDay() { return m_hour * 60 + m_min;}
   uint32_t getSec() { return m_sec; }
-  void set(int h, int m, int s) { m_hour = h; m_min = m; m_sec = s; update(true);}
+  void set(int h, int m, int s)
+  {
+     m_hour = h;
+     m_min = m;
+     m_sec = s;
+    update(true);
+  }
   void set(time_t t) {
      m_hour = hour(); m_min = minute(); m_sec = second(); update(true);
   }
@@ -156,7 +182,16 @@ class cParGeoPos : public cParBase
 
   void setLat(float lat) {m_lat = lat; update(true);}
   void setLon(float lon) {m_lon = lon; update(true);}
-  void set(float lat, float lon) {m_lat = lat; m_lon = lon; update(true);}
+  void set(float lat, float lon)
+  {
+    if((m_lat != lat) || (m_lon != lon))
+    {
+      m_lat = lat;
+      m_lon = lon;
+      update(true);
+    }
+  }
+
  private:
   float m_lat = 0;
   float m_lon = 0;
@@ -372,11 +407,14 @@ class cParEnum : public cParBase
   uint32_t get() { return m_val; }
   void set(uint32_t v)
   {
-    if (m_val < m_enumeration.size())
-      m_val = v;
-    else
-      m_val = 0;
-    update(true);
+    if(v != m_val)
+    {
+      if (m_val < m_enumeration.size())
+        m_val = v;
+      else
+        m_val = 0;
+      update(true);
+    }
   }
 
   void getRange(char* pBuf, size_t size)

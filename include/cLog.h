@@ -18,8 +18,12 @@ class cLog
  public:
   cLog(const char* name);
   void log(const char* msg, bool keepOpen = false);
+
   void logf(const char* fmt, ...);
   void close();
+  void setLogLevel(int level) { m_logLevel = level; }
+  void debugLog(int level, const char* msg);
+  void debugLog(int level, const char c, bool keepOpen = true);
 
  protected:
   cLog();
@@ -35,5 +39,6 @@ class cLog
   char m_fileName[40];
   char m_timeStamp[20];
   char m_name[8];
+  int m_logLevel = 0;
 };
 #endif //#ifndef _CLOG_H_

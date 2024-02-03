@@ -241,15 +241,17 @@ void loop()
   else
     handleButtonsAndLeds();
 
+  float lat, lon, altitude, satCount;
+  enGpsStatus gpsStatus;
+  if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
+    gps.operate(lat, lon, altitude, satCount, gpsStatus);
+
   if(tickOneSec)
   {
-    if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
-    {
-      float lat, lon, altitude;
-      gps.operate(lat, lon, altitude);
-      devStatus.gpsStatus.set(gps.getStatus());
-      devStatus.geoPos.set(lat, lon);
-    }
+    devStatus.geoPos.set(lat, lon);
+    devStatus.height.set(altitude);
+    devStatus.satCount.set(satCount);
+    devStatus.gpsStatus.set(gpsStatus);
 
     devStatus.mainLoop.set(loopCount);
     devStatus.peakVal.set(audio.getLastPeakVal() * 100);

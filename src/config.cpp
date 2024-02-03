@@ -165,20 +165,26 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
 
     oled.setCursor(45, 10);
     oled.print("BatSpy");
-    oled.setCursor(10, 25);
-    oled.print(Txt::get(1702));
+    oled.setCursor(1, 25);
+    oled.print(Txt::get(430));
     oled.setCursor(1, 34);
     oled.print(devStatus.version.get());
-    oled.setCursor(1, 43);
+    oled.setCursor(1, 48);
+    oled.print(Txt::get(435));
+    oled.setCursor(1, 57);
     oled.print(devStatus.hwVersion.get());
     memset(buf, 0, sizeof(buf));
     getSerialNr(buf, sizeof(buf));
-    oled.setCursor(1, 52);
+    oled.setCursor(1, 71);
+    oled.print(Txt::get(437));
+    oled.setCursor(1, 80);
     oled.print(buf);
     
-    oled.setCursor(1, 90);
-    oled.print("(C) 2021..24 Christian M" CH_UEs "ller");
-    oled.setCursor(1, 110);
+    oled.setCursor(1, 99);
+    oled.print("(C) 2021..24");
+    oled.setCursor(1, 108);
+    oled.print("Christian M" CH_UEs "ller");
+    oled.setCursor(1, 125);
     oled.print(Txt::get(1704));
     oled.display();
   }
@@ -390,7 +396,13 @@ void powerOff()
   blink(5);
   if((hasDisplay() == enDisplayType::NO_DISPLAY) && !wheels.isKeyPressed())
     return;
-
+  if (hasDisplay() == enDisplayType::OLED_128)
+  {
+    oled.clearDisplay();
+    oled.setCursor(5, 40);
+    oled.print(Txt::get(2100));
+    oled.display();
+  }
   audio.closeProject();
   delay(300);
   blink(3);

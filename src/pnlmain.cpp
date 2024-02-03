@@ -715,7 +715,7 @@ void enableEditPosition(cMenuesystem* pThis, bool on)
   if (devPars.menueType.get() == enMenueType::COMPACT)
   {
     cPanel* pan = pThis->getPan(panGeo);
-    for (int i = 0; i < posIndex.size(); i++)
+    for (size_t i = 0; i < posIndex.size(); i++)
     {
       int itemIndex = posIndex[i];
       pan->itemList[itemIndex].isEdit = on;

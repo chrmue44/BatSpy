@@ -53,10 +53,11 @@ void MEMF cGps::setMode(enGpsMode mode)
 void MEMF cGps::test()
 {
   char esc[2] = {0,0};
-  float lat,lon, altitude;
+  float lat,lon, altitude, satCount;
+  enGpsStatus gpsStatus;
   do
   {
-    operate(lat, lon, altitude, true);
+    operate(lat, lon, altitude, satCount, gpsStatus, true);
     while(Serial.available() > 0)
     {
       char c = Serial.read();
@@ -71,7 +72,7 @@ void MEMF cGps::test()
 }
 
 
-bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
+bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount, enGpsStatus& gpsStatus, bool testMode)
 {
   if(m_mode == enGpsMode::GPS_OFF)
     m_status = enGpsStatus::GPS_STATUS_OFF;
@@ -83,7 +84,8 @@ bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
       if((c == '$') || (m_recIdx >= (sizeof(m_recLine) - 1))) 
       {
         m_recLine[m_recIdx] = 0;
-        gpsLog.log(m_recLine, true);
+        if(devPars.debugLevel.get() >= 0.999)
+          gpsLog.log(m_recLine, true);
         m_recIdx = 0;
       }
       m_recLine[m_recIdx++] = c;
@@ -94,19 +96,16 @@ bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
       {
         int year;
         byte month, day, hour, minute, second, hundredths;
-        m_gps.f_get_position(&lat, &lon, &m_age);
+        m_gps.f_get_position(&m_lat, &m_lon, &m_age);
         m_gps.crack_datetime(&year, &month, &day, &hour,
                            &minute, &second, &hundredths, &m_age);
         if (m_age == TinyGPS::GPS_INVALID_AGE)
           m_valid = false;
         else if(m_age < 5000)
         {
-          m_lat = lat;
-          m_lon = lon;
           m_speed = m_gps.f_speed_kmph();
           m_heading = m_gps.f_course();
           m_altitude = m_gps.f_altitude();
-	  	    height = m_altitude;
           m_year = year;
           m_month = month;
           m_day = day;
@@ -116,7 +115,13 @@ bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
 		      m_valid = true;
           if(m_gpx.isOpen())
             m_gpx.log(lat, lon, m_altitude);
+          
+          altitude = m_altitude;
+          satCount = m_gps.satellites();
+          lat = m_lat;
+          lon = m_lon;
         }
+
         if(m_valid)
         {
           if(m_mode == enGpsMode::GPS_AUTO_OFF_AFTER_FIX)
@@ -124,9 +129,6 @@ bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
             m_status = enGpsStatus::GPS_FIXED_OFF;
             m_power = false;
             digWrite(SPIN_PWR_GPS, 0);
-            devStatus.geoPos.setLat(m_lat);
-            devStatus.geoPos.setLon(m_lon);
-            devStatus.height.set(m_altitude);
           }
           else
             m_status = enGpsStatus::GPS_FIXED;
@@ -136,5 +138,6 @@ bool MEMF cGps::operate(float& lat, float& lon, float& height, bool testMode)
       }
     }
   }
+  gpsStatus = m_status;
   return m_valid;
 }

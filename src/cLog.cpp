@@ -52,21 +52,39 @@ void cLog::create()
     }
     m_create = true;
   }
+  timeStamp();
+  if(!m_open)
+  {
+    enSdRes res =  cSdCard::inst().openFile(m_fileName, m_fd, enMode::APPEND);
+    DPRINTF1("open log file: %s, res %i\n", m_fileName, res);
+    if(res == enSdRes::OK)
+      m_open = true;
+  }
+}
+
+void MEMF cLog::debugLog(int level, const char c, bool keepOpen)
+{
+  if(m_logLevel >= level)
+  {
+    create();
+    if (m_open)
+    {
+      size_t written;
+      cSdCard::inst().writeFile(m_fd, &c, written, 1);
+      if (!keepOpen)
+      {
+        DPRINT1("logfile closed in log()\n");
+        cSdCard::inst().closeFile(m_fd);
+        m_open = false;
+      }
+    }
+  }
 }
 
 void MEMF cLog::log(const char* msg, bool keepOpen)
 {
   DPRINTF1("cLog::log: %s\n", msg);
   create();
-  timeStamp();
-  cSdCard& sd = cSdCard::inst();
-  if(!m_open)
-  {
-    enSdRes res = sd.openFile(m_fileName, m_fd, enMode::APPEND);
-    DPRINTF1("open log file: %s, res %i\n", m_fileName, res);
-    if(res == enSdRes::OK)
-      m_open = true;
-  }
   if (m_open)
   {
     char buf[256];
@@ -76,14 +94,22 @@ void MEMF cLog::log(const char* msg, bool keepOpen)
       snprintf(buf, sizeof(buf), "%s %s\n", m_timeStamp, msg);
 
     size_t written;
-    sd.writeFile(m_fd, buf, written, strlen(buf));
+    cSdCard::inst().writeFile(m_fd, buf, written, strlen(buf));
     if (!keepOpen)
     {
       DPRINT1("logfile closed in log()\n");
-      sd.closeFile(m_fd);
+      cSdCard::inst().closeFile(m_fd);
       m_open = false;
     }
   }
+}
+
+void MEMF cLog::debugLog(int level, const char* msg) 
+{
+  if(level == 0)
+    return;
+  if (level >= m_logLevel)
+    logf(msg);
 }
 
 void MEMF cLog::logf(const char* fmt, ...)
