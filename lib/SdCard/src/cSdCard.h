@@ -213,6 +213,7 @@ class cSdCard {
   FATFS m_fatfs;                     ///< File system object
 #elif defined(CARDLIB_SDFAT)
   sd_t m_sd;
+  bool m_ok = false;
 #endif
 };
 

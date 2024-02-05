@@ -77,20 +77,25 @@ cSdCard::cSdCard() {
 }
 
 
-enSdRes cSdCard::mount() {
+enSdRes cSdCard::mount() 
+{
   enSdRes retVal = OK;
 #if defined(CARDLIB_SDFAT)
-  if (!m_sd.begin(SD_CONFIG)) {
+  if (!m_sd.begin(SD_CONFIG))
+  {
     retVal = MOUNT_FAILED;
+    m_ok = false;
   }
+  else
+    m_ok = true;
   strcpy(m_actDir, "/");
 
-  #elif defined(CARDLIB_SD)
+#elif defined(CARDLIB_SD)
   if (!SD.begin(BUILTIN_SDCARD))
     retVal = MOUNT_FAILED;
   strcpy(m_actDir, "/");
 
-  #elif  defined(CARDLIB_USDFS)
+#elif  defined(CARDLIB_USDFS)
   TCHAR tdir[FILENAME_LEN];
   strcpy(m_actDir, "0:/");
   char2tchar(m_actDir, sizeof(m_actDir), tdir);
@@ -103,8 +108,11 @@ enSdRes cSdCard::mount() {
   return retVal;
 }
 
-enSdRes cSdCard::unmount() {
+enSdRes cSdCard::unmount()
+{
   enSdRes retVal = OK;
+  if(m_ok)
+  {
   #if defined(CARDLIB_SD)
    ;
    #elif defined(CARDLIB_SDFAT)
@@ -118,12 +126,18 @@ enSdRes cSdCard::unmount() {
   if(rc != FR_OK)
     retVal = UNMOUNT_ERR;
 #endif
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
 
 #if defined(CARDLIB_SDFAT)
-enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) {
+enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) 
+{
   enSdRes retVal = OK;
+  if(m_ok)
+  {
   tFILE dir;
   tFILE file;
  
@@ -185,12 +199,16 @@ enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t
     m_dirInfo.push_back(d);      
     dir.close();
   } 
-  directory = m_dirInfo; 
+  directory = m_dirInfo;
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED; 
   return retVal;
 }
 
 #elif defined(CARDLIB_SD)
-enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) {
+enSdRes cSdCard::dir(tDirInfo& directory, bool terminal, const char* ext, size_t startIndex) 
+{
   enSdRes retVal = OK;
   File dir = SD.open(m_actDir);
   if (!dir)
@@ -338,7 +356,10 @@ enSdRes cSdCard::dir(tDirInfo*& directory, bool terminal, const char* ext, size_
 #endif
 
 
-enSdRes cSdCard::mkDir(const char* name) {
+enSdRes cSdCard::mkDir(const char* name)
+{
+  if(m_ok)
+  {
   DPRINTF1("mkdir( %s )\n", name);
 #if defined(CARDLIB_SD)  
   char buf[PATH_LEN];
@@ -358,12 +379,18 @@ enSdRes cSdCard::mkDir(const char* name) {
   DPRINTF1("dir to create: %s\n", buf); 
   bool rc = m_sd.mkdir(buf);
   return rc ? OK : MKDIR_ERR;
+  }
+  else
+    return enSdRes::MOUNT_FAILED;
 #endif
 }
 
 
-enSdRes cSdCard::del(const char* name) {
+enSdRes cSdCard::del(const char* name)
+{
   enSdRes retVal = OK;
+  if(m_ok)
+  {
   #if defined(CARDLIB_SD)  
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);    
@@ -380,22 +407,32 @@ enSdRes cSdCard::del(const char* name) {
   bool rc =  m_sd.remove(buf);
   retVal = rc ? OK : DEL_ERR;
 #endif
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
 
 enSdRes cSdCard::rename (const char* oldName, const char* newName)
 {
   enSdRes retVal = enSdRes::OK;
+  if(m_ok)
+  {
 #if defined(CARDLIB_SDFAT)
   bool ok = m_sd.rename(oldName, newName);
   if(!ok)
     retVal = enSdRes::RENAME_ERR;
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 #endif
 }
 
 enSdRes cSdCard::deldir(const char* name) 
 {
+  if(m_ok)
+  {
 #if defined(CARDLIB_SD)  
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);    
@@ -409,6 +446,9 @@ enSdRes cSdCard::deldir(const char* name)
   bool rc = m_sd.rmdir(name);
   return rc ? OK : DEL_ERR;
 #endif
+  }
+  else
+    return enSdRes::MOUNT_FAILED;
 }
 
 #if defined(CARDLIB_USDFS)  
@@ -423,9 +463,12 @@ enSdRes cSdCard::rename(const char* oldName, const char* newName) {
 #endif
 
 
-enSdRes cSdCard::chdir(const char* name) {
+enSdRes cSdCard::chdir(const char* name)
+{
   DPRINTF1("chdir( %s )\n", name);
   enSdRes retVal = OK;
+  if(m_ok)
+  {
   char dir[PATH_LEN];
   
   strcpy(dir, m_actDir);
@@ -476,6 +519,9 @@ enSdRes cSdCard::chdir(const char* name) {
     strcpy(m_actDir, dir);
   DPRINTF1("curr dir: %s\n", m_actDir);
   DPRINTF1("returns: %i\n", retVal);
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
 
@@ -490,6 +536,8 @@ char* cSdCard::getActPath() {
 enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode) 
 {
   enSdRes retVal = OK;
+  if(m_ok)
+  {
 #ifdef DEBUG_LEVEL
   if (mode == READ)
     DPRINTF1("openFile( %s, tFILE, READ)\n", name);
@@ -532,12 +580,18 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
   }
   retVal = ok ? enSdRes::OK : enSdRes::OPEN_FILE_ERR;
 #endif
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   DPRINTF1("returns %i\n", retVal);  
   return retVal;
 }
 
-enSdRes cSdCard::readFile(tFILE& file, void* buf, size_t& bytesRead, size_t bytesToRead) {
+enSdRes cSdCard::readFile(tFILE& file, void* buf, size_t& bytesRead, size_t bytesToRead)
+{
   enSdRes retVal = OK;
+  if(m_ok)
+  {
   DPRINTF1("readFile(tFILE, buf, bytesRead, %i)\n", bytesToRead);
 #if defined(CARDLIB_SD)
   int rc = file.read(buf, bytesToRead);
@@ -560,15 +614,21 @@ enSdRes cSdCard::readFile(tFILE& file, void* buf, size_t& bytesRead, size_t byte
     bytesRead = (size_t)rc;
 #endif
   DPRINTF1("returns %i\n", retVal);  
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
 
 
-enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesRead) {
+enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesRead) 
+{
+  enSdRes res;
+  if(m_ok)
+  {
   char* pBuf = (char*)buf;
   bytesRead = 0;
   size_t count;
-  enSdRes res;
   while (pBuf < ((char*)buf + bufSize))
   {
     res = readFile(file, pBuf, count, 1);
@@ -588,13 +648,18 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
   }
   else
     res = LINE_ERR;
+  }
+  else
+    res = enSdRes::MOUNT_FAILED;
   return res;
 }
 
 
-enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, size_t bytesToWrite) {
+enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, size_t bytesToWrite) 
+{
   enSdRes retVal = OK;
-  
+  if(m_ok)
+  {  
 #if defined(CARDLIB_SD)
   int rc = file.write((const uint8_t*)buf, bytesToWrite);
   if(rc < 0)
@@ -613,7 +678,9 @@ enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, s
   else
     bytesWritten = (size_t)rc;
 #endif
-  
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;  
 }
 
@@ -621,19 +688,25 @@ bool cSdCard::fileExists(char* fName)
 {
   tFILE file;
   bool retVal = false;
-  enSdRes res = openFile(fName, file, enMode::READ);
-  if(res == enSdRes::OK)
+  if(m_ok)
   {
-    retVal = true;
-    closeFile(file);
+    enSdRes res = openFile(fName, file, enMode::READ);
+    if(res == enSdRes::OK)
+    {
+      retVal = true;
+      closeFile(file);
+    }
   }
   return retVal;
   //return m_sd.exists(fName);
 }
 
 
-enSdRes cSdCard::closeFile(tFILE& file) {
+enSdRes cSdCard::closeFile(tFILE& file)
+{
   enSdRes retVal = OK;  
+  if(m_ok)
+  {
   DPRINTLN1("closeFile(tFILE)\n");
 
   #if defined(CARDLIB_SD)
@@ -650,6 +723,9 @@ enSdRes cSdCard::closeFile(tFILE& file) {
   retVal = ok ? OK : CLOSE_ERR;
   #endif
   DPRINTF1("returned %i\n", (int)retVal);
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal; 
 }
 
@@ -689,31 +765,41 @@ void cSdCard::transformPathName(TCHAR* buf, UINT bufsize, const char* name) {
 
 #define BUFLEN  64
 
-enSdRes cSdCard::sendFileToTerminal(char* name, int delayTime) {
-  tFILE file;
-  char buf[BUFLEN + 2];
-  size_t bytesRead = 0;
-  enSdRes rc = openFile(name, file, READ);
-  if(rc == OK) {  
-    size_t size = fileSize(file);
-    Serial.printf("%09u:",size);
-    int cnt = 0;
-    while(! eof(file)) {
-      rc = readFile(file, &buf, bytesRead, BUFLEN);
-      Serial.write(&buf[0],bytesRead);
-      cnt++;
-      if(cnt >= 32)
-      {
-        cnt = 0;
-        delay(delayTime);
+enSdRes cSdCard::sendFileToTerminal(char* name, int delayTime) 
+{
+  enSdRes rc = enSdRes::OK;
+  if(m_ok)
+  {
+    tFILE file;
+    char buf[BUFLEN + 2];
+    size_t bytesRead = 0;
+    rc = openFile(name, file, READ);
+    if(rc == OK) 
+    {  
+      size_t size = fileSize(file);
+      Serial.printf("%09u:",size);
+      int cnt = 0;
+      while(! eof(file))
+     {
+        rc = readFile(file, &buf, bytesRead, BUFLEN);
+        Serial.write(&buf[0],bytesRead);
+        cnt++;
+        if(cnt >= 32)
+        {
+          cnt = 0;
+          delay(delayTime);
+        }
       }
     }
   }
+  else
+    rc = enSdRes::MOUNT_FAILED;
   return rc;
 }
 
 
-enSdRes cSdCard::readFileFromTerminal(char* name) {
+enSdRes cSdCard::readFileFromTerminal(char* name) 
+{
   tFILE file;
   char buf[80];
   size_t bytesLeft;
@@ -776,6 +862,8 @@ enSdRes cSdCard::readFileFromTerminal(char* name) {
 enSdRes cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
 {
   enSdRes retVal = OK;
+  if(m_ok)
+  {
 #if defined(CARDLIB_USDFS) 
   FATFS *fs;
   DWORD fre_clust, fre_sect, tot_sect;
@@ -802,6 +890,9 @@ enSdRes cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
   freeSpaceKb = m_sd.freeClusterCount() * kbPerCluster;
   totSpaceKb = m_sd.clusterCount() * kbPerCluster;
 #endif
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
 
@@ -809,6 +900,8 @@ enSdRes cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
 enSdRes cSdCard::format()
 {
   enSdRes retVal = enSdRes::OK; 
+  if(m_ok)
+  {
 #if SD_FAT_TYPE == 2 
 //  SdExFat sd;
   if (!m_sd.cardBegin(SD_CONFIG)) 
@@ -834,5 +927,8 @@ enSdRes cSdCard::format()
   chdir("/");
   DPRINTLN1("Done");
 #endif
+  }
+  else
+    retVal = enSdRes::MOUNT_FAILED;
   return retVal;
 }
