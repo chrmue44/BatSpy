@@ -241,31 +241,28 @@ void loop()
   else
     handleButtonsAndLeds();
 
-  float lat = 0, lon = 0, altitude = 0, satCount = 0;
-  enGpsStatus gpsStatus  = enGpsStatus::GPS_STATUS_OFF;
   bool valid = false;
   if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
-    valid = gps.operate(lat, lon, altitude, satCount, gpsStatus);
+    valid = gps.operate();
 
   if(tickOneSec)
   {
     if(valid)
     {
-      devStatus.geoPos.set(lat, lon);
+      devStatus.geoPos.set(gps.getLat(), gps.getLon());
       devStatus.lonSign.set(devStatus.geoPos.getSignLon());
       devStatus.lonDeg.set(devStatus.geoPos.getDegLon());
       devStatus.lonMin.set(devStatus.geoPos.getMinLon());
       devStatus.lonSec.set(devStatus.geoPos.getSecLon());
-      devStatus.height.set(altitude);
+      devStatus.height.set(gps.getAltitude());
       devStatus.latSign.set(devStatus.geoPos.getSignLat());
       devStatus.latDeg.set(devStatus.geoPos.getDegLat());
       devStatus.latMin.set(devStatus.geoPos.getMinLat());
       devStatus.latSec.set(devStatus.geoPos.getSecLat());
-      devStatus.height.set(altitude);
     }
     if (devPars.srcPosition.get() != enPositionMode::POS_FIX)
-      devStatus.satCount.set(satCount);
-    devStatus.gpsStatus.set(gpsStatus);
+      devStatus.satCount.set(gps.getSatCount());
+    devStatus.gpsStatus.set(gps.getStatus());
 
     devStatus.mainLoop.set(loopCount);
     devStatus.peakVal.set(audio.getLastPeakVal() * 100);
@@ -276,7 +273,7 @@ void loop()
       devStatus.voltage.set(readSupplyVoltage());
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
     }
-    else if((sec % 10) == 2)
+    else if(((sec % 10) == 2) && !audio.isRecording())
     {
     //Serial.printf("volt %f, level: %f  factor:%f\n", devStatus.voltage.get(), devStatus.chargeLevel.get(),devPars.voltFactor.get());
       float humidity;
