@@ -480,6 +480,9 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     case 'a':
       replyOk = parseAutoRecParams(&buf[1], true);
       break;
+    case 'b':
+     replyOk = setValFloat(buf + 1, PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, devPars.backLightTime);
+     break;
     case 'f':
       replyOk = setVoltageFactor(&buf[1]);
       break;
@@ -487,12 +490,8 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       replyOk = parseLocationParams(&buf[1], true);
       break;
     case 'm':
-      val = atoi(buf + 1);
-      if((val >= 0) && (val <= 80))
-        devPars.mixFreq.set(val);
-      else
-        replyOk = false;
-      break;
+     replyOk = setValFloat(buf + 1, devPars.mixFreq.getMin(), devPars.mixFreq.getMax(), devPars.mixFreq);
+     break;
     case 'n':
       setValEnum(&buf[1], 0, 1, devPars.lang);
       break;
@@ -533,16 +532,14 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
   case 'a':
     replyOk = parseAutoRecParams(&buf[1], false, replyBuf, sizeof(replyBuf));
     break;
-
+  case 'b':
+    getValInt(buf + 1, devPars.backLightTime, replyBuf, sizeof(replyBuf));
+    break;
   case 'l':
     replyOk = parseLocationParams(&buf[1], false, replyBuf, sizeof(replyBuf));
     break;
   case 'm':
-    val = atoi(buf + 1);
-    if ((val >= 0) && (val <= 80))
-      devPars.mixFreq.set(val);
-    else
-      replyOk = false;
+    getValInt(buf + 1, devPars.mixFreq, replyBuf, sizeof(replyBuf));
     break;
   case 'n':
     getValEnum(&buf[1], devPars.lang, replyBuf, sizeof(replyBuf));
@@ -923,6 +920,8 @@ void MEMF cTerminal::showCommands()
   Serial.println("pai      get auto recording stop hour");
   Serial.println("Pan<val> set auto recording stop minute (0 ... 59");
   Serial.println("pan      get auto recording stop minute");
+  Serial.println("Pb<val>  set backlight time [s]");
+  Serial.println("pb       get backlight time [s]");
   Serial.println("Pf       set current voltage to calc voltage fact (unlock first)");
   Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
   Serial.println("pls      get location source");
