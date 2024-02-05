@@ -61,8 +61,8 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_START_MIN     0x0056   // devPars.startMin,        INT16
 #define EEPADDR_STOP_H        0x0058   // devPars.stopH,           INT16
 #define EEPADDR_STOP_MIN      0x005A   // devPars.stopMin,         INT16
-#define EEPADDR_FREE_INT16_0  0x005C   
-#define EEPADDR_FREE_INT16_1  0x005E
+#define EEPADDR_TIMEZONE      0x005C   // devPars.timeZone         INT16
+#define EEPADDR_DAYLIGHT_SAV  0x005E   // devPars.daylightSav      INT16
 #define EEPADDR_FREE_INT16_2  0x0060
 #define EEPADDR_LIVE_AMPL     0x0062   // devPars.liveAmplitude,   INT16
 #define EEPADDR_FREE_INT16_3  0x0064   

@@ -129,7 +129,8 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_START_MIN,    (int16_t)devPars.startMin.get());
   writeInt16ToEep(EEPADDR_STOP_H,       (int16_t)devPars.stopH.get());
   writeInt16ToEep(EEPADDR_STOP_MIN,     (int16_t)devPars.stopMin.get());
-  writeInt16ToEep(EEPADDR_FREE_INT16_0, 0);
+  writeInt16ToEep(EEPADDR_TIMEZONE,     (int16_t)devPars.timeZone.get());
+  writeInt16ToEep(EEPADDR_DAYLIGHT_SAV, (int16_t)devPars.daylightSav.get());
   writeInt16ToEep(EEPADDR_LIVE_AMPL,    (int16_t)devPars.liveAmplitude.get());
   writeFloatToEep(EEPADDR_ALTITUDE,     devStatus.height.get());
   writeInt16ToEep(EEPADDR_TRIG_TYPE,    (int16_t)devPars.triggerType.get());
@@ -192,6 +193,9 @@ bool MEMP loadParsFromEep()
     devPars.startMin.set(readInt16FromEep(EEPADDR_START_MIN)); //if addr changes see also pnlparams.cpp
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
     devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));  //if addr changes see also pnlparams.cpp
+    devPars.timeZone.set(readInt16FromEep(EEPADDR_TIMEZONE));
+    devPars.daylightSav.set(readInt16FromEep(EEPADDR_DAYLIGHT_SAV));
+
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
     //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));

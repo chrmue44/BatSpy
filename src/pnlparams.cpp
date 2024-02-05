@@ -231,19 +231,24 @@ int MEMP initDateTimePan(cPanel* pan, tCoord lf)
 
 int MEMP initDateTimePanCompact(cPanel* pan, tCoord lf)
 {
-  int r = 3;
-  int err = pan->addTextItem(1142,              10, 20 + r * lf, 50, lf);
-  err |= pan->addNumItem(&devStatus.day,        60, 20 + r * lf, 13, lf, true);
-  err |= pan->addTextItem(1345,                 74, 20 + r * lf, 3, lf);
-  err |= pan->addNumItem(&devStatus.month,      78, 20 + r * lf, 13, lf, true);
-  err |= pan->addTextItem(1345,                 91, 20 + r * lf, 3, lf);
+  int r = 1;
+  int x = 60;
+  int err = pan->addTextItem(1142,               1, 20 + r   * lf, 50, lf);
+  err |= pan->addNumItem(&devStatus.day,         x, 20 + r   * lf, 13, lf, true);
+  err |= pan->addTextItem(1345,                 74, 20 + r   * lf,  3, lf);
+  err |= pan->addNumItem(&devStatus.month,      78, 20 + r   * lf, 13, lf, true);
+  err |= pan->addTextItem(1345,                 91, 20 + r   * lf,  3, lf);
   err |= pan->addNumItem(&devStatus.year,       95, 20 + r++ * lf, 25, lf, true);
-  err |= pan->addTextItem(1143,                 10, 20 + r * lf, 13, lf);
-  err |= pan->addNumItem(&devStatus.hour,       61, 20 + r * lf, 13, lf, true);
-  err |= pan->addTextItem(1182,                 74, 20 + r * lf, 3, lf);
+  err |= pan->addTextItem(1143,                  1, 20 + r   * lf, 13, lf);
+  err |= pan->addNumItem(&devStatus.hour,        x, 20 + r   * lf, 13, lf, true);
+  err |= pan->addTextItem(1182,                 74, 20 + r   * lf,  3, lf);
   err |= pan->addNumItem(&devStatus.minute,     78, 20 + r++ * lf, 13, lf, true);
+  err |= pan->addTextItem(1720,                  1, 20 + r   * lf,  x, lf);
+  err |= pan->addNumItem(&devPars.timeZone,      x, 20 + r++ * lf, 20, lf, true);
+  err |= pan->addTextItem(1730,                  1, 20 + r   * lf,  x, lf);
+  err |= pan->addEnumItem(&devPars.daylightSav,  x, 20 + r++ * lf, 60, lf, true);
   r++;
-  err |= pan->addBtnItem(1032,                 40,  20 + r * lf, 50, lf + 3, setTimeFunc);
+  err |= pan->addBtnItem(1032,                  40, 20 + r   * lf, 50, lf + 3, setTimeFunc);
   return err;
 }
 

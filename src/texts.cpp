@@ -266,6 +266,9 @@ struct stTxtList PROGMEM Texts[] =
   { 1711, "Experte",                   "Expert"},
   { 1712, "Recorder",                  "Recorder"},
   { 1713, "Handgerät",                 "Handheld" },
+  { 1720, "Zeitzone",                  "Time Zone"},
+  { 1730, "Sommerzeit",                "Daylight Saving Time"},
+  { 1740, "Automatisch",               "Automatic"},
   { 2000, "offene Landschaft",         "open land"},
   { 2001, "einzelne Bäume & Häuser",   "single trees & houses"},
   { 2002, "Straße",                    "street"},
@@ -277,6 +280,7 @@ struct stTxtList PROGMEM Texts[] =
   { 2012, "bewölkt Schauer",           "cloudy with rainshowers" },
   { 2013, "Regen",                     "rain" },
   { 2100, "Schalte aus...",            "Shutting down..."},
+  
   
 
   { 12000, TGE_ASC_0           ,0},

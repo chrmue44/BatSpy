@@ -51,14 +51,40 @@ void MEMF cGps::setMode(enGpsMode mode)
   m_mode = mode;
 }
 
+time_t MEMF cGps::getTime()
+{
+  if(m_valid)
+  {
+    tmElements_t tim;
+    tim.Year = m_year;
+    tim.Month = m_month;
+    tim.Day = m_day;
+    tim.Hour = m_hour;
+    tim.Minute = m_minute;
+    tim.Second = m_second;
+    return makeTime(tim);
+  }
+  else
+    return 0;
+}
+
+void MEMF cGps::getTime(int& y, int& m, int& d, int& h, int& min, int& s)
+{
+  y = m_year;
+  m = m_month;
+  d = m_day;
+  h = m_hour;
+  min = m_minute;
+  s = m_second;
+}
+
+
 void MEMF cGps::test()
 {
   char esc[2] = {0,0};
-  float lat,lon, altitude, satCount;
-  enGpsStatus gpsStatus;
   do
   {
-    operate(lat, lon, altitude, satCount, gpsStatus, true);
+    operate(true);
     while(Serial.available() > 0)
     {
       char c = Serial.read();
@@ -73,16 +99,16 @@ void MEMF cGps::test()
 }
 
 
-bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount, enGpsStatus& gpsStatus, bool testMode)
+bool MEMF cGps::operate(bool testMode)
 {
   if(m_mode == enGpsMode::GPS_OFF)
     m_status = enGpsStatus::GPS_STATUS_OFF;
   if(m_power)
   {
 #ifdef SIMU_DISPLAY
-    lat = 49 + (float)std::rand() / RAND_MAX;
-    lon = 8 + (float)std::rand() / RAND_MAX;
-    satCount = 3 + 3 * (float)std::rand() / RAND_MAX;
+    m_lat = 49 + (float)std::rand() / RAND_MAX;
+    m_lon = 8 + (float)std::rand() / RAND_MAX;
+    m_satCount = 3 + 3 * (float)std::rand() / RAND_MAX;
     m_status = enGpsStatus::GPS_FIXED;
     m_valid = true;
 #else
@@ -93,7 +119,7 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
       if((c == '$') || (m_recIdx >= (sizeof(m_recLine) - 1))) 
       {
         m_recLine[m_recIdx] = 0;
-        if(devPars.debugLevel.get() >= 0.999)
+        if(devPars.debugLevel.get() >= 1)
           gpsLog.log(m_recLine, true);
         m_recIdx = 0;
       }
@@ -103,11 +129,9 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
       DPRINT1((char)c);
       if (m_gps.encode(c))
       {     
-        int year;
-        byte month, day, hour, minute, second, hundredths;
         m_gps.f_get_position(&m_lat, &m_lon, &m_age);
-        m_gps.crack_datetime(&year, &month, &day, &hour,
-                           &minute, &second, &hundredths, &m_age);
+        m_gps.crack_datetime(&m_year, &m_month, &m_day, &m_hour,
+                           &m_minute, &m_second, &m_hundreds, &m_age);
         if (m_age == TinyGPS::GPS_INVALID_AGE)
           m_valid = false;
         else if(m_age < 5000)
@@ -115,21 +139,16 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
           m_speed = m_gps.f_speed_kmph();
           m_heading = m_gps.f_course();
           m_altitude = m_gps.f_altitude();
-          m_year = year;
-          m_month = month;
-          m_day = day;
-          m_hour = hour;
-          m_minute = minute;
-          m_second = second;
 		      m_valid = true;
           if(m_gpx.isOpen())
             m_gpx.log(m_lat, m_lon, m_altitude);
           
-          altitude = m_altitude;
-          satCount = m_gps.satellites();
-          lat = m_lat;
-          lon = m_lon;
+          m_satCount = m_gps.satellites();
+          if(devPars.debugLevel.get() >= 1)
+            gpsLog.logf("new position  lat:%f lon:%f  sat:%i age:%i\n", m_lat, m_lon, (int)m_satCount, m_age);
         }
+        else
+          m_valid = false;
 
         if(m_valid)
         {
@@ -144,11 +163,11 @@ bool MEMF cGps::operate(float& lat, float& lon, float& altitude, float& satCount
         }
         else
           m_status = enGpsStatus::GPS_SEARCHING;
+        if(devPars.debugLevel.get() >= 1)
+          gpsLog.logf("valid: %i\n", m_valid ? 1: 0);
       }
     }
 #endif  //#ifdef SIMU_DISPLAY
   }
-
-  gpsStatus = m_status;
   return m_valid;
 }

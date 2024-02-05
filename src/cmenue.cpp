@@ -48,12 +48,12 @@ void MEMP cMenue::initPars()
   devPars.lang.addItem(1101);
   devPars.lang.addItem(1102);
   loadLanguage();
-
   devPars.mixFreq.init(1,20, 1, 0);
 
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
+  devPars.preAmpGain.clear();
 #ifdef ARDUINO_TEENSY41
   if(hasAmpRevB())
   {
@@ -90,6 +90,7 @@ void MEMP cMenue::initPars()
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
   devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
 
+  devPars.filtType.clear();
   devPars.filtType.addItem(1171);
   devPars.filtType.addItem(1172);
   devPars.filtType.addItem(1173);
@@ -100,7 +101,7 @@ void MEMP cMenue::initPars()
   devPars.deadTime.set(PAR_DEADTIM_MIN);
   devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
-  devPars.backLightTime.init(5,300,1,0);
+  devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);
 
   devPars.knobRotation.clear();
   devPars.knobRotation.addItem(1151);
@@ -117,6 +118,7 @@ void MEMP cMenue::initPars()
   devPars.stopMin.init(0, 59, 1, 0, 2);
   devPars.voltFactor.init(0, 1, 0.0000001f, 5);
 
+  devPars.recAuto.clear();
   devPars.recAuto.addItem(1400),
   devPars.recAuto.addItem(1401),
   devPars.recAuto.addItem(1402),
@@ -125,14 +127,17 @@ void MEMP cMenue::initPars()
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
 
+  devPars.srcPosition.clear();
   devPars.srcPosition.addItem(1410);
   devPars.srcPosition.addItem(1412);
   devPars.srcPosition.addItem(1413);
 
+  devPars.menueType.clear();
   devPars.menueType.addItem(1711),
   devPars.menueType.addItem(1712),
   devPars.menueType.addItem(1713),
 
+  devPars.triggerType.clear();
   devPars.triggerType.addItem(1361);
   devPars.triggerType.addItem(1362);
   devPars.triggerType.addItem(1363);
@@ -140,14 +145,21 @@ void MEMP cMenue::initPars()
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
+  devPars.debugLevel.clear();
   devPars.debugLevel.addItem(1400);
   devPars.debugLevel.addItem(1381);
   devPars.debugLevel.addItem(1382);
   devPars.debugLevel.addItem(1383);
   devPars.debugLevel.addItem(1384);
 
-  devStatus.opMode.clear();
+  devPars.timeZone.init(-12.0, +12, 1.0, 0);
 
+  devPars.daylightSav.clear();
+  devPars.daylightSav.addItem(16);
+  devPars.daylightSav.addItem(15);
+  devPars.daylightSav.addItem(1740);
+
+  devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
   devStatus.opMode.addItem(21);
   devStatus.opMode.addItem(22);
@@ -253,9 +265,10 @@ void MEMP cMenue::initPars()
 extern Adafruit_SSD1327 oled;
 void cMenue::refreshDisplay()
 {
-  if(hasDisplay() == enDisplayType::OLED_128)
+  if((hasDisplay() == enDisplayType::OLED_128) && !audio.isRecording())
     oled.display();
 }
+
 void cMenue::initFileRelatedParams()
 {
   initBats();

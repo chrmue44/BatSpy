@@ -143,6 +143,8 @@ struct stParams
 #define PAR_DEADTIM_MIN  0.3f
 #define PAR_DEADTIM_MAX  30.0f
   cParNum backLightTime = 120;       ///< time for backlight
+#define PAR_BACKLIGHT_MIN     5.0f
+#define PAR_BACKLIGHT_MAX   300.0f
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1
@@ -182,6 +184,8 @@ struct stParams
 #define PAR_SHUTOFF_MIN  3.6f
 #define PAR_SHUTOFF_MAX  8.0f
   cParEnum debugLevel = 0;
+  cParNum timeZone = 0; 
+  cParEnum daylightSav = enDlSaving::DLS_OFF;
 };
 
 #endif //#ifndef _PARAMETERS_H_

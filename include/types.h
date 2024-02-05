@@ -155,4 +155,11 @@ enum enDisplayType
   TFT_320 = 2
 };
 
+enum enDlSaving
+{
+  DLS_OFF = 0,
+  DLS_ON = 1,
+  DLS_AUTO = 2,
+};
+
 #endif    //#ifndef _TYPES_H
