@@ -265,7 +265,7 @@ void MEMP cMenue::initPars()
 extern Adafruit_SSD1327 oled;
 void cMenue::refreshDisplay()
 {
-  if((hasDisplay() == enDisplayType::OLED_128) && !audio.isRecording())
+  if((hasDisplay() == enDisplayType::OLED_128))
     oled.display();
 }
 

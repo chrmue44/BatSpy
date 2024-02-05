@@ -119,6 +119,7 @@ enSdRes cSdCard::unmount()
    while(m_sd.isBusy())
      delay(2);
    m_sd.begin(1);
+   m_ok = false;
 #elif defined(CARDLID_USDFS)
   TCHAR tdir[FILENAME_LEN];
   char2tchar(m_actDir, sizeof(m_actDir), tdir);

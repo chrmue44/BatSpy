@@ -148,7 +148,7 @@ public:
   int getHdrHeight() { return m_lineHeight + 1; }  ///< height of header panel
   int getWidth() { return m_width; }
   int getHeight() { return m_height; }
-  void enable(bool on) { m_enabled = on; }
+  void enable(bool on);
 
 protected:
 /**

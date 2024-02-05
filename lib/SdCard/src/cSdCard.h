@@ -92,6 +92,7 @@ class cSdCard {
 
    enSdRes mount();
    
+   bool isMounted() { return m_ok; }
    enSdRes unmount();
 
   /**

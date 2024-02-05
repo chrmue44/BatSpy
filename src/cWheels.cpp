@@ -47,21 +47,21 @@ void cWheels::checkButtons()
   {
     m_keys[m_wrIdx] = enKey::KEY_OK;
     increaseWrIdx();
-    DPRINTLN1("enKey::KEY_OK");
+    DPRINTLN1("buttons enKey::KEY_OK");
   }
   m_btnUp.update();
   if (m_btnUp.fallingEdge())
   {
     m_keys[m_wrIdx] = enKey::UP;
     increaseWrIdx();
-    DPRINTLN1("enKey::UP");
+    DPRINTLN1("buttons enKey::UP");
   }
   m_btnDown.update();
   if (m_btnDown.fallingEdge())
   {
     m_keys[m_wrIdx] = enKey::DOWN;
     increaseWrIdx();
-    DPRINTLN1("enKey::DOWN");
+    DPRINTLN1("buttons enKey::DOWN");
   }
 }
 

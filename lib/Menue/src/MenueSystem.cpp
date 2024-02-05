@@ -352,6 +352,7 @@ bool MMEM cMenuesystem::drawPanels()
       gpDisplay->fillRect(pan->x,pan->y,pan->width, pan->height, pColors->textHdrBack);
       retVal |= drawSubPanel(pan, m_fKeyPanel);
       m_refreshFkey = false;
+      retVal = true;
     }
   }
 
@@ -1028,6 +1029,13 @@ void MMEM cMenuesystem::refreshAll()
   refreshHdrPanel();
   refreshMainPanel();
   drawPanels();
+}
+
+void MMEM cMenuesystem::enable(bool on)
+{
+  if(!m_enabled && on)
+    resetTimer();
+  m_enabled = on; 
 }
 
 uint32_t MMEM cMenuesystem::getTimeAfterKeyPress()

@@ -98,6 +98,7 @@ void setup()
   {
     setDispLight(255);
     setVisibilityRecCount(&menue);
+    menue.resetTimer();
   }
   else
   {

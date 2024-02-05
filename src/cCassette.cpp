@@ -117,7 +117,7 @@ int cCassette::stop()
   {
     m_recorder.end();
     cSdCard& sd = cSdCard::inst();
-    while (m_recorder.available() > 0)
+    while (sd.isMounted() && (m_recorder.available() > 0))
     {
       rc = sd.writeFile(m_fil, (char*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
@@ -128,9 +128,11 @@ int cCassette::stop()
 
     rc = sd.closeFile(m_fil);
     DPRINTLN1(" Recording stopped!");
+    m_isRecFileOpen = false;
+    m_mode = enCassMode::STOP;
     if (rc != enSdRes::OK)
       return 1;
-    m_isRecFileOpen = false;
+    return 0;
   }
   
   else if(m_mode == enCassMode::PLAY)

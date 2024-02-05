@@ -217,6 +217,7 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     do
     {
       exit = !digitalRead(PIN_ROT_LEFT_S);
+      yield();
     } while (!exit);
   }
   else
