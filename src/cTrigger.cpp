@@ -139,8 +139,8 @@ void cTrigger::checkLiveTrigger(float fFilter)
       }
       else
         m_stateLive = enTrigState::ARMED;
-        if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq < m_minFreq))
-          m_minFreq = m_fftInfo.lastMaxFreq;
+      if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq < m_minFreq))
+        m_minFreq = m_fftInfo.lastMaxFreq;
       break;
     
     case enTrigState::TRIGGERED:

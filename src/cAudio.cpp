@@ -92,6 +92,41 @@ void cAudio::init()
   m_filtDisp.setHighpass(0, 50);
 }
 
+void cAudio::enable(bool on)
+{
+  AudioNoInterrupts();
+  if(!on)
+  {
+    m_cMi2Mx.disconnect(); // mic to mixer
+    m_cCa2Mx.disconnect(); // player to mixer
+    m_cMx2Mu.disconnect(); // mixer to multiplier
+    m_cSi2Mu.disconnect(); // sine to multiplier
+    m_cMi2Fi.disconnect(); // microphone to filter
+    m_cFi2Pk.disconnect(); // filter to peak detector
+    m_cMu2Ol.disconnect(); // multiplier to audio output left
+    m_cMu2Or.disconnect(); // multiplier to audio output right
+    m_cMi2De.disconnect(); // microphone to delay
+    m_cDe2Ca.disconnect(); // delay to recorder
+    m_cMi2Hp.disconnect(); // microphone to high pass
+    m_cHp2Ft.disconnect(); // high pass to fft
+  }
+  else
+  {
+    m_cMi2Mx.connect(); // mic to mixer
+    m_cCa2Mx.connect(); // player to mixer
+    m_cMx2Mu.connect(); // mixer to multiplier
+    m_cSi2Mu.connect(); // sine to multiplier
+    m_cMi2Fi.connect(); // microphone to filter
+    m_cFi2Pk.connect(); // filter to peak detector
+    m_cMu2Ol.connect(); // multiplier to audio output left
+    m_cMu2Or.connect(); // multiplier to audio output right
+    m_cMi2De.connect(); // microphone to delay
+    m_cDe2Ca.connect(); // delay to recorder
+    m_cMi2Hp.connect(); // microphone to high pass
+    m_cHp2Ft.connect(); // high pass to fft
+  }
+  AudioInterrupts();
+}
 
 void cAudio::setSampleRate(enSampleRate sr)
 {
@@ -280,8 +315,8 @@ void cAudio::setup()
     setPreAmpGain((enGain)devPars.preAmpGain.get());
   }
   #endif
+  setAnalogPower(true);
   #ifdef ARDUINO_TEENSY40
-  digWrite(SPIN_PWR_ANA, 1);
   setPreAmpGain((enGainRevC)devPars.preAmpGain.get());
   #endif
   if (isSetupNeeded())
@@ -394,7 +429,50 @@ void cAudio::setMixOscFrequency(float freq)
   m_old.oscFrequency = devPars.mixFreq.get();
 }
 
+bool cAudio::isRecordingActive()
+{
+  bool retVal = false;
+  if(devPars.recAuto.get() == enRecAuto::OFF)
+    retVal = false;
+  else if(devPars.recAuto.get() == enRecAuto::ON)
+    retVal = true;
+  else
+  {
+    if(devPars.startH.get() > devPars.stopH.get())
+    {
+      retVal = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+               (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+    }
+    else
+    {
+      retVal = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+                 (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+    }
+  }
+  return retVal;
+}
 
+
+void cAudio::checkAutoRecording(bool recActive)
+{
+  if(m_cass.getMode() != enCassMode::REC)
+  {
+    if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
+    {
+      if (!recActive && m_prj.getIsOpen())
+        m_prj.closePrjFile();
+      if (recActive && m_trigger.getRecTrigger())
+      {
+        startRecording();
+        delay(5);
+      }
+    }
+    else
+      m_prj.closePrjFile();
+  }
+}
+
+/*
 void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 {
   if(m_cass.getMode() != enCassMode::REC)
@@ -436,7 +514,7 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
       m_prj.closePrjFile();
   }
 }
-
+*/
 
 void cAudio::openProject()
 {

@@ -249,7 +249,7 @@ bool setVoltageFactor(const char* p)
 
 bool setAndCheckPassword(const char* pw)
 {
-  strncpy(passwd, pw, sizeof(passwd));
+  strncpy(passwd, pw, sizeof(passwd) - 1);
   return isSystemLocked();
 }
 

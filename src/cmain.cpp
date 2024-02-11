@@ -123,14 +123,14 @@ void handleDisplayAndWheel(bool oneSec)
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
-    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000)) 
+    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
     {
       if(backLightOn)
       {
         setDispLight(0);
         backLightOn = false;
       }
-    } 
+    }
   }
   else
   {
@@ -144,7 +144,7 @@ void handleDisplayAndWheel(bool oneSec)
 
     //handle commands
     if(key != enKey::NOKEY)
-    {      
+    {
       if(!backLightOn)
       {
         backLightOn = true;
@@ -185,14 +185,14 @@ void handleButtonsAndLeds()
     }
   }
   if(wheels.getKey() == enKey::KEY_RELEASED)
-  { 
+  {
     if(functionExecuted)
       functionExecuted = false;
     else
       statusDisplay.nextState();
   }
   if(wheels.isKeyPressed())
-  { 
+  {
     if(!switchOff.isRunning())
       switchOff.setAlarm_ms(3000);
     if(!function.isRunning() && !functionExecuted)
@@ -203,7 +203,7 @@ void handleButtonsAndLeds()
     switchOff.stop();
     function.stop();
   }
-  
+
   if(switchOff.isAlarm())
   {
     audio.stopRecording();
@@ -221,20 +221,22 @@ void handleButtonsAndLeds()
 
 // *********************** main loop **************************
 int loopCount = 0;
-
-void loop() 
+bool tempMeasSheduled = false;
+void loop()
 {
   loopCount++;
-  
+
   bool rtFft;
   if(hasDisplay() == enDisplayType::TFT_320)
     rtFft = (menue.getFocusPanel() == pnlLive) ||
-              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel())); 
+              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
   else
     rtFft = terminal.isOnline();
   audio.operate( rtFft );
-  audio.checkAutoRecording(menue, rtc);
-  
+  bool recOn = audio.isRecordingActive();
+  audio.checkAutoRecording(recOn);
+  setHwOperationMode(recOn ? enCpuMode::RECORDING : enCpuMode::POWER_SAVE);
+
   bool tickOneSec = tick1s.check();
 
   if (hasDisplay())
@@ -242,13 +244,13 @@ void loop()
   else
     handleButtonsAndLeds();
 
-  bool valid = false;
+  bool gpsValid = false;
   if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
-    valid = gps.operate();
+    gpsValid = gps.operate();
 
   if(tickOneSec)
   {
-    if(valid)
+    if(gpsValid)
     {
       devStatus.geoPos.set(gps.getLat(), gps.getLon());
       devStatus.lonSign.set(devStatus.geoPos.getSignLon());
@@ -275,18 +277,21 @@ void loop()
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
     }
     else if(((sec % 10) == 2) && !audio.isRecording())
-    {
-    //Serial.printf("volt %f, level: %f  factor:%f\n", devStatus.voltage.get(), devStatus.chargeLevel.get(),devPars.voltFactor.get());
-      float humidity;
-      float temp = readTemperature(humidity);
-      devStatus.temperature.set(temp);
-      devStatus.humidity.set(humidity);
-    }
+      tempMeasSheduled = true;
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
-    devStatus.time.set(rtc.getTime());
-    devStatus.date.set(rtc.getTime());
-    devStatus.time.update(true);
+    devStatus.time.set();
+    devStatus.date.set();
+  }
+
+  // operate I2C only when recording is paused
+  if(tempMeasSheduled && !audio.isRecording())
+  {
+    float humidity;
+    float temp = readTemperature(humidity);
+    devStatus.temperature.set(temp);
+    devStatus.humidity.set(humidity);
+    tempMeasSheduled = false;
   }
 
   if(tick15Min.check())

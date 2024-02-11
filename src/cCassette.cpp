@@ -33,7 +33,7 @@ void cCassette::setSamplingRate(uint32_t s)
 int cCassette::startRec(const char* name, float recTime)
 {
   m_maxRecSamples = calcRecSamples(recTime);
-  strncpy(m_fileName, name, sizeof (m_fileName));
+  strncpy(m_fileName, name, sizeof (m_fileName) - 1);
   return startRec();
 }
 

@@ -20,7 +20,7 @@
 MEMF cLog::cLog(const char* name)
 :m_create(false)
 {
-  strncpy(m_name, name, sizeof(m_name));
+  strncpy(m_name, name, sizeof(m_name) - 1);
 }
 
 void MEMF cLog::timeStamp()

@@ -76,7 +76,7 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
     if (p != nullptr)
     {
       p += 7;
-      strncpy(notes, p, sizeof(notes));
+      strncpy(notes, p, sizeof(notes) - 1);
       DPRINTLN4("found tag <Notes>");
       continue;
     }

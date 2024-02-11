@@ -10,8 +10,6 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
-#include "config.h"
-
 // operation modes of recorder
 enum enCassMode
 {
@@ -162,4 +160,10 @@ enum enDlSaving
   DLS_AUTO = 2,
 };
 
+enum enCpuMode
+{
+  CPU_MODE_INIT = 0,
+  RECORDING = 1,
+  POWER_SAVE = 2
+};
 #endif    //#ifndef _TYPES_H

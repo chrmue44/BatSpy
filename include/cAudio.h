@@ -105,6 +105,7 @@ private:
  public:
   cAudio();
   void init();
+  void enable(bool on);
   static int32_t getSampleRateHz(enSampleRate sr);
   static size_t getFftOutputSize() { return sizeof(AudioAnalyzeFFT1024::output) / sizeof(AudioAnalyzeFFT1024::output[0]); }
   void setSampleRate(enSampleRate sr);
@@ -117,7 +118,8 @@ private:
   #endif
   void setup();
   void updateCassMode();
-  void checkAutoRecording(cMenue& menue, cRtc& rtc);
+  //void checkAutoRecording(cMenue& menue, cRtc& rtc);
+  void checkAutoRecording(bool recActive);
   void operate(bool liveFft);
   float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
@@ -126,6 +128,7 @@ private:
   void sendFftBuffer(int delayTime, int part);
   void stopRecording();
   void startRecording();
+  bool isRecordingActive();
   
  private:
   void setMixOscFrequency(float freq);

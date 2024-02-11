@@ -97,7 +97,7 @@ int cUtils::replaceAll(const char* str, const char* toSearch, const char* replac
   int retVal = 0;
   bool found = false;
   char buf[512];
-  strncpy(buf, str, sizeof(buf));
+  strncpy(buf, str, sizeof(buf) - 1);
 
   do {
     retVal = cUtils::replace(buf, toSearch, replaceStr, result, resultSize);

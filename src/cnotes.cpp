@@ -46,7 +46,7 @@ void cnotes::getNote(int i, char* buf, size_t bufSize)
 
   char fName[PAR_STR_LEN * 2];
   char line[PAR_STR_LEN];
-  strncpy(fName, m_fName, sizeof (fName));
+  strncpy(fName, m_fName, sizeof (fName) - 1);
   strncat(fName, ".", 2);
   strncat(fName, devPars.lang.getActText(), 20);
 

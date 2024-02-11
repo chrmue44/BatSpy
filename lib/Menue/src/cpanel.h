@@ -80,7 +80,7 @@ class cParStr : public cParBase
   { 
     if(strcmp(p, m_val) != 0)
     {
-      strncpy(m_val, p, sizeof(m_val));
+      strncpy(m_val, p, sizeof(m_val) - 1);
       update(true);
     } 
   }
@@ -119,10 +119,28 @@ class cParDate : public cParBase
       update(true);
     }
   }
-  void set(time_t t) 
+
+  void set() 
   {
-     m_day = day(); m_month = month(); m_year = year(); update(true);
+    bool upd = false;
+    if(m_day != (uint32_t)day())
+    {
+      m_day = day();
+      upd = true;
+    }
+    if(m_month != (uint32_t)month())
+    {
+      m_month = month();
+      upd = true;
+    }
+    if(m_year != (uint32_t)year())
+    {
+      m_year = year();
+      upd = true;
+    }
+    update(upd);
   }
+
  private:
   uint32_t m_day = 1;
   uint32_t m_month = 1;
@@ -146,7 +164,9 @@ class cParTime : public cParBase
      m_sec = s;
     update(true);
   }
-  void set(time_t t) {
+
+  void set() 
+  {
      m_hour = hour(); m_min = minute(); m_sec = second(); update(true);
   }
  private:

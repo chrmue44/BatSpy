@@ -23,8 +23,12 @@
 
 #include "startup_pic.c_"
 
+#if defined(__IMXRT1062__)
+extern "C" uint32_t set_arm_clock(uint32_t frequency);
+#endif
+
+
 cMeanCalc<int32_t,50> digits;
-//cMeanCalc<int16_t,10> uref;
 
 uint8_t ioexOut = 0;
 bool ioDebugMode = false;
@@ -50,7 +54,7 @@ void initPins()
   ioex.attach(Wire);
   bool ok = sht.init();
   if(!ok)
-    Serial.println("error initializing humidity sensor");
+    sysLog.log("error initializing humidity sensor");
   sht.setAccuracy(SHTSensor::SHTAccuracy::SHT_ACCURACY_HIGH);
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
   ioex.config(TCA9534::Config::OUT); // set all port to output
@@ -104,7 +108,7 @@ void initPins()
     strcat(buf, "5V");
 #endif
 #ifdef ARDUINO_TEENSY40
-strncpy(buf, "RevC, ", sizeof(buf));
+strncpy(buf, "RevC", sizeof(buf));
 #endif
   devStatus.hwVersion.set(buf);
 }
@@ -179,7 +183,7 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.print(Txt::get(437));
     oled.setCursor(1, 80);
     oled.print(buf);
-    
+
     oled.setCursor(1, 99);
     oled.print("(C) 2021..24");
     oled.setCursor(1, 108);
@@ -272,6 +276,39 @@ void initDisplay(int orientation)
 }
 
 
+enCpuMode cpuMode = enCpuMode::CPU_MODE_INIT;
+void setHwOperationMode(enCpuMode mode)
+{
+  if(cpuMode != mode)
+  {
+    switch(mode)
+    {
+      case enCpuMode::POWER_SAVE:
+        audio.enable(false);
+        setAnalogPower(false);
+        set_arm_clock(CPU_FREQ_LOW);
+        sysLog.log("enable power save mode");
+        break;
+      case enCpuMode::RECORDING:
+        set_arm_clock(CPU_FREQ_HIGH);
+        audio.enable(true);
+        setAnalogPower(true);
+        sysLog.log("enable recording mode");
+        break;
+      case enCpuMode::CPU_MODE_INIT:
+        break;
+    }
+    cpuMode = mode;
+    DPRINTF1("CPU Freq: %i\n", F_CPU_ACTUAL);
+  }
+}
+
+void setAnalogPower(bool on)
+{
+#ifdef ARDUINO_TEENSY40
+  digWrite(SPIN_PWR_ANA, on ? 1 : 0);
+#endif
+}
 
 
 void checkSupplyVoltage()

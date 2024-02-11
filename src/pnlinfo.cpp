@@ -48,15 +48,17 @@ int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
   int r = 0;
   int x = 80;
   int err = 0;
-  err |= pan->addTextItem(430,                   1, 20 + r++ * lf, x, lf);
-  err |= pan->addStrItem(&devStatus.version,     1, 20 + r++ * lf, x, lf);
+  err |= pan->addTextItem(430,                   1, 20 + r++ * lf,  x, lf);
+  err |= pan->addStrItem(&devStatus.version,     1, 20 + r++ * lf,  x, lf);
   r++;
-  err |= pan->addTextItem(435,                   1, 20 + r++ * lf, x, lf);
-  err |= pan->addStrItem(&devStatus.hwVersion,   1, 20 + r++ * lf, x, lf);
-  err |= pan->addTextItem(455,                   1, 20 + r   * lf, x, lf);
-  err |= pan->addNumItem(&devStatus.temperature, x, 20 + r++ * lf,  30, lf, false);
-  err |= pan->addTextItem(456,                   1, 20 + r   * lf,   x, lf);
-  err |= pan->addNumItem(&devStatus.humidity,    x, 20 + r++ * lf, 30, lf, false);
+  err |= pan->addTextItem(435,                   1, 20 + r++ * lf,  x, lf);
+  err |= pan->addStrItem(&devStatus.hwVersion,   1, 20 + r++ * lf,  x, lf);
+  err |= pan->addTextItem(455,                   1, 20 + r   * lf,  x, lf);
+  err |= pan->addNumItem(&devStatus.temperature, x, 20 + r   * lf, 20, lf, false);
+  err |= pan->addTextItem(303,                   x + 30, 20 + r++ * lf, 15, lf);
+  err |= pan->addTextItem(456,                   1, 20 + r   * lf,  x, lf);
+  err |= pan->addNumItem(&devStatus.humidity,    x, 20 + r   * lf, 30, lf, false);
+  err |= pan->addTextItem(302,                   x + 30, 20 + r++ * lf, 15, lf);
 
   return err;
 }

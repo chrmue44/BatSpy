@@ -272,7 +272,7 @@ bool cTerminal::isOnline()
 void MEMF cTerminal::parseSetStatusCmd(const char* buf)
 {
   char locBuf[64];
-  strncpy(locBuf, buf, sizeof(locBuf));
+  strncpy(locBuf, buf, sizeof(locBuf) - 1);
   my_vector<char*, 20> token;
   int y, mo, d, h, mi, sec;
   int cnt;

@@ -258,8 +258,8 @@ void MEMP cMenue::initPars()
 
   if (devPars.recAuto.get() == enRecAuto::TWILIGHT)
     calcSunrise();
-  devStatus.time.set(rtc.getTime());
-  devStatus.date.set(rtc.getTime());
+  devStatus.time.set();
+  devStatus.date.set();
 }
 
 extern Adafruit_SSD1327 oled;

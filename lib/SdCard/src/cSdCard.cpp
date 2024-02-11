@@ -486,7 +486,7 @@ enSdRes cSdCard::chdir(const char* name)
   // absolute path
 #if defined(CARDLIB_SD) || defined(CARDLIB_SDFAT)
   else if(name[0] == '/') {
-    strncpy(dir, name, sizeof(dir));
+    strncpy(dir, name, sizeof(dir) - 1);
 #elif defined(CARDLIB_USDFS)
   else if((name[0] == '0') && (name[1] == ':')) {
 #endif
@@ -565,7 +565,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);
   DPRINTF1("full path: %s\n", buf);
-  bool ok = enSdRes::OPEN_FILE_ERR;
+  bool ok = false;
   switch(mode)
   {
     case enMode::READ:

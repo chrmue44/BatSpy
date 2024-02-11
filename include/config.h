@@ -68,6 +68,9 @@
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
 #define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
 
+#define CPU_FREQ_HIGH      200000000  // CPU frequency for full speed operation
+#define CPU_FREQ_LOW        24000000  // CPU frequency for reduced speed operation
+
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
 
@@ -203,7 +206,8 @@ void setIoDebugMode(bool mode);
 void portExpSetBit(uint8_t port, uint8_t state);
 void initDisplay(int orientation);
 void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
-
+void setAnalogPower(bool on);
+void setHwOperationMode(enCpuMode mode);
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"
