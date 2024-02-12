@@ -85,6 +85,9 @@ void setup()
   initDisplay(orientation);
   cSdCard::inst().mount();
   sysLog.log("power on");
+  char serial[16];
+   getSerialNr(serial, sizeof(serial));
+  sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
   delay(500);  
   menue.init(hasDisplay() != enDisplayType::NO_DISPLAY);
   menue.initFileRelatedParams();

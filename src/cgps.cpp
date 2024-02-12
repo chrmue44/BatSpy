@@ -139,6 +139,17 @@ bool MEMF cGps::operate(bool testMode)
           m_speed = m_gps.f_speed_kmph();
           m_heading = m_gps.f_course();
           m_altitude = m_gps.f_altitude();
+          if(!m_valid)
+          {
+            rtc.checkAndSetTime(m_year, m_month, m_day, m_hour, m_minute, m_second, 
+                                (enDlSaving)devPars.daylightSav.get());
+            if (m_mode == enGpsMode::GPS_AUTO_OFF_AFTER_FIX)
+            {
+              m_timer.stop();
+              m_timer.setAlarm(MAX_ON_TIME_S);
+              m_timer.start();
+            }
+          }
 		      m_valid = true;
           if(m_gpx.isOpen())
             m_gpx.log(m_lat, m_lon, m_altitude);
@@ -152,7 +163,7 @@ bool MEMF cGps::operate(bool testMode)
 
         if(m_valid)
         {
-          if(m_mode == enGpsMode::GPS_AUTO_OFF_AFTER_FIX)
+          if((m_mode == enGpsMode::GPS_AUTO_OFF_AFTER_FIX) && (m_timer.isAlarm()))
           {
             m_status = enGpsStatus::GPS_FIXED_OFF;
             m_power = false;

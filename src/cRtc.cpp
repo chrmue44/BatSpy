@@ -41,6 +41,8 @@ void cRtc::setTime(int y, int mo, int d, int h, int m, int s)
 time_t MEMF cRtc::maketime(int y, int mo, int d, int h, int m, int s)
 {
   tmElements_t tim;
+  if(y > 1970)
+    y -= 1970;
   tim.Year = y;
   tim.Month = mo;
   tim.Day = d;
@@ -54,9 +56,10 @@ void MEMF cRtc::checkAndSetTime(int y, int mo, int d, int h, int m, int s, enDlS
 {
   time_t dst = getDaylightSaving(y, mo, d, ds);
   time_t gpsTime = dst + (long)(devPars.timeZone.get()) * 3600 + maketime(y, mo, d, h, m, s);
-  
+  sysLog.log("check and set time");
   if(abs(getTime() - gpsTime) > 20)
   {
+    sysLog.logf("set time to %02i.%02i.%04i   %02i:%02i:%02i", d, mo, y, h, m, s);
     Teensy3Clock.set(gpsTime);
     ::setTime(gpsTime);
   } 
