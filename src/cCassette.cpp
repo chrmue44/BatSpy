@@ -12,7 +12,7 @@
 #include <cstring>
 #include "cmenue.h"
 #include "cRtc.h"
-//#define DEBUG_LEVEL 1
+//#define DEBUG_LEVEL 4
 #include "debug.h"
 
 //#ifndef ARDUINO_TEENSY41
@@ -40,6 +40,7 @@ int cCassette::startRec(const char* name, float recTime)
 int cCassette::startRec()
 {
   m_mode = enCassMode::REC;
+  DPRINTF4("cCassete:startRec: %s,  samples: %i", m_fileName, m_maxRecSamples);
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
     // check if file is Good
@@ -113,6 +114,7 @@ int cCassette::stop()
 {
   enSdRes rc = enSdRes::OK;
   //float peakVal = -1.0;
+  DPRINTLN4("cCassette:stop recording");
   if (m_mode == enCassMode::REC)
   {
     m_recorder.end();
@@ -127,7 +129,7 @@ int cCassette::stop()
     finalizeWavFile();
 
     rc = sd.closeFile(m_fil);
-    DPRINTLN1(" Recording stopped!");
+    DPRINTLN4("cCassette::stop: Recording stopped!");
     m_isRecFileOpen = false;
     m_mode = enCassMode::STOP;
     if (rc != enSdRes::OK)
@@ -137,7 +139,7 @@ int cCassette::stop()
   
   else if(m_mode == enCassMode::PLAY)
   {
-    DPRINTLN1("stopPlaying");
+    DPRINTLN4("stopPlaying");
     m_player.stop();
   }
   m_mode = enCassMode::STOP;
@@ -148,7 +150,7 @@ int cCassette::stop()
 void cCassette::startPlay()
 {
   DPRINTLN1("startPlaying ");
-  DPRINTF1("Playfile: %s\n", m_fileName);
+  DPRINTF4("Playfile: %s\n", m_fileName);
   delay(100);
   m_player.play(m_fileName);
   m_mode = enCassMode::PLAY;

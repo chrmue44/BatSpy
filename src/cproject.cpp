@@ -189,6 +189,7 @@ void MEMF cProject::addFile()
   strncpy(item.value, m_name, sizeof(item.value));
   attr.push_back(item);
   m_xml.simpleTagNoValue("Record", &attr);
+  m_recCount++;
 }
 
 void MEMF cProject::closePrjFile()
@@ -216,5 +217,6 @@ void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_fDay, m_fMo, m_fy, m_fh, m_fMin, m_fSec);
   float duration = (float)sampleCnt/ cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate.get());
   info.write(infoFile, duration, date, cUtils::getFileName(m_wavFile),
-              devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal);
+              devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal,
+               devStatus.temperature.get(), devStatus.humidity.get());
 }

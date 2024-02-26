@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <cSdCard.h>
-//#define DEBUG_LEVEL   4
+#define DEBUG_LEVEL   4
 #include "debug.h"
 #include "cStatus.h"
 #include "config.h"
@@ -157,7 +157,10 @@ void cStatus::execFunction()
     if(m_recRunning)
       audio.stopRecording();
     else
+    {
+      DPRINTLN4("cStatus startRecording()");
       audio.startRecording();
+    }
     break;
   }
   m_state = enShowState::INIT;

@@ -32,6 +32,8 @@
 #define TAG_TRIG_FREQ    "Frequency"
 #define TAG_GAIN         "Gain"
 #define TAG_INP_FILTER   "InputFilter"
+#define TAG_TEMPERAtURE  "Temparature"
+#define TAG_HUMIDITY     "Humidity"
 
 enum enToken
 {
@@ -47,7 +49,7 @@ class cFileInfo
 
  public:
   int write(const char* fileName, float duration, const char* date,
-            const char* wavFile, float lat, float lon, float peakVal);
+            const char* wavFile, float lat, float lon, float peakVal, float temp, float humid);
   int readParameter(const char* fileName, uint32_t& sampleRate);
 
  private:

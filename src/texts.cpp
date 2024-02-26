@@ -242,6 +242,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1382, "Ebene 2"                   , "Level 2" },
   { 1383, "Ebene 3"                   , "Level 3" },
   { 1384, "Ebene 4"                   , "Level 4" },
+  { 1390, "Displaytest"               , "Display test"},
   { 1400, "Aus",                       "Off"},
   { 1401, "Ein",                       "On"},
   { 1402, "Zeitgesteuert",             "Time controlled"},

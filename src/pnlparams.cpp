@@ -58,6 +58,13 @@ void MEMP positionModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+
+void MEMP displayTestFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  testDisplay();
+  pThis->refreshAll();
+}
+
 void MEMP calcSunrise()
 {
   int srH, srM, ssH, ssM;
@@ -202,6 +209,7 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true, positionModeFunc);
   err |= pan->addTextItem(1380,                  1,      30 + r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.debugLevel,   x,      30 + r++ * lf,  48, lf, true);
+  err |= pan->addBtnItem(1390,                  30,      35 + r   * lf,  70, lf + 2, displayTestFunc);
 
   return err;
 }

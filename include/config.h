@@ -193,6 +193,7 @@ inline bool hasAmpRevB() { return  isRevisionB(); }
 
 #endif // defined (ARDUINO_TEENSY41)
 int hasDisplay();
+void testDisplay();
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);

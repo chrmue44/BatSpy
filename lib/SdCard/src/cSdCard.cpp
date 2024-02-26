@@ -893,7 +893,11 @@ enSdRes cSdCard::getFreeMem(size_t& freeSpaceKb, size_t& totSpaceKb)
 #endif
   }
   else
+  {
     retVal = enSdRes::MOUNT_FAILED;
+    freeSpaceKb = 0;
+    totSpaceKb = 0;
+  }
   return retVal;
 }
 

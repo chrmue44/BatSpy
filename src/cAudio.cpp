@@ -455,7 +455,7 @@ bool cAudio::isRecordingActive()
 
 void cAudio::checkAutoRecording(bool recActive)
 {
-  if(m_cass.getMode() != enCassMode::REC)
+  if((devStatus.playStatus.get() == enPlayStatus::ST_STOP) && (m_cass.getMode() == enCassMode::STOP))
   {
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
@@ -463,6 +463,7 @@ void cAudio::checkAutoRecording(bool recActive)
         m_prj.closePrjFile();
       if (recActive && m_trigger.getRecTrigger())
       {
+        DPRINTLN4("checkAutorecording: start recording");
         startRecording();
         delay(5);
       }
@@ -546,6 +547,7 @@ void cAudio::operate(bool liveFft)
   {
     if (m_cass.getMode() == enCassMode::STOP)
     {
+      DPRINTF4("cAudio::operate: cass mode: %i, playStatus: %i\n", m_cass.getMode(), devStatus.playStatus.get());
       switch (devStatus.playStatus.get())
       {
       case enPlayStatus::ST_PLAY:
@@ -564,7 +566,7 @@ void cAudio::operate(bool liveFft)
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
-          DPRINTLN4("recording stopped");
+          DPRINTLN4("cAudio::operate: recording stopped");
         }
         break;
 
@@ -595,6 +597,7 @@ void cAudio::operate(bool liveFft)
 
 void cAudio::stopRecording()
 {
+  DPRINTLN4("stop recording");
   m_cass.stop();
   devStatus.playStatus.set(enPlayStatus::ST_STOP);
 }
@@ -690,11 +693,11 @@ void cAudio::startRecording()
 {
   if (!m_prj.getIsOpen())
     openProject();
-  devStatus.recCount.set(devStatus.recCount.get() + 1);
-  DPRINTF4("checkAutoRec start recording: %i\n", (int)devStatus.recCount.get());
   statusDisplay.setRecRunning(true);
   m_prj.createElekonFileName();
   m_prj.addFile();
+  devStatus.recCount.set(m_prj.getRecCount());
+  DPRINTF4("start recording: %i\n", (int)devStatus.recCount.get());
   m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
   devStatus.playStatus.set(enPlayStatus::ST_REC);
 }

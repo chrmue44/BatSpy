@@ -14,7 +14,7 @@
 #include <cstring>
 
 int MEMF cFileInfo::write(const char* fileName, float duration, const char* date,
-                     const char* wavFile, float lat, float lon, float peakVal)
+                     const char* wavFile, float lat, float lon, float peakVal, float temp, float humid)
 {
   int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
@@ -40,6 +40,8 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
     writeLine("<GPS>");
     writeTag(TAG_POSITION, lat, lon);
     writeLine("</GPS>");
+    writeTag(TAG_TEMPERAtURE, devStatus.temperature.get(), "°C");
+    writeTag(TAG_HUMIDITY, devStatus.humidity.get(), "%");
     writeLine("</BatRecord>");
     cSdCard::inst().closeFile(m_file);
   }

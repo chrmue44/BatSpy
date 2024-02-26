@@ -232,6 +232,59 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.clearDisplay();
 }
 
+void testDisplay()
+{
+  int x = 44, y = 2;
+  int state = 0;
+  int r = 5;
+  pDisplay->fillRect(0, 0, pDisplay->width(), pDisplay->height(), 0xFF);
+  oled.setTextColor(SSD1327_BLACK);
+  oled.setCursor(30, 50);
+  oled.print("Display test");
+  oled.setCursor(30, 65);
+  oled.print("stop with OK");
+  
+  for(;;)
+  { 
+    pDisplay->fillRect(x-2, y-2, 4*r, 4*r, 0xFF);
+    switch (state)
+    {
+    case 0:
+      if (x < (pDisplay->width() - 2 * r - 2))
+        x += 1;
+      else
+        state = 1;
+        break;
+    case 1:
+      if (y < (pDisplay->height() - 2* r - 2))
+        y += 1;
+      else
+        state = 2;
+        break;
+    case 2:
+      if (x > 1)
+        x -= 1;
+      else
+        state = 3;
+        break;
+    case 3:
+      if (y > 1)
+        y -= 1;
+      else
+        state = 0;
+      break;
+    }
+    pDisplay->fillCircle(x+r, y+r, r, 0);
+    oled.display();
+    if( !digitalRead(PIN_ROT_LEFT_S))
+    {
+      oled.clearDisplay();
+      break;
+    }
+    delay(25);
+  }
+}
+
 
 void initDisplay(int orientation)
 {
@@ -265,6 +318,7 @@ void initDisplay(int orientation)
       menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 7);
     }
     setDispLight(255);
+    //testDisplay();
     showSplashScreen(tft, true);
     resetTft();
     pDisplay->setRotation(orientation);
