@@ -25,7 +25,7 @@ void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
 
 void cTrigger::checkTrigger()
 {
-  float fFilter = devPars.filtFreq.get() * 1000.0;
+  float fFilter = devPars.trigFiltFreq.get() * 1000.0;
   checkRecordingTrigger(fFilter);
  // checkLiveTrigger(fFilter);
 }

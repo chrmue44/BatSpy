@@ -64,14 +64,15 @@ struct stSrDesc
 class cAudio
 {
 private:
-  AudioInputSpiMono        m_audioIn;   // audio shield: mic or line-in
-  AudioOutputMQS           m_audioOut;  // medium quality output Teensy 4.x
-  AudioSynthWaveformSine   m_sineHet;   // sinus generator for heterodyne
-  AudioEffectMultiply      m_mult1;     // multiplier for heterodyne
-  AudioMixer4              m_mixer;     // selector for input: player or mic
-  AudioFilterBiquad        m_filter;    // filter before peak detection
-  AudioEffectDelay         m_delay;     // delay for pre trigger
-  cCassette                m_cass;      // player/recorder
+  AudioInputSpiMono        m_audioIn;     // audio shield: mic or line-in
+  AudioOutputMQS           m_audioOut;    // medium quality output Teensy 4.x
+  AudioSynthWaveformSine   m_sineHet;     // sinus generator for heterodyne
+  AudioEffectMultiply      m_mult1;       // multiplier for heterodyne
+  AudioMixer4              m_mixer;       // selector for input: player or mic
+  AudioFilterBiquad        m_trigFilter;  // filter before peak detection
+  AudioFilterBiquad        m_recFilter;   // filter before peak detection
+  AudioEffectDelay         m_delay;       // delay for pre trigger
+  cCassette                m_cass;        // player/recorder
   AudioAnalyzePeak         m_peak;
   AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
   AudioFilterBiquad        m_filtDisp;  // high pass filter for live display
@@ -82,8 +83,9 @@ private:
   AudioConnection m_cCa2Mx; // player to mixer
   AudioConnection m_cMx2Mu; // mixer to multiplier
   AudioConnection m_cSi2Mu; // sine to multiplier
-  AudioConnection m_cMi2Fi; // microphone to filter
-  AudioConnection m_cFi2Pk; // filter to peak detector
+  AudioConnection m_cMi2Fi; // microphone to trig filter
+  AudioConnection m_cMi2Rf; // microphone to rec filter
+  AudioConnection m_cRf2Pk; // rec filter to peak detector
   AudioConnection m_cMu2Ol; // multiplier to audio output left
   AudioConnection m_cMu2Or; // multiplier to audio output right
   AudioConnection m_cMi2De; // microphone to delay
@@ -133,6 +135,7 @@ private:
  private:
   void setMixOscFrequency(float freq);
   void setTrigFilter(float freq, enFiltType type);
+  void setRecFilter(float freq, enFiltType type);
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
   void calcLiveFft();

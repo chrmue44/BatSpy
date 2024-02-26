@@ -45,20 +45,22 @@ int MEMP initInfoPanExpert(cPanel* pan, tCoord lf)
 
 int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
 {
-  int r = 0;
+  int r = 2;
   int x = 80;
   int err = 0;
-  err |= pan->addTextItem(430,                   1, 20 + r++ * lf,  x, lf);
-  err |= pan->addStrItem(&devStatus.version,     1, 20 + r++ * lf,  x, lf);
-  r++;
-  err |= pan->addTextItem(435,                   1, 20 + r++ * lf,  x, lf);
-  err |= pan->addStrItem(&devStatus.hwVersion,   1, 20 + r++ * lf,  x, lf);
-  err |= pan->addTextItem(455,                   1, 20 + r   * lf,  x, lf);
-  err |= pan->addNumItem(&devStatus.temperature, x, 20 + r   * lf, 20, lf, false);
-  err |= pan->addTextItem(303,                   x + 30, 20 + r++ * lf, 15, lf);
-  err |= pan->addTextItem(456,                   1, 20 + r   * lf,  x, lf);
-  err |= pan->addNumItem(&devStatus.humidity,    x, 20 + r   * lf, 30, lf, false);
-  err |= pan->addTextItem(302,                   x + 30, 20 + r++ * lf, 15, lf);
+  err |= pan->addTextItem(430,                   1,      r++ * lf,  x, lf);
+  err |= pan->addStrItem(&devStatus.version,     1,      r++ * lf,  x, lf);
+  err |= pan->addTextItem(435,                   1,      r++ * lf,  x, lf);
+  err |= pan->addStrItem(&devStatus.hwVersion,   1,      r++ * lf,  x, lf);
+  err |= pan->addTextItem(455,                   1,      r   * lf,  x, lf);
+  err |= pan->addNumItem(&devStatus.temperature, x,      r   * lf, 20, lf, false);
+  err |= pan->addTextItem(303,                   x + 30, r++ * lf, 15, lf);
+  err |= pan->addTextItem(456,                   1,      r   * lf,  x, lf);
+  err |= pan->addNumItem(&devStatus.humidity,    x,      r   * lf, 30, lf, false);
+  err |= pan->addTextItem(302,                   x + 30, r++ * lf, 15, lf);
+  err |= pan->addTextItem(405,                   1,      r   * lf, 80, lf);
+  err |= pan->addNumItem(&devStatus.cpuAudioMax, x,      r++ * lf, 35, lf, false);
+  err |= pan->addBtnItem(309,                    20, 5+  r   * lf, 90, lf + 3, btnAudioFunc);
 
   return err;
 }

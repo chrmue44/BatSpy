@@ -88,12 +88,18 @@ void MEMP cMenue::initPars()
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devPars.filtFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
+  devPars.trigFiltFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
+  devPars.recFiltFreq.init(0, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
 
-  devPars.filtType.clear();
-  devPars.filtType.addItem(1171);
-  devPars.filtType.addItem(1172);
-  devPars.filtType.addItem(1173);
+  devPars.trigFiltType.clear();
+  devPars.trigFiltType.addItem(1171);
+  devPars.trigFiltType.addItem(1172);
+  devPars.trigFiltType.addItem(1173);
+
+  devPars.recFiltType.clear();
+  devPars.recFiltType.addItem(1171);
+  devPars.recFiltType.addItem(1172);
+  devPars.recFiltType.addItem(1173);
 
   devPars.recThreshhold.init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
   devPars.recThreshhold.set(-12);
@@ -295,8 +301,10 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);   ///< knob rotation
   devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
-  devPars.filtFreq.set(16.0);             ///< hight pass freq for recording trigger
-  devPars.filtType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
+  devPars.trigFiltFreq.set(16.0);             ///< hight pass freq for recording trigger
+  devPars.trigFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
+  devPars.recFiltFreq.set(1.0);             ///< hight pass freq for recording trigger
+  devPars.recFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.startH.set(21);               ///< hour of start time
   devPars.startMin.set(0);              ///< minute of start time
   devPars.stopH.set(6);                 ///< hour of start time

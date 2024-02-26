@@ -730,9 +730,9 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
       break;
     case 'f':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.filtFreq);
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq);
       else
-        getValFloat(buf + 1, devPars.filtFreq, reply, replySize);
+        getValFloat(buf + 1, devPars.trigFiltFreq, reply, replySize);
       break;
     case 'm':
       if (write)
@@ -742,9 +742,9 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
       break;
     case 'y':
       if (write)
-        replyOk = setValEnum(buf + 1, 0, 1, devPars.filtType);
+        replyOk = setValEnum(buf + 1, 0, 1, devPars.trigFiltType);
       else
-        getValEnum(buf + 1, devPars.filtType, reply, replySize);
+        getValEnum(buf + 1, devPars.trigFiltType, reply, replySize);
       break;
     case 'p':
       if (write)

@@ -32,8 +32,8 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
     writeTag(TAG_TRIG_TYPE, devPars.triggerType.getActText());
     writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");
     writeTag(TAG_TRIG_EV_LEN, devPars.minEventLen.get(), "ms");
-    writeTag(TAG_TRIG_FILT, devPars.filtType.getActText());
-    writeTag(TAG_TRIG_FREQ, devPars.filtFreq.get(), "kHz");
+    writeTag(TAG_TRIG_FILT, devPars.trigFiltType.getActText());
+    writeTag(TAG_TRIG_FREQ, devPars.trigFiltFreq.get(), "kHz");
     writeLine("</Trigger>");
     writeTag(TAG_DURATION, duration, "Sec");
     writeTag(TAG_PEAK_VAL, peakVal, "%");

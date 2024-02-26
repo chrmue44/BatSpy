@@ -57,12 +57,13 @@ m_cMi2Mx(m_audioIn, 0, m_mixer, MIX_CHAN_MIC),
 m_cCa2Mx(m_cass.getPlayer(), 0, m_mixer, MIX_CHAN_PLAY),
 m_cMx2Mu(m_mixer, 0, m_mult1, 0),
 m_cSi2Mu(m_sineHet, 0, m_mult1, 1),
-m_cMi2Fi(m_audioIn, 0, m_filter, 0),
-m_cFi2Pk(m_filter, m_peak),
+m_cMi2Fi(m_audioIn, 0, m_trigFilter, 0),
+m_cMi2Rf(m_audioIn, 0, m_recFilter, 0),
+m_cRf2Pk(m_recFilter, m_peak),
 m_cMu2Ol(m_mult1, 0, m_audioOut, 0),
 m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 //m_cMi2De(m_audioIn, 0, m_delay, 0),
-m_cMi2De(m_filter, 0, m_delay, 0),
+m_cMi2De(m_recFilter, 0, m_delay, 0),
 m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
 m_cMi2Hp(m_audioIn, m_filtDisp),
 m_cHp2Ft(m_filtDisp, m_fft),
@@ -101,8 +102,9 @@ void cAudio::enable(bool on)
     m_cCa2Mx.disconnect(); // player to mixer
     m_cMx2Mu.disconnect(); // mixer to multiplier
     m_cSi2Mu.disconnect(); // sine to multiplier
-    m_cMi2Fi.disconnect(); // microphone to filter
-    m_cFi2Pk.disconnect(); // filter to peak detector
+    m_cMi2Fi.disconnect(); // microphone to trigger filter
+    m_cMi2Rf.disconnect(); // microphone to recording filter
+    m_cRf2Pk.disconnect(); // filter to peak detector
     m_cMu2Ol.disconnect(); // multiplier to audio output left
     m_cMu2Or.disconnect(); // multiplier to audio output right
     m_cMi2De.disconnect(); // microphone to delay
@@ -116,8 +118,9 @@ void cAudio::enable(bool on)
     m_cCa2Mx.connect(); // player to mixer
     m_cMx2Mu.connect(); // mixer to multiplier
     m_cSi2Mu.connect(); // sine to multiplier
-    m_cMi2Fi.connect(); // microphone to filter
-    m_cFi2Pk.connect(); // filter to peak detector
+    m_cMi2Fi.connect(); // microphone to trigger filter
+    m_cMi2Rf.connect(); // microphone to recording filter
+    m_cRf2Pk.connect(); // filter to peak detector
     m_cMu2Ol.connect(); // multiplier to audio output left
     m_cMu2Or.connect(); // multiplier to audio output right
     m_cMi2De.connect(); // microphone to delay
@@ -252,25 +255,45 @@ void cAudio::setPreAmpGain(enGainRevB gain)
 
 void cAudio::setTrigFilter(float freq, enFiltType type)
 {
-  float maxFreq = m_sampleRate/2;
+  float maxFreq = m_sampleRate/2000;
   float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
-  devPars.filtFreq.init(5,maxFreq, 1, 0);
+  devPars.trigFiltFreq.init(5,maxFreq, 1, 0);
   switch (type)
   {
     case enFiltType::HIGHPASS:
-      m_filter.setHighpass(0, f, 0.7f);
+      m_trigFilter.setHighpass(0, f, 0.7f);
       break;
     case enFiltType::LOWPASS:
-      m_filter.setLowpass(0, f, 0.7f);
+      m_trigFilter.setLowpass(0, f, 0.7f);
       break;
     case enFiltType::BANDPASS:
-      m_filter.setBandpass(0, f, 0.7f);
+      m_trigFilter.setBandpass(0, f, 0.7f);
       break;  
     default:
       break;
   }
 }
 
+void cAudio::setRecFilter(float freq, enFiltType type)
+{
+  float maxFreq = m_sampleRate/2000;
+  float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
+  devPars.recFiltFreq.init(0,maxFreq, 1, 0);
+  switch (type)
+  {
+    case enFiltType::HIGHPASS:
+      m_recFilter.setHighpass(0, f, 0.7f);
+      break;
+    case enFiltType::LOWPASS:
+      m_recFilter.setLowpass(0, f, 0.7f);
+      break;
+    case enFiltType::BANDPASS:
+      m_recFilter.setBandpass(0, f, 0.7f);
+      break;  
+    default:
+      break;
+  }
+}
 
 bool cAudio::isSetupNeeded()
 {
@@ -361,7 +384,8 @@ void cAudio::setup()
     m_trigger.setThreshold(pow(10, (devPars.recThreshhold.get() / 10.0)));
     m_trigger.setMinEventLength(devPars.minEventLen.get(), m_sampleRate);
     m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
-    setTrigFilter(devPars.filtFreq.get() * 1000.0, (enFiltType)devPars.filtType.get());
+    setTrigFilter(devPars.trigFiltFreq.get() * 1000.0, (enFiltType)devPars.trigFiltType.get());
+    setRecFilter(devPars.recFiltFreq.get() * 1000.0, (enFiltType)devPars.recFiltType.get());
     devStatus.liveMsPerDiv.clear();
     for(int i = 0; i < 4; i++)
       addLiveMsPerDiv(i, m_sampleRate);

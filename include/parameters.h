@@ -153,10 +153,12 @@ struct stParams
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
 #define PAR_PRETRIG_MIN 0.0
 #define PAR_PRETRIG_MAX 150.0
-  cParNum filtFreq = 16;             ///< hight pass freq for recording trigger
+  cParNum recFiltFreq = 16;          ///< hight pass freq for recording trigger
+  cParNum trigFiltFreq = 16; 
 #define PAR_TRIGFILTFREQ_MIN   1.0f
 #define PAR_TRIGFILTFREQ_MAX  70.0f
-  cParEnum filtType = 0;             ///< filter type for recording trigger
+  cParEnum recFiltType = 0;          ///< filter type for recording trigger
+  cParEnum trigFiltType = 0;         ///< filter type for recording trigger
 #define PAR_TRIGFILTTYPE_MIN   0
 #define PAR_TRIGFILTTYPE_MAX   2
   cParNum startH = 21;               ///< hour of start time

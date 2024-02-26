@@ -123,8 +123,8 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_DEBUG_LEVEL , devPars.debugLevel.get());
   writeFloatToEep(EEPADDR_LAT,          devStatus.geoPos.getLat());
   writeFloatToEep(EEPADDR_LON,          devStatus.geoPos.getLon());
-  writeFloatToEep(EEPADDR_FILT_FREQ,    devPars.filtFreq.get());
-  writeInt16ToEep(EEPADDR_FILT_TYPE,    devPars.filtType.get());
+  writeFloatToEep(EEPADDR_TFILT_FREQ,    devPars.trigFiltFreq.get());
+  writeInt16ToEep(EEPADDR_TFILT_TYPE,    devPars.trigFiltType.get());
   writeInt16ToEep(EEPADDR_START_H,      (int16_t)devPars.startH.get());
   writeInt16ToEep(EEPADDR_START_MIN,    (int16_t)devPars.startMin.get());
   writeInt16ToEep(EEPADDR_STOP_H,       (int16_t)devPars.stopH.get());
@@ -136,6 +136,9 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_TRIG_TYPE,    (int16_t)devPars.triggerType.get());
   writeFloatToEep(EEPADDR_MIN_EV_LEN,   devPars.minEventLen.get());
   writeFloatToEep(EEPADDR_SHUTOFF_V,    devPars.ShutoffVoltage.get());
+  writeFloatToEep(EEPADDR_RFILT_FREQ,    devPars.recFiltFreq.get());
+  writeInt16ToEep(EEPADDR_RFILT_TYPE,    devPars.recFiltType.get());
+
   int addr = EEPADDR_FIRSTFREE;
   for(int i = 0; i < 20; i++)
   {
@@ -187,8 +190,8 @@ bool MEMP loadParsFromEep()
     devPars.debugLevel.set(readInt16FromEep(EEPADDR_DEBUG_LEVEL));
     devStatus.geoPos.setLat(readFloatFromEep(EEPADDR_LAT));
     devStatus.geoPos.setLon(readFloatFromEep(EEPADDR_LON));
-    devPars.filtFreq.set(readFloatFromEep(EEPADDR_FILT_FREQ));
-    devPars.filtType.set(readInt16FromEep(EEPADDR_FILT_TYPE));
+    devPars.trigFiltFreq.set(readFloatFromEep(EEPADDR_TFILT_FREQ));
+    devPars.trigFiltType.set(readInt16FromEep(EEPADDR_TFILT_TYPE));
     devPars.startH.set(readInt16FromEep(EEPADDR_START_H));   //if addr changes see also pnlparams.cpp
     devPars.startMin.set(readInt16FromEep(EEPADDR_START_MIN)); //if addr changes see also pnlparams.cpp
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
@@ -202,7 +205,9 @@ bool MEMP loadParsFromEep()
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
     devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
-
+    devPars.recFiltFreq.set(readFloatFromEep(EEPADDR_RFILT_FREQ));
+    devPars.recFiltType.set(readInt16FromEep(EEPADDR_RFILT_TYPE));
+ 
     devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     int digits = analogRead(PIN_SUPPLY_VOLT);
     devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));

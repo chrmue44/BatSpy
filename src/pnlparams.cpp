@@ -124,9 +124,9 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1370,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.minEventLen,  190, 20 +  r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1170,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.filtFreq,     190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.trigFiltFreq, 190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.filtType,    190, 20 +  r++ * lf,  70, lf, true);
+  err |= pan->addEnumItem(&devPars.trigFiltType,190, 20 +  r++ * lf,  70, lf, true);
   err |= pan->addTextItem(1330,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
@@ -156,7 +156,7 @@ int MEMP initParRecCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1370,                  1,      30 + r * lf,    80, lf);
   err |= pan->addNumItem(&devPars.minEventLen,   x + 10, 30 + r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1176,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.filtFreq,      x + 10, 30 + r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 10, 30 + r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1180,                  1,      30 + r * lf,    80, lf);
   err |= pan->addNumItem(&devPars.startH,        x - 23, 30 + r * lf,    14, lf, true);
   err |= pan->addTextItem(1182,                  x  - 8, 30 + r * lf,     5, lf);
@@ -198,18 +198,22 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   int x = 70;
-  int r = 0;
-  err |= pan->addTextItem(1100,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.lang,         x,      30 + r++ * lf,  50, lf, true, languageFunc);
-  err |= pan->addTextItem(1148,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addNumItem(&devPars.backLightTime, x + 30, 30 + r++ * lf,  25, lf, true);
-  err |= pan->addTextItem(1325,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      30 + r++ * lf,  45, lf, true);
-  err |= pan->addTextItem(1421,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.srcPosition,  x,      30 + r++ * lf,  48, lf, true, positionModeFunc);
-  err |= pan->addTextItem(1380,                  1,      30 + r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.debugLevel,   x,      30 + r++ * lf,  48, lf, true);
-  err |= pan->addBtnItem(1390,                  30,      35 + r   * lf,  70, lf + 2, displayTestFunc);
+  int r = 2;
+  err |= pan->addTextItem(1100,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.lang,         x,      r++ * lf,  50, lf, true, languageFunc);
+  err |= pan->addTextItem(1148,                  1,      r   * lf,   x, lf);
+  err |= pan->addNumItem(&devPars.backLightTime, x + 30, r++ * lf,  25, lf, true);
+  err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
+  err |= pan->addTextItem(1177,                  1,      r * lf,    80, lf);
+  err |= pan->addNumItem(&devPars.recFiltFreq,   x + 10, r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1175,                  1,      r * lf,    80, lf);
+  err |= pan->addEnumItem(&devPars.recFiltType,  x,      r++ * lf,  50, lf, true);
+  err |= pan->addTextItem(1421,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.srcPosition,  x,      r++ * lf,  48, lf, true, positionModeFunc);
+  err |= pan->addTextItem(1380,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.debugLevel,   x,      r++ * lf,  48, lf, true);
+  err |= pan->addBtnItem(1390,                  30,      5 + r   * lf,  70, lf + 2, displayTestFunc);
 
   return err;
 }
