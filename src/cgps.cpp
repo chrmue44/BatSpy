@@ -82,6 +82,7 @@ void MEMF cGps::getTime(int& y, int& m, int& d, int& h, int& min, int& s)
 void MEMF cGps::test()
 {
   char esc[2] = {0,0};
+
   do
   {
     operate(true);
@@ -112,7 +113,11 @@ bool MEMF cGps::operate(bool testMode)
     m_status = enGpsStatus::GPS_FIXED;
     m_valid = true;
 #else
-
+    if(testMode && (SERIAL_GPS.available() == 0))
+    {
+      Serial.println("no GPS data");
+      delay(500);
+    }
     while (SERIAL_GPS.available()) 
     {
       int c = SERIAL_GPS.read();
@@ -126,7 +131,7 @@ bool MEMF cGps::operate(bool testMode)
       m_recLine[m_recIdx++] = c;
       if(testMode)
         Serial.print((char)c);
-      DPRINT1((char)c);
+   //   DPRINT1((char)c);
       if (m_gps.encode(c))
       {     
         m_gps.f_get_position(&m_lat, &m_lon, &m_age);

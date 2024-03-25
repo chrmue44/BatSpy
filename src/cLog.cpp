@@ -43,7 +43,7 @@ void cLog::create()
     enSdRes res = sd.openFile(m_fileName, m_fd, enMode::WRITE);
     if(res == enSdRes::OK)
     {
-      DPRINT1("initialized log\n");
+      DPRINTLN1("initialized log");
       size_t written;
       char buf[256];
       snprintf(buf, sizeof(buf), "log created\n");
@@ -73,7 +73,7 @@ void MEMF cLog::debugLog(int level, const char c, bool keepOpen)
       cSdCard::inst().writeFile(m_fd, &c, written, 1);
       if (!keepOpen)
       {
-        DPRINT1("logfile closed in log()\n");
+        DPRINTLN1("logfile closed in log()");
         cSdCard::inst().closeFile(m_fd);
         m_open = false;
       }
@@ -97,7 +97,7 @@ void MEMF cLog::log(const char* msg, bool keepOpen)
     cSdCard::inst().writeFile(m_fd, buf, written, strlen(buf));
     if (!keepOpen)
     {
-      DPRINT1("logfile closed in log()\n");
+      DPRINTLN1("logfile closed in log()");
       cSdCard::inst().closeFile(m_fd);
       m_open = false;
     }
@@ -114,7 +114,7 @@ void MEMF cLog::debugLog(int level, const char* msg)
 
 void MEMF cLog::logf(const char* fmt, ...)
 {
-  DPRINT1("cLog::logf\n");
+  DPRINTLN1("cLog::logf");
   char buf[256];
   va_list args;
   va_start(args, fmt);

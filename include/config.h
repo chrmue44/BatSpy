@@ -84,8 +84,8 @@
 
 // *****   pin definitions *****
 #define SPIN_POWER_OFF   0x8010      // power off if voltage too low
-#define SPIN_LED_DISP    0x8002      // LED Display
-#define SPIN_LED_2       0x8001      // LED 2
+#define SPIN_LED_DISP    0x8002      // LED Display (D5)
+#define SPIN_LED_2       0x8001      // LED 2       (D4)
 #define SPIN_AMP0        0x8004      // AMP0
 #define SPIN_TFT_RES     0x8008      // Reset TFT-Display
 #define SPIN_PWR_ANA     0x8020      // Poser supply analog stage

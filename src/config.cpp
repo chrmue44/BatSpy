@@ -60,6 +60,7 @@ void initPins()
   ioex.config(TCA9534::Config::OUT); // set all port to output
   ioex.polarity(TCA9534::Polarity::POL_ORIGINAL); // set all port polarity to original
   ioex.output(ioexOut);
+  digWrite(SPIN_LED_2, 1);
   digWrite(SPIN_POWER_OFF, 1);
 #endif
 
@@ -572,10 +573,12 @@ void setDispLight(uint8_t bright)
 #ifdef ARDUINO_TEENSY40
 void portExpSetBit(uint8_t port, uint8_t state)
 {
+  uint8_t oldState = ioexOut;
   if(state == 0)
     ioexOut &= ~port;
   else
     ioexOut |= port;
-  ioex.output(ioexOut);
+  if(oldState != ioexOut)
+    ioex.output(ioexOut);
 }
 #endif

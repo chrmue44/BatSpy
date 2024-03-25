@@ -75,7 +75,7 @@ bool setVoltageFactor(const char* p);
 
 #define EEPADDR_FIRSTFREE     0x007A
 
-#define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  
+#define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
 #define EEP_SERIAL_SIZE       12       // size of the string
 #define EEPADDR_VOLT_FACT     0x0310   // devPars.voltFactor       float
 

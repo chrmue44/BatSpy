@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <cSdCard.h>
-#define DEBUG_LEVEL   4
+//#define DEBUG_LEVEL   4
 #include "debug.h"
 #include "cStatus.h"
 #include "config.h"

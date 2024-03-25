@@ -116,6 +116,7 @@ void setup()
     calcSunrise();
   initDisplayVars();
   logStatus();
+  digWrite(SPIN_LED_2, 0);
 }
 
 
@@ -249,10 +250,15 @@ void loop()
 
   bool gpsValid = false;
   if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
+  {
     gpsValid = gps.operate();
-
+  }
   if(tickOneSec)
   {
+    if(gps.getStatus() == enGpsStatus::GPS_SEARCHING)
+       digWrite(SPIN_LED_2, 1);
+    else
+       digWrite(SPIN_LED_2, 0);
     if(gpsValid)
     {
       devStatus.geoPos.set(gps.getLat(), gps.getLon());

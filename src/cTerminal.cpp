@@ -148,6 +148,7 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       break;
     
     case 'g':
+      Serial.write("entering GPS test mode\n");
       gps.test();
       Serial.write("GPS test mode finished\n");
       break;
@@ -697,13 +698,36 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
       else
         getValFloat(buf + 1, devPars.deadTime, reply, replySize);
       break;
+    case 'f':
+      if (write)
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq);
+      else
+        getValFloat(buf + 1, devPars.trigFiltFreq, reply, replySize);
+      break;
 	case 'g':
       if(write)
         replyOk = setValEnum(buf + 1, PAR_GAIN_MIN, PAR_GAIN_MAX, devPars.preAmpGain);
       else
         getValEnum(buf + 1, devPars.preAmpGain, reply, replySize);
       break;
-
+    case 'h':
+      if (write)
+        replyOk = setValFloat(buf + 1, PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, devPars.recThreshhold);
+      else
+        getValFloat(buf + 1, devPars.recThreshhold, reply, replySize);
+      break;
+    case 'm':
+      if (write)
+        replyOk = setValFloat(buf + 1, PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, devPars.minEventLen);
+      else
+        getValFloat(buf + 1, devPars.minEventLen, reply, replySize);
+      break;
+    case 'r':
+      if (write)
+        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.triggerType);
+      else
+        getValEnum(buf + 1, devPars.triggerType, reply, replySize);
+      break;
     case 's':
       if (write)
         replyOk = setValEnum(buf + 1, PAR_SR_MIN, PAR_SR_MAX, devPars.sampleRate);
@@ -716,29 +740,17 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
       else
         getValFloat(buf + 1, devPars.recTime, reply, replySize);
       break;
-    case 'h':
+    case 'u':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, devPars.recThreshhold);
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.recFiltFreq);
       else
-        getValFloat(buf + 1, devPars.recThreshhold, reply, replySize);
+        getValFloat(buf + 1, devPars.recFiltFreq, reply, replySize);
       break;
-    case 'r':
+    case 'v':
       if (write)
-        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.triggerType);
+        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.recFiltType);
       else
-        getValEnum(buf + 1, devPars.triggerType, reply, replySize);
-      break;
-    case 'f':
-      if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq);
-      else
-        getValFloat(buf + 1, devPars.trigFiltFreq, reply, replySize);
-      break;
-    case 'm':
-      if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, devPars.minEventLen);
-      else
-        getValFloat(buf + 1, devPars.minEventLen, reply, replySize);
+        getValEnum(buf + 1, devPars.recFiltType, reply, replySize);
       break;
     case 'y':
       if (write)
@@ -945,12 +957,18 @@ void MEMF cTerminal::showCommands()
   Serial.println("prt      get recording time [s]");
   Serial.println("Prd<val> set dead time after recording [s] (1 .. 30)");
   Serial.println("prd      get dead time after recording [s]");
+  Serial.println("Prf<val> set trig filter frequency [kHz] (5 .. 70)");
+  Serial.println("prf      get trig filter frequency [kHz]");
   Serial.println("Prh<val> set trig threshold [dB] (-24 ... -1)");
   Serial.println("prh      get trig threshold [dB]");
+  Serial.println("Prm<val> set trig event time [ms] (0.5 ... 10)");
+  Serial.println("prm      get trig event time [ms]");
   Serial.println("Prr<val> set trig type (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
   Serial.println("prr      get trig type");
-  Serial.println("Prf<val> set trig filter frequency [kHz] (5 .. 70)");
-  Serial.println("prf<val> get trig filter frequency [kHz]");
+  Serial.println("Pru<val> set recording filter frequency [kHz] (5 .. 70)");
+  Serial.println("pru<val> get recording filter frequency [kHz]");
+  Serial.println("Prv<val> set recording filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("prv<val> get recording filter type");
   Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
   Serial.println("pry<val> get trig filter type");
   Serial.println("sa       get audio mem usage [%]");
