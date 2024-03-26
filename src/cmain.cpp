@@ -211,6 +211,8 @@ void handleButtonsAndLeds()
   if(switchOff.isAlarm())
   {
     audio.stopRecording();
+    sysLog.logf("power down via button");
+    sysLog.close();
     powerOff();
   }
   if(function.isAlarm())
@@ -255,7 +257,7 @@ void loop()
   }
   if(tickOneSec)
   {
-    if(gps.getStatus() == enGpsStatus::GPS_SEARCHING)
+    if((devPars.srcPosition.get() != enPositionMode::POS_FIX) && (gps.getStatus() == enGpsStatus::GPS_SEARCHING))
        digWrite(SPIN_LED_2, 1);
     else
        digWrite(SPIN_LED_2, 0);

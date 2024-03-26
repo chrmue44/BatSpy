@@ -116,7 +116,7 @@ bool MEMF cGps::operate(bool testMode)
     if(testMode && (SERIAL_GPS.available() == 0))
     {
       Serial.println("no GPS data");
-      delay(500);
+      delay(1000);
     }
     while (SERIAL_GPS.available()) 
     {

@@ -37,27 +37,6 @@ void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 }
 
 
-void MEMP positionModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
-{
-  switch(devPars.srcPosition.get())
-  { 
-    case enPositionMode::POS_FIX:
-      enableEditPosition(pThis, true);
-      gps.setMode(enGpsMode::GPS_OFF);
-      break;
-    
-    case enPositionMode::POS_GPS_ON:
-      enableEditPosition(pThis, false);
-      gps.setMode(enGpsMode::GPS_ON);
-      break;
-
-    case enPositionMode::POS_GPS_AUTO:
-      enableEditPosition(pThis, false);
-      gps.setMode(enGpsMode::GPS_AUTO_OFF_AFTER_FIX);
-      break;
-  }
-}
-
 
 void MEMP displayTestFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
@@ -209,8 +188,6 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.recFiltFreq,   x + 10, r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  1,      r * lf,    80, lf);
   err |= pan->addEnumItem(&devPars.recFiltType,  x,      r++ * lf,  50, lf, true);
-  err |= pan->addTextItem(1421,                  1,      r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.srcPosition,  x,      r++ * lf,  48, lf, true, positionModeFunc);
   err |= pan->addTextItem(1380,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.debugLevel,   x,      r++ * lf,  48, lf, true);
   err |= pan->addBtnItem(1390,                  30,      5 + r   * lf,  70, lf + 2, displayTestFunc);
