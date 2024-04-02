@@ -126,24 +126,27 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
 int MEMP initParRecCompact(cPanel* pan, tCoord lf)
 {
   int  err = 0;
-  int r = 0;
+  int r = 2;
   int x = 80;
-  err |= pan->addTextItem(1141,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold, x + 10, 30 + r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1360,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addEnumItem(&devPars.triggerType,  x - 27, 30 + r++ * lf, 110, lf, true);
-  err |= pan->addTextItem(1370,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.minEventLen,   x + 10, 30 + r++ * lf,  40, lf, true);
-  err |= pan->addTextItem(1176,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 10, 30 + r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1180,                  1,      30 + r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.startH,        x - 23, 30 + r * lf,    14, lf, true);
-  err |= pan->addTextItem(1182,                  x  - 8, 30 + r * lf,     5, lf);
-  err |= pan->addNumItem(&devPars.startMin,      x  - 2, 30 + r++ * lf,  14, lf, true);
-  err |= pan->addTextItem(1181,                  1,      30 + r * lf,     5, lf);
-  err |= pan->addNumItem(&devPars.stopH,         x - 23, 30 + r * lf,    14, lf, true);
-  err |= pan->addTextItem(1182,                  x -  8, 30 + r * lf,     5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,       x -  2, 30 + r++ * lf,  14, lf, true);
+  err |= pan->addTextItem(1360,                  1,      r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.triggerType,  x - 30, r++ * lf,  72, lf, true);
+  err |= pan->addTextItem(1141,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold, x + 15, r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1370,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.minEventLen,   x + 15, r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1176,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 15, r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1330,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1180,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.startH,        x - 23, r   * lf,  14, lf, true);
+  err |= pan->addTextItem(1182,                  x  - 8, r   * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.startMin,      x  - 2, r++ * lf,  14, lf, true);
+  err |= pan->addTextItem(1181,                  1,      r   * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopH,         x - 23, r   * lf,  14, lf, true);
+  err |= pan->addTextItem(1182,                  x -  8, r   * lf,   5, lf);
+  err |= pan->addNumItem(&devPars.stopMin,       x -  2, r++ * lf,  14, lf, true);
+
   return err;
 }
 

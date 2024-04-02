@@ -166,6 +166,8 @@ void AudioInputSpiMono::isr(void)
 	audio_block_t *left /*, *right */;
 
 #if defined (SIMU_DISPLAY)
+	src = (int16_t*)&spi_rx_buffer[0];
+	end = (int16_t*)&spi_rx_buffer[AUDIO_BLOCK_SAMPLES / 2];
 	// TODO
 #elif (defined(KINETISK) || defined(__IMXRT1062__))
 	daddr = (uint32_t)(dma.TCD->DADDR);

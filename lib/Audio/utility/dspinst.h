@@ -199,7 +199,7 @@ static inline uint32_t pack_16b_16b(int32_t a, int32_t b) __attribute__((always_
 static inline uint32_t pack_16b_16b(int32_t a, int32_t b)
 {
 #if defined SIMU_DISPLAY
-    return ((a & 0xFFFF) << 16) | (b & 0xFFFF))
+	return ((a & 0xFFFF) << 16) | (b & 0xFFFF);
 #elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("pkhbt %0, %1, %2, lsl #16" : "=r" (out) : "r" (b), "r" (a));
