@@ -87,8 +87,9 @@ void cAudio::init()
 #endif
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
-  AudioMemory(600);
-
+  //AudioMemory(600);
+  audio_block_t data[600];
+  AudioStream::initialize_memory(data, 600);
   m_old.oscFrequency = 999;
   m_filtDisp.setHighpass(0, 50);
 }
@@ -148,6 +149,7 @@ void cAudio::setSampleRate(enSampleRate sr)
     int c1 = C * c2 - (c0 * c2);
     set_audioClock(c0, c1, c2, true);
     m_sampleRate *= 2;
+#ifndef SIMU_DISPLAY
     // clock for input
     CCM_CS1CDR = (CCM_CS1CDR & ~(CCM_CS1CDR_SAI1_CLK_PRED_MASK | CCM_CS1CDR_SAI1_CLK_PODF_MASK))
        | CCM_CS1CDR_SAI1_CLK_PRED(n1-1) // &0x07
@@ -156,6 +158,7 @@ void cAudio::setSampleRate(enSampleRate sr)
   	CCM_CS1CDR = (CCM_CS1CDR & ~(CCM_CS1CDR_SAI3_CLK_PRED_MASK | CCM_CS1CDR_SAI3_CLK_PODF_MASK))
 		   | CCM_CS1CDR_SAI3_CLK_PRED(n1-1)
 		   | CCM_CS1CDR_SAI3_CLK_PODF(n2-1);      
+#endif
     DPRINTF1("factors c0:%i  c1:%i   c2:%i\n", c0, c1, c2);
     DPRINTF1("setSampleRate(%d)\n", m_sampleRate);
     m_cass.setSamplingRate(m_sampleRate);

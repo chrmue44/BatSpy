@@ -25,8 +25,11 @@
  */
 
 #include <stdint.h>
-
-const int16_t AudioWindowHanning256[] __attribute__ ((aligned (4))) = {
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowHanning256[]  = {
+#else
+  const int16_t AudioWindowHanning256[] __attribute__((aligned(4))) = {
+#endif
      0,     5,    20,    45,    80,   124,   179,   243,   317,   401,
    495,   598,   711,   833,   965,  1106,  1257,  1416,  1585,  1763,
   1949,  2145,  2349,  2561,  2782,  3011,  3249,  3494,  3747,  4008,
@@ -55,7 +58,11 @@ const int16_t AudioWindowHanning256[] __attribute__ ((aligned (4))) = {
    124,    80,    45,    20,     5,     0,
 };
 
-const int16_t AudioWindowBartlett256[] __attribute__ ((aligned (4))) = {
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBartlett256[] = {
+#else
+const int16_t AudioWindowBartlett256[] __attribute__((aligned(4))) = {
+#endif
    128,   384,   640,   896,  1152,  1408,  1664,  1920,  2176,  2432,
   2688,  2944,  3200,  3456,  3712,  3968,  4224,  4480,  4736,  4992,
   5248,  5504,  5760,  6016,  6272,  6528,  6784,  7040,  7296,  7552,
@@ -84,7 +91,11 @@ const int16_t AudioWindowBartlett256[] __attribute__ ((aligned (4))) = {
   1408,  1152,   896,   640,   384,   128,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackman256[] = {
+#else
 const int16_t AudioWindowBlackman256[] __attribute__ ((aligned (4))) = {
+#endif
      0,     2,     7,    16,    29,    45,    65,    89,   116,   148,
    183,   222,   266,   314,   366,   422,   483,   549,   620,   695,
    776,   862,   953,  1050,  1153,  1261,  1376,  1496,  1623,  1757,
@@ -113,7 +124,11 @@ const int16_t AudioWindowBlackman256[] __attribute__ ((aligned (4))) = {
     45,    29,    16,     7,     2,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowFlattop256[] = {
+#else
 const int16_t AudioWindowFlattop256[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,    -1,    -3,    -6,    -9,   -14,   -20,   -27,   -35,
    -45,   -56,   -68,   -83,   -99,  -117,  -137,  -160,  -185,  -213,
   -243,  -276,  -312,  -351,  -393,  -438,  -487,  -538,  -593,  -651,
@@ -142,7 +157,11 @@ const int16_t AudioWindowFlattop256[] __attribute__ ((aligned (4))) = {
     -9,    -6,    -3,    -1,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackmanHarris256[] = {
+#else 
 const int16_t AudioWindowBlackmanHarris256[] __attribute__ ((aligned (4))) = {
+#endif
      2,     2,     3,     5,     7,     9,    13,    17,    22,    27,
     34,    42,    51,    61,    73,    86,   101,   118,   137,   158,
    181,   207,   235,   267,   301,   339,   381,   427,   476,   530,
@@ -171,7 +190,11 @@ const int16_t AudioWindowBlackmanHarris256[] __attribute__ ((aligned (4))) = {
      9,     7,     5,     3,     2,     2,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowNuttall256[] = {
+#else
 const int16_t AudioWindowNuttall256[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,     1,     2,     4,     6,     9,    13,    17,    22,
     28,    35,    43,    52,    62,    74,    87,   102,   119,   138,
    160,   183,   210,   239,   271,   306,   345,   388,   434,   485,
@@ -200,7 +223,11 @@ const int16_t AudioWindowNuttall256[] __attribute__ ((aligned (4))) = {
      6,     4,     2,     1,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackmanNuttall256[] = {
+#else
 const int16_t AudioWindowBlackmanNuttall256[] __attribute__ ((aligned (4))) = {
+#endif
     12,    12,    13,    15,    18,    22,    26,    32,    38,    46,
     54,    64,    76,    89,   103,   119,   137,   158,   180,   205,
    232,   262,   295,   331,   371,   414,   461,   512,   567,   627,
@@ -229,7 +256,11 @@ const int16_t AudioWindowBlackmanNuttall256[] __attribute__ ((aligned (4))) = {
     22,    18,    15,    13,    12,    12,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowWelch256[] = {
+#else
 const int16_t AudioWindowWelch256[] __attribute__ ((aligned (4))) = {
+#endif
    256,   764,  1268,  1768,  2264,  2756,  3244,  3728,  4208,  4684,
   5156,  5624,  6088,  6548,  7004,  7456,  7904,  8348,  8788,  9224,
   9656, 10084, 10508, 10928, 11344, 11756, 12164, 12568, 12968, 13364,
@@ -258,7 +289,11 @@ const int16_t AudioWindowWelch256[] __attribute__ ((aligned (4))) = {
   2756,  2264,  1768,  1268,   764,   256,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowHamming256[] = {
+#else
 const int16_t AudioWindowHamming256[] __attribute__ ((aligned (4))) = {
+#endif
   2621,  2626,  2640,  2663,  2695,  2736,  2786,  2845,  2913,  2991,
   3077,  3172,  3276,  3388,  3509,  3639,  3778,  3925,  4080,  4243,
   4415,  4595,  4782,  4978,  5181,  5392,  5610,  5836,  6069,  6309,
@@ -287,7 +322,11 @@ const int16_t AudioWindowHamming256[] __attribute__ ((aligned (4))) = {
   2736,  2695,  2663,  2640,  2626,  2621,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowCosine256[] = {
+#else
 const int16_t AudioWindowCosine256[] __attribute__ ((aligned (4))) = {
+#endif
      0,   404,   807,  1211,  1614,  2017,  2420,  2822,  3224,  3626,
   4027,  4427,  4827,  5226,  5624,  6021,  6417,  6813,  7207,  7600,
   7993,  8383,  8773,  9161,  9548,  9934, 10318, 10700, 11081, 11460,
@@ -316,7 +355,11 @@ const int16_t AudioWindowCosine256[] __attribute__ ((aligned (4))) = {
   2017,  1614,  1211,   807,   404,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowTukey256[] = {
+#else
 const int16_t AudioWindowTukey256[] __attribute__ ((aligned (4))) = {
+#endif
      0,    20,    80,   179,   317,   495,   711,   965,  1257,  1585,
   1949,  2349,  2782,  3249,  3747,  4276,  4834,  5421,  6034,  6672,
   7334,  8018,  8722,  9445, 10184, 10939, 11707, 12486, 13274, 14070,
@@ -345,7 +388,11 @@ const int16_t AudioWindowTukey256[] __attribute__ ((aligned (4))) = {
    495,   317,   179,    80,    20,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowHanning1024[] = {
+#else
 const int16_t AudioWindowHanning1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,     1,     3,     5,     8,    11,    15,    20,    25,
     31,    37,    44,    52,    61,    69,    79,    89,   100,   111,
    123,   136,   149,   163,   178,   193,   208,   225,   242,   259,
@@ -451,7 +498,11 @@ const int16_t AudioWindowHanning1024[] __attribute__ ((aligned (4))) = {
      3,     1,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBartlett1024[] = {
+#else
 const int16_t AudioWindowBartlett1024[] __attribute__ ((aligned (4))) = {
+#endif
     32,    96,   160,   224,   288,   352,   416,   480,   544,   608,
    672,   736,   800,   864,   928,   992,  1056,  1120,  1184,  1248,
   1312,  1376,  1440,  1504,  1568,  1632,  1696,  1760,  1824,  1888,
@@ -557,7 +608,11 @@ const int16_t AudioWindowBartlett1024[] __attribute__ ((aligned (4))) = {
    224,   160,    96,    32,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackman1024[] = {
+#else
 const int16_t AudioWindowBlackman1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,     0,     1,     2,     3,     4,     5,     7,     9,
     11,    13,    16,    19,    22,    25,    29,    32,    36,    40,
     45,    49,    54,    59,    65,    70,    76,    82,    88,    95,
@@ -663,7 +718,11 @@ const int16_t AudioWindowBlackman1024[] __attribute__ ((aligned (4))) = {
      1,     0,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowFlattop1024[] = {
+#else
 const int16_t AudioWindowFlattop1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,     0,     0,     0,     0,     0,     0,    -1,    -1,
     -2,    -2,    -3,    -3,    -4,    -5,    -5,    -6,    -7,    -8,
     -9,   -10,   -12,   -13,   -14,   -15,   -17,   -18,   -20,   -21,
@@ -769,7 +828,11 @@ const int16_t AudioWindowFlattop1024[] __attribute__ ((aligned (4))) = {
      0,     0,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackmanHarris1024[] = {
+#else
 const int16_t AudioWindowBlackmanHarris1024[] __attribute__ ((aligned (4))) = {
+#endif
      2,     2,     2,     2,     2,     2,     3,     3,     3,     3,
      4,     4,     5,     5,     5,     6,     7,     7,     8,     8,
      9,    10,    11,    12,    13,    14,    15,    16,    17,    18,
@@ -875,7 +938,11 @@ const int16_t AudioWindowBlackmanHarris1024[] __attribute__ ((aligned (4))) = {
      2,     2,     2,     2,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowNuttall1024[] = {
+#else
 const int16_t AudioWindowNuttall1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,     0,     0,     0,     0,     0,     1,     1,     1,     1,
      1,     2,     2,     3,     3,     3,     4,     4,     5,     6,
      6,     7,     8,     8,     9,    10,    11,    12,    13,    14,
@@ -981,7 +1048,11 @@ const int16_t AudioWindowNuttall1024[] __attribute__ ((aligned (4))) = {
      0,     0,     0,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowBlackmanNuttall1024[] = {
+#else
 const int16_t AudioWindowBlackmanNuttall1024[] __attribute__ ((aligned (4))) = {
+#endif
     12,    12,    12,    12,    12,    12,    13,    13,    13,    14,
     14,    15,    15,    16,    17,    17,    18,    19,    20,    21,
     22,    23,    24,    25,    26,    27,    29,    30,    32,    33,
@@ -1087,7 +1158,11 @@ const int16_t AudioWindowBlackmanNuttall1024[] __attribute__ ((aligned (4))) = {
     12,    12,    12,    12,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowWelch1024[] = {
+#else
 const int16_t AudioWindowWelch1024[] __attribute__ ((aligned (4))) = {
+#endif
     64,   192,   319,   446,   573,   700,   827,   953,  1079,  1205,
   1330,  1455,  1580,  1705,  1830,  1954,  2078,  2202,  2325,  2448,
   2571,  2694,  2817,  2939,  3061,  3183,  3304,  3425,  3546,  3667,
@@ -1193,7 +1268,11 @@ const int16_t AudioWindowWelch1024[] __attribute__ ((aligned (4))) = {
    446,   319,   192,    64,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowHamming1024[] = {
+#else
 const int16_t AudioWindowHamming1024[] __attribute__ ((aligned (4))) = {
+#endif
   2621,  2622,  2623,  2624,  2626,  2629,  2632,  2635,  2640,  2644,
   2650,  2656,  2662,  2669,  2677,  2685,  2694,  2704,  2713,  2724,
   2735,  2747,  2759,  2772,  2785,  2799,  2813,  2828,  2844,  2860,
@@ -1299,7 +1378,11 @@ const int16_t AudioWindowHamming1024[] __attribute__ ((aligned (4))) = {
   2624,  2623,  2622,  2621,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowCosine1024[] = {
+#else
 const int16_t AudioWindowCosine1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,   101,   201,   302,   403,   503,   604,   704,   805,   906,
   1006,  1107,  1207,  1308,  1408,  1509,  1609,  1710,  1810,  1911,
   2011,  2112,  2212,  2313,  2413,  2513,  2614,  2714,  2814,  2914,
@@ -1405,7 +1488,11 @@ const int16_t AudioWindowCosine1024[] __attribute__ ((aligned (4))) = {
    302,   201,   101,     0,
 };
 
+#ifdef SIMU_DISPLAY
+__declspec(align(4)) const int16_t AudioWindowTukey1024[] = {
+#else
 const int16_t AudioWindowTukey1024[] __attribute__ ((aligned (4))) = {
+#endif
      0,     1,     5,    11,    20,    31,    44,    61,    79,   100,
    123,   149,   178,   208,   242,   277,   315,   356,   399,   444,
    492,   542,   595,   650,   707,   767,   829,   893,   960,  1029,

@@ -72,7 +72,9 @@ void AudioInputSpiMono::begin(void)
 	// TODO: should we set & clear the I2S_RCSR_SR bit here?
 //	AudioOutputI2S::config_i2s();
     config_i2s();
-#if defined(KINETISK)
+#if defined(SIMU_DISPLAY)
+		// TODO
+#elif defined(KINETISK)
 	CORE_PIN13_CONFIG = PORT_PCR_MUX(4); // pin 13, PTC5, I2S0_RXD0
 	dma.TCD->SADDR = (void *)((uint32_t)&I2S0_RDR0 + 2);
 	dma.TCD->SOFF = 0;
@@ -163,7 +165,9 @@ void AudioInputSpiMono::isr(void)
 	int16_t *dest_left /*, *dest_right */;
 	audio_block_t *left /*, *right */;
 
-#if defined(KINETISK) || defined(__IMXRT1062__)
+#if defined (SIMU_DISPLAY)
+	// TODO
+#elif (defined(KINETISK) || defined(__IMXRT1062__))
 	daddr = (uint32_t)(dma.TCD->DADDR);
 	dma.clearInterrupt();
 	//Serial.println("isr");
@@ -258,7 +262,9 @@ void AudioInputSpiMono::update(void)
 
 void AudioInputSpiMono::config_i2s(bool only_bclk)
 {
-#if defined(__IMXRT1062__)
+#if defined(SIMU_DISPLAY)
+	// TODO
+#elif defined(__IMXRT1062__)
 
 	CCM_CCGR5 |= CCM_CCGR5_SAI1(CCM_CCGR_ON);
 

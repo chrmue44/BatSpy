@@ -32,7 +32,9 @@ extern "C" const uint16_t sqrt_integer_guess_table[];
 extern const uint16_t sqrt_integer_guess_table[];
 #endif
 
+#ifndef SIMU_DISPLAY
 inline uint32_t sqrt_uint32(uint32_t in) __attribute__((always_inline,unused));
+#endif
 inline uint32_t sqrt_uint32(uint32_t in)
 {
 	uint32_t n = sqrt_integer_guess_table[__builtin_clz(in)];
@@ -42,7 +44,9 @@ inline uint32_t sqrt_uint32(uint32_t in)
 	return n;
 }
 
+#ifndef SIMU_DISPLAY
 inline uint32_t sqrt_uint32_approx(uint32_t in) __attribute__((always_inline,unused));
+#endif
 inline uint32_t sqrt_uint32_approx(uint32_t in)
 {
 	uint32_t n = sqrt_integer_guess_table[__builtin_clz(in)];

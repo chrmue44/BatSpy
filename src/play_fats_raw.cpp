@@ -26,9 +26,7 @@
 
 //#include <Arduino.h>
 #include "play_fats_raw.h"
-#ifndef SIMU_DISPLAY
 #include "spi_interrupt.h"
-#endif
 
 void AudioPlayFatsRaw::begin(void)
 {

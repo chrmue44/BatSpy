@@ -7,7 +7,11 @@
  * ***********************************************************/
 #ifndef _CAUDIO_H
 #define _CAUDIO_H
+#ifdef SIMU_DISPLAY
+#include <Audio_sim.h>
+#else
 #include <Audio.h>
+#endif
 #include <cstdint>
 #include <cstddef>
 

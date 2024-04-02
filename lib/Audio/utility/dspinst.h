@@ -33,7 +33,17 @@
 static inline int32_t signed_saturate_rshift(int32_t val, int bits, int rshift) __attribute__((always_inline, unused));
 static inline int32_t signed_saturate_rshift(int32_t val, int bits, int rshift)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined SIMU_DISPLAY
+	int32_t out = val >> rshift;
+	int32_t max = 1 << (bits - 1);
+	if (out >= 0)
+	{
+		if (out > max - 1) out = max - 1;
+  }
+	else 
+		if (out < -max) out = -max;
+    return out;
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("ssat %0, %1, %2, asr %3" : "=r" (out) : "I" (bits), "r" (val), "I" (rshift));
 	return out;
@@ -71,7 +81,9 @@ static inline int16_t saturate16(int32_t val)
 static inline int32_t signed_multiply_32x16b(int32_t a, uint32_t b) __attribute__((always_inline, unused));
 static inline int32_t signed_multiply_32x16b(int32_t a, uint32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined (SIMU_DISPLAY)
+	return ((int64_t)a * (b & 0xFFFF)) >> 16;
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smulwb %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
 	return out;
@@ -84,7 +96,9 @@ static inline int32_t signed_multiply_32x16b(int32_t a, uint32_t b)
 static inline int32_t signed_multiply_32x16t(int32_t a, uint32_t b) __attribute__((always_inline, unused));
 static inline int32_t signed_multiply_32x16t(int32_t a, uint32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined SIMU_DISPLAY
+	return ((int64_t)a * (b >> 16)) >> 16;
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smulwt %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
 	return out;
@@ -97,7 +111,9 @@ static inline int32_t signed_multiply_32x16t(int32_t a, uint32_t b)
 static inline int32_t multiply_32x32_rshift32(int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline int32_t multiply_32x32_rshift32(int32_t a, int32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined(SIMU_DISPLAY)
+	return (int32_t)(((int64_t)a * (int64_t)b) >> 32);
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smmul %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
 	return out;
@@ -110,7 +126,9 @@ static inline int32_t multiply_32x32_rshift32(int32_t a, int32_t b)
 static inline int32_t multiply_32x32_rshift32_rounded(int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline int32_t multiply_32x32_rshift32_rounded(int32_t a, int32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined (SIMU_DISPLAY)
+	return (((int64_t)a * (int64_t)b + 0x8000000) >> 32);
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smmulr %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
 	return out;
@@ -123,7 +141,9 @@ static inline int32_t multiply_32x32_rshift32_rounded(int32_t a, int32_t b)
 static inline int32_t multiply_accumulate_32x32_rshift32_rounded(int32_t sum, int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline int32_t multiply_accumulate_32x32_rshift32_rounded(int32_t sum, int32_t a, int32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined(SIMU_DISPLAY)
+	return sum + (((int64_t)a * (int64_t)b + 0x8000000) >> 32);
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smmlar %0, %2, %3, %1" : "=r" (out) : "r" (sum), "r" (a), "r" (b));
 	return out;
@@ -136,7 +156,9 @@ static inline int32_t multiply_accumulate_32x32_rshift32_rounded(int32_t sum, in
 static inline int32_t multiply_subtract_32x32_rshift32_rounded(int32_t sum, int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline int32_t multiply_subtract_32x32_rshift32_rounded(int32_t sum, int32_t a, int32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined (SIMU_DISPLAY)
+	return sum - (((int64_t)a * (int64_t)b + 0x8000000) >> 32);
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("smmlsr %0, %2, %3, %1" : "=r" (out) : "r" (sum), "r" (a), "r" (b));
 	return out;
@@ -176,7 +198,9 @@ static inline uint32_t pack_16t_16b(int32_t a, int32_t b)
 static inline uint32_t pack_16b_16b(int32_t a, int32_t b) __attribute__((always_inline, unused));
 static inline uint32_t pack_16b_16b(int32_t a, int32_t b)
 {
-#if defined (__ARM_ARCH_7EM__)
+#if defined SIMU_DISPLAY
+    return ((a & 0xFFFF) << 16) | (b & 0xFFFF))
+#elif defined (__ARM_ARCH_7EM__)
 	int32_t out;
 	asm volatile("pkhbt %0, %1, %2, lsl #16" : "=r" (out) : "r" (b), "r" (a));
 	return out;
@@ -200,9 +224,13 @@ static inline uint32_t pack_16x16(int32_t a, int32_t b)
 static inline uint32_t signed_add_16_and_16(uint32_t a, uint32_t b) __attribute__((always_inline, unused));
 static inline uint32_t signed_add_16_and_16(uint32_t a, uint32_t b)
 {
+#if defined SIMU_DISPLAY
+	return (((a >> 16) + (b >> 16)) << 16) | ((a & 0xFFFF) + (b & 0xFFFF));
+#else
 	int32_t out;
 	asm volatile("qadd16 %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
 	return out;
+#endif
 }
 
 // computes (((a[31:16] - b[31:16]) << 16) | (a[15:0 - b[15:0]))  (saturates)
@@ -237,7 +265,11 @@ static inline int32_t signed_multiply_accumulate_32x16b(int32_t sum, int32_t a, 
 static inline int32_t signed_multiply_accumulate_32x16b(int32_t sum, int32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = sum + (((int64_t)a * (b & 0xFFFF)) >> 16);
+#else
 	asm volatile("smlawb %0, %2, %3, %1" : "=r" (out) : "r" (sum), "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -246,7 +278,11 @@ static inline int32_t signed_multiply_accumulate_32x16t(int32_t sum, int32_t a, 
 static inline int32_t signed_multiply_accumulate_32x16t(int32_t sum, int32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = sum + (((int64_t)a * (b >> 16)) >> 16);
+#else
 	asm volatile("smlawt %0, %2, %3, %1" : "=r" (out) : "r" (sum), "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -263,7 +299,11 @@ static inline int32_t multiply_16tx16t_add_16bx16b(uint32_t a, uint32_t b) __att
 static inline int32_t multiply_16tx16t_add_16bx16b(uint32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = (a & 0xFFFF) * (b & 0xFFFF) + (a >> 16) * (b >> 16);
+#else
 	asm volatile("smuad %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -295,7 +335,11 @@ static inline int32_t multiply_16bx16b(uint32_t a, uint32_t b) __attribute__((al
 static inline int32_t multiply_16bx16b(uint32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = (a & 0xFFFF) * (b & 0xFFFF);
+#else
 	asm volatile("smulbb %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -313,7 +357,11 @@ static inline int32_t multiply_16tx16b(uint32_t a, uint32_t b) __attribute__((al
 static inline int32_t multiply_16tx16b(uint32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = (a >> 16) * (b & 0xFFFF);
+#else
 	asm volatile("smultb %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -322,7 +370,11 @@ static inline int32_t multiply_16tx16t(uint32_t a, uint32_t b) __attribute__((al
 static inline int32_t multiply_16tx16t(uint32_t a, uint32_t b)
 {
 	int32_t out;
+#ifdef SIMU_DISPLAY
+	out = (a >> 16) * (b >> 16);
+#else
 	asm volatile("smultt %0, %1, %2" : "=r" (out) : "r" (a), "r" (b));
+#endif
 	return out;
 }
 
@@ -342,12 +394,14 @@ static inline int32_t substract_32_saturate(uint32_t a, uint32_t b)
 static inline int32_t FRACMUL_SHL(int32_t x, int32_t y, int z)
 {
     int32_t t, t2;
-    asm ("smull    %[t], %[t2], %[a], %[b]\n\t"
+#ifndef SIMU_DISPLAY
+		asm ("smull    %[t], %[t2], %[a], %[b]\n\t"
          "mov      %[t2], %[t2], asl %[c]\n\t"
          "orr      %[t], %[t2], %[t], lsr %[d]\n\t"
          : [t] "=&r" (t), [t2] "=&r" (t2)
          : [a] "r" (x), [b] "r" (y),
            [c] "Mr" ((z) + 1), [d] "Mr" (31 - (z)));
+#endif
     return t;
 }
 
@@ -358,7 +412,9 @@ static inline uint32_t get_q_psr(void) __attribute__((always_inline, unused));
 static inline uint32_t get_q_psr(void)
 {
   uint32_t out;
+#ifndef SIMU_DISPLAY
   asm ("mrs %0, APSR" : "=r" (out));
+#endif
   return (out & 0x8000000)>>27;
 }
 
@@ -366,9 +422,11 @@ static inline uint32_t get_q_psr(void)
 static inline void clr_q_psr(void) __attribute__((always_inline, unused));
 static inline void clr_q_psr(void)
 {
+#ifndef SIMU_DISPLAY
   uint32_t t;
   asm ("mov %[t],#0\n"
        "msr APSR_nzcvq,%0\n" : [t] "=&r" (t)::"cc");
+#endif
 }
 
 

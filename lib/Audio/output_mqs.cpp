@@ -25,7 +25,17 @@
  */
 // Frank B
 
-#if defined(__IMXRT1052__) || defined(__IMXRT1062__)
+#if defined(SIMU_DISPLAY)
+#include <Arduino.h>
+#include "output_mqs.h"
+void AudioOutputMQS::begin(void)
+{
+}
+
+void AudioOutputMQS::update(void)
+{
+}
+#elif defined(__IMXRT1052__) || defined(__IMXRT1062__)
 #include <Arduino.h>
 #include "output_mqs.h"
 #include "memcpy_audio.h"

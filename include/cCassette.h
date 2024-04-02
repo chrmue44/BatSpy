@@ -13,7 +13,11 @@
 #define CCASSETTE_H
 
 //#define WAV
+#ifdef SIMU_DISPLAY
+#include <Audio_sim.h>
+#else
 #include <Audio.h>
+#endif
 #include <cSdCard.h>
 
 #include "types.h"

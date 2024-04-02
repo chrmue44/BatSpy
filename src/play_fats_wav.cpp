@@ -26,9 +26,8 @@
 
 #include <Arduino.h>
 #include "play_fats_wav.h"
-#ifndef SIMU_DISPLAY
 #include "spi_interrupt.h"
-#endif
+
 #define STATE_DIRECT_8BIT_MONO		0  // playing mono at native sample rate
 #define STATE_DIRECT_8BIT_STEREO	1  // playing stereo at native sample rate
 #define STATE_DIRECT_16BIT_MONO		2  // playing mono at native sample rate
