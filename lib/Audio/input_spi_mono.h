@@ -37,6 +37,9 @@ public:
 	AudioInputSpiMono(void) : AudioStream(0, NULL) { begin(); }
 	virtual void update(void);
 	void begin(void);
+#ifdef SIMU_DISPLAY
+	DMAChannel* getDma() { return &dma; }
+#endif
 protected:	
 	AudioInputSpiMono(int dummy): AudioStream(0, NULL) {} // to be used only inside AudioInputI2Sslave !!
 	static bool update_responsibility;

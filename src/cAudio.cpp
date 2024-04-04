@@ -565,7 +565,11 @@ void cAudio::operate(bool liveFft)
   {
     int idx = m_fft.find_max_amp();
     m_fftInfo.lastMaxAmpl = m_fft.output[idx];
-    m_fftInfo.lastMaxFreq = (float)m_sampleRate * idx / getFftOutputSize() / 2.0;  
+    m_fftInfo.lastMaxFreq = (float)m_sampleRate * idx / getFftOutputSize() / 2.0; 
+    int32_t avg = 0;
+    for(int i = 0; i < 512; i++)
+      avg += m_fft.output[i];
+    m_fftInfo.lastAvg =  (float)avg / 512.;
     m_trigger.checkTrigger();
   }
   if(liveFft && fftAvailable && !m_haltLiveFft)

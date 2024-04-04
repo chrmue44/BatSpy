@@ -11,6 +11,7 @@
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S);
 cLog sysLog("sys");
 cLog gpsLog("gps");
+cLog trigLog("trig");
 cGps gps;
 Adafruit_GFX* pDisplay = nullptr;
 cAudio audio;  // audio control

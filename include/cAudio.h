@@ -135,7 +135,9 @@ private:
   void stopRecording();
   void startRecording();
   bool isRecordingActive();
-  
+#ifdef SIMU_DISPLAY
+  DMAChannel* getDma() { return m_audioIn.getDma(); }
+#endif
  private:
   void setMixOscFrequency(float freq);
   void setTrigFilter(float freq, enFiltType type);

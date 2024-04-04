@@ -11,11 +11,11 @@
 #include "debug.h"
 #include "cTrigger.h"
 
+
 cTrigger::cTrigger(stFftInfo& info, AudioAnalyzePeak& peak) :
 m_fftInfo(info),
 m_peak(peak)
 {
-
 }
 
 void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
@@ -96,6 +96,8 @@ void cTrigger::checkRecordingTrigger(float fFilter)
       if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq >= fFilter))
       {
         m_countRec++;
+        trigLog.logf("%i, %i, %.1f, %.1f\n", 
+                      m_countRec, m_fftInfo.lastMaxAmpl,m_fftInfo.lastMaxFreq, m_fftInfo.lastAvg);  //@@@
         if(m_countRec >= m_minEventLen)
         {
           DPRINTF4("recording triggered, count %i\n", m_countRec);

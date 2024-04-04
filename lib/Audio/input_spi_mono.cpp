@@ -52,7 +52,11 @@
 
 #if !defined(KINETISL)
 
+#if defined SIMU_DISPLAY
+uint32_t spi_rx_buffer[AUDIO_BLOCK_SAMPLES];
+#else
 DMAMEM __attribute__((aligned(32))) static uint32_t spi_rx_buffer[AUDIO_BLOCK_SAMPLES];
+#endif
 audio_block_t * AudioInputSpiMono::block_left = NULL;
 //audio_block_t * AudioInputSpiMono::block_right = NULL;
 int16_t AudioInputSpiMono::wRight = 0;
@@ -165,11 +169,7 @@ void AudioInputSpiMono::isr(void)
 	int16_t *dest_left /*, *dest_right */;
 	audio_block_t *left /*, *right */;
 
-#if defined (SIMU_DISPLAY)
-	src = (int16_t*)&spi_rx_buffer[0];
-	end = (int16_t*)&spi_rx_buffer[AUDIO_BLOCK_SAMPLES / 2];
-	// TODO
-#elif (defined(KINETISK) || defined(__IMXRT1062__))
+#if (defined(KINETISK) || defined(__IMXRT1062__))
 	daddr = (uint32_t)(dma.TCD->DADDR);
 	dma.clearInterrupt();
 	//Serial.println("isr");
