@@ -116,7 +116,7 @@ void setup()
     calcSunrise();
   initDisplayVars();
   logStatus();
-  trigLog.log("count,ampl,freq,avg");
+  trigLog.log("count,ampl,freq,avg, bandwidth");
   digWrite(SPIN_LED_2, 0);
 }
 

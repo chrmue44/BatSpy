@@ -26,6 +26,7 @@ struct stFftInfo
   uint16_t lastMaxAmpl;           // max amplitude of last fft
   float lastMaxFreq;              // max frequency of last fft
   float lastAvg;                  // last average value over all frequencies
+  float bw;                       // bandwidth of signal above threshold
   uint32_t sweepDelayCnt = 0;     // delay counter to slow down sweep speed 
 };
 
