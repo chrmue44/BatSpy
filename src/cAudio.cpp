@@ -568,18 +568,38 @@ void cAudio::operate(bool liveFft)
     m_fftInfo.lastMaxFreq = (float)m_sampleRate * idx / getFftOutputSize() / 2.0; 
     int32_t avg = 0;
     int32_t bw = 0;
-    for(int i = 0; i < 512; i++)
-    {
+    int i = 0;
+    int32_t avgPeak = 0;
+
+    // calculate average 
+    for(i = 0; i < 512; i++)
       avg += m_fft.output[i];
-      if(m_fft.output[i] > FREQ_THRESHOLD)
-        bw++;
+    
+    // calculate bandwidth around maximum intensity
+    i = idx;
+    while((m_fft.output[i] > FREQ_THRESHOLD) && (i < 512))
+    {
+      bw++;
+      idx++;
+      avgPeak += m_fft.output[i];
     }
-    m_fftInfo.lastAvg =  (float)avg / 512.0;
+    i = idx;
+    while((m_fft.output[i] > FREQ_THRESHOLD) && (i >= 0))
+    {
+      bw++;
+      idx--;
+      avgPeak += m_fft.output[i];
+    }
+    m_fftInfo.lastAvgPeak = (float)avgPeak / (float)bw;
+    m_fftInfo.lastAvg =  (float)(avg - avgPeak) / 512.0;
     m_fftInfo.bw = (float)(bw * m_sampleRate) / 1024.0;
     m_trigger.checkTrigger();
   }
+
   if(liveFft && fftAvailable && !m_haltLiveFft)
     calcLiveFft();
+  
+  // handle recording
   if (m_oldCassMode != m_cass.getMode())
   {
     if (m_cass.getMode() == enCassMode::STOP)
