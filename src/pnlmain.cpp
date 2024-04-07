@@ -744,7 +744,7 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(26,                    1,      y + r * lf,   70, lf);
   err |= pan->addEnumItem(&devPars.recAuto,      x -  7, y + r++ * lf, 73, lf, true, dispModeFunc);
   err |= pan->addTextItem(27,                    1,      y + r * lf,   70, lf);
-  err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 40, lf, false);
+  err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 50, lf, false);
  // pan->itemList[visRecCntIndex].isVisible = false;
   err |= pan->addTextItem(1365,                  1,      y + r * lf,   80, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
@@ -755,9 +755,9 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.freeSpace,   x,      y + r * lf,   35, lf, false);
   err |= pan->addTextItem(454,                   x + 40, y + r++ * lf, 18, lf);
   err |= pan->addTextItem(451,                   1,      y + r * lf,   70, lf);
-  err |= pan->addNumItem(&devStatus.chargeLevel, x,      y + r * lf,   12, lf, false);
+  err |= pan->addNumItem(&devStatus.chargeLevel, x,      y + r * lf,   20, lf, false);
   err |= pan->addTextItem(453,                   x + 21, y + r * lf,    6, lf);
-  err |= pan->addNumItem(&devStatus.voltage,     x + 32, y + r * lf,   20, lf, false);
+  err |= pan->addNumItem(&devStatus.voltage,     x + 32, y + r * lf,   23, lf, false);
   err |= pan->addTextItem(452,                   x + 56, y + r++ * lf,  8, lf);
   err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
   err |= pan->addTimeItem(&devStatus.time,       x,      y + r++ * lf, 70, lf);

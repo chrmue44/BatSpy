@@ -130,6 +130,8 @@ int MEMP initParRecCompact(cPanel* pan, tCoord lf)
   int x = 80;
   err |= pan->addTextItem(1360,                  1,      r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.triggerType,  x - 30, r++ * lf,  72, lf, true);
+  err |= pan->addTextItem(1120,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recTime,       x + 15, r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1141,                  1,      r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.recThreshhold, x + 15, r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1370,                  1,      r   * lf,  80, lf);

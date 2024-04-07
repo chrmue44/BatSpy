@@ -151,7 +151,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1101, "Deutsch"                   ,0 },
   { 1102, "English"                   ,0 },
   { 1110, "Abtastrate [ks/s]"         ,"Sampling rate [ks/s]" },
-  { 1120, "Aufnahmedauer [s]"         ,"Recording time [s]" },
+  { 1120, "Aufnahmezeit [s]"          ,"Recording time [s]" },
   { 1130, "10x"                       ,0 },
   { 1131, "20x"                       ,0 },
   { 1140, "Schwellwert Aufnahme [db]" ,"Threshhold recording [dB]" },
