@@ -46,6 +46,7 @@ class cTrigger
   float m_recThresh = 0.1;                      ///< recording thresh hold (0.0 ... 1.0)
   float m_minFreq = 15000;                      ///< minimal frequency found during trigger
   int m_minEventLen = 1;                        ///< minimum event length to trigger
+  stFftInfo m_trigInfo;                         ///< information about last trigger event
 
  public:
   cTrigger(stFftInfo& info, AudioAnalyzePeak& peak);
@@ -59,6 +60,7 @@ class cTrigger
   float lastPeakVal() { return m_peakVal;}
   void setThreshold(float level) { m_recThresh = level; }
   void setMinEventLength(float len, uint32_t sampleRate);
+  void logTrigInfo();
 
  private:
   void checkLiveTrigger(float fFilter);

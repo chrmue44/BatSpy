@@ -580,16 +580,19 @@ void cAudio::operate(bool liveFft)
     while((m_fft.output[i] > FREQ_THRESHOLD) && (i < 512))
     {
       bw++;
-      idx++;
+      i++;
       avgPeak += m_fft.output[i];
     }
     i = idx;
     while((m_fft.output[i] > FREQ_THRESHOLD) && (i >= 0))
     {
       bw++;
-      idx--;
+      i--;
       avgPeak += m_fft.output[i];
     }
+    
+    if(bw == 0)
+      bw++;
     m_fftInfo.lastAvgPeak = (float)avgPeak / (float)bw;
     m_fftInfo.lastAvg =  (float)(avg - avgPeak) / 512.0;
     m_fftInfo.bw = (float)(bw * m_sampleRate) / 1024.0;
@@ -615,6 +618,7 @@ void cAudio::operate(bool liveFft)
         statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
         m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
+        m_trigger.logTrigInfo();
         DPRINTLN4("start timeout");
         break;
       case enPlayStatus::ST_STOP:
@@ -623,6 +627,7 @@ void cAudio::operate(bool liveFft)
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
+          m_trigger.logTrigInfo();
           DPRINTLN4("cAudio::operate: recording stopped");
         }
         break;

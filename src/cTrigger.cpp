@@ -96,10 +96,9 @@ void cTrigger::checkRecordingTrigger(float fFilter)
       if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq >= fFilter))
       {
         m_countRec++;
-        trigLog.logf(",%i, %i, %.1f, %.1f, %.1f, %.1f\n", 
-                      m_countRec, m_fftInfo.lastMaxAmpl,m_fftInfo.lastMaxFreq, m_fftInfo.lastAvg, m_fftInfo.lastAvgPeak, m_fftInfo.bw);  //@@@
         if(m_countRec >= m_minEventLen)
         {
+          m_trigInfo = m_fftInfo;
           DPRINTF4("recording triggered, count %i\n", m_countRec);
           m_recTrigger = true;
           m_stateRec = enTrigState::TRIGGERED;
@@ -114,6 +113,12 @@ void cTrigger::checkRecordingTrigger(float fFilter)
   }
 }
 
+void cTrigger::logTrigInfo()
+{
+  trigLog.logf(",%i, %i, %.1f, %.1f, %.1f, %.1f\n", 
+                m_countRec, m_trigInfo.lastMaxAmpl,
+                m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);  //@@@
+}
 
 void cTrigger::checkLiveTrigger(float fFilter)
 {
