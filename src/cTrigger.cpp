@@ -20,7 +20,9 @@ m_peak(peak)
 
 void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
 {
-  m_minEventLen = (int)(len / 1000.0 * sampleRate / 512.0 + 0.5); 
+  m_minEventLen = (int)(len / 1000.0 * sampleRate / 1024.0 + 0.5);
+  if(m_minEventLen == 0)
+    m_minEventLen = 1; 
 }
 
 void cTrigger::checkTrigger()
@@ -113,10 +115,10 @@ void cTrigger::checkRecordingTrigger(float fFilter)
   }
 }
 
-void cTrigger::logTrigInfo()
+void cTrigger::logTrigInfo(const char* fileName)
 {
-  trigLog.logf(",%i, %i, %.1f, %.1f, %.1f, %.1f\n", 
-                m_countRec, m_trigInfo.lastMaxAmpl,
+  trigLog.logf(",%s, %i, %i, %.1f, %.1f, %.1f, %.1f\n", 
+                fileName, m_countRec, m_trigInfo.lastMaxAmpl,
                 m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);  //@@@
 }
 

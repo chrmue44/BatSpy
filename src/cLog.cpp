@@ -50,6 +50,8 @@ void cLog::create()
       sd.writeFile(m_fd, buf, written, strlen(buf));
       sd.closeFile(m_fd);
     }
+    else
+      DPRINTLN1("failed to open file");
     m_create = true;
   }
   timeStamp();
@@ -59,6 +61,8 @@ void cLog::create()
     DPRINTF1("open log file: %s, res %i\n", m_fileName, res);
     if(res == enSdRes::OK)
       m_open = true;
+    else
+      DPRINTLN1("failed to open file");
   }
 }
 
