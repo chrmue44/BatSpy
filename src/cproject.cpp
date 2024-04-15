@@ -119,7 +119,7 @@ void MEMF cProject::openPrjFile(const char* pNotes)
   strcat(buf, "/");
   strcat(buf, m_prjName);
   strcat(buf, ".bpr");
-  trigLog.log("count,ampl,freq,avg, avgPeak,bandwidth");
+  trigLog.log("fileName,count,ampl,freq,avg, avgPeak,bandwidth");
   DPRINTF4("open project %s \n", buf);
   if(cSdCard::inst().fileExists(buf))
     openExistingPrjFile(buf, startY, startM, startD);
