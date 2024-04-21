@@ -120,6 +120,7 @@ struct stStatus
   cParList notes2 = 0;
   cParNum lastCallF = 0.0;
   cParList liveMsPerDiv = 0;
+  cParNum chargeLevel = 0;
 };
 
 

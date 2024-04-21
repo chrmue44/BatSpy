@@ -631,7 +631,9 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(440,                  3,     30 + r * lf, 80, lf);
   err |= pan->addNumItem(&devStatus.freeSpace,  x,     30 + r++ * lf, 80, lf, false);
   err |= pan->addTextItem(450,                  3,     30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.voltage,    x,     30 + r * lf, 40, lf, false);
+  err |= pan->addNumItem(&devStatus.chargeLevel, x,    30 + r * lf, 20, lf, false);
+  err |= pan->addTextItem(453,                   x + 21, 30 + r * lf,    6, lf);
+  err |= pan->addNumItem(&devStatus.voltage,    x + 40,  30 + r * lf, 40, lf, false);
   err |= pan->addNumItem(&devStatus.digits,   245,     30 + r * lf, 40, lf, false);
   err |= pan->addTextItem(201,                   3, 200 + lf, 70, lf);
   err |= pan->addDateItem(&devStatus.date,     100, 200 + lf, 70, lf);

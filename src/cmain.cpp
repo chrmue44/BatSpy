@@ -16,6 +16,7 @@
 #include "pnllive.h"
 #include "pnlparams.h"
 #include "globals.h"
+#include "cBattery.h"
 
 extern struct stTxtList Texts[];
 /*
@@ -166,6 +167,7 @@ void loop()
       cSdCard::inst().getFreeMem(freeSpace, totSpace);
       float volt = readSupplyVoltage();
       devStatus.voltage.set(volt);
+	  devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
       devStatus.freeSpace.set(freeSpace / 1024);
       float temp = readTemperature();
       devStatus.temperature.set(temp);

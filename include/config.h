@@ -51,6 +51,9 @@
 #define TEMP_OFFS_PORTABLE   34.0f   // temp offset measured CPU temp to outside temp
 #define TEMP_OFFS_STATIONARY 25.0f   // temp offset measured CPU temp to outside temp
 
+#define CPU_FREQ_HIGH      200000000  // CPU frequency for full speed operation
+#define CPU_FREQ_LOW        24000000  // CPU frequency for reduced speed operation
+
 //#define AUDIO_IN_SPI
 #define AUDIO_OUT_TEENSY
 
@@ -128,7 +131,7 @@ void setDispLight(uint8_t bright);
 
 inline bool isRevisionB() { return (digitalRead(PIN_REV1) == 0); }
 inline bool isRevisionA() { return (digitalRead(PIN_REV1) == 1); }
-//inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
+inline bool is12V() { return (digitalRead(PIN_ID_12V) == 0); }
 inline bool hasAmpRevB() { return  isRevisionB(); }
 
 #define PATH_NOTES1  "/info/notes1.txt"

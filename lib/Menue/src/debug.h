@@ -55,6 +55,7 @@
 #define DPRINTF3(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); Serial.log(b,3);}
 #define DPRINTF4(x, ...) { char b[256]; snprintf(b, sizeof(b), (x), __VA_ARGS__); Serial.log(b,4);}
 #else
+  #define DPRINT1(x)
   #define DPRINTLN1(x)
   #define DPRINTF1(x, ...)
   #define DPRINTLN2(x)
