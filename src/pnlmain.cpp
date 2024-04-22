@@ -751,14 +751,16 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
 
  // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
  // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
-  err |= pan->addTextItem(441,                   1,      y + r * lf,   70, lf);
-  err |= pan->addNumItem(&devStatus.freeSpace,   x,      y + r * lf,   35, lf, false);
-  err |= pan->addTextItem(454,                   x + 40, y + r++ * lf, 18, lf);
-  err |= pan->addTextItem(451,                   1,      y + r * lf,   70, lf);
-  err |= pan->addNumItem(&devStatus.chargeLevel, x,      y + r * lf,   20, lf, false);
-  err |= pan->addTextItem(453,                   x + 21, y + r * lf,    6, lf);
-  err |= pan->addNumItem(&devStatus.voltage,     x + 32, y + r * lf,   23, lf, false);
-  err |= pan->addTextItem(452,                   x + 56, y + r++ * lf,  8, lf);
+//  err |= pan->addTextItem(451,                   1,      y + r * lf,   70, lf);
+  err |= pan->addStrItem(&devStatus.batSymbol,    1,     y + r * lf, 25, lf);
+  err |= pan->addNumItem(&devStatus.chargeLevel, 30,     y + r * lf,   13, lf, false);
+  err |= pan->addTextItem(453,                   45,     y + r * lf,    6, lf);
+  err |= pan->addTextItem(441,                   60,     y + r * lf,   10, lf);
+  err |= pan->addNumItem(&devStatus.freeSpace,   70,     y + r * lf,   13, lf, false);
+  err |= pan->addTextItem(454,                   85,     y + r++ * lf, 13, lf);
+  r++;
+  //  err |= pan->addNumItem(&devStatus.voltage,     x + 32, y + r * lf,   23, lf, false);
+//  err |= pan->addTextItem(452,                   x + 56, y + r++ * lf,  8, lf);
   err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
   err |= pan->addTimeItem(&devStatus.time,       x,      y + r++ * lf, 70, lf);
   err |= pan->addTextItem(460,                   1,      y + r * lf,   70, lf);

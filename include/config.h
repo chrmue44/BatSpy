@@ -79,7 +79,8 @@
 
 #define I2C_ADDR_PORT_EXT 0x20
 #define I2C_ADDR_OLED     0x3C
-#define I2C_ADDR_HUMID    0x44
+#define I2C_ADDR_HUMID_A  0x44
+#define I2C_ADDR_HUMID_B  0x45
 
 
 // *****   pin definitions *****

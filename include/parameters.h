@@ -115,6 +115,7 @@ struct stStatus
   cParNum mainLoop = 0;
   cParEnum gpsStatus = enGpsStatus::GPS_STATUS_OFF;
   cParNum chargeLevel = 0;
+  cParStr batSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
 };
 
 

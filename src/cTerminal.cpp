@@ -346,7 +346,7 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
 	case 'f':
       size_t freeSpace;  size_t totSpace;
       cSdCard::inst().getFreeMem(freeSpace, totSpace);
-      devStatus.freeSpace.set(freeSpace / 1024);
+      devStatus.freeSpace.set(freeSpace / 1024 / 1024);
       getValFloat(buf + 1, devStatus.freeSpace, replyBuf, sizeof(replyBuf));
       Serial.print(&replyBuf[0]);
       break;	

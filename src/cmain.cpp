@@ -59,13 +59,14 @@ void initDisplayVars()
 {
   size_t freeSpace;  size_t totSpace;
   cSdCard::inst().getFreeMem(freeSpace, totSpace);
-  devStatus.freeSpace.set(freeSpace / 1024);
+  devStatus.freeSpace.set(freeSpace / 1024/1024);
   float humidity;
   float temp = readTemperature(humidity);
   devStatus.temperature.set(temp);
   devStatus.humidity.set(humidity);
   devStatus.voltage.set(readSupplyVoltage());
   devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+  devStatus.batSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
 }
 
 void setup()
@@ -286,6 +287,7 @@ void loop()
     {
       devStatus.voltage.set(readSupplyVoltage());
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
+      devStatus.batSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
     else if(((sec % 10) == 2) && !audio.isRecording())
       tempMeasSheduled = true;
@@ -309,7 +311,7 @@ void loop()
   {
     size_t freeSpace;  size_t totSpace;
     cSdCard::inst().getFreeMem(freeSpace, totSpace);
-    devStatus.freeSpace.set(freeSpace / 1024);
+    devStatus.freeSpace.set(freeSpace / 1024/1024);
     if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
       calcSunrise();
     logStatus();

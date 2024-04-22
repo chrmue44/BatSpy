@@ -12,6 +12,7 @@ class cBattery
 {
   public:
   static float getChargeCondition(float voltage);
+  static const char* getBatterySymbol(float chargeLevel);
 };
 
 #endif //#ifndef _CBATTERY_H_

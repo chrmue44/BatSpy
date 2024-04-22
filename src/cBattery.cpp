@@ -52,3 +52,17 @@ float cBattery::getChargeCondition(float voltage)
   }
   return retVal;
 }
+
+char battSymbol[15];
+const char* cBattery::getBatterySymbol(float chargeLevel)
+{
+  int ful = (int)(chargeLevel / 10.0 + 0.5);
+  battSymbol[0] = 0xEC;
+  for (int i = 1; i <= ful; i++)
+    battSymbol[i] = 0xEE;
+  for (int i = ful + 1; i <= 10; i++)
+    battSymbol[i] = 0xED;
+  battSymbol[11] = 0xEF;
+  battSymbol[12] = 0;
+  return &battSymbol[0];
+}
