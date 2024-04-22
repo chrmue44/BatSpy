@@ -20,7 +20,7 @@
 #include "chmfont.h"
 #include "fnt8x11.h"
 #include "cutils.h"
-
+#include "globals.h"
 #include "startup_pic.c_"
 
 #if defined(__IMXRT1062__)
@@ -52,10 +52,7 @@ void initPins()
 
   Wire.begin();
   ioex.attach(Wire);
-  bool ok = sht.init();
-  if(!ok)
-    sysLog.log("error initializing humidity sensor");
-  sht.setAccuracy(SHTSensor::SHTAccuracy::SHT_ACCURACY_HIGH);
+  initTempSensor();
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
   ioex.config(TCA9534::Config::OUT); // set all port to output
   ioex.polarity(TCA9534::Polarity::POL_ORIGINAL); // set all port polarity to original
@@ -450,6 +447,29 @@ float calcVoltageFactor(float volt)
   return fact;
 }
 
+void initTempSensor()
+{
+  sht.begin(Wire, SHT40_I2C_ADDR_44);
+  sht.softReset();
+  delay(10);
+  uint32_t serialNumber = 0;
+  int error = sht.serialNumber(serialNumber);
+  if (error != 0) 
+  {
+    sysLog.log("attempt to init temp sensor I2S addr 0x44 failed");
+    sht.begin(Wire, SHT40_I2C_ADDR_45);
+    sht.softReset();
+    delay(10);
+    error = sht.serialNumber(serialNumber);
+    if (error != 0)
+    { 
+      sysLog.log("attempt to init temp sensor I2S addr 0x44 failed");
+      return;
+    }
+  }
+  sysLog.log("temp sensor successfully initialized");
+}
+
 float readTemperature(float& humidity)
 {
 #ifdef ARDUINO_TEENSY41
@@ -460,9 +480,14 @@ float readTemperature(float& humidity)
   humidity = 0.0;
 #endif
 #ifdef ARDUINO_TEENSY40
-  sht.readSample();
-  humidity = sht.getHumidity();
-  return sht.getTemperature();
+  float t;
+  int err = sht.measureHighPrecision(t, humidity);
+  if(err != 0)
+  {
+    t = NAN;
+    humidity = NAN;
+  }
+  return t;
 #endif
 }
 

@@ -210,6 +210,7 @@ void initDisplay(int orientation);
 void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
 void setAnalogPower(bool on);
 void setHwOperationMode(enCpuMode mode);
+void initTempSensor();
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

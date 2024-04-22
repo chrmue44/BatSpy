@@ -29,7 +29,7 @@ cStatus statusDisplay;
 
 stStatus devStatus;          ///< status of the device
 stParams devPars;            ///< parameters of the device
-SHTSensor sht;
+SensirionI2cSht4x sht;
 char serialNumber[EEP_SERIAL_SIZE];
 
 #ifdef ARDUINO_TEENSY40

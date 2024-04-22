@@ -25,7 +25,7 @@ extern TCA9534 ioex;
 #include "cnotes.h"
 #include "cStatus.h"
 #include "cEeprom.h"
-#include "arduino-sht.h"
+#include "SensirionI2cSht4x.h"
 
 
 extern cLog sysLog;
@@ -47,7 +47,7 @@ extern stStatus devStatus;          ///< status of the device
 extern stParams devPars;            ///< parameters of the device
 extern cnotes notes1;
 extern cnotes notes2;
-extern SHTSensor sht;
+extern SensirionI2cSht4x sht;
 extern cStatus statusDisplay;
 extern char serialNumber[EEP_SERIAL_SIZE];
 #endif //#ifndef GLOBALS_H

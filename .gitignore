@@ -23,3 +23,6 @@ lib/ILI9341_t3/docs
 /lib/Adafruit_BusIO/.github
 /lib/Adafruit_ILI9341/examples
 /lib/Adafruit_ILI9341/.github
+/lib/Sensirion-core-main/examples
+/lib/arduino-i2c-sht4x/images
+/lib/arduino-i2c-sht4x/examples

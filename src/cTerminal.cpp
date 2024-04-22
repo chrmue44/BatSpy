@@ -316,6 +316,7 @@ void MEMF cTerminal::parseSetStatusCmd(const char* buf)
 void MEMF cTerminal::parseGetStatusCmd(const char* buf)
 {
   char replyBuf[256];
+  static float temp, humid;
   switch(buf[0])
   {
     case 'a':
@@ -325,15 +326,15 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       break;
     case 'b':
       {
-        bool ok = sht.readSample();
-        if(ok)
-          Serial.printf("%.1f", sht.getTemperature());
+        int ok = sht.measureHighPrecision(temp, humid);
+        if(ok == 0)
+          Serial.printf("%.1f", temp);
         else
           Serial.println("Error reading temperature");
       }
       break;
     case 'c':
-      Serial.printf("%.1f",  sht.getHumidity());
+      Serial.printf("%.1f",  humid);
       break;
 	  case 'd':
   	  snprintf(replyBuf, sizeof(replyBuf), "%02lu.%02lu.%04lu", devStatus.date.getDay(), devStatus.date.getMonth(), devStatus.date.getYear());
