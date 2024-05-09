@@ -135,6 +135,7 @@ void MEMF cLog::close()
     char buf[128];
     snprintf(buf, sizeof(buf), "close log\n");
     log(buf);
+    cSdCard::inst().
     cSdCard::inst().closeFile(m_fd);
     m_open = false;
   }

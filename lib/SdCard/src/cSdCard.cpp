@@ -674,6 +674,7 @@ enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, s
 
 #elif defined(CARDLIB_SDFAT)
   int rc = file.write((const uint8_t*)buf, bytesToWrite);
+  file.flush();
   if(rc < 0)
     retVal = WRITE_ERR;
   else
@@ -720,6 +721,7 @@ enSdRes cSdCard::closeFile(tFILE& file)
   #elif defined(CARDLIB_SDFAT)
   
   file.timestamp(T_WRITE,year(), month(), day(), hour(), minute(), second());
+  file.flush();
   bool ok = file.close();
   retVal = ok ? OK : CLOSE_ERR;
   #endif

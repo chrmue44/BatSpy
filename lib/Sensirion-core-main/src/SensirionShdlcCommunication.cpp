@@ -67,7 +67,7 @@ static uint16_t unstuffByte(uint8_t& data, Stream& serial, uint32_t startTime,
 
 uint16_t SensirionShdlcCommunication::sendFrame(SensirionShdlcTxFrame& frame,
                                                 Stream& serial) {
-    size_t writtenBytes = serial.write(&frame._buffer[0], frame._index);
+    size_t writtenBytes = serial.write((const char*)&frame._buffer[0], frame._index);
     if (writtenBytes != frame._index) {
         return WriteError | SerialWriteError;
     }

@@ -331,25 +331,33 @@ void initDisplay(int orientation)
 enCpuMode cpuMode = enCpuMode::CPU_MODE_INIT;
 void setHwOperationMode(enCpuMode mode)
 {
+  char buf[80];
   if(cpuMode != mode)
   {
     switch(mode)
     {
+      sysLog.close();
+      trigLog.close();
+      audio.closeProject();
+      cSdCard::inst().unmount();
       case enCpuMode::POWER_SAVE:
         audio.enable(false);
         setAnalogPower(false);
         set_arm_clock(CPU_FREQ_LOW);
-        sysLog.log("enable power save mode");
+        strncpy(buf,"enable power save mode", sizeof(buf));
         break;
       case enCpuMode::RECORDING:
         set_arm_clock(CPU_FREQ_HIGH);
         audio.enable(true);
         setAnalogPower(true);
-        sysLog.log("enable recording mode");
+        strncpy(buf,"enable recording mode", sizeof(buf));
         break;
       case enCpuMode::CPU_MODE_INIT:
         break;
     }
+    delay(50);
+    cSdCard::inst().mount();
+    sysLog.log(buf);
     cpuMode = mode;
     DPRINTF1("CPU Freq: %i\n", F_CPU_ACTUAL);
   }

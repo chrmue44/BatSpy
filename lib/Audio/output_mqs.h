@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#if defined(__IMXRT1052__) || defined(__IMXRT1062__)
+#if defined(__IMXRT1052__) || defined(__IMXRT1062__) || defined(SIMU_DISPLAY)
 #ifndef output_mqs_h_
 #define output_mqs_h_
 

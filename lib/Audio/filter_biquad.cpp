@@ -28,7 +28,7 @@
 #include "filter_biquad.h"
 #include "utility/dspinst.h"
 
-#if defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7EM__) || defined(SIMU_DISPLAY)
 
 void AudioFilterBiquad::update(void)
 {

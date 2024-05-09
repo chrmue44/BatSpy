@@ -28,7 +28,7 @@
 #include "mixer.h"
 #include "utility/dspinst.h"
 
-#if defined(__ARM_ARCH_7EM__)
+#if defined(__ARM_ARCH_7EM__) || defined(SIMU_DISPLAY)
 #define MULTI_UNITYGAIN 65536
 
 static void applyGain(int16_t *data, int32_t mult)
@@ -73,7 +73,7 @@ static void applyGainThenAdd(int16_t *data, const int16_t *in, int32_t mult)
 	}
 }
 
-#elif defined(KINETISL)
+#elif defined(KINETISL)  
 #define MULTI_UNITYGAIN 256
 
 static void applyGain(int16_t *data, int32_t mult)
