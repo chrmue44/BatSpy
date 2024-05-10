@@ -85,11 +85,11 @@ void setup()
   int orientation = readInt16FromEep(0x0032) == 0 ? 0 : 2;
   initDisplay(orientation);
   cSdCard::inst().mount();
-  sysLog.log("power on");
   char serial[16];
    getSerialNr(serial, sizeof(serial));
-  sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
   delay(500);  
+  sysLog.log("power on");
+  sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
   menue.init(hasDisplay() != enDisplayType::NO_DISPLAY);
   menue.initFileRelatedParams();
   // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);

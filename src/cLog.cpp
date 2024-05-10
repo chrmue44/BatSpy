@@ -138,5 +138,6 @@ void MEMF cLog::close()
     cSdCard::inst().
     cSdCard::inst().closeFile(m_fd);
     m_open = false;
+    m_create = false;
   }
 }
