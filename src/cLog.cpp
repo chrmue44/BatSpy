@@ -49,10 +49,10 @@ void cLog::create()
       snprintf(buf, sizeof(buf), "log created\n");
       sd.writeFile(m_fd, buf, written, strlen(buf));
       sd.closeFile(m_fd);
+      m_create = true;
     }
     else
       DPRINTLN1("failed to open file");
-    m_create = true;
   }
   timeStamp();
   if(!m_open)

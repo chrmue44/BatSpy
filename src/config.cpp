@@ -471,7 +471,7 @@ void initTempSensor()
     error = sht.serialNumber(serialNumber);
     if (error != 0)
     { 
-      sysLog.log("attempt to init temp sensor I2S addr 0x44 failed");
+      sysLog.log("attempt to init temp sensor I2S addr 0x45 failed");
       return;
     }
   }
