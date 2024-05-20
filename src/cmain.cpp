@@ -120,14 +120,20 @@ void setup()
   digWrite(SPIN_LED_2, 0);
 }
 
+static bool backLightOn = true;
+bool reinitDisplay = false;
 
 void handleDisplayAndWheel(bool oneSec)
 {
-  static bool backLightOn = true;
-
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
+    if(backLightOn && reinitDisplay)
+    {
+      initDisplay(devPars.dispOrient.get(), false);
+      sysLog.log("reinitialized display communication because of faulty temp. sensor");
+      reinitDisplay = false;
+    }    
     if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
     {
       if(backLightOn)
@@ -229,6 +235,7 @@ void handleButtonsAndLeds()
 // *********************** main loop **************************
 int loopCount = 0;
 bool tempMeasSheduled = false;
+
 void loop()
 {
   loopCount++;
@@ -302,6 +309,8 @@ void loop()
   {
     float humidity;
     float temp = readTemperature(humidity);
+    if((temp > 100) && (hasDisplay() == enDisplayType::OLED_128)) 
+      reinitDisplay = true;
     devStatus.temperature.set(temp);
     devStatus.humidity.set(humidity);
     tempMeasSheduled = false;

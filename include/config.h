@@ -206,7 +206,7 @@ void resetTft();
 void powerOff();
 void setIoDebugMode(bool mode);
 void portExpSetBit(uint8_t port, uint8_t state);
-void initDisplay(int orientation);
+void initDisplay(int orientation, bool showSplash = true);
 void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
 void setAnalogPower(bool on);
 void setHwOperationMode(enCpuMode mode);

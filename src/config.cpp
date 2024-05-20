@@ -171,10 +171,10 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.print(Txt::get(430));
     oled.setCursor(1, 34);
     oled.print(devStatus.version.get());
-    oled.setCursor(1, 48);
-    oled.print(Txt::get(435));
-    oled.setCursor(1, 57);
-    oled.print(devStatus.hwVersion.get());
+ //   oled.setCursor(1, 48);
+ //   oled.print(Txt::get(435));
+ //   oled.setCursor(1, 57);
+ //   oled.print(devStatus.hwVersion.get());
     memset(buf, 0, sizeof(buf));
     getSerialNr(buf, sizeof(buf));
     oled.setCursor(1, 71);
@@ -284,7 +284,7 @@ void testDisplay()
 }
 
 
-void initDisplay(int orientation)
+void initDisplay(int orientation, bool showSplash)
 {
   enDisplayType dType = (enDisplayType)hasDisplay();
   if (dType != enDisplayType::NO_DISPLAY)
@@ -317,13 +317,16 @@ void initDisplay(int orientation)
     }
     setDispLight(255);
     //testDisplay();
-    showSplashScreen(tft, true);
-    resetTft();
-    pDisplay->setRotation(orientation);
-    pDisplay->fillScreen(SSD1327_BLACK);
-    pDisplay->setTextColor(SSD1327_WHITE);
-    pDisplay->setTextSize(3);
-    setDispLight(255);
+    if(showSplash)
+    {
+      showSplashScreen(tft, true);
+      resetTft();
+      pDisplay->setRotation(orientation);
+      pDisplay->fillScreen(SSD1327_BLACK);
+      pDisplay->setTextColor(SSD1327_WHITE);
+      pDisplay->setTextSize(3);
+      setDispLight(255);
+    }
   }
 }
 
@@ -492,8 +495,9 @@ float readTemperature(float& humidity)
   int err = sht.measureHighPrecision(t, humidity);
   if(err != 0)
   {
-    t = NAN;
+    t = 333;
     humidity = NAN;
+    sysLog.log("error reading temp sensor");
   }
   return t;
 #endif
