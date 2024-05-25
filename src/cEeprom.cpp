@@ -119,6 +119,7 @@ void MEMP saveParsToEep()
   writeFloatToEep(EEPADDR_PRE_TRIGGER,  devPars.preTrigger.get());
   writeFloatToEep(EEPADDR_DEAD_TIME,    devPars.deadTime.get());
   writeFloatToEep(EEPADDR_BACKLIGHT,    devPars.backLightTime.get());
+  writeInt16ToEep(EEPADDR_BRIGHTNESS,   devPars.brightness.get());
   writeInt16ToEep(EEPADDR_LANGUAGE,     devPars.lang.get());
   writeInt16ToEep(EEPADDR_DEBUG_LEVEL , devPars.debugLevel.get());
   writeFloatToEep(EEPADDR_LAT,          devStatus.geoPos.getLat());
@@ -186,6 +187,7 @@ bool MEMP loadParsFromEep()
     //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
     devPars.deadTime.set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
+    devPars.brightness.set(readInt16FromEep(EEPADDR_BRIGHTNESS));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
     devPars.debugLevel.set(readInt16FromEep(EEPADDR_DEBUG_LEVEL));
     devStatus.geoPos.setLat(readFloatFromEep(EEPADDR_LAT));

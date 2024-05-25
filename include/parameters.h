@@ -116,6 +116,7 @@ struct stStatus
   cParEnum gpsStatus = enGpsStatus::GPS_STATUS_OFF;
   cParNum chargeLevel = 0;
   cParStr batSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
+  cParStr recStatus = "\xF1";
 };
 
 
@@ -146,6 +147,9 @@ struct stParams
   cParNum backLightTime = 120;       ///< time for backlight
 #define PAR_BACKLIGHT_MIN     5.0f
 #define PAR_BACKLIGHT_MAX   300.0f
+  cParNum brightness = 0x7F;
+#define PAR_CONTRAST_MIN  10
+#define PAR_CONTRAST_MAX  0xFF
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1

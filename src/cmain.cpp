@@ -82,8 +82,9 @@ void setup()
 //  waitForSerial();
   audio.init();
   Txt::setResource(Texts);
-  int orientation = readInt16FromEep(0x0032) == 0 ? 0 : 2;
-  initDisplay(orientation);
+  int orientation = readInt16FromEep(EEPADDR_DISP_ORIENT) == 0 ? 0 : 2;
+  uint8_t brightness = readInt16FromEep(EEPADDR_BRIGHTNESS);
+  initDisplay(orientation, brightness);
   cSdCard::inst().mount();
   char serial[16];
    getSerialNr(serial, sizeof(serial));
@@ -248,6 +249,13 @@ void loop()
     rtFft = terminal.isOnline();
   audio.operate( rtFft );
   bool recOn = audio.isRecordingActive();
+  if(year() < 2024)
+  {
+    recOn = false;
+    devStatus.recStatus.set("!!!");
+  }
+  else
+    devStatus.recStatus.set(recOn ? "\xF0" : "\xF1");
   audio.checkAutoRecording(recOn);
   setHwOperationMode(recOn ? enCpuMode::RECORDING : enCpuMode::POWER_SAVE);
 

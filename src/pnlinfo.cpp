@@ -50,8 +50,10 @@ int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
   int err = 0;
   err |= pan->addTextItem(430,                   1,      r++ * lf,  x, lf);
   err |= pan->addStrItem(&devStatus.version,     1,      r++ * lf,  x, lf);
-  err |= pan->addTextItem(435,                   1,      r++ * lf,  x, lf);
-  err |= pan->addStrItem(&devStatus.hwVersion,   1,      r++ * lf,  x, lf);
+  err |= pan->addTextItem(415,                   1,      r   * lf,  x, lf);
+  err |= pan->addNumItem(&devStatus.peakVal,     x,      r++ * lf, 20, lf, false);
+//  err |= pan->addTextItem(435,                   1,      r++ * lf,  x, lf);
+//  err |= pan->addStrItem(&devStatus.hwVersion,   1,      r++ * lf,  x, lf);
   err |= pan->addTextItem(455,                   1,      r   * lf,  x, lf);
   err |= pan->addNumItem(&devStatus.temperature, x,      r   * lf, 20, lf, false);
   err |= pan->addTextItem(303,                   x + 30, r++ * lf, 15, lf);

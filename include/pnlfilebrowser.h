@@ -18,6 +18,7 @@
 int initFileBrowserPan(cPanel* pan, tCoord lf);
 void initFileBrowser(cPanel* pan, const char* dir);
 int initFkeyFilePanel(cPanel* pan, tCoord lf);
+void f2FormatFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
 
 
 #endif // PNLFILEBROWSER_H

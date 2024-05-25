@@ -12,6 +12,7 @@
 #include "config.h"
 #include "csunrise.h"
 #include "pnlmain.h"
+#include "pnlfilebrowser.h"
 #include "cEeprom.h"
 
 extern cRtc rtc;
@@ -36,7 +37,10 @@ void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   sysLog.logf("voltage factor: %2.4f; voltage: %2.3f", devPars.voltFactor.get(), voltage); 
 }
 
-
+void contrastFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  setDisplayBrightness(devPars.brightness.get());
+}
 
 void MEMP displayTestFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
@@ -187,6 +191,8 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.lang,         x,      r++ * lf,  50, lf, true, languageFunc);
   err |= pan->addTextItem(1148,                  1,      r   * lf,   x, lf);
   err |= pan->addNumItem(&devPars.backLightTime, x + 30, r++ * lf,  25, lf, true);
+  err |= pan->addTextItem(1149,                  1,      r *   lf,   x, lf);
+  err |= pan->addNumItem(&devPars.brightness,      x ,     r++ * lf,  25, lf, true, contrastFunc);
   err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
   err |= pan->addTextItem(1177,                  1,      r * lf,    80, lf);
@@ -195,7 +201,8 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.recFiltType,  x,      r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1380,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.debugLevel,   x,      r++ * lf,  48, lf, true);
-  err |= pan->addBtnItem(1390,                  30,      5 + r   * lf,  70, lf + 2, displayTestFunc);
+  err |= pan->addBtnItem(1390,                   1,  5 + r   * lf,  60, lf + 2, displayTestFunc);
+  err |= pan->addBtnItem(5,                      64, 5 + r   * lf,  60, lf + 2, f2FormatFunc);
 
   return err;
 }

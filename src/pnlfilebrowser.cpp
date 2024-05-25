@@ -148,7 +148,11 @@ void MEMP fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f2FormatFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  pThis->showMsg(enMsg::YESNO, fuFormat, Txt::get(1040), Txt::get(1041));
+  if(hasDisplay() == enDisplayType::TFT_320)
+    pThis->showMsg(enMsg::YESNO, fuFormat, Txt::get(1040), Txt::get(1041));
+  else
+    pThis->showMsg(enMsg::YESNO, fuFormat, true, Txt::get(1044), Txt::get(1045), 
+                   Txt::get(1046), Txt::get(1047));
 }
 
 void MEMP funcDel(cMenuesystem* pThis, enKey key, cParBase* pItem)

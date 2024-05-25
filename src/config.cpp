@@ -181,7 +181,7 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.print(Txt::get(437));
     oled.setCursor(1, 80);
     oled.print(buf);
-
+    
     oled.setCursor(1, 99);
     oled.print("(C) 2021..24");
     oled.setCursor(1, 108);
@@ -241,7 +241,7 @@ void testDisplay()
   oled.print("Display test");
   oled.setCursor(30, 65);
   oled.print("stop with OK");
-  
+
   for(;;)
   { 
     pDisplay->fillRect(x-2, y-2, 4*r, 4*r, 0xFF);
@@ -283,8 +283,15 @@ void testDisplay()
   }
 }
 
+void setDisplayBrightness(uint8_t brightness)
+{
+  if (hasDisplay() == enDisplayType::OLED_128)
+  {
+    oled.setContrast(devPars.brightness.get());
+  }
+}
 
-void initDisplay(int orientation, bool showSplash)
+void initDisplay(int orientation, uint8_t brightness, bool showSplash)
 {
   enDisplayType dType = (enDisplayType)hasDisplay();
   if (dType != enDisplayType::NO_DISPLAY)
@@ -313,6 +320,7 @@ void initDisplay(int orientation, bool showSplash)
       oled.setFont(&chmFont);
       oled.clearDisplay();
       oled.display();
+      oled.setContrast(0x7F);
       menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 7);
     }
     setDispLight(255);

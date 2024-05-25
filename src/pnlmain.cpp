@@ -746,7 +746,8 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(27,                    1,      y + r * lf,   70, lf);
   err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 50, lf, false);
  // pan->itemList[visRecCntIndex].isVisible = false;
-  err |= pan->addTextItem(1365,                  1,      y + r * lf,   80, lf);
+  err |= pan->addTextItem(1365,                  1,      y + r * lf,   45, lf);
+  err |= pan->addStrItem(&devStatus.recStatus,  45,      y + r * lf,    8, lf);
   err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
 
  // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
