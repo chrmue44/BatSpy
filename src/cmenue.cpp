@@ -108,7 +108,7 @@ void MEMP cMenue::initPars()
   devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);
-  devPars.brightness.init(PAR_CONTRAST_MIN, PAR_CONTRAST_MAX, 10, 0);
+  devPars.brightness.init(PAR_BRIGHTNESS_MIN, PAR_BRIGHTNESS_MAX, 10, 0);
   devPars.knobRotation.clear();
   devPars.knobRotation.addItem(1151);
   devPars.knobRotation.addItem(1152);

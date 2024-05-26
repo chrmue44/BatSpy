@@ -148,8 +148,8 @@ struct stParams
 #define PAR_BACKLIGHT_MIN     5.0f
 #define PAR_BACKLIGHT_MAX   300.0f
   cParNum brightness = 0x7F;
-#define PAR_CONTRAST_MIN  10
-#define PAR_CONTRAST_MAX  0xFF
+#define PAR_BRIGHTNESS_MIN  10
+#define PAR_BRIGHTNESS_MAX  0xFF
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1
