@@ -30,7 +30,7 @@ extern TCA9534 ioex;
 
 extern cLog sysLog;
 extern cLog gpsLog;
-extern cLog trigLog;
+//extern cLog trigLog;
 extern cGps gps;
 extern Adafruit_GFX* pDisplay;
 extern cAudio audio;  // audio control

@@ -115,12 +115,12 @@ void cTrigger::checkRecordingTrigger(float fFilter)
   }
 }
 
-void cTrigger::logTrigInfo(const char* fileName)
+/*void cTrigger::logTrigInfo(const char* fileName)
 {
   trigLog.logf(",%s, %i, %i, %.1f, %.1f, %.1f, %.1f\n", 
                 fileName, m_countRec, m_trigInfo.lastMaxAmpl,
                 m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);  //@@@
-}
+}*/
 
 void cTrigger::checkLiveTrigger(float fFilter)
 {

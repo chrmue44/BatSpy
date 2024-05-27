@@ -347,10 +347,10 @@ void setHwOperationMode(enCpuMode mode)
   {
     switch(mode)
     {
-      sysLog.close();
-      trigLog.close();
+   //   sysLog.close();
+    //  trigLog.close();
       audio.closeProject();
-      cSdCard::inst().unmount();
+   //   cSdCard::inst().unmount();
       case enCpuMode::POWER_SAVE:
         audio.enable(false);
         setAnalogPower(false);
@@ -366,8 +366,8 @@ void setHwOperationMode(enCpuMode mode)
       case enCpuMode::CPU_MODE_INIT:
         break;
     }
-    delay(50);
-    cSdCard::inst().mount();
+    delay(100);
+   // cSdCard::inst().mount();
     sysLog.log(buf);
     cpuMode = mode;
     DPRINTF1("CPU Freq: %i\n", F_CPU_ACTUAL);
@@ -546,7 +546,7 @@ void powerOff()
   blink(3);
   sysLog.close();
   gpsLog.close();
-  trigLog.close();
+  //trigLog.close();
   cSdCard::inst().unmount();
   delay(300);
   blink(3);

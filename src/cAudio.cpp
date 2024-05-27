@@ -613,21 +613,23 @@ void cAudio::operate(bool liveFft)
       case enPlayStatus::ST_PLAY:
         devStatus.playStatus.set(enPlayStatus::ST_STOP);
         break;
+
       case enPlayStatus::ST_REC:
         m_timeout.setAlarm(devPars.deadTime.get());
         statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
         m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
-        m_trigger.logTrigInfo(m_prj.getWavFileName());
+//        m_trigger.logTrigInfo(m_prj.getWavFileName());
         DPRINTLN4("start timeout");
         break;
+
       case enPlayStatus::ST_STOP:
         if(m_oldCassMode == enCassMode::REC)
         {
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
-          m_trigger.logTrigInfo(m_prj.getWavFileName());
+//          m_trigger.logTrigInfo(m_prj.getWavFileName());
           DPRINTLN4("cAudio::operate: recording stopped");
         }
         break;
