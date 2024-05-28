@@ -32,18 +32,18 @@
 
 //#define MXFN 100 // maximal number of files
 #if defined(ARDUINO_TEENSY41) || defined(ARDUINO_TEENSY40)
-#define N_BUFFER 8  // min. nr of buffers to write to SD card
-#ifdef SIMU_DISPLAY
-#define BUFFSIZE (384000 / 10 *sizeof (int16_t))
-#else
-#define BUFFSIZE (3 * N_BUFFER * AUDIO_BLOCK_SAMPLES * sizeof(int16_t)) // size of buffer
-#endif
+  #define N_BUFFER 8  // min. nr of buffers to write to SD card
+  #ifdef SIMU_DISPLAY
+    #define BUFFSIZE (384000 / 10 *sizeof (int16_t))
+  #else
+    #define BUFFSIZE (8 * N_BUFFER * AUDIO_BLOCK_SAMPLES * sizeof(int16_t)) // size of buffer
+  #endif
 #elif defined(__MK20DX256__)
-#define BUFFSIZE (8*1024) // size of buffer to be written
+  #define BUFFSIZE (8*1024) // size of buffer to be written
 #elif defined(__MK66FX1M0__)
 //#define BUFF 96
-#define BUFF 48
-#define BUFFSIZE (BUFF*1024) // size of buffer to be written
+  #define BUFF 48
+  #define BUFFSIZE (BUFF*1024) // size of buffer to be written
 #endif
 
 

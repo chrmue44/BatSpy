@@ -564,7 +564,7 @@ enSdRes cSdCard::openFile(const char* name, tFILE& file, enMode mode)
 #elif defined (CARDLIB_SDFAT)
   char buf[PATH_LEN];
   transformPathName(buf, PATH_LEN, name);
-  DPRINTF1("full path: %s\n", buf);
+  DPRINTF1("open file: %s\n", buf);
   bool ok = false;
   switch(mode)
   {
@@ -674,7 +674,7 @@ enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, s
 
 #elif defined(CARDLIB_SDFAT)
   int rc = file.write((const uint8_t*)buf, bytesToWrite);
-  file.flush();
+  DPRINTF1("wr file: %lu\n", bytesToWrite);
   if(rc < 0)
     retVal = WRITE_ERR;
   else
@@ -721,7 +721,6 @@ enSdRes cSdCard::closeFile(tFILE& file)
   #elif defined(CARDLIB_SDFAT)
   
   file.timestamp(T_WRITE,year(), month(), day(), hour(), minute(), second());
-  file.flush();
   bool ok = file.close();
   retVal = ok ? OK : CLOSE_ERR;
   #endif

@@ -129,18 +129,21 @@ void handleDisplayAndWheel(bool oneSec)
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
-    if(backLightOn && reinitDisplay)
+    if(!audio.isRecording())
     {
-      initDisplay(devPars.dispOrient.get(), false);
-      sysLog.log("reinitialized display communication because of faulty temp. sensor");
-      reinitDisplay = false;
-    }    
-    if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
-    {
-      if(backLightOn)
+      if(backLightOn && reinitDisplay)
       {
-        setDispLight(0);
-        backLightOn = false;
+        initDisplay(devPars.dispOrient.get(), false);
+        sysLog.log("reinitialized display communication because of faulty temp. sensor");
+        reinitDisplay = false;
+      }
+      if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
+      {
+        if(backLightOn)
+        {
+          setDispLight(0);
+          backLightOn = false;
+        }
       }
     }
   }
@@ -248,6 +251,9 @@ void loop()
   else
     rtFft = terminal.isOnline();
   audio.operate( rtFft );
+  //if(audio.isRecording())
+  //  return;
+
   bool recOn = audio.isRecordingActive();
   if(year() < 2024)
   {

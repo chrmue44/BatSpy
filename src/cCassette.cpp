@@ -46,7 +46,8 @@ int cCassette::startRec()
     // check if file is Good
   if (rc != OK) { // only option is to close file
     sd.closeFile(m_fil);
-   return 1;
+    m_mode = enCassMode::STOP;
+    return 1;
   }
   else
     m_isRecFileOpen = true;
@@ -73,12 +74,14 @@ int cCassette::operate()
     {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
       if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
         av = sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t);
+      AudioNoInterrupts();
       for (size_t i = 0; i < av; i++)
       {
         memcpy(m_buffern + i * AUDIO_BLOCK_SAMPLES * sizeof(int16_t),
-               m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
+        m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
         m_recorder.freeBuffer();
       }
+      AudioInterrupts();
       m_sampleCnt += av * AUDIO_BLOCK_SAMPLES;
 
       cSdCard& sd = cSdCard::inst();
@@ -88,6 +91,8 @@ int cCassette::operate()
       if (rc != OK)
       { // IO error
         m_mode = enCassMode::STOP;
+        m_isRecFileOpen = false;
+        DPRINTF4("error writing SD: %i\n", rc);
         return 1;
       }
     }
@@ -123,6 +128,7 @@ int cCassette::stop()
     {
       rc = sd.writeFile(m_fil, (char*)m_recorder.readBuffer(), m_wr, AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_recorder.freeBuffer();
+      DPRINTF1("wr buf %lu\n",  AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
       m_sampleCnt += AUDIO_BLOCK_SAMPLES;
     }
     

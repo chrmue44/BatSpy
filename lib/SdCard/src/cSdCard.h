@@ -18,7 +18,7 @@
 #endif
 #ifdef ARDUINO_TEENSY40
 const uint8_t SD_CS_PIN = 23;
-#define SPI_CLOCK SD_SCK_MHZ(40)
+#define SPI_CLOCK SD_SCK_MHZ(30) 
 #define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SPI_CLOCK)
 #endif
 
