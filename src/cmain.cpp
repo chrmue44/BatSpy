@@ -261,7 +261,7 @@ void loop()
     devStatus.recStatus.set("!!!");
   }
   else
-    devStatus.recStatus.set(recOn ? "\xF0" : "\xF1");
+    devStatus.recStatus.set(recOn ? "\xF2" : "\xF1");
   audio.checkAutoRecording(recOn);
   setHwOperationMode(recOn ? enCpuMode::RECORDING : enCpuMode::POWER_SAVE);
 

@@ -22,7 +22,6 @@ extern thPanel panFont;
 extern thPanel panTime;        ///< panel to display time diagram
 extern thPanel pnlLive;
 extern thPanel panGeo;
-extern thPanel panGps;
 extern thPanel panInfo;
 extern thPanel fkeyWaterPan;   ///< f-key panel for waterfall screen
 extern thPanel panWaterfall;
@@ -55,7 +54,6 @@ int initMainPanelExpert(cPanel* pan, tCoord lf);
 int initMainPanelRecorder(cPanel* pan, tCoord lf);
 int initMainPanelHandheld(cPanel* pan, tCoord lf);
 int initMainPanelCompact(cPanel* pan, tCoord lf);
-int initGpsPanelCompact(cPanel* pan, tCoord lf);
 
 void f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem);

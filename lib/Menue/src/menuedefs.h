@@ -86,7 +86,7 @@ struct stColors
  extern const stColors* pColors;
 
 #define PAR_STR_LEN         80      ///< max. ln of string par
-#define CNT_PANEL_ITEM      35      ///< max. count of panel items
+#define CNT_PANEL_ITEM      40      ///< max. count of panel items
 #define CNT_ENUM_ITEM       20      ///< max. number of enum items
 #define LIST_ITEM_LEN       25      ///< max. length of list item text
 #define CNT_PANEL_LIST      25      ///< max. number of panels in list

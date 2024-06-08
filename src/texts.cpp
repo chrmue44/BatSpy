@@ -1,4 +1,4 @@
-﻿/*************************************************************
+/*************************************************************
  * BatSpy: Teensy 4.1 based recording device for bat sounds  *
  * ***********************************************************
  * Copyright (C) 2021 Christian Mueller                      *
@@ -47,7 +47,7 @@ struct stTxtList PROGMEM Texts[] =
   {    26, "Aufnahme"                  ,"Record"},
   {    27, "Dateien"                   ,"Files"},
   {    28, "Aufnahme"                  ,"Recording"},
-  {    30, "Status"                    ,0},
+  {    30, "GPS Status"                ,0},
   {    32, "Projekt-Notizen 1"         ,"Project Notes 1"},
   {    33, "Projekt-Notizen 2"         ,"Project Notes 2"},
   {   100, "Übersicht"                 ,"Overview"},
@@ -187,6 +187,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1180, "Startzeit"                 ,"Start Time" },
   { 1181, "Stoppzeit"                 ,"Stop Time" },
   { 1182, ":"                         ,0 },
+  { 1183, "-"                         ,0 },
   { 1200, "Name deutsch"              ,"Name" },
   { 1202, "Name latein"               ,"Name lat." },
   { 1204, "Hauptfreq. [kHz]"          ,"Main freq. [kHz]" },

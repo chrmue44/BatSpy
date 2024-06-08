@@ -612,12 +612,14 @@ void cAudio::operate(bool liveFft)
       {
       case enPlayStatus::ST_PLAY:
         devStatus.playStatus.set(enPlayStatus::ST_STOP);
+        devStatus.recStatus.set("\xF1");
         break;
 
       case enPlayStatus::ST_REC:
         m_timeout.setAlarm(devPars.deadTime.get());
         statusDisplay.setRecRunning(false);
         devStatus.playStatus.set(enPlayStatus::TIMEOUT);
+        devStatus.recStatus.set("\xF2");
         m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
 //        m_trigger.logTrigInfo(m_prj.getWavFileName());
         DPRINTLN4("start timeout");
@@ -651,6 +653,7 @@ void cAudio::operate(bool liveFft)
     {
       m_timeout.stop();
       devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      devStatus.recStatus.set("\xF2");
       m_trigger.releaseLiveTrigger();
       m_trigger.releaseRecTrigger();
       DPRINTF4("timeout over, timeout %f,  timer %f\n", devPars.deadTime.get(), m_timeout.runTime());
@@ -664,6 +667,7 @@ void cAudio::stopRecording()
   DPRINTLN4("stop recording");
   m_cass.stop();
   devStatus.playStatus.set(enPlayStatus::ST_STOP);
+  devStatus.recStatus.set("\xF2");
 }
 
 

@@ -155,6 +155,26 @@ const stColors PROGMEM OledColors
   COL_OLED_CURSOR        //uint16_t cursor;
 };
 
+const stColors PROGMEM OledColorsInv
+{
+  16 - COL_OLED_TEXT,         //uint16_t text;
+  16 - COL_OLED_TEXT_PAR,     //uint16_t textPar;
+  16 - COL_OLED_TEXT_DIR,     //uint16_t textDir;
+  16 - COL_OLED_TEXTBACK,     //uint16_t textBack;
+  16 - COL_OLED_TEXTSEL,      //uint16_t textSel;
+  16 - COL_OLED_TEXTSELBACK,  //uint16_t textSelBack;
+  16 - COL_OLED_TEXTEDIT,     //uint16_t textEdit;
+  16 - COL_OLED_TEXTEDITBACK, //uint16_t textEditBack;
+  16 - COL_OLED_MSGSHADOW,    //uint16_t msgShadow;
+  16 - COL_OLED_TEXTHDR,      //uint16_t textHdr;
+  16 - COL_OLED_TEXTHDRBACK,  //uint16_t textHdrBack;
+  16 - COL_OLED_TEXTDROPBACK, //uint16_t textDropBack;
+  16 - COL_OLED_MENULINE,     //uint16_t menuLine
+  16 - COL_OLED_GRID,         //uint16_t grid;
+  16 - COL_OLED_GRAPH,        //uint16_t graph;
+  16 - COL_OLED_CURSOR        //uint16_t cursor;
+};
+
 void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
 {
   char buf[20];
@@ -320,7 +340,7 @@ void initDisplay(int orientation, uint8_t brightness, bool showSplash)
       oled.setFont(&chmFont);
       oled.clearDisplay();
       oled.display();
-      oled.setContrast(0x7F);
+      oled.setContrast(brightness);
       menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 7);
     }
     setDispLight(255);

@@ -62,7 +62,12 @@ int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(302,                   x + 30, r++ * lf, 15, lf);
   err |= pan->addTextItem(405,                   1,      r   * lf, 80, lf);
   err |= pan->addNumItem(&devStatus.cpuAudioMax, x,      r++ * lf, 35, lf, false);
-  err |= pan->addBtnItem(309,                    20, 5+  r   * lf, 90, lf + 3, btnAudioFunc);
+  err |= pan->addTextItem(30,                    1,      r * lf, 70, lf);
+  err |= pan->addEnumItem(&devStatus.gpsStatus,  x,      r++ * lf, 35, lf, false);
+  err |= pan->addTextItem(461,                   1,      r * lf, 23, lf);
+  err |= pan->addNumItem(&devStatus.satCount,    x,      r++ * lf, 15, lf, false);
+  err |= pan->addBtnItem(309,                   20,      r * lf, 90, lf + 3, btnAudioFunc);
+
 
   return err;
 }
