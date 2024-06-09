@@ -768,6 +768,7 @@ void cAudio::startRecording()
   DPRINTF4("start recording: %i\n", (int)devStatus.recCount.get());
   m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
   devStatus.playStatus.set(enPlayStatus::ST_REC);
+  devStatus.recStatus.set("\xF0");
 }
 
 
