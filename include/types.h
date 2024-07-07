@@ -77,6 +77,12 @@ enum enDispOrient
   RIGHT_HAND             = 1
 };
 
+enum enDispMode
+{
+  DISP_NORMAL            = 0,
+  DISP_INVERSE           = 1
+};
+
 // knob rotation
 enum enKnobRot
 {

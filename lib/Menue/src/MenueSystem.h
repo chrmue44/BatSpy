@@ -149,6 +149,8 @@ public:
   int getWidth() { return m_width; }
   int getHeight() { return m_height; }
   void enable(bool on);
+  void setColors(const stColors* colors);
+
 
 protected:
 /**

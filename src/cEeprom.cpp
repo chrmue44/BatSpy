@@ -117,9 +117,9 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_KNOB_ROT,     devPars.knobRotation.get());
   writeInt16ToEep(EEPADDR_DISP_ORIENT,  devPars.dispOrient.get());
   writeFloatToEep(EEPADDR_PRE_TRIGGER,  devPars.preTrigger.get());
+  writeInt16ToEep(EEPADDR_DISP_MODE,    devPars.displayMode.get());
   writeFloatToEep(EEPADDR_DEAD_TIME,    devPars.deadTime.get());
   writeFloatToEep(EEPADDR_BACKLIGHT,    devPars.backLightTime.get());
-  writeInt16ToEep(EEPADDR_BRIGHTNESS,   devPars.brightness.get());
   writeInt16ToEep(EEPADDR_LANGUAGE,     devPars.lang.get());
   writeInt16ToEep(EEPADDR_DEBUG_LEVEL , devPars.debugLevel.get());
   writeFloatToEep(EEPADDR_LAT,          devStatus.geoPos.getLat());
@@ -184,10 +184,10 @@ bool MEMP loadParsFromEep()
     devPars.recThreshhold.set(readFloatFromEep(EEPADDR_REC_TRESH));
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
+    devPars.displayMode.set(readInt16FromEep(EEPADDR_DISP_MODE));
     //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
     devPars.deadTime.set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
-    devPars.brightness.set(readInt16FromEep(EEPADDR_BRIGHTNESS));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
     devPars.debugLevel.set(readInt16FromEep(EEPADDR_DEBUG_LEVEL));
     devStatus.geoPos.setLat(readFloatFromEep(EEPADDR_LAT));
@@ -204,11 +204,11 @@ bool MEMP loadParsFromEep()
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
     //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
+    devPars.recFiltFreq.set(readFloatFromEep(EEPADDR_RFILT_FREQ));
+    devPars.recFiltType.set(readInt16FromEep(EEPADDR_RFILT_TYPE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
     devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
-    devPars.recFiltFreq.set(readFloatFromEep(EEPADDR_RFILT_FREQ));
-    devPars.recFiltType.set(readInt16FromEep(EEPADDR_RFILT_TYPE));
  
     devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     int digits = analogRead(PIN_SUPPLY_VOLT);

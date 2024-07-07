@@ -485,10 +485,6 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     case 'b':
       replyOk = setValFloat(buf + 1, PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, devPars.backLightTime);
       break;
-    case 'c':
-      replyOk = setValInt(buf + 1, PAR_BRIGHTNESS_MIN, PAR_BRIGHTNESS_MAX, devPars.brightness);
-      setDisplayBrightness(devPars.brightness.get());
-      break;
     case 'f':
       replyOk = setVoltageFactor(&buf[1]);
       break;
@@ -540,9 +536,6 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     break;
   case 'b':
     getValInt(buf + 1, devPars.backLightTime, replyBuf, sizeof(replyBuf));
-    break;
-  case 'c':
-    getValInt(buf + 1, devPars.brightness, replyBuf, sizeof(replyBuf));
     break;
   case 'l':
     replyOk = parseLocationParams(&buf[1], false, replyBuf, sizeof(replyBuf));
@@ -942,8 +935,6 @@ void MEMF cTerminal::showCommands()
   Serial.println("pan      get auto recording stop minute");
   Serial.println("Pb<val>  set backlight time [s]");
   Serial.println("pb       get backlight time [s]");
-  Serial.println("Pc<val>  set brightness (10 .. 255)");
-  Serial.println("pc       get brightness");
   Serial.println("Pf       set current voltage to calc voltage fact (unlock first)");
   Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
   Serial.println("pls      get location source");

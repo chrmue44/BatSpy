@@ -31,6 +31,7 @@ extern thPanel panFileBrowser;
 extern thPanel fkeyFilePan;
 extern thPanel panParams;      ///< panel for general parameter settings
 extern thPanel panParRec;      ///< panel for recording settings
+extern thPanel panParTrig;     ///< pnael for trigger settings
 extern thPanel panPosition;    ///< panel for setting of position
 extern thPanel panBats;        ///< panel for bat infos
 extern thPanel panDateTime;    ///< panel to set time and date

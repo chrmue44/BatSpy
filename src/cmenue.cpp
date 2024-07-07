@@ -108,7 +108,6 @@ void MEMP cMenue::initPars()
   devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);
-  devPars.brightness.init(PAR_BRIGHTNESS_MIN, PAR_BRIGHTNESS_MAX, 10, 0);
   devPars.knobRotation.clear();
   devPars.knobRotation.addItem(1151);
   devPars.knobRotation.addItem(1152);
@@ -164,6 +163,10 @@ void MEMP cMenue::initPars()
   devPars.daylightSav.addItem(16);
   devPars.daylightSav.addItem(15);
   devPars.daylightSav.addItem(1740);
+
+  devPars.displayMode.clear();
+  devPars.displayMode.addItem(1156);
+  devPars.displayMode.addItem(1157);
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
@@ -226,7 +229,7 @@ void MEMP cMenue::initPars()
   devStatus.lonSec.init(0,999,5,0,3);
   devStatus.geoPos.set(49.1234, 8.2345f);
   
-  devStatus.peakVal.init(0, 100, 0.1f, 2);
+  devStatus.peakVal.init(0, 100, 0.1f, 1);
   devStatus.freeSpace.init(0, 256000, 1, 0);
   devStatus.voltage.init(0, 20, 0.01f, 2);
   devStatus.setVoltage.init(0,10, 0.05f, 2);
@@ -241,6 +244,7 @@ void MEMP cMenue::initPars()
   devStatus.posValid.addItem(16);
   devStatus.posValid.addItem(15);
   devStatus.lastCallF.init(0.0f, 200.0f, 0.1f, 1);
+ 
 
   if(hasDisplay() == enDisplayType::OLED_128)
   { 
@@ -288,36 +292,43 @@ void cMenue::setFactoryDefaults(enMode mode)
 {
   devPars.volume.set(6.0f);              ///< volume setting
   devPars.mixFreq.set(40.0f);              ///< mixer frequency
+  devPars.recAuto.set(0);
+  devPars.sendDelay.set(2.0);
+  devPars.srcPosition.set(enPositionMode::POS_FIX);
+  devPars.menueType.set(enMenueType::COMPACT);
+  devPars.knobRotation.set(enKnobRot::CLOCKWISE);
   devPars.recTime.set(3.0f);               ///< recording time
   devPars.sampleRate.set(enSampleRate::SR_384K);    ///< sample rate
-  devPars.lang.set(enLang::LANG_GER);        ///< display language
+  devPars.preAmpGain.set(enGainRevC::GAINC_58DB);
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
   devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
+  devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
+  devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
+  devPars.displayMode.set(enDispMode::DISP_NORMAL);
   devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
-  devPars.preAmpGain.set(1);           ///< gain of pre amplifier
-  devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
-  devPars.knobRotation.set(enKnobRot::CLOCKWISE);   ///< knob rotation
-  devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
+  devPars.lang.set(enLang::LANG_GER);        ///< display language
+  devPars.debugLevel.set(0);
+  devStatus.geoPos.setLat(49.5);
+  devStatus.geoPos.setLon(8.3);
   devPars.trigFiltFreq.set(16.0);             ///< hight pass freq for recording trigger
   devPars.trigFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
-  devPars.recFiltFreq.set(1.0);             ///< hight pass freq for recording trigger
-  devPars.recFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.startH.set(21);               ///< hour of start time
   devPars.startMin.set(0);              ///< minute of start time
   devPars.stopH.set(6);                 ///< hour of start time
   devPars.stopMin.set(0);               ///< minute of start time
- // devPars.voltFactor.set(1);            ///< factor digits to voltage
-  devPars.recAuto.set(0);              ///< mode for automatic recording
-  devPars.sendDelay.set(2);             ///< delay [ms] after sending 2048 Bytes on USB
+  devPars.timeZone.set(1);
+  devPars.daylightSav.set(enDlSaving::DLS_AUTO);
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
-  devPars.srcPosition.set(enPositionMode::POS_FIX);  ///< source of position (fixed, GPS)
-  devPars.menueType.set(enMenueType::RECORDER);   ///< menue type
+  devStatus.height.set(100);
+  devPars.recFiltFreq.set(1.0);             ///< hight pass freq for recording trigger
+  devPars.recFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger
   devPars.ShutoffVoltage.set(5.4f);
+  devPars.voltFactor.set(1);
 }
 
 void MEMP cMenue::initDialogs() 
@@ -506,7 +517,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 int MEMP cMenue::initComactPanels(tCoord lf)
 {
   int err = 0;
-  panInfo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  panInfo = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initInfoPanCompact(getPan(panInfo), lf);
 
   // F-KEYs for main panel
@@ -514,19 +525,22 @@ int MEMP cMenue::initComactPanels(tCoord lf)
   err |= initCompactFkeyPanel(getPan(fkeyMainPan), lf);
 
   // main panel
-  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight() + 4, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight()- 4);
+  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initMainPanelCompact(getPan(panGeo), lf);
   setMainPanel(panGeo);
   setFkeyPanel(fkeyMainPan);
   enableEditPosition(this, devPars.srcPosition.get() == enPositionMode::POS_FIX);
 
-  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  panParams = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initParPanCompact(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  panParRec = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initParRecCompact(getPan(panParRec), lf);
 
-  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight() - 4);
+  panParTrig = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
+  err |= initParTriggerCompact(getPan(panParTrig), lf);
+
+  panDateTime = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initDateTimePanCompact(getPan(panDateTime), lf);
 
   return err;

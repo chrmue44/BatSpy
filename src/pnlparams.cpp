@@ -29,6 +29,12 @@ void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP displayModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  setDisplayColorsInverse(devPars.displayMode.get());
+  menue.refreshAll();
+}
+
 void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   float voltage = devStatus.setVoltage.get();
@@ -37,10 +43,6 @@ void MEMP voltageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   sysLog.logf("voltage factor: %2.4f; voltage: %2.3f", devPars.voltFactor.get(), voltage); 
 }
 
-void contrastFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
-{
-  setDisplayBrightness(devPars.brightness.get());
-}
 
 void MEMP displayTestFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
@@ -131,33 +133,40 @@ int MEMP initParRecCompact(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   int r = 2;
-  int x = 80;
-  err |= pan->addTextItem(1360,                  1,      r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.triggerType,  x - 30, r++ * lf,  72, lf, true);
+  int x = 95;
   err |= pan->addTextItem(1120,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,       x + 15, r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recTime,       x,      r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1110,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.sampleRate,   x,      r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
+  err |= pan->addTextItem(1177,                  1,      r   * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.recFiltFreq,   x,      r++ * lf,  30, lf, true);
+  err |= pan->addTextItem(1175,                  1,      r   * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.recFiltType,  x - 20, r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1145,                  1,      r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.deadTime,      x,      r++ * lf,  20, lf, true);
-  err |= pan->addTextItem(1141,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold, x + 15, r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1370,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.minEventLen,   x + 15, r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1176,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 15, r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1330,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1180,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.startH,        x - 23, r   * lf,  14, lf, true);
-  err |= pan->addTextItem(1182,                  x  - 8, r   * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.startMin,      x  - 2, r++ * lf,  14, lf, true);
-  err |= pan->addTextItem(1181,                  1,      r   * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopH,         x - 23, r   * lf,  14, lf, true);
-  err |= pan->addTextItem(1182,                  x -  8, r   * lf,   5, lf);
-  err |= pan->addNumItem(&devPars.stopMin,       x -  2, r++ * lf,  14, lf, true);
 
   return err;
 }
 
+int MEMP initParTriggerCompact(cPanel* pan, tCoord lf)
+{
+  int x = 80;
+  int err = 0;
+  int r = 2;
+  err |= pan->addTextItem(1360,                  1,      r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.triggerType,  x - 30, r++ * lf, 72, lf, true);
+  err |= pan->addTextItem(1141,                  1,      r   * lf, 80, lf);
+  err |= pan->addNumItem(&devPars.recThreshhold, x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addTextItem(1370,                  1,      r   * lf, 80, lf);
+  err |= pan->addNumItem(&devPars.minEventLen,   x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addTextItem(1176,                  1,      r   * lf, 80, lf);
+  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addTextItem(1330,                  1,      r   * lf, 80, lf);
+  err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf, 30, lf, true);
+  return err;
+}
 
 int MEMP initParPan(cPanel* pan, tCoord lf)
 {
@@ -191,16 +200,10 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   int r = 2;
   err |= pan->addTextItem(1100,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.lang,         x,      r++ * lf,  50, lf, true, languageFunc);
+  err |= pan->addTextItem(1155,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.displayMode,  x,      r++ * lf,  50, lf, true, displayModeFunc);
   err |= pan->addTextItem(1148,                  1,      r   * lf,   x, lf);
   err |= pan->addNumItem(&devPars.backLightTime, x + 30, r++ * lf,  25, lf, true);
-  err |= pan->addTextItem(1149,                  1,      r *   lf,   x, lf);
-  err |= pan->addNumItem(&devPars.brightness,      x ,     r++ * lf,  25, lf, true, contrastFunc);
-  err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
-  err |= pan->addTextItem(1177,                  1,      r * lf,    80, lf);
-  err |= pan->addNumItem(&devPars.recFiltFreq,   x + 10, r++ * lf,  30, lf, true);
-  err |= pan->addTextItem(1175,                  1,      r * lf,    80, lf);
-  err |= pan->addEnumItem(&devPars.recFiltType,  x,      r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1380,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.debugLevel,   x,      r++ * lf,  48, lf, true);
   err |= pan->addBtnItem(1390,                   1,  5 + r   * lf,  60, lf + 2, displayTestFunc);

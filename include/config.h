@@ -207,11 +207,13 @@ void powerOff();
 void setDisplayBrightness(uint8_t brightness);
 void setIoDebugMode(bool mode);
 void portExpSetBit(uint8_t port, uint8_t state);
-void initDisplay(int orientation, uint8_t brightness, bool showSplash = true);
+void initDisplay(int orientation, uint8_t brightness, bool dispModeInv, bool showSplash);
 void showSplashScreen(Adafruit_GFX& tft, bool waitBtn);
 void setAnalogPower(bool on);
 void setHwOperationMode(enCpuMode mode);
 void initTempSensor();
+void setDisplayColorsInverse(bool inv);
+
 
 #define PATH_NOTES1  "/info/notes1.txt"
 #define PATH_NOTES2  "/info/notes2.txt"

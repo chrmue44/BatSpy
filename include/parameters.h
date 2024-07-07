@@ -145,11 +145,9 @@ struct stParams
 #define PAR_DEADTIM_MIN  0.3f
 #define PAR_DEADTIM_MAX  30.0f
   cParNum backLightTime = 120;       ///< time for backlight
+  cParEnum displayMode = enDispMode::DISP_NORMAL;   ///< display mode
 #define PAR_BACKLIGHT_MIN     5.0f
 #define PAR_BACKLIGHT_MAX   300.0f
-  cParNum brightness = 0x7F;
-#define PAR_BRIGHTNESS_MIN  10
-#define PAR_BRIGHTNESS_MAX  0xFF
   cParEnum preAmpGain = 1;           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1

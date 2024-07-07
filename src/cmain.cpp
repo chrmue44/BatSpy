@@ -83,8 +83,8 @@ void setup()
   audio.init();
   Txt::setResource(Texts);
   int orientation = readInt16FromEep(EEPADDR_DISP_ORIENT) == 0 ? 0 : 2;
-  uint8_t brightness = readInt16FromEep(EEPADDR_BRIGHTNESS);
-  initDisplay(orientation, brightness);
+  bool dispModeInv = readInt16FromEep(EEPADDR_DISP_MODE) != 0;
+  initDisplay(orientation, 255, dispModeInv, true);
   cSdCard::inst().mount();
   char serial[16];
    getSerialNr(serial, sizeof(serial));
@@ -133,7 +133,7 @@ void handleDisplayAndWheel(bool oneSec)
     {
       if(backLightOn && reinitDisplay)
       {
-        initDisplay(devPars.dispOrient.get(), false);
+        initDisplay(devPars.dispOrient.get(), 255,  devPars.displayMode.get(), false);
         sysLog.log("reinitialized display communication because of faulty temp. sensor");
         reinitDisplay = false;
       }

@@ -47,6 +47,10 @@ void cMenuesystem::setPdisplay(int width, int height, Adafruit_GFX* pDisplay, in
   m_fontOffset = fontOffset;
 }
 
+void cMenuesystem::setColors(const stColors* colors)
+{
+  pColors = colors;
+}
 const stColors* pColors = nullptr;   ///< set of colors
 
 

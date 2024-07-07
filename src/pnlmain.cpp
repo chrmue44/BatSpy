@@ -163,6 +163,13 @@ void MEMP f1DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->setMainPanel(panInfo);
     pThis->setFkeyPanel(fkeyMainPan);
     break;
+  case 2:
+#ifndef SIMU_DISPLAY
+    while (digitalRead(PIN_ROT_LEFT_S) == 0);
+#endif
+    showSplashScreen(*gpDisplay, true);
+    pThis->refreshAll();
+    break;
   }
 }
 
@@ -265,16 +272,19 @@ void MEMP initFunctionItemsRecorder()
 
 void MEMP initFunctionsCompact()
 {
+  f1MainItems.clear();
   f1MainItems.addItem(100);
   f1MainItems.addItem(105);
+  f1MainItems.addItem(1000);
 
-  f4MainItems.addItem(1000);
-  f4MainItems.addItem(1001);
-  f4MainItems.addItem(1021);
+  f4MainItems.clear();
   f4MainItems.addItem(1030);
   f4MainItems.addItem(1034);
+  f4MainItems.addItem(1360);
   f4MainItems.addItem(1031);
   f4MainItems.addItem(1035);
+  f4MainItems.addItem(1001);
+  f4MainItems.addItem(1021);
 }
 
 void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
@@ -445,51 +455,50 @@ void MEMP f4DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (pThis->getFocusItem())
   {
-  case 0:
-#ifndef SIMU_DISPLAY
-    while (digitalRead(PIN_ROT_LEFT_S) == 0);
-#endif
-    showSplashScreen(*gpDisplay, true);
-    pThis->refreshAll();
-    break;
+    case 0:
+      pThis->setMainPanel(panParams);
+      setHeaderPanelText(pThis, 1030);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
 
-  case 1:
-    pThis->showMsg(enMsg::YESNO, f4LoadFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1006));
-    break;
+    case 1:
+      pThis->setMainPanel(panParRec);
+      setHeaderPanelText(pThis, 1034);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
 
-  case 2:
-    pThis->showMsg(enMsg::YESNO, f4SaveFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1025));
-    break;
+    case 2:
+      pThis->setMainPanel(panParTrig);
+      setHeaderPanelText(pThis, 1360);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
 
-  case 3:
-    pThis->setMainPanel(panParams);
-    setHeaderPanelText(pThis, 1030);
-    pThis->setHdrPanel(hdrMainPanel);
-    pThis->setFkeyPanel(fkeyMainPan);
-    break;
+    case 3:
+      devStatus.year.set((float)devStatus.date.getYear());
+      devStatus.month.set((float)devStatus.date.getMonth());
+      devStatus.day.set((float)devStatus.date.getDay());
+      devStatus.hour.set((float)devStatus.time.getHour());
+      devStatus.minute.set((float)devStatus.time.getMin());
+      pThis->setMainPanel(panDateTime);
+      setHeaderPanelText(pThis, 1031);
+      pThis->setHdrPanel(hdrMainPanel);
+      pThis->setFkeyPanel(fkeyMainPan);
+      break;
 
-  case 4:
-    pThis->setMainPanel(panParRec);
-    setHeaderPanelText(pThis, 1034);
-    pThis->setHdrPanel(hdrMainPanel);
-    pThis->setFkeyPanel(fkeyMainPan);
-    break;
+    case 4:
+      pThis->showMsg(enMsg::YESNO, f4FactSetFunc, true, Txt::get(1007), Txt::get(1009), Txt::get(1006));
+      break;
 
-  case 5:
-    devStatus.year.set((float)devStatus.date.getYear());
-    devStatus.month.set((float)devStatus.date.getMonth());
-    devStatus.day.set((float)devStatus.date.getDay());
-    devStatus.hour.set((float)devStatus.time.getHour());
-    devStatus.minute.set((float)devStatus.time.getMin());
-    pThis->setMainPanel(panDateTime);
-    setHeaderPanelText(pThis, 1031);
-    pThis->setHdrPanel(hdrMainPanel);
-    pThis->setFkeyPanel(fkeyMainPan);
-    break;
+    case 5:
+      pThis->showMsg(enMsg::YESNO, f4LoadFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1006));
+      break;
 
-  case 6:
-    pThis->showMsg(enMsg::YESNO, f4FactSetFunc, true, Txt::get(1007), Txt::get(1009), Txt::get(1006));
-
+    case 6:
+      pThis->showMsg(enMsg::YESNO, f4SaveFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1025));
+      break;
   }
 }
 
@@ -609,7 +618,6 @@ void setGpsStatus(cMenuesystem* pThis)
 int MEMP initMainPanelExpert(cPanel* pan, tCoord lf)
 {
   visRecCntIndex = 2;
-  int xg = 10;
   int r = 2;
   int err = pan->addTextItem(202,                  3,  30,             80, lf);
   err |= pan->addEnumItem(&devStatus.opMode,     150,  30,            140, lf, true);
@@ -780,7 +788,7 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addStrItem(&devStatus.recStatus,  90, y + r++ * lf, 8, lf);
   y += 4;
   err |= pan->addTextItem(1421,                  1, y + r * lf, 60, lf);
-  err |= pan->addEnumItem(&devPars.srcPosition, 63, y + r++ * lf, 50, lf, true, positionModeFunc);
+  err |= pan->addEnumItem(&devPars.srcPosition, 53, y + r++ * lf, 74, lf, true, positionModeFunc);
   posIndex.clear();
   posIndex.push_back(pan->itemList.size());
   err |= pan->addEnumItem(&devStatus.latSign,   1, y + r * lf, 6, lf, true, setPosFunc);

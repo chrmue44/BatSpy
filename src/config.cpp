@@ -157,22 +157,22 @@ const stColors PROGMEM OledColors
 
 const stColors PROGMEM OledColorsInv
 {
-  16 - COL_OLED_TEXT,         //uint16_t text;
-  16 - COL_OLED_TEXT_PAR,     //uint16_t textPar;
-  16 - COL_OLED_TEXT_DIR,     //uint16_t textDir;
-  16 - COL_OLED_TEXTBACK,     //uint16_t textBack;
-  16 - COL_OLED_TEXTSEL,      //uint16_t textSel;
-  16 - COL_OLED_TEXTSELBACK,  //uint16_t textSelBack;
-  16 - COL_OLED_TEXTEDIT,     //uint16_t textEdit;
-  16 - COL_OLED_TEXTEDITBACK, //uint16_t textEditBack;
-  16 - COL_OLED_MSGSHADOW,    //uint16_t msgShadow;
-  16 - COL_OLED_TEXTHDR,      //uint16_t textHdr;
-  16 - COL_OLED_TEXTHDRBACK,  //uint16_t textHdrBack;
-  16 - COL_OLED_TEXTDROPBACK, //uint16_t textDropBack;
-  16 - COL_OLED_MENULINE,     //uint16_t menuLine
-  16 - COL_OLED_GRID,         //uint16_t grid;
-  16 - COL_OLED_GRAPH,        //uint16_t graph;
-  16 - COL_OLED_CURSOR        //uint16_t cursor;
+  15 - COL_OLED_TEXT,         //uint16_t text;
+  15 - COL_OLED_TEXT_PAR,     //uint16_t textPar;
+  15 - COL_OLED_TEXT_DIR,     //uint16_t textDir;
+  15 - COL_OLED_TEXTBACK,     //uint16_t textBack;
+  15 - COL_OLED_TEXTSEL,      //uint16_t textSel;
+  15 - COL_OLED_TEXTSELBACK,  //uint16_t textSelBack;
+  15 - COL_OLED_TEXTEDIT,     //uint16_t textEdit;
+  15 - COL_OLED_TEXTEDITBACK, //uint16_t textEditBack;
+  15 - COL_OLED_MSGSHADOW,    //uint16_t msgShadow;
+  15 - COL_OLED_TEXTHDR,      //uint16_t textHdr;
+  15 - COL_OLED_TEXTHDRBACK,  //uint16_t textHdrBack;
+  15 - COL_OLED_TEXTDROPBACK, //uint16_t textDropBack;
+  15 - COL_OLED_MENULINE,     //uint16_t menuLine
+  15 - COL_OLED_GRID,         //uint16_t grid;
+  15 - COL_OLED_GRAPH,        //uint16_t graph;
+  15 - COL_OLED_CURSOR        //uint16_t cursor;
 };
 
 void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
@@ -307,11 +307,22 @@ void setDisplayBrightness(uint8_t brightness)
 {
   if (hasDisplay() == enDisplayType::OLED_128)
   {
-    oled.setContrast(devPars.brightness.get());
+    oled.setContrast(brightness);
   }
 }
 
-void initDisplay(int orientation, uint8_t brightness, bool showSplash)
+void setDisplayColorsInverse(bool inv)
+{
+  if (hasDisplay() == enDisplayType::OLED_128)
+  {
+    if (inv)
+      menue.setColors(&OledColorsInv);
+    else
+      menue.setColors(&OledColors);
+  }
+}
+
+void initDisplay(int orientation, uint8_t brightness, bool dispModeInv, bool showSplash)
 {
   enDisplayType dType = (enDisplayType)hasDisplay();
   if (dType != enDisplayType::NO_DISPLAY)
@@ -342,6 +353,7 @@ void initDisplay(int orientation, uint8_t brightness, bool showSplash)
       oled.display();
       oled.setContrast(brightness);
       menue.setPdisplay(DISP_HEIGHT_OLED, DISP_WIDTH_OLED, pDisplay, LINE_HEIGHT_OLED, 2, &OledColors, 7);
+      setDisplayColorsInverse(dispModeInv);
     }
     setDispLight(255);
     //testDisplay();
@@ -518,7 +530,10 @@ float readTemperature(float& humidity)
     return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
   humidity = 0.0;
 #endif
-#ifdef ARDUINO_TEENSY40
+#ifdef SIMU_DISPLAY
+  humidity = 58.9;
+  return 25.2;
+#elif defined ARDUINO_TEENSY40
   float t;
   int err = sht.measureHighPrecision(t, humidity);
   if(err != 0)
