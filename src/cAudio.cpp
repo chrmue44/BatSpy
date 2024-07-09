@@ -491,8 +491,18 @@ void cAudio::checkAutoRecording(bool recActive)
       if (recActive && m_trigger.getRecTrigger())
       {
         DPRINTLN4("checkAutorecording: start recording");
-        startRecording();
-        delay(5);
+        int res = startRecording();
+        if(res == 0)
+          delay(5);
+        else
+        {
+          cSdCard::inst().unmount();
+          delay(100);
+          cSdCard::inst().mount();
+          delay(100);
+          openProject();
+          sysLog.log("reinitialized SD card after failure");
+        }
       }
     }
     else
@@ -547,11 +557,14 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 void cAudio::openProject()
 {
   char buf[2 * PAR_STR_LEN + 3];
+  /*
   cUtils::replaceInternalCodingWithUTF8(devStatus.notes1.getActText(), buf, sizeof(buf));
   strncat(buf, "\n", 2);
   size_t len = strlen(buf);
   if (len < sizeof(buf))
     cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
+  */
+  buf[0] = 0;
   m_prj.openPrjFile(buf);
   devStatus.recCount.set(m_prj.getRecCount());
 }
@@ -757,7 +770,7 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 }
 
 
-void cAudio::startRecording()
+int cAudio::startRecording()
 {
   if (!m_prj.getIsOpen())
     openProject();
@@ -766,9 +779,13 @@ void cAudio::startRecording()
   m_prj.addFile();
   devStatus.recCount.set(m_prj.getRecCount());
   DPRINTF4("start recording: %i\n", (int)devStatus.recCount.get());
-  m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
-  devStatus.playStatus.set(enPlayStatus::ST_REC);
-  devStatus.recStatus.set("\xF0");
+  int retVal = m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
+  if(retVal == 0)
+  {
+    devStatus.playStatus.set(enPlayStatus::ST_REC);
+    devStatus.recStatus.set("\xF0");
+  }
+  return retVal;
 }
 
 

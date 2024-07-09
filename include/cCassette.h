@@ -51,7 +51,6 @@ class cCassette
 {
   public:
     cCassette();
-//    int startRec(float recTime, enRecFmt recFmt);
     int startRec(const char* name, float recTime);
     int startRec();
     int stop();
@@ -78,6 +77,7 @@ class cCassette
     float getTitleTime() { return m_player.getTitleTime(); }
 
     size_t getSampleCnt() { return m_sampleCnt; }
+    uint32_t getErrCounter() {return m_errCount; }
 
   private:
     void writeWavHeader();
@@ -91,7 +91,6 @@ class cCassette
     AudioRecordQueue m_recorder;
     bool m_isRecFileOpen = false;
     bool m_isPlayFileOpen = false;
-    //FATFS m_fatfs;                 ///< File system object
     tFILE m_fil;                     ///< File object
 #ifdef SIMU_DISPLAY
     uint8_t m_buffern[BUFFSIZE];
@@ -103,6 +102,7 @@ class cCassette
     uint32_t m_sampleRate;
     uint32_t m_sampleCnt;
     uint32_t m_maxRecSamples;
+    uint32_t m_errCount = 0;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

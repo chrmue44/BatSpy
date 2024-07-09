@@ -133,7 +133,7 @@ private:
   void openProject();
   void sendFftBuffer(int delayTime, int part);
   void stopRecording();
-  void startRecording();
+  int startRecording();
   bool isRecordingActive();
 #ifdef SIMU_DISPLAY
   DMAChannel* getDma() { return m_audioIn.getDma(); }

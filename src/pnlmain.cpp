@@ -761,7 +761,6 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   int err = 0;
   int r = 0;
   int x = 60;
-  int xg = 10;
   int y = lf + 3;
 
   err |= pan->addDateItem(&devStatus.date,      10, y + r * lf, 70, lf);

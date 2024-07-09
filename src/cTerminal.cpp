@@ -13,6 +13,7 @@
 #include "cmenue.h"
 #include "cutils.h"
 #include "cEeprom.h"
+#include "pnlparams.h"
 
 extern cMenue menue;
 
@@ -485,6 +486,11 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
     case 'b':
       replyOk = setValFloat(buf + 1, PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, devPars.backLightTime);
       break;
+    case 'd':
+      setValEnum(&buf[1], 0, 1, devPars.displayMode);
+      displayModeFunc(&menue, enKey::NO, nullptr);
+      break;
+
     case 'f':
       replyOk = setVoltageFactor(&buf[1]);
       break;
@@ -536,6 +542,9 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     break;
   case 'b':
     getValInt(buf + 1, devPars.backLightTime, replyBuf, sizeof(replyBuf));
+    break;
+  case 'd':
+    getValEnum(&buf[1], devPars.displayMode, replyBuf, sizeof(replyBuf));
     break;
   case 'l':
     replyOk = parseLocationParams(&buf[1], false, replyBuf, sizeof(replyBuf));
@@ -935,6 +944,8 @@ void MEMF cTerminal::showCommands()
   Serial.println("pan      get auto recording stop minute");
   Serial.println("Pb<val>  set backlight time [s]");
   Serial.println("pb       get backlight time [s]");
+  Serial.println("Pd<val>  set display mode: 0=normal, 1=inverse");
+  Serial.println("pd       get display mode");
   Serial.println("Pf       set current voltage to calc voltage fact (unlock first)");
   Serial.println("Pls<val> set location source (0 = FIX, 1 = GPS)");
   Serial.println("pls      get location source");

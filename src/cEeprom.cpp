@@ -208,7 +208,8 @@ bool MEMP loadParsFromEep()
     devPars.recFiltType.set(readInt16FromEep(EEPADDR_RFILT_TYPE));
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
-    devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
+    //devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
+   devPars.ShutoffVoltage.set(5.8);
  
     devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     int digits = analogRead(PIN_SUPPLY_VOLT);

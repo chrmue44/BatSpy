@@ -44,14 +44,18 @@ int cCassette::startRec()
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
     // check if file is Good
-  if (rc != OK) { // only option is to close file
+  if (rc != OK) 
+  { // only option is to close file
+    m_errCount++;
     sd.closeFile(m_fil);
     m_mode = enCassMode::STOP;
     return 1;
   }
   else
+  {
+    m_errCount = 0;
     m_isRecFileOpen = true;
-
+  }
   m_sampleCnt = 0;
   writeWavHeader();
 

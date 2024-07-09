@@ -327,7 +327,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.recFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger
-  devPars.ShutoffVoltage.set(5.4f);
+  devPars.ShutoffVoltage.set(5.8f);
   devPars.voltFactor.set(1);
 }
 
