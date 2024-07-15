@@ -766,8 +766,8 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addDateItem(&devStatus.date,      10, y + r * lf, 70, lf);
   err |= pan->addTimeItem(&devStatus.time,      67, y + r++ * lf, 70, lf);
   err |= pan->addStrItem(&devStatus.batSymbol,   1, y + r * lf, 25, lf);
-  err |= pan->addNumItem(&devStatus.chargeLevel,30, y + r * lf, 13, lf, false);
-  err |= pan->addTextItem(453,                  48, y + r * lf, 6, lf);
+  //err |= pan->addNumItem(&devStatus.chargeLevel,30, y + r * lf, 13, lf, false);
+  //err |= pan->addTextItem(453,                  48, y + r * lf, 6, lf);
   err |= pan->addTextItem(441,                  60, y + r * lf, 10, lf);
   err |= pan->addNumItem(&devStatus.freeSpace,  70, y + r * lf, 13, lf, false);
   err |= pan->addTextItem(454,                  85, y + r++ * lf, 13, lf);
