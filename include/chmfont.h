@@ -144,8 +144,8 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {   407,   5,   7,   6,    0,   -7 },   // 0x79 'y'
   {   412,   5,   7,   6,    0,   -7 },   // 0x7A 'z'
   {   417,   3,   7,   4,    0,   -7 },   // 0x7B '{'
-  {   421,   2,   7,   4,    0,   -7 },   // 0x7C '|'
-  {   424,   3,   7,   0,    0,   -7 },   // 0x7D '}'
+  {   421,   2,   7,   3,    0,   -7 },   // 0x7C '|'
+  {   424,   3,   7,   4,    0,   -7 },   // 0x7D '}'
   {     0,   0,   0,   0,    0,    0 },   // 0x7E '~'
   {   428,   7,   7,   8,    0,   -7 },   // 0x7F 'non-printable'
   {     0,   0,   0,   0,    0,    0 },   // 0x80 'non-printable'
@@ -260,10 +260,10 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {   465,   1,   7,   1,    0,   -7 },   // 0xED 'í'
   {   467,   1,   7,   1,    0,   -7 },   // 0xEE 'î'
   {   469,   3,   7,   4,    0,   -7 },   // 0xEF 'ï'
-  {   473,   7,   7,   8,    0,   -7 },   // 0xF0 REC
-  {   480,   7,   7,   8,    0,   -7 },   // 0xF1 STOP
-  {   487,   5,   7,   6,    0,   -7 },   // 0xF2 PAUSE
-  {   492,   5,   7,   6,    0,   -7 },   // 0xF3 PLAY
+  {   473,   7,   7,   8,    0,   -7 },   // 0xF0 'ð'
+  {   480,   7,   7,   8,    0,   -7 },   // 0xF1 'ñ'
+  {   487,   5,   7,   6,    0,   -7 },   // 0xF2 'ò'
+  {   492,   5,   7,   6,    0,   -7 },   // 0xF3 'ó'
   {     0,   0,   0,   0,    0,    0 },   // 0xF4 'ô'
   {     0,   0,   0,   0,    0,    0 },   // 0xF5 'õ'
   {   497,   5,   7,   6,    0,   -7 },   // 0xF6 'ö'
@@ -275,4 +275,4 @@ const GFXglyph chmFont_Glyphs[] PROGMEM = {
   {   502,   5,   7,   6,    0,   -7 }    // 0xFC 'ü'
 };
 
-const GFXfont chmFont PROGMEM = { (uint8_t*)chmFont_Bitmaps,             (GFXglyph*)chmFont_Glyphs, 0x1E, 0xFC,             7 };
+const GFXfont chmFont PROGMEM = { (uint8_t*)chmFont_Bitmaps,              (GFXglyph*)chmFont_Glyphs, 0x1E, 0xFC,              7 };

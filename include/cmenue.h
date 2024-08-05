@@ -91,7 +91,7 @@ private:
   int initExpertPanels(tCoord lf);
   int initRecorderPanels(tCoord lf);
   int initHandheldPanels(tCoord lf);
-  int initComactPanels(tCoord lf);
+  int initCompactPanels(tCoord lf);
 
 };
 

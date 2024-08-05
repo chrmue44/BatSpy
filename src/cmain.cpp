@@ -85,12 +85,14 @@ void setup()
   int orientation = readInt16FromEep(EEPADDR_DISP_ORIENT) == 0 ? 0 : 2;
   bool dispModeInv = readInt16FromEep(EEPADDR_DISP_MODE) != 0;
   initDisplay(orientation, 255, dispModeInv, true);
-  cSdCard::inst().mount();
-  char serial[16];
+  enSdRes res = cSdCard::inst().mount();
+   char serial[16];
    getSerialNr(serial, sizeof(serial));
   delay(500);  
   sysLog.log("power on");
   sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
+  if(res != enSdRes::OK)
+    sysLog.log("mounting of SD card failed");
   menue.init(hasDisplay() != enDisplayType::NO_DISPLAY);
   menue.initFileRelatedParams();
   // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);

@@ -62,5 +62,6 @@ void setVisibilityRecCount(cMenuesystem* pThis);
 void setGpsLog(cMenuesystem* pThis, bool on);
 void setHeaderPanelText(cMenuesystem* pThis, thText t);
 void enableEditPosition(cMenuesystem* pThis, bool on);
+void enableEditTimes(cMenuesystem* pThis, bool on);
 
 #endif // PANMAIN_H

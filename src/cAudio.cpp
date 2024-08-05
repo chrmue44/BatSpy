@@ -430,7 +430,7 @@ void cAudio::updateCassMode()
     }
     break;
   case enPlayStatus::ST_REC:
-    if (m_cass.getMode() != enCassMode::REC)
+    if ((m_cass.getMode() != enCassMode::REC) && cSdCard::inst().isMounted())
     {
       setAudioConnections(0);
       startRecording();
@@ -482,7 +482,7 @@ bool cAudio::isRecordingActive()
 
 void cAudio::checkAutoRecording(bool recActive)
 {
-  if((devStatus.playStatus.get() == enPlayStatus::ST_STOP) && (m_cass.getMode() == enCassMode::STOP))
+  if((devStatus.playStatus.get() == enPlayStatus::ST_STOP) && (m_cass.getMode() == enCassMode::STOP) && cSdCard::inst().isMounted())
   {
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {

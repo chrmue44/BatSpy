@@ -370,7 +370,7 @@ void MEMP cMenue::initDialogs()
       break;
     case enMenueType::COMPACT:
       initFunctionsCompact();
-      initComactPanels(lf);
+      initCompactPanels(lf);
       break;
   }
 }
@@ -514,7 +514,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
   return err;
 }
 
-int MEMP cMenue::initComactPanels(tCoord lf)
+int MEMP cMenue::initCompactPanels(tCoord lf)
 {
   int err = 0;
   panInfo = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
@@ -530,6 +530,7 @@ int MEMP cMenue::initComactPanels(tCoord lf)
   setMainPanel(panGeo);
   setFkeyPanel(fkeyMainPan);
   enableEditPosition(this, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  enableEditTimes(this, (devPars.recAuto.get() != enRecAuto::OFF) && (devPars.recAuto.get() != enRecAuto::ON));
 
   panParams = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initParPanCompact(getPan(panParams), lf);

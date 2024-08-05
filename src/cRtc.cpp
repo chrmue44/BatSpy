@@ -62,6 +62,7 @@ void MEMF cRtc::checkAndSetTime(int y, int mo, int d, int h, int m, int s, enDlS
     sysLog.logf("set time to %02i.%02i.%04i   %02i:%02i:%02i", d, mo, y, h, m, s);
     Teensy3Clock.set(gpsTime);
     ::setTime(gpsTime);
+    
   } 
 }
 
