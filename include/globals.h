@@ -26,6 +26,7 @@ extern TCA9534 ioex;
 #include "cStatus.h"
 #include "cEeprom.h"
 #include "SensirionI2cSht4x.h"
+#include "cCmdExecuter.h"
 
 
 extern cLog sysLog;
@@ -50,4 +51,6 @@ extern cnotes notes2;
 extern SensirionI2cSht4x sht;
 extern cStatus statusDisplay;
 extern char serialNumber[EEP_SERIAL_SIZE];
+
+extern cCmdExecuter command;
 #endif //#ifndef GLOBALS_H

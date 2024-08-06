@@ -70,19 +70,19 @@ class cParStr : public cParBase
 {
  public:
     cParStr() :
-    m_color(0) 
+    m_color(0)
     {
       m_val[0] = 0;
     }
   cParStr(const char* p) { set(p); }
   char* get() {return m_val;}
   void set(const char* p)
-  { 
+  {
     if(strcmp(p, m_val) != 0)
     {
       strncpy(m_val, p, sizeof(m_val) - 1);
       update(true);
-    } 
+    }
   }
 void setColor(uint16_t col) { m_color = col; }
   uint16_t getColor() { return m_color; }
@@ -165,7 +165,7 @@ class cParTime : public cParBase
     update(true);
   }
 
-  void set() 
+  void set()
   {
      m_hour = hour(); m_min = minute(); m_sec = second(); update(true);
   }
@@ -178,7 +178,7 @@ class cParTime : public cParBase
 /**
  * @brief represents a position
  */
-class cParGeoPos : public cParBase 
+class cParGeoPos : public cParBase
 {
  public:
   float getLat() {return m_lat;}
@@ -224,7 +224,7 @@ class cParGeoPos : public cParBase
 /**
  * @brief represents a button
  */
-class cParBtn : public cParBase 
+class cParBtn : public cParBase
 {
  public:
   cParBtn() {}
@@ -241,7 +241,7 @@ class cParBtn : public cParBase
 /**
  * @brief The stEnumItem struct one item to display an enum parameter
  */
-class cListItem : public cParBase 
+class cListItem : public cParBase
 {
  public:
    cListItem() :
@@ -265,7 +265,7 @@ typedef my_vector<cListItem, CNT_ENUM_ITEM> tList;
 /**
  * @brief The stEnumItem struct one item to display an enum parameter
  */
-class cEnumItem : public cParBase 
+class cEnumItem : public cParBase
 {
  public:
    cEnumItem() :
@@ -289,7 +289,7 @@ typedef my_vector<cEnumItem, CNT_ENUM_ITEM> tEnum;
 class cParEnum;
 class cParList;
 
-class cParText : public cParBase 
+class cParText : public cParBase
 {
  public:
   void setText(const char* p) {m_text = p; update(true); }
@@ -316,7 +316,7 @@ class cParText : public cParBase
 /**
  * @brief item in a panel
  */
-struct stPanelItem 
+struct stPanelItem
 {
   tCoord x;             ///< x coordinate [px]
   tCoord y;             ///< y coordinate [px]
@@ -332,7 +332,7 @@ struct stPanelItem
 
 typedef my_vector<stPanelItem, CNT_PANEL_ITEM> tItemList;
 
-struct cPanel 
+struct cPanel
 {
   cPanel();
   virtual ~cPanel() {}
@@ -391,7 +391,7 @@ struct cPanel
 /**
  * parameter type enumaration
  */
-class cParEnum : public cParBase 
+class cParEnum : public cParBase
 {
  public:
   cParEnum() :
@@ -404,7 +404,7 @@ class cParEnum : public cParBase
 
   }
 
-  int addItem(thText text) 
+  int addItem(thText text)
   {
     cEnumItem item;
     item.setId ((uint16_t)m_enumeration.size());
@@ -412,7 +412,7 @@ class cParEnum : public cParBase
     return m_enumeration.push_back(item);
   }
 
-  int addItem(const char* text) 
+  int addItem(const char* text)
   {
     cEnumItem item;
     item.setId((uint16_t)m_enumeration.size());
@@ -466,7 +466,7 @@ class cParEnum : public cParBase
 /**
  * parameter type list
  */
-class cParList : public cParBase 
+class cParList : public cParBase
 {
  public:
   cParList(uint32_t v) :
@@ -475,7 +475,7 @@ class cParList : public cParBase
 
   }
 
-  int addItem(thText text) 
+  int addItem(thText text)
   {
     cListItem item;
     item.setId ((uint16_t)m_enumeration.size());
@@ -483,7 +483,7 @@ class cParList : public cParBase
     return m_enumeration.push_back(item);
   }
 
-  int addItem(const char* text) 
+  int addItem(const char* text)
   {
     cListItem item;
     item.setId((uint16_t)m_enumeration.size());

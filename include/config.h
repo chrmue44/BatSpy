@@ -193,7 +193,7 @@ inline bool hasAmpRevB() { return  isRevisionB(); }
 #define portExpSetBit(x, y)   digitalWrite(x, y)
 
 #endif // defined (ARDUINO_TEENSY41)
-int hasDisplay();
+enDisplayType hasDisplay();
 void testDisplay();
 float readSupplyVoltage();
 void initPins();
@@ -213,6 +213,8 @@ void setAnalogPower(bool on);
 void setHwOperationMode(enCpuMode mode);
 void initTempSensor();
 void setDisplayColorsInverse(bool inv);
+bool isBackLightOn();
+void setBackLight(bool on);
 
 
 #define PATH_NOTES1  "/info/notes1.txt"

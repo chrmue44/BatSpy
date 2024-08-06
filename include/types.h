@@ -145,31 +145,61 @@ enum enTrigType
 };
 
 /// source of position information
-enum enPositionMode
+enum class enPositionMode
 {
-  POS_FIX = 0,
-  POS_GPS_ON = 1,
-  POS_GPS_AUTO = 2,
+  FIX = 0,
+  GPS_ON = 1,
+  GPS_AUTO = 2,
 };
 
-enum enDisplayType
+enum class enDisplayType
 {
   NO_DISPLAY = 0,
   OLED_128 = 1,
   TFT_320 = 2
 };
 
-enum enDlSaving
+enum class enDlSaving
 {
-  DLS_OFF = 0,
-  DLS_ON = 1,
-  DLS_AUTO = 2,
+  OFF  = 0,
+  ON   = 1,
+  AUTO = 2,
 };
 
 enum enCpuMode
 {
   CPU_MODE_INIT = 0,
-  RECORDING = 1,
-  POWER_SAVE = 2
+  RECORDING     = 1,
+  POWER_SAVE    = 2
 };
+
+// states of the main state machine
+enum class enMainState
+{
+  INIT    = 0,
+  IDLE    = 1,
+  RECORD  = 2,
+  PLAY    = 3,
+  COMMAND = 4,
+};
+
+enum class enCmd
+{
+	LOG,
+	SHUTDOWN,
+	UPDATE_INFOS,
+  MEAS_TEMPERATURE,
+  CHECK_AND_SET_TIME,
+  BACKLIGHT_OFF,
+  BACKLIGHT_ON,
+  CLOSE_PROJECT,
+  POWER_OFF
+};
+
+enum class enGpsBaudRate
+{
+  BD_9600 = 0,
+  BD_152000 = 1,
+};
+
 #endif    //#ifndef _TYPES_H

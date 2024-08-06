@@ -114,13 +114,13 @@ time_t cRtc::getDaylightSaving(int y, int m, int d, enDlSaving ds)
   time_t retVal = 0;
   switch (ds)
   {
-    case enDlSaving::DLS_OFF:
+    case enDlSaving::OFF:
       retVal = 0;
       break;
-    case enDlSaving::DLS_ON:
+    case enDlSaving::ON:
       retVal = 3600;
       break;
-    case enDlSaving::DLS_AUTO:
+    case enDlSaving::AUTO:
       retVal = isDst(y, m, d) ? 3600 : 0;
       break;
   }

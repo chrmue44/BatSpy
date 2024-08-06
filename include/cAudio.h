@@ -125,7 +125,7 @@ private:
   void setup();
   void updateCassMode();
   //void checkAutoRecording(cMenue& menue, cRtc& rtc);
-  void checkAutoRecording(bool recActive);
+  void checkAutoRecording(bool& recActive);
   void operate(bool liveFft);
   float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}

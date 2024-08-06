@@ -12,10 +12,13 @@
 #include <cmath>
 
 void MEMF cGps::init()
-{ 
+{
   if(m_power)
   {
-    SERIAL_GPS.begin(9600, SERIAL_8N1);
+    if(devPars.gpsBaudRate.get() == static_cast<uint32_t>(enGpsBaudRate::BD_9600))
+      SERIAL_GPS.begin(9600, SERIAL_8N1);
+    else
+      SERIAL_GPS.begin(115200, SERIAL_8N1);
     cSdCard::inst().chdir("/log");
     m_valid = false;
     m_recIdx = 0;
@@ -146,8 +149,7 @@ bool MEMF cGps::operate(bool testMode)
           m_altitude = m_gps.f_altitude();
           if(!m_valid)
           {
-            rtc.checkAndSetTime(m_year, m_month, m_day, m_hour, m_minute, m_second, 
-                                (enDlSaving)devPars.daylightSav.get());
+			command.addToQueue(enCmd::CHECK_AND_SET_TIME, nullptr);
             if (m_mode == enGpsMode::GPS_AUTO_OFF_AFTER_FIX)
             {
               m_timer.stop();

@@ -480,7 +480,7 @@ bool cAudio::isRecordingActive()
 }
 
 
-void cAudio::checkAutoRecording(bool recActive)
+void cAudio::checkAutoRecording(bool& recActive)
 {
   if((devStatus.playStatus.get() == enPlayStatus::ST_STOP) && (m_cass.getMode() == enCassMode::STOP) && cSdCard::inst().isMounted())
   {
@@ -587,7 +587,7 @@ void cAudio::operate(bool liveFft)
     // calculate average 
     for(i = 0; i < 512; i++)
       avg += m_fft.output[i];
-    
+
     // calculate bandwidth around maximum intensity
     i = idx;
     while((m_fft.output[i] > FREQ_THRESHOLD) && (i < 512))
@@ -603,7 +603,7 @@ void cAudio::operate(bool liveFft)
       i--;
       avgPeak += m_fft.output[i];
     }
-    
+
     if(bw == 0)
       bw++;
     m_fftInfo.lastAvgPeak = (float)avgPeak / (float)bw;
@@ -614,7 +614,7 @@ void cAudio::operate(bool liveFft)
 
   if(liveFft && fftAvailable && !m_haltLiveFft)
     calcLiveFft();
-  
+
   // handle recording
   if (m_oldCassMode != m_cass.getMode())
   {

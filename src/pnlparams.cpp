@@ -206,6 +206,8 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.backLightTime, x + 30, r++ * lf,  25, lf, true);
   err |= pan->addTextItem(1380,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.debugLevel,   x,      r++ * lf,  48, lf, true);
+  err |= pan->addTextItem(1385,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.gpsBaudRate,  x,      r++ * lf,  48, lf, true);
   err |= pan->addBtnItem(1390,                   1,  5 + r   * lf,  60, lf + 2, displayTestFunc);
   err |= pan->addBtnItem(5,                      64, 5 + r   * lf,  60, lf + 2, f2FormatFunc);
 

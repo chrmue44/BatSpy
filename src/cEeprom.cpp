@@ -137,15 +137,16 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_TRIG_TYPE,    (int16_t)devPars.triggerType.get());
   writeFloatToEep(EEPADDR_MIN_EV_LEN,   devPars.minEventLen.get());
   writeFloatToEep(EEPADDR_SHUTOFF_V,    devPars.ShutoffVoltage.get());
-  writeFloatToEep(EEPADDR_RFILT_FREQ,    devPars.recFiltFreq.get());
-  writeInt16ToEep(EEPADDR_RFILT_TYPE,    devPars.recFiltType.get());
+  writeFloatToEep(EEPADDR_RFILT_FREQ,   devPars.recFiltFreq.get());
+  writeInt16ToEep(EEPADDR_RFILT_TYPE,   devPars.recFiltType.get());
+  writeInt16ToEep(EEPADDR_BAUD_GPS,     devPars.gpsBaudRate.get());
 
   int addr = EEPADDR_FIRSTFREE;
   for(int i = 0; i < 20; i++)
   {
     writeInt16ToEep(addr, 0);
     addr += 2;
-  }    
+  }
   writeInt16ToEep(EEPADDR_MAX_ADDR, addr - 2);
 
   int16_t chks = 0;
@@ -209,8 +210,8 @@ bool MEMP loadParsFromEep()
     devPars.triggerType.set(readInt16FromEep(EEPADDR_TRIG_TYPE));
     devPars.minEventLen.set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
     //devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
-   devPars.ShutoffVoltage.set(5.8);
- 
+    devPars.ShutoffVoltage.set(5.8);
+    devPars.gpsBaudRate.set(readInt16FromEep(EEPADDR_BAUD_GPS));
     devPars.voltFactor.set(readFloatFromEep(EEPADDR_VOLT_FACT));
     int digits = analogRead(PIN_SUPPLY_VOLT);
     devStatus.setVoltage.set((devPars.voltFactor.get() * (float)digits));

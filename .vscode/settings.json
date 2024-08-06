@@ -48,6 +48,8 @@
         "stdexcept": "cpp",
         "cinttypes": "cpp",
         "cstdbool": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "charconv": "cpp",
+        "xstring": "cpp"
     }
 }

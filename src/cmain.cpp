@@ -88,7 +88,7 @@ void setup()
   enSdRes res = cSdCard::inst().mount();
    char serial[16];
    getSerialNr(serial, sizeof(serial));
-  delay(500);  
+  delay(500);
   sysLog.log("power on");
   sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
   if(res != enSdRes::OK)
@@ -100,7 +100,7 @@ void setup()
   menue.printPars();
   getSerialNr(serialNumber, sizeof(serialNumber));
   audio.setup();
-  wheels.setDirection(true);  
+  wheels.setDirection(true);
   if(hasDisplay() != enDisplayType::NO_DISPLAY)
   {
     setDispLight(255);
@@ -123,8 +123,6 @@ void setup()
   digWrite(SPIN_LED_2, 0);
 }
 
-static bool backLightOn = true;
-bool reinitDisplay = false;
 
 void handleDisplayAndWheel(bool oneSec)
 {
@@ -133,19 +131,9 @@ void handleDisplayAndWheel(bool oneSec)
     menue.handleKey(enKey::TICK);
     if(!audio.isRecording())
     {
-      if(backLightOn && reinitDisplay)
+       if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
       {
-        initDisplay(devPars.dispOrient.get(), 255,  devPars.displayMode.get(), false);
-        sysLog.log("reinitialized display communication because of faulty temp. sensor");
-        reinitDisplay = false;
-      }
-      if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
-      {
-        if(backLightOn)
-        {
-          setDispLight(0);
-          backLightOn = false;
-        }
+        command.addToQueue(enCmd::BACKLIGHT_OFF);
       }
     }
   }
@@ -162,11 +150,9 @@ void handleDisplayAndWheel(bool oneSec)
     //handle commands
     if(key != enKey::NOKEY)
     {
-      if(!backLightOn)
+      if(!isBackLightOn())
       {
-        backLightOn = true;
-        setDispLight(255);
-        menue.resetTimer();
+        command.addToQueue(enCmd::BACKLIGHT_ON);
       }
       else
       {
@@ -190,6 +176,7 @@ void handleDisplayAndWheel(bool oneSec)
 cTimer switchOff;
 cTimer function;
 bool functionExecuted = false;
+const char* MSG_PWR_DN_BUTTON = "power down via button";
 
 void handleButtonsAndLeds()
 {
@@ -224,8 +211,8 @@ void handleButtonsAndLeds()
   if(switchOff.isAlarm())
   {
     audio.stopRecording();
-    sysLog.logf("power down via button");
-    sysLog.close();
+	command.addToQueue(enCmd::LOG, (void*)MSG_PWR_DN_BUTTON);
+	command.addToQueue(enCmd::POWER_OFF);
     powerOff();
   }
   if(function.isAlarm())
@@ -238,53 +225,32 @@ void handleButtonsAndLeds()
 }
 
 
+
 // *********************** main loop **************************
 int loopCount = 0;
-bool tempMeasSheduled = false;
-
+extern void stateMachine();
 void loop()
 {
   loopCount++;
 
-  bool rtFft;
-  if(hasDisplay() == enDisplayType::TFT_320)
-    rtFft = (menue.getFocusPanel() == pnlLive) ||
-              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
-  else
-    rtFft = terminal.isOnline();
-  audio.operate( rtFft );
-  //if(audio.isRecording())
-  //  return;
-
-  bool recOn = audio.isRecordingActive();
-  if(year() < 2024)
-  {
-    recOn = false;
-    devStatus.recStatus.set("!!!");
-  }
-  else
-  { 
-    if(!audio.isRecording())
-      devStatus.recStatus.set(recOn ? "\xF2" : "\xF1");
-  }
-  audio.checkAutoRecording(recOn);
-  setHwOperationMode(recOn ? enCpuMode::RECORDING : enCpuMode::POWER_SAVE);
-
   bool tickOneSec = tick1s.check();
 
-  if (hasDisplay())
+  if (hasDisplay() != enDisplayType::NO_DISPLAY)
     handleDisplayAndWheel(tickOneSec);
   else
     handleButtonsAndLeds();
 
+  stateMachine();
+
   bool gpsValid = false;
-  if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
+  if(devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX))
   {
     gpsValid = gps.operate();
   }
   if(tickOneSec)
   {
-    if((devPars.srcPosition.get() != enPositionMode::POS_FIX) && (gps.getStatus() == enGpsStatus::GPS_SEARCHING))
+    if((devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX)) &&
+        (gps.getStatus() == enGpsStatus::GPS_SEARCHING))
        digWrite(SPIN_LED_2, 1);
     else
        digWrite(SPIN_LED_2, 0);
@@ -301,7 +267,7 @@ void loop()
       devStatus.latMin.set(devStatus.geoPos.getMinLat());
       devStatus.latSec.set(devStatus.geoPos.getSecLat());
     }
-    if (devPars.srcPosition.get() != enPositionMode::POS_FIX)
+    if (devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX))
       devStatus.satCount.set(gps.getSatCount());
     devStatus.gpsStatus.set(gps.getStatus());
 
@@ -316,33 +282,13 @@ void loop()
       devStatus.batSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
     else if(((sec % 10) == 2) && !audio.isRecording())
-      tempMeasSheduled = true;
+      command.addToQueue(enCmd::MEAS_TEMPERATURE, nullptr);
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
     devStatus.time.set();
     devStatus.date.set();
   }
 
-  // operate I2C only when recording is paused
-  if(tempMeasSheduled && !audio.isRecording())
-  {
-    float humidity;
-    float temp = readTemperature(humidity);
-    if((temp > 100) && (hasDisplay() == enDisplayType::OLED_128)) 
-      reinitDisplay = true;
-    devStatus.temperature.set(temp);
-    devStatus.humidity.set(humidity);
-    tempMeasSheduled = false;
-  }
-
   if(tick15Min.check())
-  {
-    size_t freeSpace;  size_t totSpace;
-    cSdCard::inst().getFreeMem(freeSpace, totSpace);
-    devStatus.freeSpace.set(freeSpace / 1024/1024);
-    if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
-      calcSunrise();
-    logStatus();
-    checkSupplyVoltage();
-  }
+    command.addToQueue(enCmd::UPDATE_INFOS, nullptr);
 }

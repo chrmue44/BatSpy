@@ -33,16 +33,17 @@ void setHeaderPanelText(cMenuesystem* pThis, thText t)
 // *******************************************
 // drop down panel F1 for main panel
 
+const char* MSG_PWR_DN_MENUE = "power down via menue";
+
 void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  switch (key) 
+  switch (key)
   {
     case enKey::YES:
-      sysLog.logf("power down via menue");
-      sysLog.close();
-      powerOff();
+	  command.addToQueue(enCmd::LOG, (void*)MSG_PWR_DN_MENUE);
+	  command.addToQueue(enCmd::POWER_OFF);
       break;
-      
+
     default:
     case enKey::NO:
       break;
@@ -540,7 +541,7 @@ int MEMP initFkeyPanel(cPanel* pan, tCoord lf)
  
   retVal = pan->addTextItem(1, 0, 227, 80, lf, true, f1Func);
   retVal |= pan->addTextItem(2,  81, 227, 79, lf, true, f2Func);
-  if(devPars.srcPosition.get() != enPositionMode::POS_FIX)
+  if(devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX))
     retVal |= pan->addTextItem(6, 161, 227, 79, lf, true, f3Func);
   retVal |= pan->addTextItem(4, 241, 227, 79, lf, true, f4Func);
   return retVal;
@@ -681,7 +682,7 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
 //  err |= pan->addTextItem(1325,                  3, 30 + r   * lf, 80, lf);
 //  err |= pan->addEnumItem(&devPars.preAmpGain,   x, 30 + r++ * lf, 120, lf, true);
 
-  if (devPars.srcPosition.get() != enPositionMode::POS_FIX)
+  if (devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX))
   {
     err |= pan->addTextItem(200, 3, 30 + r * lf, 80, lf);
     err |= pan->addGeoItem(&devStatus.geoPos,     x, 30 + r++ * lf, 150, lf, false);
@@ -708,7 +709,7 @@ int MEMP initMainPanelRecorder(cPanel* pan, tCoord lf)
     err |= pan->addNumItem(&devStatus.lonSec,   x + 150, 30 + r++ * lf, 25, lf, true, setPosFunc);
   }
   err |= pan->addTextItem(193,                  3,   30 + r * lf, 80, lf);
-  err |= pan->addNumItem(&devStatus.height,     x,   30 + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  err |= pan->addNumItem(&devStatus.height,     x,   30 + r++ * lf, 50, lf, devPars.srcPosition.get() == static_cast<uint32_t>(enPositionMode::FIX));
   err |= pan->addTextItem(440,                  3,   30 + r * lf, 80, lf);
   err |= pan->addNumItem(&devStatus.freeSpace,  x,   30 + r++ * lf, 80, lf, false);
   err |= pan->addTextItem(450,                  3,   30 + r * lf, 80, lf);
@@ -760,22 +761,23 @@ void switchOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP positionModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  switch (devPars.srcPosition.get())
+  enPositionMode mode =static_cast<enPositionMode>(devPars.srcPosition.get());
+  switch (mode)
   {
-  case enPositionMode::POS_FIX:
-    enableEditPosition(pThis, true);
-    gps.setMode(enGpsMode::GPS_OFF);
-    break;
+    case enPositionMode::FIX:
+      enableEditPosition(pThis, true);
+      gps.setMode(enGpsMode::GPS_OFF);
+      break;
 
-  case enPositionMode::POS_GPS_ON:
-    enableEditPosition(pThis, false);
-    gps.setMode(enGpsMode::GPS_ON);
-    break;
+    case enPositionMode::GPS_ON:
+      enableEditPosition(pThis, false);
+      gps.setMode(enGpsMode::GPS_ON);
+      break;
 
-  case enPositionMode::POS_GPS_AUTO:
-    enableEditPosition(pThis, false);
-    gps.setMode(enGpsMode::GPS_AUTO_OFF_AFTER_FIX);
-    break;
+    case enPositionMode::GPS_AUTO:
+      enableEditPosition(pThis, false);
+      gps.setMode(enGpsMode::GPS_AUTO_OFF_AFTER_FIX);
+      break;
   }
 }
 

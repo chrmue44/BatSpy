@@ -42,7 +42,7 @@ cMenue::cMenue(int width, int height, Adafruit_GFX* pDisplay) :
 cMenue::~cMenue() {
 }
 
-void MEMP cMenue::initPars() 
+void MEMP cMenue::initPars()
 {
   devPars.lang.clear();
   devPars.lang.addItem(1101);
@@ -81,7 +81,7 @@ void MEMP cMenue::initPars()
 #endif
   for(int t = 1300; t <= 1308; t++)
     devPars.sampleRate.addItem(t);
-  devPars.sampleRate.set(SR_312K);  
+  devPars.sampleRate.set(SR_312K);
   devPars.recTime.init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
@@ -168,6 +168,10 @@ void MEMP cMenue::initPars()
   devPars.displayMode.addItem(1156);
   devPars.displayMode.addItem(1157);
 
+  devPars.gpsBaudRate.clear();
+  devPars.gpsBaudRate.addItem(1386);
+  devPars.gpsBaudRate.addItem(1387);
+
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
   devStatus.opMode.addItem(21);
@@ -228,7 +232,7 @@ void MEMP cMenue::initPars()
   devStatus.lonMin.init(0, 59, 1, 0,2);
   devStatus.lonSec.init(0,999,5,0,3);
   devStatus.geoPos.set(49.1234, 8.2345f);
-  
+
   devStatus.peakVal.init(0, 100, 0.1f, 1);
   devStatus.freeSpace.init(0, 256000, 1, 0);
   devStatus.voltage.init(0, 20, 0.01f, 2);
@@ -244,10 +248,9 @@ void MEMP cMenue::initPars()
   devStatus.posValid.addItem(16);
   devStatus.posValid.addItem(15);
   devStatus.lastCallF.init(0.0f, 200.0f, 0.1f, 1);
- 
 
   if(hasDisplay() == enDisplayType::OLED_128)
-  { 
+  {
     devStatus.gpsStatus.addItem(1430); //enGpsStatus::GPS_STATUS_OFF
     devStatus.gpsStatus.addItem(1434); //enGpsStatus::GPS_SEARCHING
     devStatus.gpsStatus.addItem(1435); //enGpsStatus::GPS_FIXED
@@ -261,7 +264,6 @@ void MEMP cMenue::initPars()
     devStatus.gpsStatus.addItem(1433); //enGpsStatus::GPS_FIXED_OFF
   }
   devStatus.chargeLevel.init(0,99,1,0);
-  
   devStatus.chargeLevel.init(0.0, 99.0, 0.1, 0);
   load();
   setPosFunc(this, enKey::NO, nullptr);
@@ -294,7 +296,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.mixFreq.set(40.0f);              ///< mixer frequency
   devPars.recAuto.set(0);
   devPars.sendDelay.set(2.0);
-  devPars.srcPosition.set(enPositionMode::POS_FIX);
+  devPars.srcPosition.set(static_cast<uint32_t>(enPositionMode::FIX));
   devPars.menueType.set(enMenueType::COMPACT);
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);
   devPars.recTime.set(3.0f);               ///< recording time
@@ -320,7 +322,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.stopH.set(6);                 ///< hour of start time
   devPars.stopMin.set(0);               ///< minute of start time
   devPars.timeZone.set(1);
-  devPars.daylightSav.set(enDlSaving::DLS_AUTO);
+  devPars.daylightSav.set(static_cast<uint32_t>(enDlSaving::AUTO));
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
   devStatus.height.set(100);
   devPars.recFiltFreq.set(1.0);             ///< hight pass freq for recording trigger
@@ -328,10 +330,11 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger
   devPars.ShutoffVoltage.set(5.8f);
-  devPars.voltFactor.set(1);
+//  devPars.voltFactor.set(1);
+  devPars.gpsBaudRate.set(static_cast<uint32_t>(enGpsBaudRate::BD_9600));
 }
 
-void MEMP cMenue::initDialogs() 
+void MEMP cMenue::initDialogs()
 {
   if(hasDisplay() == enDisplayType::NO_DISPLAY)
     return;
@@ -346,13 +349,16 @@ void MEMP cMenue::initDialogs()
       break;
     case enDisplayType::TFT_320:
       lf = LINE_HEIGHT_TFT;
+      break;
+    case enDisplayType::NO_DISPLAY:
+      break;
 
   }
   // Header for main panel
   setHdrPanel(createPanel(PNL_HEADER, 0, 0, getWidth(), getHdrHeight()));
   setHeaderPanelText(this, 100);
 
- 
+
   switch (devPars.menueType.get())
   {
     default:
@@ -529,7 +535,7 @@ int MEMP cMenue::initCompactPanels(tCoord lf)
   err |= initMainPanelCompact(getPan(panGeo), lf);
   setMainPanel(panGeo);
   setFkeyPanel(fkeyMainPan);
-  enableEditPosition(this, devPars.srcPosition.get() == enPositionMode::POS_FIX);
+  enableEditPosition(this, devPars.srcPosition.get() == static_cast<uint32_t>(enPositionMode::FIX));
   enableEditTimes(this, (devPars.recAuto.get() != enRecAuto::OFF) && (devPars.recAuto.get() != enRecAuto::ON));
 
   panParams = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
@@ -563,7 +569,7 @@ int MEMP cMenue::initRecorderPanels(tCoord lf)
 
   pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initLivePanRecorder(getPan(pnlLive), lf);
-  
+
   panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initInfoPanRecorder(getPan(panInfo), lf);
 

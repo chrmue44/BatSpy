@@ -32,6 +32,7 @@ cMeanCalc<int32_t,50> digits;
 
 uint8_t ioexOut = 0;
 bool ioDebugMode = false;
+bool backLightOn = false;
 
 #ifdef ARDUINO_TEENSY41
 uint8_t pinAmp0;
@@ -273,19 +274,19 @@ void testDisplay()
         x += 1;
       else
         state = 1;
-        break;
+      break;
     case 1:
       if (y < (pDisplay->height() - 2* r - 2))
         y += 1;
       else
         state = 2;
-        break;
+      break;
     case 2:
       if (x > 1)
         x -= 1;
       else
         state = 3;
-        break;
+      break;
     case 3:
       if (y > 1)
         y -= 1;
@@ -371,37 +372,33 @@ void initDisplay(int orientation, uint8_t brightness, bool dispModeInv, bool sho
   }
 }
 
+const char* MSG_POWER_SAVE = "enable power save mode";
+const char* MSG_RECORDING_MODE = "enable recording mode";
 
 enCpuMode cpuMode = enCpuMode::CPU_MODE_INIT;
 void setHwOperationMode(enCpuMode mode)
 {
-  char buf[80];
   if(cpuMode != mode)
   {
     switch(mode)
     {
-   //   sysLog.close();
-    //  trigLog.close();
-      audio.closeProject();
-   //   cSdCard::inst().unmount();
       case enCpuMode::POWER_SAVE:
+        command.addToQueue(enCmd::CLOSE_PROJECT);
         audio.enable(false);
         setAnalogPower(false);
         set_arm_clock(CPU_FREQ_LOW);
-        strncpy(buf,"enable power save mode", sizeof(buf));
+		command.addToQueue(enCmd::LOG, (void*)MSG_POWER_SAVE);
         break;
       case enCpuMode::RECORDING:
         set_arm_clock(CPU_FREQ_HIGH);
         audio.enable(true);
         setAnalogPower(true);
-        strncpy(buf,"enable recording mode", sizeof(buf));
+		command.addToQueue(enCmd::LOG, (void*)MSG_RECORDING_MODE);
         break;
       case enCpuMode::CPU_MODE_INIT:
         break;
     }
     delay(100);
-   // cSdCard::inst().mount();
-    sysLog.log(buf);
     cpuMode = mode;
     DPRINTF1("CPU Freq: %i\n", F_CPU_ACTUAL);
   }
@@ -490,7 +487,7 @@ float calcVoltageFactor(float volt)
     delay(2);
   }
   digits /= cnt;
-  
+
   if(digits > 0)
   {
       fact = volt / digits;
@@ -595,7 +592,7 @@ void powerOff()
   for(;;)  { }
 }
 
-int hasDisplay()
+enDisplayType hasDisplay()
 {
 #ifdef ARDUINO_TEENSY40
   if (digitalRead(PIN_REV0) == 0)
@@ -606,7 +603,7 @@ int hasDisplay()
     return enDisplayType::NO_DISPLAY;
 #endif
 #ifdef ARDUINO_TEENSY41
-  return enDisplyType::TFT_320;
+  return enDisplayType::TFT_320;
 #endif
 }
 
@@ -614,7 +611,6 @@ int hasDisplay()
 void setDispLight(uint8_t bright)
 {
 #ifdef ARDUINO_TEENSY40
-  
   switch(hasDisplay())
   {
     case enDisplayType::TFT_320:
@@ -623,6 +619,7 @@ void setDispLight(uint8_t bright)
       else
         digWrite(SPIN_LED_DISP, 0);
       break;
+
     case enDisplayType::OLED_128:
       if(bright > 128)
       {
@@ -635,10 +632,13 @@ void setDispLight(uint8_t bright)
         oled.display();
         menue.enable(false);
       }
+      break;
 
+    case enDisplayType::NO_DISPLAY:
+      break;
   }
 #endif
-#ifdef ARDUINO_TEENSY41  
+#ifdef ARDUINO_TEENSY41
   uint8_t pinLed;
   else if(isRevisionB())
     pinLed = PIN_TFT_LED_REVB;
@@ -648,7 +648,7 @@ void setDispLight(uint8_t bright)
     digitalWrite(pinLed, 1);
   else
     digitalWrite(pinLed, 0);
-#endif  
+#endif
 }
 
 
@@ -662,5 +662,23 @@ void portExpSetBit(uint8_t port, uint8_t state)
     ioexOut |= port;
   if(oldState != ioexOut)
     ioex.output(ioexOut);
+}
+
+bool isBackLightOn()
+{
+  return backLightOn;
+}
+
+void setBackLight(bool on)
+{
+  if(on == backLightOn)
+    return;
+
+  if(on)
+    setDispLight(255);
+  else
+    setDispLight(0);
+
+  backLightOn = on;
 }
 #endif

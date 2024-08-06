@@ -35,7 +35,7 @@ enum enLedMode
   DISP_GPS = 4
 };
 
-enum enShowState
+enum class enShowState
 {
   INIT = 0,
   WAIT = 1,

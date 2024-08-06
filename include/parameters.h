@@ -175,7 +175,7 @@ struct stParams
   bool sunriseCalc = false;          ///< true if sunrise and sunset are calculated
   cParNum sendDelay = 2;             ///< delay [ms] after sending 2048 Bytes on USB
   cParNum liveAmplitude = 50;        ///< max. amplitude for live display
-  cParEnum srcPosition = enPositionMode::POS_FIX;  ///< source of position (fixed, GPS)
+  cParEnum srcPosition = static_cast<uint32_t>(enPositionMode::FIX);  ///< source of position (fixed, GPS)
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1
   cParEnum menueType = enMenueType::EXPERT;   ///< menue type
@@ -189,8 +189,11 @@ struct stParams
 #define PAR_SHUTOFF_MIN  3.6f
 #define PAR_SHUTOFF_MAX  8.0f
   cParEnum debugLevel = 0;
-  cParNum timeZone = 0; 
-  cParEnum daylightSav = enDlSaving::DLS_OFF;
+  cParNum timeZone = 0;
+  cParEnum daylightSav = static_cast<uint32_t>(enDlSaving::OFF);
+  cParEnum gpsBaudRate = static_cast<uint32_t>(enGpsBaudRate::BD_9600);
+#define PAR_GPS_BR_MIN  static_cast<uint32_t>(enGpsBaudRate::BD_9600)
+#define PAR_GPS_BR_MAX  static_cast<uint32_t>(enGpsBaudRate::BD_115200)
 };
 
 #endif //#ifndef _PARAMETERS_H_

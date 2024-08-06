@@ -40,6 +40,12 @@ class cGps
     enGpsStatus getStatus() { return m_status; }
     float getLat() { return m_lat; }
     float getLon() { return m_lon; }
+    int getYear() { return m_year; }
+    int getMonth() { return m_month; }
+    int getDay() { return m_day; }
+    int getHour() { return m_hour; }
+    int getMinute() { return m_minute; }
+    int getSec() { return m_second; }
     float getAltitude() { return m_altitude; }
     int getSatCount() { return m_satCount; }
     float getLonMin() { return m_lon - static_cast<int>(m_lon); }
