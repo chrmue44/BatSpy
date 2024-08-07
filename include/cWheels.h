@@ -16,8 +16,10 @@
 
 
 #define KEYBUF_SIZE 20
-#define DEBOUNCE_TIME 100  //50
-#define SENSITIVITY   4  //4
+#define DEBOUNCE_TIME 70      ///< debouncing time [ms]
+#define START_REPEAT 700      ///< time before starting repetition [ms]
+#define BTN_REPEAT_TIME  150  ///< repetition time
+#define SENSITIVITY   4       ///< minimum nr of increments for encoder 
 /*
  *
  */

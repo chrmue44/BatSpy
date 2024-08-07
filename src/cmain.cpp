@@ -66,7 +66,7 @@ void initDisplayVars()
   devStatus.humidity.set(humidity);
   devStatus.voltage.set(readSupplyVoltage());
   devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
-  devStatus.batSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
+  devStatus.battSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
 }
 
 void setup()
@@ -126,6 +126,14 @@ void setup()
 
 void handleDisplayAndWheel(bool oneSec)
 {
+  bool rtFft;
+  if(hasDisplay() == enDisplayType::TFT_320)
+    rtFft = (menue.getFocusPanel() == pnlLive) ||
+              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
+  else
+    rtFft = terminal.isOnline();
+  audio.operate( rtFft );
+
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
@@ -279,7 +287,7 @@ void loop()
     {
       devStatus.voltage.set(readSupplyVoltage());
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
-      devStatus.batSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
+      devStatus.battSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
     else if(((sec % 10) == 2) && !audio.isRecording())
       command.addToQueue(enCmd::MEAS_TEMPERATURE, nullptr);

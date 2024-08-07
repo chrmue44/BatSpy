@@ -56,20 +56,21 @@ class cTimer
     return m_running & ( runTimeMs() > m_alarmTime);
   }
 
-  uint32_t runTimeMs() 
+  uint32_t runTimeMs()
   {
     uint32_t actTime = millis();
     uint32_t retVal;
     if(actTime >= m_startTime)
       retVal = actTime - m_startTime;
-    else {
+    else
+    {
       retVal = 0xFFFFFFFF - m_startTime;
-      retVal += actTime;     
+      retVal += actTime;
     }
     return retVal;
   }
 
-  float runTime() 
+  float runTime()
   {
     return (float)runTimeMs()/1000.0f;
   }

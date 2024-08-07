@@ -14,9 +14,9 @@
 cWheels::cWheels(int la, int lb, int btnL):
 m_enc(la, lb),
 m_pos(0),
-m_btn(btnL, DEBOUNCE_TIME),
-m_btnUp(la, DEBOUNCE_TIME),
-m_btnDown(lb,DEBOUNCE_TIME),
+m_btn(btnL, DEBOUNCE_TIME, START_REPEAT, BTN_REPEAT_TIME),
+m_btnUp(la, DEBOUNCE_TIME, START_REPEAT, BTN_REPEAT_TIME),
+m_btnDown(lb,DEBOUNCE_TIME, START_REPEAT, BTN_REPEAT_TIME),
 m_ccw(false),
 m_wrIdx(0),
 m_rdIdx(0),

@@ -105,7 +105,7 @@ void MEMP cMenue::initPars()
   devPars.recThreshhold.set(-12);
 
   devPars.deadTime.set(PAR_DEADTIM_MIN);
-  devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 1, 0);
+  devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 0.5f, 1);
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);
   devPars.knobRotation.clear();
@@ -138,9 +138,10 @@ void MEMP cMenue::initPars()
   devPars.srcPosition.addItem(1413);
 
   devPars.menueType.clear();
-  devPars.menueType.addItem(1711),
-  devPars.menueType.addItem(1712),
-  devPars.menueType.addItem(1713),
+  devPars.menueType.addItem(1711);
+  devPars.menueType.addItem(1712);
+    devPars.menueType.addItem(1713);
+    devPars.menueType.addItem(1714);
 
   devPars.triggerType.clear();
   devPars.triggerType.addItem(1361);

@@ -104,7 +104,7 @@ void cCmdExecuter::incQueuePtr(stQueueEntry*& ptr)
 
 void cCmdExecuter::addToQueue(enCmd cmd, void* pData)
 {
-  if(m_queue)
+  if(m_queueFull)
     return;
 
   m_pWrite->cmd = cmd;

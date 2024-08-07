@@ -2,6 +2,7 @@
 #include "cCmdExecuter.h"
 #include "globals.h"
 #include "pnlmain.h"
+#include "debug.h"
 
 static enMainState mainState = enMainState::INIT;
 
@@ -9,14 +10,6 @@ static enMainState mainState = enMainState::INIT;
 
 void handleIdleState()
 {
-  bool rtFft;
-  if(hasDisplay() == enDisplayType::TFT_320)
-    rtFft = (menue.getFocusPanel() == pnlLive) ||
-              ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
-  else
-    rtFft = terminal.isOnline();
-  audio.operate( rtFft );
-
   bool recOn = audio.isRecordingActive();
   if(year() < 2024)
   {
@@ -48,25 +41,25 @@ void stateMachine()
 {
   switch(mainState)
   {
-	default:
-	case enMainState::INIT:
-	  mainState = enMainState::IDLE;
-	  break;
-
-	case enMainState::IDLE:
-      handleIdleState();
-	  break;
-
-	case enMainState::RECORD:
-	  if(!audio.isRecording())
-	    mainState = enMainState::COMMAND;
-	  break;
-
-	case enMainState::COMMAND:
-	  if (command.isAvailable())
-		command.execCmd();
-	  if(!command.isAvailable())
+	  default:
+	  case enMainState::INIT:
 	    mainState = enMainState::IDLE;
-	  break;
+	    break;
+
+	  case enMainState::IDLE:
+        handleIdleState();
+	    break;
+
+	  case enMainState::RECORD:
+	    if(!audio.isRecording())
+	      mainState = enMainState::COMMAND;
+	    break;
+
+	  case enMainState::COMMAND:
+	    if (command.isAvailable())
+		    command.execCmd();
+	    if(!command.isAvailable())
+	      mainState = enMainState::IDLE;
+  	  break;
   }
 }

@@ -115,7 +115,7 @@ struct stStatus
   cParNum mainLoop = 0;
   cParEnum gpsStatus = enGpsStatus::GPS_STATUS_OFF;
   cParNum chargeLevel = 0;
-  cParStr batSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
+  cParStr battSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
   cParStr recStatus = "\xF1";
 };
 
@@ -142,7 +142,7 @@ struct stParams
 #define PAR_RECTHRESH_MIN -24.0f
 #define PAR_RECTHRESH_MAX -1.0f
   cParNum deadTime = 3;              ///< timeout after one recording
-#define PAR_DEADTIM_MIN  0.3f
+#define PAR_DEADTIM_MIN  0.5f
 #define PAR_DEADTIM_MAX  30.0f
   cParNum backLightTime = 120;       ///< time for backlight
   cParEnum displayMode = enDispMode::DISP_NORMAL;   ///< display mode

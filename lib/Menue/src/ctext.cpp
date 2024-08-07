@@ -99,7 +99,7 @@ const char* Txt::get(thText id)
       found = true;
       break;
     }
-    else if (iFirst == iLast)
+    else if ((iLast - iFirst) <= 1)
       break;
     else if (m_pTextList[i].id < id)
       iFirst = i;

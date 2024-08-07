@@ -432,10 +432,10 @@ class cParEnum : public cParBase
   {
     if(v != m_val)
     {
-      if (m_val < m_enumeration.size())
+      if (v < m_enumeration.size())
         m_val = v;
       else
-        m_val = 0;
+        m_val = m_enumeration.size() - 1;
       update(true);
     }
   }
