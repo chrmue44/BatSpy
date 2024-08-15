@@ -627,28 +627,26 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
   enSdRes res;
   if(m_ok)
   {
-  char* pBuf = (char*)buf;
-  bytesRead = 0;
-  size_t count;
-  while (pBuf < ((char*)buf + bufSize))
-  {
-    res = readFile(file, pBuf, count, 1);
-    if(res != enSdRes::OK)
-      break;
-    if((count == 0 ) || (res != OK))
-      break;
-    bytesRead += count;
+    char* pBuf = (char*)buf;
+    bytesRead = 0;
+    size_t count;
+    while (pBuf < ((char*)buf + bufSize - 1))
+    {
+      res = readFile(file, pBuf, count, 1);
+      if((count == 0 ) || (res != enSdRes::OK))
+        break;
+      bytesRead += count;
+      if(*pBuf == '\n')
+        break;
+      pBuf++;
+    }
     if(*pBuf == '\n')
-      break;
-    pBuf++;
-  }
-  if(*pBuf == '\n')
-  {
-    pBuf++;
-    *pBuf = 0;
-  }
-  else
-    res = LINE_ERR;
+    {
+      pBuf++;
+      *pBuf = 0;
+    }
+    else
+      res = LINE_ERR;
   }
   else
     res = enSdRes::MOUNT_FAILED;
@@ -656,7 +654,7 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
 }
 
 
-enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, size_t bytesToWrite) 
+enSdRes cSdCard::writeFile(tFILE& file, const void* buf, size_t& bytesWritten, size_t bytesToWrite)
 {
   enSdRes retVal = OK;
   if(m_ok)

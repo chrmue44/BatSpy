@@ -19,7 +19,7 @@
 //extern "C" uint32_t usd_getError(void);
 //#endif   //#ifndef ARDUINO_TEENSY41
 
-cCassette::cCassette() 
+cCassette::cCassette()
 {
 
 }
@@ -44,7 +44,7 @@ int cCassette::startRec()
   cSdCard& sd = cSdCard::inst();
   enSdRes rc = sd.openFile(m_fileName, m_fil, WRITE);
     // check if file is Good
-  if (rc != OK) 
+  if (rc != OK)
   { // only option is to close file
     m_errCount++;
     sd.closeFile(m_fil);
@@ -66,56 +66,60 @@ int cCassette::startRec()
 
 int cCassette::operate()
 {
+  int retVal = 0;
   enSdRes rc = enSdRes::OK;
-  if (m_mode == enCassMode::STOP)
+  switch(m_mode)
   {
-    return 0;
-  }
-  else if (m_mode == enCassMode::REC)
-  {
-    size_t av = m_recorder.available();
-    if (av >= N_BUFFER  )
-    {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
-      if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
-        av = sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t);
-      AudioNoInterrupts();
-      for (size_t i = 0; i < av; i++)
+    default:
+    case enCassMode::STOP:
+      retVal = 0;
+      break;
+
+    case enCassMode::REC:
       {
-        memcpy(m_buffern + i * AUDIO_BLOCK_SAMPLES * sizeof(int16_t),
-        m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
-        m_recorder.freeBuffer();
-      }
-      AudioInterrupts();
-      m_sampleCnt += av * AUDIO_BLOCK_SAMPLES;
+        size_t av = m_recorder.available();
+        if (av >= N_BUFFER  )
+        {// one buffer = 256 (8bit)-bytes = block of 128 16-bit samples
+          if(av > sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t))
+            av = sizeof(m_buffern) / AUDIO_BLOCK_SAMPLES / sizeof(int16_t);
+          AudioNoInterrupts();
+          for (size_t i = 0; i < av; i++)
+          {
+            memcpy(m_buffern + i * AUDIO_BLOCK_SAMPLES * sizeof(int16_t),
+            m_recorder.readBuffer(), AUDIO_BLOCK_SAMPLES * sizeof(int16_t));
+            m_recorder.freeBuffer();
+          }
+          AudioInterrupts();
+          m_sampleCnt += av * AUDIO_BLOCK_SAMPLES;
 
-      cSdCard& sd = cSdCard::inst();
-      size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
-      rc = sd.writeFile (m_fil, (const char*)m_buffern, m_wr, cnt);
-      DPRINTF1("wr buf %lu\n", cnt);
-      if (rc != OK)
-      { // IO error
+          cSdCard& sd = cSdCard::inst();
+          size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
+          rc = sd.writeFile (m_fil, (const char*)m_buffern, m_wr, cnt);
+          DPRINTF1("wr buf %lu\n", cnt);
+          if (rc != OK)
+          { // IO error
+            m_mode = enCassMode::STOP;
+            m_isRecFileOpen = false;
+            DPRINTF4("error writing SD: %i\n", rc);
+            return 1;
+          }
+        }
+        if(m_sampleCnt >= m_maxRecSamples)
+          stop();
+        retVal = 0;
+      }
+      break;
+
+    case enCassMode::PLAY:
+      if (!m_player.isPlaying())
+      {
+        m_player.stop();
+        DPRINTLN1("File is over");
         m_mode = enCassMode::STOP;
-        m_isRecFileOpen = false;
-        DPRINTF4("error writing SD: %i\n", rc);
-        return 1;
       }
-    }
-
-    if(m_sampleCnt >= m_maxRecSamples)
-      stop();
-    return 0;
-  }
-
-  else if(m_mode == enCassMode::PLAY)
-  {
-    if (!m_player.isPlaying())
-    {
-      m_player.stop();
-      DPRINTLN1("File is over");
-      m_mode = enCassMode::STOP;
-    }
+      break;
   } 
-  return 0;
+  return retVal;
 }
 
 

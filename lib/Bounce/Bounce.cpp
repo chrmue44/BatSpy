@@ -34,7 +34,7 @@ int Bounce::update()
   {
 	  case enBounceState::RELEASED:
 	    break;
-	  
+
     case enBounceState::PRESSED:
 	    if(timeDiff(m_previous_millis, actTime) > m_start_repeat_millis)
 	      m_state = enBounceState::REPEAT;

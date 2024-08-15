@@ -6,7 +6,8 @@
 //#define DEBUG_LEVEL  4
 #include "debug.h"
 cProject::cProject() :
-m_isOpen(false)
+m_isOpen(false),
+m_create(falsae)
 {
 
 }
@@ -36,7 +37,7 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
   DPRINTF4("open existing file %s\n", fName);
   cSdCard& sd = cSdCard::inst();
   tFILE file;
-  char buf[256]; 
+  char buf[256];
   char tmpFileName[64];
   size_t bytesRead;
   m_recCount = 0;
@@ -48,8 +49,8 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
     DPRINTF4("error renaming file: old: %s, new: %s\n",fName, tmpFileName);
 
   res = sd.openFile(tmpFileName, file, enMode::READ);
-  
-  char notes[128]; 
+
+  char notes[128];
   notes[0] = 0;
 
   while(res == enSdRes::OK)
@@ -101,10 +102,10 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
 }
 
 
-void MEMF cProject::openPrjFile(const char* pNotes)
+void MEMF cProject::createPrjFile(const char* pNotes)
 {
   char buf[FILENAME_LEN];
-  
+
   int startY = year();
   int startM = month();
   int startD = day();
@@ -130,6 +131,7 @@ void MEMF cProject::openPrjFile(const char* pNotes)
     m_recCount = 0;
   }
   m_isOpen = true;
+  m_create = true;
 }
 
 void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
@@ -176,7 +178,7 @@ const char* MEMF cProject::createElekonFileName()
   return m_wavFile;
 }
 
-void MEMF cProject::addFile()
+void MEMF cProject::addFile, bool keepOpen)
 {
   tAttrList attr;
   stAttr item;
@@ -216,7 +218,10 @@ void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
   cUtils::replace(m_wavFile, ".wav", ".xml", infoFile, sizeof(infoFile));
 
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_fDay, m_fMo, m_fy, m_fh, m_fMin, m_fSec);
-  float duration = (float)sampleCnt/ cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate.get());
+  float sampleRate = cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate.get());
+  float duration = 0;
+  if(sampleRate > 0.1)
+    duration = (float)sampleCnt/ sampleRate;
   info.write(infoFile, duration, date, cUtils::getFileName(m_wavFile),
               devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal,
                devStatus.temperature.get(), devStatus.humidity.get());

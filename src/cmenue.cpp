@@ -302,14 +302,14 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);
   devPars.recTime.set(3.0f);               ///< recording time
   devPars.sampleRate.set(enSampleRate::SR_384K);    ///< sample rate
-  devPars.preAmpGain.set(enGainRevC::GAINC_58DB);
+  devPars.preAmpGain.set(static_cast<uint32_t>(enGainRevC::GAINC_58DB));
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
   devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
   devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
-  devPars.displayMode.set(enDispMode::DISP_NORMAL);
+  devPars.displayMode.set(static_cast<uint32_t>(enDispMode::NORMAL));
   devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.lang.set(enLang::LANG_GER);        ///< display language

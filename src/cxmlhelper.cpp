@@ -51,7 +51,7 @@ void MEMF cXmlHelper::writeString(const char* str)
 }
 
 
-void MEMF cXmlHelper::initXml() 
+void MEMF cXmlHelper::initXml()
 {
   m_indent = 0;
   writeString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");

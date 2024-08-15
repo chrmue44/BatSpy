@@ -22,6 +22,8 @@ void cmdLog(void* pData)
 
 void cmdUpdateInfos(void* pData)
 {
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD update infos");
   size_t freeSpace;  size_t totSpace;
   cSdCard::inst().getFreeMem(freeSpace, totSpace);
   devStatus.freeSpace.set(freeSpace / 1024/1024);
@@ -35,8 +37,10 @@ void cmdMeasTemperature(void* pData)
 {
   float humidity;
   float temp = readTemperature(humidity);
-  if((temp > 100) && (hasDisplay() == enDisplayType::OLED_128))
-  if(isBackLightOn())
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD measure temperature");
+
+  if((temp > 100) && (hasDisplay() == enDisplayType::OLED_128) && isBackLightOn())
   {
     initDisplay(devPars.dispOrient.get(), 255,  devPars.displayMode.get(), false);
     sysLog.log("reinitialized display due to temp sensor error");
@@ -48,6 +52,8 @@ void cmdMeasTemperature(void* pData)
 
 void cmdCheckAndSetTime(void* pData)
 {
+    if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD check and set time");
   rtc.checkAndSetTime(gps.getYear(), gps.getMonth(), gps.getDay(),
                       gps.getHour(), gps.getMinute(), gps.getSec(),
                      (enDlSaving)devPars.daylightSav.get());
@@ -57,23 +63,31 @@ void cmdCheckAndSetTime(void* pData)
 
 void cmdBacklightOff(void* pData)
 {
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD Backlight Off");
   setBackLight(false);
 }
 
 
 void cmdBacklightOn(void* pData)
 {
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD Backlight On");
   setBackLight(true);
   menue.resetTimer();
 }
 
 void cmdCloseProject(void* pData)
 {
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD Close project");
   audio.closeProject();
 }
 
 void cmdPowerOff(void* pData)
 {
+  if(devPars.debugLevel.get() > 0)
+    sysLog.log("CMD power off");
   powerOff();
 }
 

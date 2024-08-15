@@ -81,7 +81,6 @@ class cCassette
 
   private:
     void writeWavHeader();
-    void writeInfoFile(float peakVal);
     void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
     void finalizeWavFile();
     uint32_t calcRecSamples(float time) { return (uint32_t)(time * (float)m_sampleRate); }

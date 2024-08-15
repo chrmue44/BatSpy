@@ -103,7 +103,7 @@ void setup()
   wheels.setDirection(true);
   if(hasDisplay() != enDisplayType::NO_DISPLAY)
   {
-    setDispLight(255);
+    setBackLight(true);
     setVisibilityRecCount(&menue);
     menue.resetTimer();
   }
@@ -137,13 +137,6 @@ void handleDisplayAndWheel(bool oneSec)
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
-    if(!audio.isRecording())
-    {
-       if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
-      {
-        command.addToQueue(enCmd::BACKLIGHT_OFF);
-      }
-    }
   }
   else
   {

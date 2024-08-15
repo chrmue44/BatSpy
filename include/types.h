@@ -63,7 +63,7 @@ enum enGainRevB
 };
 
 // available hardware gain settings for revision C
-enum enGainRevC
+enum class enGainRevC
 {
   GAINC_48DB            = 0,
   GAINC_58DB            = 1
@@ -77,10 +77,10 @@ enum enDispOrient
   RIGHT_HAND             = 1
 };
 
-enum enDispMode
+enum class enDispMode
 {
-  DISP_NORMAL            = 0,
-  DISP_INVERSE           = 1
+  NORMAL            = 0,
+  INVERSE           = 1
 };
 
 // knob rotation
@@ -111,17 +111,17 @@ enum enFiltType
 // automatic recording
 enum enRecAuto
 {
-  OFF = 0,
-  ON = 1,
-  TIME = 2,
+  OFF      = 0,
+  ON       = 1,
+  TIME     = 2,
   TWILIGHT = 3
 };
 
-enum enPlayStatus
+enum class enPlayStatus
 {
-  ST_STOP = 0,
-  ST_PLAY = 1,
-  ST_REC  = 2,
+  STOP    = 0,
+  PLAY    = 1,
+  REC     = 2,
   TIMEOUT = 3,
 };
 

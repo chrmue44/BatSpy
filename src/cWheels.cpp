@@ -68,14 +68,14 @@ void cWheels::checkButtons()
 void cWheels::checkEncoders()
 {
   int left = m_enc.read();
-  
+
   if (left != m_pos)
   {
     m_diff += (m_pos - left);
     m_pos = left;
     DPRINTF1("pos left: %i\n",m_pos);
   }
- 
+
   if(m_diff <= -SENSITIVITY)
   {
     DPRINTF1("diff left: %i\n", m_diff);

@@ -18,14 +18,14 @@ void handleIdleState()
   }
   else
   {
-    if(!audio.isRecording())
+    if(devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
       devStatus.recStatus.set(recOn ? "\xF2" : "\xF1");
   }
 
   if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))
   {
     if(isBackLightOn())
-	  command.addToQueue(enCmd::BACKLIGHT_OFF);
+	    command.addToQueue(enCmd::BACKLIGHT_OFF);
   }
 
   audio.checkAutoRecording(recOn);

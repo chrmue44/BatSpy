@@ -318,20 +318,20 @@ void MEMP f2Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
   {
     if(devPars.recAuto.get() == enRecAuto::ON)
     {
-      if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
-        devStatus.playStatus.set(enPlayStatus::ST_REC);
+      if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
+        devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));
       else
-        devStatus.playStatus.set(enPlayStatus::ST_STOP);
+        devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
     }
     else 
       pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1015), Txt::get(1016));
   }
   else
   {
-    if (devStatus.playStatus.get() == enPlayStatus::ST_STOP)
-      devStatus.playStatus.set(enPlayStatus::ST_PLAY);
+    if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::PLAY));
     else
-      devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
   }
   pThis->refreshMainPanel();
 }

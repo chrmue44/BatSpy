@@ -443,15 +443,16 @@ void MEMF cTerminal::parseControlCmd(const char* buf)
 {
   m_key = enKey::TER;
   bool replyOk = true;
-  switch(buf[0]) {
+  switch(buf[0]) 
+  {
     case 'p':
-      devStatus.playStatus.set(enPlayStatus::ST_PLAY);
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::PLAY));
       break;
     case 'r':
-      devStatus.playStatus.set(enPlayStatus::ST_REC);
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));
       break;
     case 's':
-      devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
       break;
     case 'f':
       devPars.fileName.set(&buf[1]);

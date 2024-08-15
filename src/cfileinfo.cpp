@@ -20,69 +20,101 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
   if(ret == 0)
   {
-    writeLine("<BatRecord>");
-    writeTag(TAG_FILE_NAME, wavFile);
-    writeTag(TAG_DATE_TIME, date);
-    writeTag(TAG_SN, serialNumber);
-    writeTag(TAG_FIRMWARE, devStatus.version.get());
-    writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
-    writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
-    writeTag(TAG_INP_FILTER, "None");
-    writeLine("<Trigger>");
-    writeTag(TAG_TRIG_TYPE, devPars.triggerType.getActText());
-    writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");
-    writeTag(TAG_TRIG_EV_LEN, devPars.minEventLen.get(), "ms");
-    writeTag(TAG_TRIG_FILT, devPars.trigFiltType.getActText());
-    writeTag(TAG_TRIG_FREQ, devPars.trigFiltFreq.get(), "kHz");
-    writeLine("</Trigger>");
-    writeTag(TAG_DURATION, duration, "Sec");
-    writeTag(TAG_PEAK_VAL, peakVal, "%");
-    writeLine("<GPS>");
-    writeTag(TAG_POSITION, lat, lon);
-    writeLine("</GPS>");
-    writeTag(TAG_TEMPERAtURE, devStatus.temperature.get(), "°C");
-    writeTag(TAG_HUMIDITY, devStatus.humidity.get(), "%");
-    writeLine("</BatRecord>");
-    cSdCard::inst().closeFile(m_file);
+    do
+    {
+      ret = writeLine("<BatRecord>");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_FILE_NAME, wavFile);
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_DATE_TIME, date);
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_SN, serialNumber);
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_FIRMWARE, devStatus.version.get());
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_INP_FILTER, "None");
+        if(ret != enSdRes::OK) break;
+      ret = writeLine("<Trigger>");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TRIG_TYPE, devPars.triggerType.getActText());
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TRIG_EV_LEN, devPars.minEventLen.get(), "ms");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TRIG_FILT, devPars.trigFiltType.getActText());
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TRIG_FREQ, devPars.trigFiltFreq.get(), "kHz");
+        if(ret != enSdRes::OK) break;
+      ret = writeLine("</Trigger>");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_DURATION, duration, "Sec");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_PEAK_VAL, peakVal, "%");
+        if(ret != enSdRes::OK) break;
+      ret = writeLine("<GPS>");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_POSITION, lat, lon);
+        if(ret != enSdRes::OK) break;
+      ret = writeLine("</GPS>");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_TEMPERAtURE, devStatus.temperature.get(), "°C");
+        if(ret != enSdRes::OK) break;
+      ret = writeTag(TAG_HUMIDITY, devStatus.humidity.get(), "%");
+        if(ret != enSdRes::OK) break;
+      ret = writeLine("</BatRecord>");
+    } while(false);    
+    ret = cSdCard::inst().closeFile(m_file);
   }
   return ret;
 }
 
-int MEMF cFileInfo::writeLine(const char* text)
+enSdRes MEMF cFileInfo::writeLine(const char* text)
 {
+  enSdRes retVal = enSdRes::OK;
   size_t bytesWritten;
   size_t len = strlen(text);
-  cSdCard::inst().writeFile(m_file, text, bytesWritten, len);
-  return cSdCard::inst().writeFile(m_file, "\n", bytesWritten, 1);
+  retVal = cSdCard::inst().writeFile(m_file, text, bytesWritten, len);
+  if(retVal == 0)
+    retVal = cSdCard::inst().writeFile(m_file, "\n", bytesWritten, 1);
+  return retVal;
 }
 
 
-int MEMF cFileInfo::writeTag(const char* tag, const char* text)
+enSdRes MEMF cFileInfo::writeTag(const char* tag, const char* text)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%s</%s>", tag, text, tag);
+  buf[127] = 0;
   return writeLine(buf);
 }
 
 
-int MEMF cFileInfo::writeTag(const char* tag, float val, const char* unit)
+enSdRes MEMF cFileInfo::writeTag(const char* tag, float val, const char* unit)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%f %s</%s>", tag, val, unit, tag);
+  buf[127] = 0;
   return writeLine(buf);
 }
 
-int MEMF cFileInfo::writeTag(const char* tag, float val1, float val2)
+enSdRes MEMF cFileInfo::writeTag(const char* tag, float val1, float val2)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%f %f</%s>", tag, val1, val2, tag);
+  buf[127] = 0;
   return writeLine(buf);
 }
 
-int MEMF cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
+enSdRes MEMF cFileInfo::writeTag(const char* tag, int32_t val, const char* unit)
 {
   char buf[128];
   snprintf(buf,sizeof(buf),"<%s>%li %s</%s>", tag, val, unit, tag);
+  buf[127] = 0;
   return writeLine(buf);
 }
 

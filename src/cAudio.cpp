@@ -43,12 +43,12 @@ const stSrDesc SR[] =
 int32_t cAudio::getSampleRateHz(enSampleRate sr)
 {
   uint32_t idx = sr;
-  if(idx >= sizeof (SR) / sizeof (SR[0]))
+  if(idx >= (sizeof (SR) / sizeof (SR[0])))
     idx = 0;
   return SR[idx].osc_frequency;
 }
 
-cAudio::cAudio() : 
+cAudio::cAudio() :
 m_audioIn(),
 m_audioOut(),
 m_cass(),
@@ -414,30 +414,34 @@ void cAudio::setup()
 
 void cAudio::updateCassMode()
 {
-  switch (devStatus.playStatus.get())
+  enPlayStatus status = static_cast<enPlayStatus>(devStatus.playStatus.get());
+  switch (status)
   {
-  case enPlayStatus::ST_STOP:
-  case enPlayStatus::TIMEOUT:
-    setAudioConnections(1);
-    m_cass.stop();
-    break;
-  case enPlayStatus::ST_PLAY:
-    if (m_cass.getMode() != enCassMode::PLAY)
-    {
-      m_cass.setFileName(devPars.fileName.get());
-      m_cass.startPlay();
-      delay(5);
-    }
-    break;
-  case enPlayStatus::ST_REC:
-    if ((m_cass.getMode() != enCassMode::REC) && cSdCard::inst().isMounted())
-    {
-      setAudioConnections(0);
-      startRecording();
-      DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
-      delay(5);
-    }
-    break;
+    default:
+    case enPlayStatus::STOP:
+    case enPlayStatus::TIMEOUT:
+      setAudioConnections(1);
+      m_cass.stop();
+      break;
+
+    case enPlayStatus::PLAY:
+      if (m_cass.getMode() != enCassMode::PLAY)
+      {
+        m_cass.setFileName(devPars.fileName.get());
+        m_cass.startPlay();
+        delay(5);
+      }
+      break;
+
+    case enPlayStatus::REC:
+      if ((m_cass.getMode() != enCassMode::REC) && cSdCard::inst().isMounted())
+      {
+        setAudioConnections(0);
+        startRecording();
+        DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
+        delay(5);
+      }
+      break;
   }
 }
 
@@ -482,7 +486,9 @@ bool cAudio::isRecordingActive()
 
 void cAudio::checkAutoRecording(bool& recActive)
 {
-  if((devStatus.playStatus.get() == enPlayStatus::ST_STOP) && (m_cass.getMode() == enCassMode::STOP) && cSdCard::inst().isMounted())
+  if((devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP)) &&
+     (m_cass.getMode() == enCassMode::STOP) &&
+     cSdCard::inst().isMounted())
   {
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
@@ -492,10 +498,12 @@ void cAudio::checkAutoRecording(bool& recActive)
       {
         DPRINTLN4("checkAutorecording: start recording");
         int res = startRecording();
-        if(res == 0)
-          delay(5);
-        else
+        delay(5);
+        if(res != 0)
         {
+          sysLog.close();
+          gpsLog.close();
+          m_prj.closePrjFile();
           cSdCard::inst().unmount();
           delay(100);
           cSdCard::inst().mount();
@@ -621,25 +629,26 @@ void cAudio::operate(bool liveFft)
     if (m_cass.getMode() == enCassMode::STOP)
     {
       DPRINTF4("cAudio::operate: cass mode: %i, playStatus: %i\n", m_cass.getMode(), devStatus.playStatus.get());
-      switch (devStatus.playStatus.get())
+      enPlayStatus status = static_cast<enPlayStatus>(devStatus.playStatus.get()); 
+      switch (status)
       {
-      case enPlayStatus::ST_PLAY:
-        devStatus.playStatus.set(enPlayStatus::ST_STOP);
-        devStatus.recStatus.set("\xF1");
-        break;
+        case enPlayStatus::PLAY:
+          devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
+          devStatus.recStatus.set("\xF1");
+          break;
 
-      case enPlayStatus::ST_REC:
-        m_timeout.setAlarm(devPars.deadTime.get());
-        statusDisplay.setRecRunning(false);
-        devStatus.playStatus.set(enPlayStatus::TIMEOUT);
-        devStatus.recStatus.set("\xF2");
-        m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
+        case enPlayStatus::REC:
+          m_timeout.setAlarm(devPars.deadTime.get());
+          statusDisplay.setRecRunning(false);
+          devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::TIMEOUT));
+          devStatus.recStatus.set("T");
+          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
 //        m_trigger.logTrigInfo(m_prj.getWavFileName());
-        DPRINTLN4("start timeout");
-        break;
+          DPRINTLN4("start timeout");
+          break;
 
-      case enPlayStatus::ST_STOP:
-        if(m_oldCassMode == enCassMode::REC)
+        case enPlayStatus::STOP:
+      /*  if(m_oldCassMode == enCassMode::REC)
         {
           statusDisplay.setRecRunning(false);
           m_trigger.releaseRecTrigger();
@@ -647,6 +656,7 @@ void cAudio::operate(bool liveFft)
 //          m_trigger.logTrigInfo(m_prj.getWavFileName());
           DPRINTLN4("cAudio::operate: recording stopped");
         }
+ */
         break;
 
       default:
@@ -660,12 +670,12 @@ void cAudio::operate(bool liveFft)
     m_oldCassMode = m_cass.getMode();
   }
 
-  if (devStatus.playStatus.get() == enPlayStatus::TIMEOUT)
+  if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::TIMEOUT))
   {
     if (m_timeout.isAlarm())
     {
       m_timeout.stop();
-      devStatus.playStatus.set(enPlayStatus::ST_STOP);
+      devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
       devStatus.recStatus.set("\xF2");
       m_trigger.releaseLiveTrigger();
       m_trigger.releaseRecTrigger();
@@ -679,7 +689,7 @@ void cAudio::stopRecording()
 {
   DPRINTLN4("stop recording");
   m_cass.stop();
-  devStatus.playStatus.set(enPlayStatus::ST_STOP);
+  devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
   devStatus.recStatus.set("\xF2");
 }
 
@@ -782,7 +792,7 @@ int cAudio::startRecording()
   int retVal = m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
   if(retVal == 0)
   {
-    devStatus.playStatus.set(enPlayStatus::ST_REC);
+    devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));
     devStatus.recStatus.set("\xF0");
   }
   return retVal;

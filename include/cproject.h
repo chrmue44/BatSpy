@@ -25,7 +25,7 @@ class cProject
 {
 public:
   cProject();
-  void openPrjFile(const char* pNotes);
+  void createPrjFile(const char* pNotes);
   void closePrjFile();
   void addFile();
   void writeInfoFile(float peakVal, size_t sampleCnt);
@@ -41,6 +41,7 @@ private:
   void saveStartTime();
 
   bool m_isOpen;
+  bool m_create;
 
   int m_fy;
   int m_fMo;
@@ -52,7 +53,7 @@ private:
 
   cXmlHelper m_xml;
   char m_prjName[16];
-  char m_wavFile[80];
+  char m_wavFile[128];
   char m_name[30];
 };
 
