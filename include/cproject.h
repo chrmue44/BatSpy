@@ -41,7 +41,6 @@ private:
   void saveStartTime();
 
   bool m_isOpen;
-  bool m_create;
 
   int m_fy;
   int m_fMo;

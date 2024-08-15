@@ -572,9 +572,12 @@ void cAudio::openProject()
   if (len < sizeof(buf))
     cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
   */
-  buf[0] = 0;
-  m_prj.openPrjFile(buf);
-  devStatus.recCount.set(m_prj.getRecCount());
+  if (!m_prj.getIsOpen())
+  {
+    buf[0] = 0;
+    m_prj.createPrjFile(buf);
+    devStatus.recCount.set(m_prj.getRecCount());
+  }
 }
 
 
@@ -619,6 +622,9 @@ void cAudio::operate(bool liveFft)
     m_fftInfo.bw = (float)(bw * m_sampleRate) / 1024.0;
     m_trigger.checkTrigger();
   }
+#ifdef SIMU_DISPLAY
+  m_trigger.checkTrigger();  //@@@
+#endif
 
   if(liveFft && fftAvailable && !m_haltLiveFft)
     calcLiveFft();

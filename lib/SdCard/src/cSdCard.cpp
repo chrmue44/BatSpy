@@ -622,7 +622,7 @@ enSdRes cSdCard::readFile(tFILE& file, void* buf, size_t& bytesRead, size_t byte
 }
 
 
-enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesRead) 
+enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesRead)
 {
   enSdRes res;
   if(m_ok)
@@ -646,7 +646,7 @@ enSdRes cSdCard::readLine(tFILE& file, void* buf, size_t bufSize, size_t& bytesR
       *pBuf = 0;
     }
     else
-      res = LINE_ERR;
+      res = enSdRes::LINE_ERR;
   }
   else
     res = enSdRes::MOUNT_FAILED;

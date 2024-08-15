@@ -22,7 +22,7 @@ class cXmlHelper
 public:
   cXmlHelper();
   void initXml();
-  enSdRes openFile(const char* name);
+  enSdRes openFile(const char* name, bool keepOpen = true);
   void closeFile();
   void openTag(const char* tagName, tAttrList* attr = NULL, bool newLine = true, bool close = false, bool withIndent = true);
   void closeTag(const char* tagName);
@@ -32,14 +32,21 @@ public:
   void simpleTag(const char* tagName, const char* val, tAttrList* attr = NULL);
   void simpleTag(const char* tagName, float val, tAttrList* attr = NULL);
   void simpleTagNoValue(const char* tagName, tAttrList* attr = NULL);
-  void writeString(const char* str);
   tFILE& getFile() { return m_file; }
+  void writeLineToFile(const char* str);
+
+private:
+  void writeString(const char* str);
+  void intermediateOpen();
+  void intermediateClose();
 
 private:
   void newLine(bool nl = true);
   void indent(bool open = false);
+  char m_fileName[40]; 
   tFILE m_file;
   int m_indent;
+  bool m_keepOpen;
   bool m_fileIsOpen;
   bool m_lastWasClose;
   bool m_lastWasOpen;

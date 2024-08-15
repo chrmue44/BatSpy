@@ -6,8 +6,7 @@
 //#define DEBUG_LEVEL  4
 #include "debug.h"
 cProject::cProject() :
-m_isOpen(false),
-m_create(falsae)
+m_isOpen(false)
 {
 
 }
@@ -31,6 +30,7 @@ int MEMF getNumberOfDays(int month, int year)
     return 30;
 }
 
+const char* PROGMEM MSG_OPEN_PRJ = "successfully loaded project file with %i records\n";
 
 void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int startM, int startD)
 {
@@ -66,7 +66,7 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
     if(p != nullptr)
     {
       DPRINTLN4("found tag <Record>");
-      m_xml.writeString(buf);
+      m_xml.writeLineToFile(buf);
       m_recCount++;
       continue;
     }
@@ -77,7 +77,17 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
     if (p != nullptr)
     {
       p += 7;
-      strncpy(notes, p, sizeof(notes) - 1);
+      char* p2 = strstr(buf, "</Notes>");
+      if (p2 != nullptr) // closing tag in same line
+      {
+        int len = strlen(notes);
+        char* pDst = notes + len;
+        while ((p < p2) && (p < notes + len - 1))
+          *pDst++ = *p++;
+        *pDst = 0;
+      }
+      else
+        strncpy(notes, p, sizeof(notes) - 1);
       DPRINTLN4("found tag <Notes>");
       continue;
     }
@@ -95,8 +105,9 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
       initializePrjFile(fName, notes, startY, startM, startD);
     }
   }
-
   DPRINTF4("found %i records\n", m_recCount);
+  if(devPars.debugLevel.get() > 0)
+    sysLog.logf(MSG_OPEN_PRJ, m_recCount);
   sd.closeFile(file);
   sd.del(tmpFileName);
 }
@@ -131,13 +142,12 @@ void MEMF cProject::createPrjFile(const char* pNotes)
     m_recCount = 0;
   }
   m_isOpen = true;
-  m_create = true;
 }
 
 void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
 {
   tAttrList attr;
-  m_xml.openFile(fName);
+  m_xml.openFile(fName, false);
   m_xml.initXml();
   stAttr item;
   strncpy(item.name, "xmlns:xsi", sizeof(item.name));
@@ -174,11 +184,11 @@ const char* MEMF cProject::createElekonFileName()
 {
   saveStartTime();
   snprintf(m_wavFile, sizeof (m_wavFile),"/prj/%s/Records/%04i%02i%02i_%02i%02i%02i.wav", m_prjName, m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);
-  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%02i%02i%02i", m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);  
+  snprintf(m_name, sizeof (m_name),"%04i%02i%02i_%02i%02i%02i", m_fy, m_fMo, m_fDay, m_fh, m_fMin ,m_fSec);
   return m_wavFile;
 }
 
-void MEMF cProject::addFile, bool keepOpen)
+void MEMF cProject::addFile()
 {
   tAttrList attr;
   stAttr item;
