@@ -123,6 +123,7 @@ struct stStatus
 #define DBG_COMMANDS 0x01
 #define DBG_GPS      0x02
 #define DBG_SYSTEM   0x04
+#define DBG_TRIGGER  0x08
 
 /**
  * @brief device parameters
@@ -200,7 +201,7 @@ struct stParams
   cParNum ShutoffVoltage = 5.4f;
 #define PAR_SHUTOFF_MIN  3.6f
 #define PAR_SHUTOFF_MAX  8.0f
-  cParEnum debugLevel = 0;
+  cParNum debugLevel = 0;
   cParNum timeZone = 0;
   cParEnum daylightSav = static_cast<uint32_t>(enDlSaving::OFF);
   cParEnum gpsBaudRate = static_cast<uint32_t>(enGpsBaudRate::BD_9600);

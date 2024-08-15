@@ -52,7 +52,7 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_DEAD_TIME     0x003A   // devPars.deadTime,      float
 #define EEPADDR_BACKLIGHT     0x003E   // devPars.backLightTime  float
 #define EEPADDR_LANGUAGE      0x0042   // devPars.lang,          INT16
-#define EEPADDR_DEBUG_LEVEL   0x0044   // devPars.debugLevel     INT16
+#define EEPADDR_FREE_INT16_2  0x0044   
 #define EEPADDR_LAT           0x0046   // devStatus.geoPos.getLat, float
 #define EEPADDR_LON           0x004A   // devStatus.geoPos.getLon, float
 #define EEPADDR_TFILT_FREQ    0x004E   // devPars.trigFiltFreq,    float
@@ -72,8 +72,9 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_SHUTOFF_V     0x0070   // devPars.ShutoffVoltage,  float
 #define EEPADDR_RFILT_FREQ    0x0074   // devPars.recFiltFreq,     float
 #define EEPADDR_RFILT_TYPE    0x0078   // devPars.recFiltType,     INT16
+#define EEPADDR_DEBUG_LEVEL   0x007A   // devPars.debugLevel       float
 
-#define EEPADDR_FIRSTFREE     0x007A
+#define EEPADDR_FIRSTFREE     0x007E
 
 #define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
 #define EEP_SERIAL_SIZE       12       // size of the string

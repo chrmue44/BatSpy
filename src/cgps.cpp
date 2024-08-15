@@ -127,7 +127,7 @@ bool MEMF cGps::operate(bool testMode)
       if((c == '$') || (m_recIdx >= (sizeof(m_recLine) - 1))) 
       {
         m_recLine[m_recIdx] = 0;
-        if(devPars.debugLevel.get() >= 1)
+        if(devPars.checkDebugLevel(DBG_GPS))
           gpsLog.log(m_recLine, true);
         m_recIdx = 0;
       }
@@ -162,7 +162,7 @@ bool MEMF cGps::operate(bool testMode)
             m_gpx.log(m_lat, m_lon, m_altitude);
           
           m_satCount = m_gps.satellites();
-          if(devPars.debugLevel.get() >= 1)
+          if(devPars.checkDebugLevel(DBG_GPS))
             gpsLog.logf("new position  lat:%f lon:%f  sat:%i age:%i\n", m_lat, m_lon, (int)m_satCount, m_age);
         }
         else
@@ -181,7 +181,7 @@ bool MEMF cGps::operate(bool testMode)
         }
         else
           m_status = enGpsStatus::GPS_SEARCHING;
-        if(devPars.debugLevel.get() >= 1)
+        if(devPars.checkDebugLevel(DBG_GPS))
           gpsLog.logf("valid: %i\n", m_valid ? 1: 0);
       }
     }

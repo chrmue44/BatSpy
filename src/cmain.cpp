@@ -276,13 +276,13 @@ void loop()
     devStatus.peakVal.set(audio.getLastPeakVal() * 100);
     loopCount = 0;
     int sec = second();
-    if((sec % 10) == 1)
+    if(sec == 1)
     {
       devStatus.voltage.set(readSupplyVoltage());
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
       devStatus.battSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
-    else if(((sec % 10) == 2) && !audio.isRecording())
+    else if(sec == 10)
       command.addToQueue(enCmd::MEAS_TEMPERATURE, nullptr);
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();

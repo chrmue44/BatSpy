@@ -151,23 +151,7 @@ void MEMP cMenue::initPars()
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
-  devPars.debugLevel.clear();
-  devPars.debugLevel.addItem(1400);
-  devPars.debugLevel.addItem(2051);
-  devPars.debugLevel.addItem(2052);
-  devPars.debugLevel.addItem(2053);
-  devPars.debugLevel.addItem(2054);
-  devPars.debugLevel.addItem(2055);
-  devPars.debugLevel.addItem(2056);
-  devPars.debugLevel.addItem(2057);
-  devPars.debugLevel.addItem(2058);
-  devPars.debugLevel.addItem(2059);
-  devPars.debugLevel.addItem(2060);
-  devPars.debugLevel.addItem(2061);
-  devPars.debugLevel.addItem(2062);
-  devPars.debugLevel.addItem(2063);
-  devPars.debugLevel.addItem(2064);
-
+  devPars.debugLevel.init(0, 31, 1, 0);
   devPars.timeZone.init(-12.0, +12, 1.0, 0);
 
   devPars.daylightSav.clear();
