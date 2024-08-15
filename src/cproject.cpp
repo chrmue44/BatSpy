@@ -106,7 +106,7 @@ void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int start
     }
   }
   DPRINTF4("found %i records\n", m_recCount);
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_SYSTEM))
     sysLog.logf(MSG_OPEN_PRJ, m_recCount);
   sd.closeFile(file);
   sd.del(tmpFileName);

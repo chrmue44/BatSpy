@@ -120,11 +120,23 @@ struct stStatus
 };
 
 
+#define DBG_COMMANDS 0x01
+#define DBG_GPS      0x02
+#define DBG_SYSTEM   0x04
+
 /**
  * @brief device parameters
  */
 struct stParams
 {
+  bool checkDebugLevel(int l)
+  {
+    int w = debugLevel.get();
+    if (w & l)
+      return true;
+    else
+      return false;
+  }
   cParNum volume =   6;              ///< volume setting
   cParNum mixFreq = 40;              ///< mixer frequency
   cParNum recTime = 3;               ///< recording time

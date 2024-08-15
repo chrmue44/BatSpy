@@ -153,10 +153,20 @@ void MEMP cMenue::initPars()
 
   devPars.debugLevel.clear();
   devPars.debugLevel.addItem(1400);
-  devPars.debugLevel.addItem(1381);
-  devPars.debugLevel.addItem(1382);
-  devPars.debugLevel.addItem(1383);
-  devPars.debugLevel.addItem(1384);
+  devPars.debugLevel.addItem(2051);
+  devPars.debugLevel.addItem(2052);
+  devPars.debugLevel.addItem(2053);
+  devPars.debugLevel.addItem(2054);
+  devPars.debugLevel.addItem(2055);
+  devPars.debugLevel.addItem(2056);
+  devPars.debugLevel.addItem(2057);
+  devPars.debugLevel.addItem(2058);
+  devPars.debugLevel.addItem(2059);
+  devPars.debugLevel.addItem(2060);
+  devPars.debugLevel.addItem(2061);
+  devPars.debugLevel.addItem(2062);
+  devPars.debugLevel.addItem(2063);
+  devPars.debugLevel.addItem(2064);
 
   devPars.timeZone.init(-12.0, +12, 1.0, 0);
 

@@ -22,7 +22,7 @@ void cmdLog(void* pData)
 
 void cmdUpdateInfos(void* pData)
 {
-  if(devPars.debugLevel.get() > 0)
+  if(devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD update infos");
   size_t freeSpace;  size_t totSpace;
   cSdCard::inst().getFreeMem(freeSpace, totSpace);
@@ -37,7 +37,7 @@ void cmdMeasTemperature(void* pData)
 {
   float humidity;
   float temp = readTemperature(humidity);
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD measure temperature");
 
   if((temp > 100) && (hasDisplay() == enDisplayType::OLED_128) && isBackLightOn())
@@ -52,7 +52,7 @@ void cmdMeasTemperature(void* pData)
 
 void cmdCheckAndSetTime(void* pData)
 {
-    if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD check and set time");
   rtc.checkAndSetTime(gps.getYear(), gps.getMonth(), gps.getDay(),
                       gps.getHour(), gps.getMinute(), gps.getSec(),
@@ -63,7 +63,7 @@ void cmdCheckAndSetTime(void* pData)
 
 void cmdBacklightOff(void* pData)
 {
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Backlight Off");
   setBackLight(false);
 }
@@ -71,7 +71,7 @@ void cmdBacklightOff(void* pData)
 
 void cmdBacklightOn(void* pData)
 {
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Backlight On");
   setBackLight(true);
   menue.resetTimer();
@@ -79,14 +79,14 @@ void cmdBacklightOn(void* pData)
 
 void cmdCloseProject(void* pData)
 {
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Close project");
   audio.closeProject();
 }
 
 void cmdPowerOff(void* pData)
 {
-  if(devPars.debugLevel.get() > 0)
+  if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD power off");
   powerOff();
 }

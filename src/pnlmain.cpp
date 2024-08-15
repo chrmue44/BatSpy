@@ -571,19 +571,27 @@ void MEMP setVisibilityRecCount(cMenuesystem* pThis)
   }
 }
 
+const char* PROGMEM MSG_REC_MODE_ON = "set recording mode ON";
+const char* PROGMEM MSG_REC_MODE_OFF = "set recording mode OFF";
+
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
+
   setVisibilityRecCount(pThis);
   calcSunrise();
   if (devPars.recAuto.get() == enRecAuto::ON)
   {
     audio.openProject();
     enableEditTimes(pThis, false);
+    if (devPars.checkDebugLevel(DBG_COMMANDS))
+      command.addToQueue(enCmd::LOG, (void*)MSG_REC_MODE_ON);
   }
   else if (devPars.recAuto.get() == enRecAuto::OFF)
   {
     audio.closeProject();
     enableEditTimes(pThis, false);
+    if (devPars.checkDebugLevel(DBG_COMMANDS))
+      command.addToQueue(enCmd::LOG, (void*)MSG_REC_MODE_OFF);
   }
   else
     enableEditTimes(pThis, true);
