@@ -282,7 +282,7 @@ void loop()
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
       devStatus.battSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
-    else if(sec == 10)
+    else if(((minute() % 15) == 0) && (sec == 10))
       command.addToQueue(enCmd::MEAS_TEMPERATURE, nullptr);
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
