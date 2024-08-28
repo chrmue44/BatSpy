@@ -49,19 +49,22 @@ void cWheels::checkButtons()
     increaseWrIdx();
     DPRINTLN1("buttons enKey::KEY_OK");
   }
-  m_btnUp.update();
-  if (m_btnUp.fallingEdge())
+  if(isBackLightOn())
   {
-    m_keys[m_wrIdx] = enKey::UP;
-    increaseWrIdx();
-    DPRINTLN1("buttons enKey::UP");
-  }
-  m_btnDown.update();
-  if (m_btnDown.fallingEdge())
-  {
-    m_keys[m_wrIdx] = enKey::DOWN;
-    increaseWrIdx();
-    DPRINTLN1("buttons enKey::DOWN");
+    m_btnUp.update();
+    if (m_btnUp.fallingEdge())
+    {
+      m_keys[m_wrIdx] = enKey::UP;
+      increaseWrIdx();
+      DPRINTLN1("buttons enKey::UP");
+    }
+    m_btnDown.update();
+    if (m_btnDown.fallingEdge())
+    {
+      m_keys[m_wrIdx] = enKey::DOWN;
+      increaseWrIdx();
+      DPRINTLN1("buttons enKey::DOWN");
+    }
   }
 }
 

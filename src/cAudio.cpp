@@ -501,6 +501,7 @@ void cAudio::checkAutoRecording(bool& recActive)
         delay(5);
         if(res != 0)
         {
+          sysLog.log("detected SD card after failure");
           sysLog.close();
           gpsLog.close();
           m_prj.closePrjFile();
@@ -513,8 +514,8 @@ void cAudio::checkAutoRecording(bool& recActive)
         }
       }
     }
-    else
-      m_prj.closePrjFile();
+//    else                            //28.8.24 why????
+//      m_prj.closePrjFile();
   }
 }
 

@@ -30,7 +30,8 @@ int MEMF getNumberOfDays(int month, int year)
     return 30;
 }
 
-const char* PROGMEM MSG_OPEN_PRJ = "successfully loaded project file with %i records\n";
+const char* PROGMEM MSG_OPEN_PRJ  = "successfully loaded project file with %i records\n";
+const char* PROGMEM MSG_CLOSE_PRJ = "closed project file\n";
 
 void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int startM, int startD)
 {
@@ -212,6 +213,8 @@ void MEMF cProject::closePrjFile()
     m_xml.closeTag("Records");
     m_xml.closeTag("BatExplorerProjectFile");
     m_xml.closeFile();
+    if (devPars.checkDebugLevel(DBG_SYSTEM))
+       sysLog.log(MSG_CLOSE_PRJ);
     m_isOpen = false;
     //trigLog.close();
   }
