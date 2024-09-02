@@ -12,8 +12,10 @@
 #include <cstring>
 #include "cmenue.h"
 #include "cRtc.h"
+#include "globals.h"
 //#define DEBUG_LEVEL 4
 #include "debug.h"
+
 
 //#ifndef ARDUINO_TEENSY41
 //extern "C" uint32_t usd_getError(void);
@@ -46,14 +48,12 @@ int cCassette::startRec()
     // check if file is Good
   if (rc != OK)
   { // only option is to close file
-    m_errCount++;
     sd.closeFile(m_fil);
     m_mode = enCassMode::STOP;
     return 1;
   }
   else
   {
-    m_errCount = 0;
     m_isRecFileOpen = true;
   }
   m_sampleCnt = 0;

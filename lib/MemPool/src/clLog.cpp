@@ -133,7 +133,6 @@ void clLog::addLogEntry(uint32_t Type, const char* Str, size_t Len, uint64_t Dev
     m_Stream->seekp(m_ComlogOffset * sizeof(tLogEntry),std::ios::beg);
 
 //=========================================================================
-    //@@@ tbd
  
   }
 	*/

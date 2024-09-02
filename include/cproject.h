@@ -29,7 +29,8 @@ public:
   void closePrjFile();
   void addFile();
   void writeInfoFile(float peakVal, size_t sampleCnt);
-
+  void reset();
+  
   bool getIsOpen() { return m_isOpen; }
   size_t getRecCount() { return m_recCount;}
   const char* getWavFileName() { return m_wavFile; }

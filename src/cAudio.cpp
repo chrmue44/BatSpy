@@ -501,13 +501,15 @@ void cAudio::checkAutoRecording(bool& recActive)
         delay(5);
         if(res != 0)
         {
-          sysLog.log("detected SD card after failure");
-          sysLog.close();
-          gpsLog.close();
-          m_prj.closePrjFile();
+          sysLog.log("detected SD card failure");
+          Serial.println("detected SD card failure"); //@@@
           cSdCard::inst().unmount();
           delay(100);
+          sysLog.reset();
+          gpsLog.reset();
+          m_prj.reset();
           cSdCard::inst().mount();
+          Serial.println("remounted SD card"); //@@@
           delay(100);
           openProject();
           sysLog.log("reinitialized SD card after failure");
@@ -802,6 +804,12 @@ int cAudio::startRecording()
     devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));
     devStatus.recStatus.set("\xF0");
   }
+  else
+  {
+    m_trigger.releaseRecTrigger();
+  }
+  if(devPars.checkDebugLevel(DBG_PERM_REC))
+    sysLog.logf("cAudio::startRec nr %i, file %s", m_prj.getRecCount(), m_prj.getWavFileName());
   return retVal;
 }
 

@@ -141,3 +141,9 @@ void MEMF cLog::close()
     m_create = false;
   }
 }
+
+void MEMF cLog::reset()
+{
+  m_open = false;
+  m_create = false;
+}

@@ -124,6 +124,7 @@ struct stStatus
 #define DBG_GPS      0x02
 #define DBG_SYSTEM   0x04
 #define DBG_TRIGGER  0x08
+#define DBG_PERM_REC 0x10
 
 /**
  * @brief device parameters

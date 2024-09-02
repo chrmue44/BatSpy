@@ -151,7 +151,7 @@ void MEMP cMenue::initPars()
   devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
-  devPars.debugLevel.init(0, 31, 1, 0);
+  devPars.debugLevel.init(0, 63, 1, 0);
   devPars.timeZone.init(-12.0, +12, 1.0, 0);
 
   devPars.daylightSav.clear();

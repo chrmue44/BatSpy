@@ -24,7 +24,7 @@ class cLog
   void setLogLevel(int level) { m_logLevel = level; }
   void debugLog(int level, const char* msg);
   void debugLog(int level, const char c, bool keepOpen = true);
-
+  void reset();
  protected:
   cLog();
 

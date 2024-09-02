@@ -220,6 +220,10 @@ void MEMF cProject::closePrjFile()
   }
 }
 
+void MEMF cProject::reset()
+{
+  m_isOpen = false;
+}
 
 void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
 {

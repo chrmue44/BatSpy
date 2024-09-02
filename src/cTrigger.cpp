@@ -66,8 +66,8 @@ void cTrigger::checkRecordingTrigger(float fFilter)
     case enTrigState::ARMED:
       if (m_peak.available())
         m_peakVal = m_peak.read();
-      if ((devPars.triggerType.get() == enTrigType::LEVEL) &&
-        (m_peakVal >= m_recThresh))
+      if (((devPars.triggerType.get() == enTrigType::LEVEL) && (m_peakVal >= m_recThresh)) ||
+       (devPars.checkDebugLevel(DBG_PERM_REC)))
       {
         DPRINTF4("recording triggered, peak %.3f, thresh %.3f\n", m_peakVal, m_recThresh);
         m_recTrigger = true;
