@@ -134,6 +134,9 @@ void MEMP fuFormat(cMenuesystem* pThis, enKey key, cParBase* pItem)
         cSdCard::inst().mkDir("log");
         cSdCard::inst().mkDir("info");
         cSdCard::inst().mkDir("prj");
+        size_t freeSpace;  size_t totSpace;
+        cSdCard::inst().getFreeMem(freeSpace, totSpace);
+        devStatus.freeSpace.set(freeSpace / 1024/1024); 
 /*        if(ret == enSdRes::OK)
           pThis->showMsg(enMsg::INFO, nullptr, Txt::get(1043));
         else

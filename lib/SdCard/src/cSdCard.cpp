@@ -122,7 +122,7 @@ enSdRes cSdCard::unmount()
       delay(2);
       count++;
     }
-    m_sd.begin(1);
+    m_sd.end();
     m_ok = false;
 #elif defined(CARDLID_USDFS)
   TCHAR tdir[FILENAME_LEN];

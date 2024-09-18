@@ -626,7 +626,7 @@ void cAudio::operate(bool liveFft)
     m_trigger.checkTrigger();
   }
 #ifdef SIMU_DISPLAY
-  m_trigger.checkTrigger();  //@@@
+  m_trigger.checkTrigger();
 #endif
 
   if(liveFft && fftAvailable && !m_haltLiveFft)

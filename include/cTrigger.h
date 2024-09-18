@@ -60,7 +60,7 @@ class cTrigger
   float lastPeakVal() { return m_peakVal;}
   void setThreshold(float level) { m_recThresh = level; }
   void setMinEventLength(float len, uint32_t sampleRate);
-//  void logTrigInfo(const char* fileName);
+  void logTrigInfo(const char* fileName);
 
  private:
   void checkLiveTrigger(float fFilter);

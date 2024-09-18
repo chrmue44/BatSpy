@@ -22,7 +22,7 @@ void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
 {
   m_minEventLen = (int)(len / 1000.0 * sampleRate / 1024.0 + 0.5);
   if(m_minEventLen == 0)
-    m_minEventLen = 1; 
+    m_minEventLen = 1;
 }
 
 void cTrigger::checkTrigger()
@@ -55,7 +55,7 @@ void cTrigger::releaseRecTrigger()
     if (m_peak.available())
       m_peakVal = m_peak.read();
     DPRINTF4("rec trig released: peak %.3f \n", m_peakVal);
-  }      
+  }
 }
 
 void cTrigger::checkRecordingTrigger(float fFilter)
@@ -84,7 +84,7 @@ void cTrigger::checkRecordingTrigger(float fFilter)
       }
       else if (devPars.triggerType.get() == enTrigType::FREQ_LEVEL)
       {
-        if ((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && 
+        if ((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) &&
             (m_fftInfo.lastMaxFreq >= fFilter) && (m_peakVal >= m_recThresh))
         {
           m_countRec = 0;
@@ -109,18 +109,19 @@ void cTrigger::checkRecordingTrigger(float fFilter)
       else
         m_stateRec = enTrigState::ARMED;
       break;
-    
+
     case enTrigState::TRIGGERED:
       break;
   }
 }
 
-/*void cTrigger::logTrigInfo(const char* fileName)
+void cTrigger::logTrigInfo(const char* fileName)
 {
-  trigLog.logf(",%s, %i, %i, %.1f, %.1f, %.1f, %.1f\n", 
+/* trigLog.logf(",%s, %i, %i, %.1f, %.1f, %.1f, %.1f\n", 
                 fileName, m_countRec, m_trigInfo.lastMaxAmpl,
-                m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);  //@@@
-}*/
+                m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);
+*/
+}
 
 void cTrigger::checkLiveTrigger(float fFilter)
 {
@@ -151,7 +152,7 @@ void cTrigger::checkLiveTrigger(float fFilter)
       if((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq < m_minFreq))
         m_minFreq = m_fftInfo.lastMaxFreq;
       break;
-    
+
     case enTrigState::TRIGGERED:
       break;
   }
