@@ -33,86 +33,6 @@ int MEMF getNumberOfDays(int month, int year)
 const char* PROGMEM MSG_OPEN_PRJ  = "successfully loaded project file with %i records\n";
 const char* PROGMEM MSG_CLOSE_PRJ = "closed project file\n";
 
-void MEMF cProject::openExistingPrjFile(const char* fName, int startY, int startM, int startD)
-{
-  DPRINTF4("open existing file %s\n", fName);
-  cSdCard& sd = cSdCard::inst();
-  tFILE file;
-  char buf[256];
-  char tmpFileName[64];
-  size_t bytesRead;
-  m_recCount = 0;
-  cUtils::replace(fName, ".bpr",".tmp", tmpFileName, sizeof(tmpFileName));
-
-  DPRINTF4("rename file: old: %s, new: %s\n", fName, tmpFileName);
-  enSdRes res = sd.rename(fName, tmpFileName);
-  if(res != enSdRes::OK)
-    DPRINTF4("error renaming file: old: %s, new: %s\n",fName, tmpFileName);
-
-  res = sd.openFile(tmpFileName, file, enMode::READ);
-
-  char notes[128];
-  notes[0] = 0;
-
-  while(res == enSdRes::OK)
-  {
-    enSdRes res = sd.readLine(file, buf, sizeof(buf), bytesRead);
-//    DPRINTF4("line: %s", buf);
-    if(res != enSdRes::OK)
-    {
-      DPRINTLN4("end of file reached");
-      break;
-    }
-    char* p = strstr(buf, "<Record ");
-    if(p != nullptr)
-    {
-      DPRINTLN4("found tag <Record>");
-      m_xml.writeLineToFile(buf);
-      m_recCount++;
-      continue;
-    }
-    p = strstr(buf, "</Records>");
-    if(p != nullptr)
-      break;
-    p = strstr(buf, "<Notes>");
-    if (p != nullptr)
-    {
-      p += 7;
-      char* p2 = strstr(buf, "</Notes>");
-      if (p2 != nullptr) // closing tag in same line
-      {
-        int len = strlen(notes);
-        char* pDst = notes + len;
-        while ((p < p2) && (p < notes + len - 1))
-          *pDst++ = *p++;
-        *pDst = 0;
-      }
-      else
-        strncpy(notes, p, sizeof(notes) - 1);
-      DPRINTLN4("found tag <Notes>");
-      continue;
-    }
-    p = strstr(buf, "</Notes>");
-    if (p != nullptr)
-    {
-      *p = 0;
-      strcat(notes, buf);
-      continue;
-    }
-    p = strstr(buf, "<Records>");
-    if(p != nullptr)
-    {
-      DPRINTLN4("found tag <Records>");
-      initializePrjFile(fName, notes, startY, startM, startD);
-    }
-  }
-  DPRINTF4("found %i records\n", m_recCount);
-  if (devPars.checkDebugLevel(DBG_SYSTEM))
-    sysLog.logf(MSG_OPEN_PRJ, m_recCount);
-  sd.closeFile(file);
-  sd.del(tmpFileName);
-}
-
 
 void MEMF cProject::createPrjFile(const char* pNotes)
 {
@@ -131,12 +51,10 @@ void MEMF cProject::createPrjFile(const char* pNotes)
 
   strcat(buf, "/");
   strcat(buf, m_prjName);
-  strcat(buf, ".bpr");
+  strcat(buf, ".batspy");
   //trigLog.log("fileName,count,ampl,freq,avg, avgPeak,bandwidth");
   DPRINTF4("open project %s \n", buf);
-  if(cSdCard::inst().fileExists(buf))
-    openExistingPrjFile(buf, startY, startM, startD);
-  else
+  if(!cSdCard::inst().fileExists(buf))
   {
     DPRINTF4("Create new project file %s\n", buf);
     initializePrjFile(buf, pNotes, startY, startM, startD);
@@ -148,8 +66,10 @@ void MEMF cProject::createPrjFile(const char* pNotes)
 void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
 {
   tAttrList attr;
-  m_xml.openFile(fName, false);
-  m_xml.initXml();
+  cXmlHelper xml;
+
+  xml.openFile(fName, false);
+  xml.initXml();
   stAttr item;
   strncpy(item.name, "xmlns:xsi", sizeof(item.name));
   strncpy(item.value, "http://www.w3.org/2001/XMLSchema-instance", sizeof(item.value));
@@ -160,15 +80,16 @@ void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int
   strncpy(item.name, "Originator", sizeof(item.name));
   strncpy(item.value, "BatSpy, Ver" __DATE__  "/"  __TIME__ , sizeof(item.value));
   attr.push_back(item);
-  m_xml.openTag("BatExplorerProjectFile", &attr);
+  xml.openTag("BatExplorerProjectFile", &attr);
 
-  m_xml.simpleTag("Name", m_prjName);
+  xml.simpleTag("Name", m_prjName);
   char buf[128];
   snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", startY, startM, startD, hour(),  minute(), m_fSec);
-  m_xml.simpleTag("Created", buf);
-  m_xml.simpleTag("Notes",pNotes);
-  m_xml.simpleTag("AutoProcess", "true");
-  m_xml.openTag("Records");
+  xml.simpleTag("Created", buf);
+  xml.simpleTag("Notes",pNotes);
+  xml.simpleTag("AutoProcess", "true");
+  xml.closeTag("BatExplorerProjectFile");
+  xml.closeFile();
 }
 
 void MEMF cProject::saveStartTime()
@@ -191,33 +112,14 @@ const char* MEMF cProject::createElekonFileName()
 
 void MEMF cProject::addFile()
 {
-  tAttrList attr;
-  stAttr item;
-  attr.clear();
-  strncpy(item.name, "File", sizeof(item.name));
-  strncpy(item.value, m_name, sizeof(item.value));
-  strcat(item.value, ".wav");
-  attr.push_back(item);
-  strncpy(item.name, "Name",sizeof(item.name));
-  strncpy(item.value, m_name, sizeof(item.value));
-  attr.push_back(item);
-  m_xml.simpleTagNoValue("Record", &attr);
   m_recCount++;
 }
 
 void MEMF cProject::closePrjFile()
 {
-  if(m_isOpen)
-  {
-    DPRINTLN4("close prj file");
-    m_xml.closeTag("Records");
-    m_xml.closeTag("BatExplorerProjectFile");
-    m_xml.closeFile();
-    if (devPars.checkDebugLevel(DBG_SYSTEM))
-       sysLog.log(MSG_CLOSE_PRJ);
-    m_isOpen = false;
+  m_recCount = 0;
+  m_isOpen = false;
     //trigLog.close();
-  }
 }
 
 void MEMF cProject::reset()

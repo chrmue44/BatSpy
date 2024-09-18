@@ -37,7 +37,6 @@ public:
   const char* createElekonFileName();
 
 private:
-  void openExistingPrjFile(const char* fName, int startY, int startM, int startD);
   void initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD);
   void saveStartTime();
 
@@ -51,7 +50,6 @@ private:
   int m_fSec;
   size_t m_recCount = 0;
 
-  cXmlHelper m_xml;
   char m_prjName[16];
   char m_wavFile[128];
   char m_name[30];
