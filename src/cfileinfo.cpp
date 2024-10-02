@@ -17,7 +17,7 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
                      const char* wavFile, float lat, float lon, float peakVal, float temp, float humid)
 {
   int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
-  enSdRes ret = cSdCard::inst().openFile(fileName, m_file, WRITE);
+  enSdRes ret = cSdCard::inst().openFile(fileName, m_file, enMode::WRITE);
   if(ret == 0)
   {
     do

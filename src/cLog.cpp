@@ -31,6 +31,7 @@ void MEMF cLog::timeStamp()
 
 void cLog::create()
 {
+  /*   //@@@
   if(!m_create)
   {
     cSdCard& sd = cSdCard::inst();
@@ -64,11 +65,13 @@ void cLog::create()
     else
       DPRINTLN1("failed to open file");
   }
+  */
 }
 
 void MEMF cLog::debugLog(int level, const char c, bool keepOpen)
 {
-  if(m_logLevel >= level)
+   /* @@@ 
+   if(m_logLevel & level)
   {
     create();
     if (m_open)
@@ -83,10 +86,12 @@ void MEMF cLog::debugLog(int level, const char c, bool keepOpen)
       }
     }
   }
+  */
 }
 
 void MEMF cLog::log(const char* msg, bool keepOpen)
 {
+  /* @@@
   DPRINTF1("cLog::log: %s\n", msg);
   create();
   if (m_open)
@@ -106,18 +111,20 @@ void MEMF cLog::log(const char* msg, bool keepOpen)
       m_open = false;
     }
   }
+  */
 }
 
 void MEMF cLog::debugLog(int level, const char* msg) 
 {
-  if(level == 0)
-    return;
-  if (level >= m_logLevel)
+  /* //@@@
+  if (level & m_logLevel)
     logf(msg);
+  */
 }
 
 void MEMF cLog::logf(const char* fmt, ...)
 {
+  /*  ///@@@
   DPRINTLN1("cLog::logf");
   char buf[256];
   va_list args;
@@ -125,6 +132,7 @@ void MEMF cLog::logf(const char* fmt, ...)
   vsnprintf(buf, sizeof(buf), fmt, args);
   va_end(args);
   log(buf, true);
+  */
 }
 
 void MEMF cLog::close()

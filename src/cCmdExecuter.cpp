@@ -35,6 +35,7 @@ void cmdUpdateInfos(void* pData)
 
 void cmdMeasTemperature(void* pData)
 {
+  /* @@@
   float humidity;
   float temp = readTemperature(humidity);
   if (devPars.checkDebugLevel(DBG_COMMANDS))
@@ -47,6 +48,7 @@ void cmdMeasTemperature(void* pData)
   }
   devStatus.temperature.set(temp);
   devStatus.humidity.set(humidity);
+  */
 }
 
 
