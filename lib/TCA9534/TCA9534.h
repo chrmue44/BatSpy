@@ -3,7 +3,11 @@
 #define ARDUINO_TCA9534_H
 
 #include <Arduino.h>
-#include <Wire.h>
+#ifdef ALT_I2C
+#include "i2c_driver_wire.h"
+#else
+#include "Wire.h"
+#endif
 
 namespace arduino
 {

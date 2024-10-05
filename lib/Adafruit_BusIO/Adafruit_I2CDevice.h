@@ -2,7 +2,11 @@
 #define Adafruit_I2CDevice_h
 
 #include <Arduino.h>
-#include <Wire.h>
+#ifdef ALT_I2C
+#include "i2c_driver_wire.h"
+#else
+#include "Wire.h"
+#endif
 
 ///< The class which defines how we will talk to this device over I2C
 class Adafruit_I2CDevice {

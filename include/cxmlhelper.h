@@ -22,7 +22,8 @@ class cXmlHelper
 public:
   cXmlHelper();
   void initXml();
-  enSdRes openFile(const char* name, bool keepOpen = true);
+//  enSdRes openFile(const char* name, bool keepOpen = true);
+  enSdRes openFile(const char* name, bool keepOpen = false);
   void closeFile();
   void openTag(const char* tagName, tAttrList* attr = NULL, bool newLine = true, bool close = false, bool withIndent = true);
   void closeTag(const char* tagName);

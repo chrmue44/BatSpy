@@ -40,7 +40,11 @@
 #define SENSIRIONI2CSHT4X_H
 
 #include <SensirionCore.h>
-#include <Wire.h>
+#ifdef ALT_I2C
+#include "i2c_driver_wire.h"
+#else
+#include "Wire.h"
+#endif
 
 #define SHT40_I2C_ADDR_44 0x44
 #define SHT40_I2C_ADDR_45 0x45

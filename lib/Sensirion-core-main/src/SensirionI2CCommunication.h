@@ -35,7 +35,11 @@
 #include <stdlib.h>
 
 #include "Arduino.h"
+#ifdef ALT_I2C
+#include "i2c_driver_wire.h"
+#else
 #include "Wire.h"
+#endif
 
 #include "SensirionI2CRxFrame.h"
 #include "SensirionI2CTxFrame.h"

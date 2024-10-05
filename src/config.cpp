@@ -8,7 +8,11 @@
 
 #include "config.h"
 #include <Arduino.h>
-#include <Wire.h>
+#ifdef ALT_I2C
+#include "i2c_driver_wire.h"
+#else
+#include "Wire.h"
+#endif
 #include "Adafruit_SSD1327.h"
 #include "Adafruit_ILI9341.h"
 
