@@ -502,14 +502,12 @@ void cAudio::checkAutoRecording(bool& recActive)
         if(res != 0)
         {
           sysLog.log("detected SD card failure");
-          Serial.println("detected SD card failure"); //@@@
           cSdCard::inst().unmount();
           delay(100);
           sysLog.reset();
           gpsLog.reset();
           m_prj.reset();
           cSdCard::inst().mount();
-          Serial.println("remounted SD card"); //@@@
           delay(100);
           openProject();
           sysLog.log("reinitialized SD card after failure");

@@ -133,7 +133,6 @@ void handleDisplayAndWheel(bool oneSec)
   else
     rtFft = terminal.isOnline();
   audio.operate( rtFft );
-
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);
@@ -153,7 +152,9 @@ void handleDisplayAndWheel(bool oneSec)
     {
       if(!isBackLightOn())
       {
-        command.addToQueue(enCmd::BACKLIGHT_ON);
+        setBackLight(true);
+        menue.resetTimer();
+//        command.addToQueue(enCmd::BACKLIGHT_ON);
       }
       else
       {

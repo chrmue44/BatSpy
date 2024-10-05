@@ -56,6 +56,7 @@ void initPins()
  // pinMode(SPIN_LED_2, OUTPUT); 
 
   Wire.begin();
+  Wire.setClock(400000);
   ioex.attach(Wire);
   initTempSensor();
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
@@ -537,6 +538,8 @@ float readTemperature(float& humidity)
   return 25.2;
 #elif defined ARDUINO_TEENSY40
   float t;
+
+  Wire.setClock(100000);
   int err = sht.measureHighPrecision(t, humidity);
   if(err != 0)
   {
@@ -544,6 +547,7 @@ float readTemperature(float& humidity)
     humidity = NAN;
     sysLog.log("error reading temp sensor");
   }
+  Wire.setClock(400000);
   return t;
 #endif
 }
