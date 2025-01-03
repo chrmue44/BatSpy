@@ -42,7 +42,7 @@
               CS1 --| D0                 GND |--
          TFT_MISO --| D1   Teensy 4.0    3V3 |--
            ROT_SW --| D2              A9 D23 |-- CS_SDCARD
-           SPARE1 --| D3              A8 D22 |-- SUPPLY_VOLT
+           EN_MIC --| D3              A8 D22 |-- SUPPLY_VOLT
              REV0 --| D4              A7 D21 |-- BCLK_ADC
              REV1 --| D5              A6 D20 |-- LRCLK_ADC  
            TFT_DC --| D6              A5 D19 |-- I2C_SCL
@@ -101,6 +101,7 @@
 #define PIN_ROT_LEFT_B   15          // encoder input B
 #define PIN_ROT_LEFT_S   2           // encoder push button
 
+#define PIN_EN_MIC       3
 #define PIN_SUPPLY_VOLT  A8    
 
 // audio out

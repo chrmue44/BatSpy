@@ -27,7 +27,7 @@ extern TCA9534 ioex;
 #include "cEeprom.h"
 #include "SensirionI2cSht4x.h"
 #include "cCmdExecuter.h"
-
+#include "cMicData.h"
 
 extern cLog sysLog;
 extern cLog gpsLog;
@@ -51,6 +51,7 @@ extern cnotes notes2;
 extern SensirionI2cSht4x sht;
 extern cStatus statusDisplay;
 extern char serialNumber[EEP_SERIAL_SIZE];
+extern cMicData micInfo;
 
 extern cCmdExecuter command;
 #endif //#ifndef GLOBALS_H

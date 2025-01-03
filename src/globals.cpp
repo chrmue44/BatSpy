@@ -32,7 +32,7 @@ stParams devPars;            ///< parameters of the device
 SensirionI2cSht4x sht;
 char serialNumber[EEP_SERIAL_SIZE];
 cCmdExecuter command;
-
+cMicData micInfo(PIN_EN_MIC);
 #ifdef ARDUINO_TEENSY40
 TCA9534 ioex;
 #endif

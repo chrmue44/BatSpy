@@ -27,6 +27,8 @@ class cTerminal {
   void parseSetCmd(const char* buf);
   void parseSetStatusCmd(const char* buf);
   void parseGetCmd(const char* buf);
+  void parseSetMicCmd(const char* buf);
+  void parseGetMicCmd(const char* buf);
 
   void parseGetStatusCmd(const char* buf);
   enKey getKey() { enKey key = m_key; m_key = NOKEY; return key; }
@@ -47,6 +49,8 @@ class cTerminal {
   bool setValFloat(const char* buf, float min, float max, cParNum& par);
   void getValFloat(const char* buf, cParNum& par, char* reply, size_t replySize);
   void getPosition(char* buf, size_t bufSize);
+  bool getFreqPointsFromUsb();
+  bool getLineFromUsb(char* buf, int size);
 
   char m_recbufUSB[256];
   char m_recbufESP[256];

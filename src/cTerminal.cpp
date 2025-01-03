@@ -61,11 +61,6 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
 
   switch(buf[0]) 
   {
-    case 'h':
-      Serial.println("");
-      showCommands();
-      break;
-
     case 'A':
       saveParsToEep();
       Serial.write('0');
@@ -128,6 +123,26 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       Serial.write(m_endChar);
       break;
 
+    case 'g':
+      Serial.write("entering GPS test mode\n");
+      gps.test();
+      Serial.write("GPS test mode finished\n");
+      break;
+
+    case 'h':
+      Serial.println("");
+      showCommands();
+      break;
+
+    case 'I':
+      parseSetMicCmd(&buf[1]);
+      break;
+
+    case 'i':
+      parseGetMicCmd(&buf[1]);
+      Serial.write(m_endChar);
+      break;
+
     case 'L':
       {
         bool ok = loadParsFromEep();
@@ -148,12 +163,6 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       Serial.write(m_endChar);      
       break;
     
-    case 'g':
-      Serial.write("entering GPS test mode\n");
-      gps.test();
-      Serial.write("GPS test mode finished\n");
-      break;
-
     case 'n':
       {
         char oldName[FILENAME_LEN];
@@ -530,6 +539,119 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
   Serial.write(m_endChar);
 }
 
+
+void MEMF cTerminal::parseGetMicCmd(const char* buf)
+{
+  m_key = enKey::TER;
+  bool replyOk = true;
+  char replyBuf[1024];
+  switch (buf[0])
+  {
+    case 'i':
+      strncpy(replyBuf, micInfo.getId(), sizeof(replyBuf));
+      break;
+
+    case 't':
+      strncpy(replyBuf, micInfo.getType(), sizeof(replyBuf));
+      break;
+
+    case 'f':
+      {
+        int index = atoi(&buf[1]);
+        stFreqItemFloat* f = micInfo.getFreqResponsePoint(index);
+        if(f != nullptr)
+          snprintf(replyBuf, sizeof(replyBuf), "%i, %.1f, %.1f", index, f->freq, f->ampl);
+        else
+          replyOk = false; 
+      }
+      break;
+    
+    case 'c':
+      strncpy(replyBuf, micInfo.getComment(), sizeof(replyBuf));
+      break;
+    
+    case 'r':
+      replyOk = micInfo.read();
+      if(replyOk)
+        replyBuf[0] = '0';
+      else  
+        replyBuf[0] = '1';
+      replyBuf[1] = 0;
+      replyOk = true;
+      break;
+
+    case 'n':
+      snprintf(replyBuf, sizeof(replyBuf), "%i", micInfo.getFreqResponsePointCount());
+      break;
+
+    default:
+      m_key = enKey::NOKEY;
+      replyOk = false;
+      break;
+  }
+  if (replyOk)
+    Serial.print(&replyBuf[0]);
+  else
+    Serial.write('?');
+}
+
+
+void cTerminal::parseSetMicCmd(char const* buf)
+{
+  m_key = enKey::TER;
+  bool replyOk = true;
+  switch(buf[0])
+  {
+    case 'i':
+      micInfo.setId(&buf[1]);
+      break;
+    case 't':
+      micInfo.setType(&buf[1]);
+      break;
+    case 'c':
+      micInfo.setComment(&buf[1]);
+      break;
+    case 'n':
+      {
+        int count = atoi(&buf[1]);
+        micInfo.setFreqResponsePointCount(count);
+      }
+      break;
+
+    case 'f':
+      {
+        char buf2[64];
+        strncpy(buf2, &buf[1], sizeof(buf2));
+        replyOk = false;
+        stFreqItemFloat item;
+        char* token = strtok(buf2, ",");
+        int index = atoi(token);
+        token = strtok(nullptr, ",");
+        if(token != nullptr)
+        {
+          item.freq = atof(token);
+          token = strtok(nullptr, ",");
+          if(token != nullptr)
+          {
+            item.ampl = atof(token);
+            replyOk = micInfo.setFreqResponsePoint(item, index);
+          }
+        }
+      }
+      break;
+
+    case 'w':
+      micInfo.write();
+      break;
+  }
+  if(replyOk)
+    Serial.write('0');
+  else  
+    Serial.write('1');
+  Serial.write(m_endChar);
+}
+
+
 void MEMF cTerminal::parseGetCmd(const char* buf)
 {
   m_key = enKey::TER;
@@ -579,6 +701,7 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
   else
     Serial.write('?');
 }
+
 
 bool MEMF cTerminal::parseAutoRecParams(const char* buf, bool write, char* reply, size_t replySize)
 {
@@ -929,7 +1052,18 @@ void MEMF cTerminal::showCommands()
   Serial.println("eO<nr>   set digital output ON (nr 0..30 direct IO, 100 .. 107 port extender)");
   Serial.println("f        get live fft");
   Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
+  Serial.println("Ic<com>  set microphone comment");
+  Serial.println("ic       get microphone comment");
+  Serial.println("If<i,f,a> set microphone frequency response");
+  Serial.println("if<i>    get microphone frequency response");
+  Serial.println("Ii<id>   set microphone id");
+  Serial.println("ii       get microphone id");
+  Serial.println("ir       read mircophone info from one wire chip");
+  Serial.println("Iw       write microphone info to one wire chip");
+  Serial.println("It<type> set microphone type");
+  Serial.println("it       get microphone type");
   Serial.println("L        load parameters from EEPROM");
+  Serial.println("m<dir>   make directory");
   Serial.println("n<old> <new> rename file or directory");  
   Serial.println("o        key OK");
   Serial.println("p        print parameters");
