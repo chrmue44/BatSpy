@@ -38,6 +38,7 @@ public:
 
 private:
   void initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD);
+  void initMicInfo(cXmlHelper& xml);
   void saveStartTime();
 
   bool m_isOpen;

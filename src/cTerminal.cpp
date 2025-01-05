@@ -547,12 +547,18 @@ void MEMF cTerminal::parseGetMicCmd(const char* buf)
   char replyBuf[1024];
   switch (buf[0])
   {
-    case 'i':
-      strncpy(replyBuf, micInfo.getId(), sizeof(replyBuf));
+    case 'c':
+      strncpy(replyBuf, micInfo.getComment(), sizeof(replyBuf));
       break;
-
-    case 't':
-      strncpy(replyBuf, micInfo.getType(), sizeof(replyBuf));
+    
+    case 'e':
+      replyOk = micInfo.read();
+      if(replyOk)
+        replyBuf[0] = '0';
+      else  
+        replyBuf[0] = '1';
+      replyBuf[1] = 0;
+      replyOk = true;
       break;
 
     case 'f':
@@ -565,23 +571,17 @@ void MEMF cTerminal::parseGetMicCmd(const char* buf)
           replyOk = false; 
       }
       break;
-    
-    case 'c':
-      strncpy(replyBuf, micInfo.getComment(), sizeof(replyBuf));
-      break;
-    
-    case 'r':
-      replyOk = micInfo.read();
-      if(replyOk)
-        replyBuf[0] = '0';
-      else  
-        replyBuf[0] = '1';
-      replyBuf[1] = 0;
-      replyOk = true;
-      break;
 
+    case 'i':
+      strncpy(replyBuf, micInfo.getId(), sizeof(replyBuf));
+      break;
+    
     case 'n':
       snprintf(replyBuf, sizeof(replyBuf), "%i", micInfo.getFreqResponsePointCount());
+      break;
+
+    case 't':
+      strncpy(replyBuf, micInfo.getType(), sizeof(replyBuf));
       break;
 
     default:
@@ -600,49 +600,57 @@ void cTerminal::parseSetMicCmd(char const* buf)
 {
   m_key = enKey::TER;
   bool replyOk = true;
-  switch(buf[0])
+  if(isSystemLocked())
+    replyOk = false;
+  else
   {
-    case 'i':
-      micInfo.setId(&buf[1]);
-      break;
-    case 't':
-      micInfo.setType(&buf[1]);
-      break;
-    case 'c':
-      micInfo.setComment(&buf[1]);
-      break;
-    case 'n':
-      {
-        int count = atoi(&buf[1]);
-        micInfo.setFreqResponsePointCount(count);
-      }
-      break;
+    switch(buf[0])
+    {
+      case 'c':
+        micInfo.setComment(&buf[1]);
+        break;
 
-    case 'f':
-      {
-        char buf2[64];
-        strncpy(buf2, &buf[1], sizeof(buf2));
-        replyOk = false;
-        stFreqItemFloat item;
-        char* token = strtok(buf2, ",");
-        int index = atoi(token);
-        token = strtok(nullptr, ",");
-        if(token != nullptr)
+      case 'e':
+        micInfo.write();
+        break;
+
+      case 'f':
         {
-          item.freq = atof(token);
+          char buf2[64];
+          strncpy(buf2, &buf[1], sizeof(buf2));
+          replyOk = false;
+          stFreqItemFloat item;
+          char* token = strtok(buf2, ",");
+          int index = atoi(token);
           token = strtok(nullptr, ",");
           if(token != nullptr)
           {
-            item.ampl = atof(token);
-            replyOk = micInfo.setFreqResponsePoint(item, index);
+            item.freq = atof(token);
+            token = strtok(nullptr, ",");
+            if(token != nullptr)
+            {
+              item.ampl = atof(token);
+              replyOk = micInfo.setFreqResponsePoint(item, index);
+            }
           }
         }
-      }
-      break;
+        break;
 
-    case 'w':
-      micInfo.write();
-      break;
+      case 'i':
+        micInfo.setId(&buf[1]);
+        break;
+
+      case 'n':
+        {
+          int count = atoi(&buf[1]);
+          micInfo.setFreqResponsePointCount(count);
+        }
+        break;
+
+      case 't':
+        micInfo.setType(&buf[1]);
+        break;
+    }
   }
   if(replyOk)
     Serial.write('0');
@@ -1054,12 +1062,12 @@ void MEMF cTerminal::showCommands()
   Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
   Serial.println("Ic<com>  set microphone comment");
   Serial.println("ic       get microphone comment");
+  Serial.println("ie       read mircophone info from one wire chip");
+  Serial.println("Ie       write microphone info to one wire chip");
   Serial.println("If<i,f,a> set microphone frequency response");
   Serial.println("if<i>    get microphone frequency response");
   Serial.println("Ii<id>   set microphone id");
   Serial.println("ii       get microphone id");
-  Serial.println("ir       read mircophone info from one wire chip");
-  Serial.println("Iw       write microphone info to one wire chip");
   Serial.println("It<type> set microphone type");
   Serial.println("it       get microphone type");
   Serial.println("L        load parameters from EEPROM");

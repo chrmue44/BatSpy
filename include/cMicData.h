@@ -35,13 +35,7 @@ struct stMicInfo
 class cMicData
 {
  public:
-  cMicData(uint8_t pin)
-  :
-  _ds(new OneWire(pin))
-  {
-    memset(&_info, 0, sizeof(_info));
-  }
-
+  cMicData(uint8_t pin);
   bool init();
   void setId(const char* id);
   char* getId() {return &_info.id[0]; }

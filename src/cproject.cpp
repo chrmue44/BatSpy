@@ -63,6 +63,30 @@ void MEMF cProject::createPrjFile(const char* pNotes)
   m_isOpen = true;
 }
 
+void MEMF cProject::initMicInfo(cXmlHelper& xml)
+{
+  xml.openTag("Microphone");
+  xml.simpleTag("Id", micInfo.getId());
+  xml.simpleTag("Type", micInfo.getType());
+  xml.simpleTag("Comment", micInfo.getComment());
+  xml.openTag("FrequencyResponse");
+  for(int i = 0; i < micInfo.getFreqResponsePointCount(); i++)
+  {
+    tAttrList attr;
+    stAttr item;
+    attr.clear();
+    strncpy(item.name, "Frequency", sizeof(item.name));
+    snprintf(item.value, sizeof(item.value),"%.1f", micInfo.getFreqResponsePoint(i)->freq);
+    attr.push_back(item);
+    strncpy(item.name, "Amplitude",sizeof(item.name));
+    snprintf(item.value, sizeof(item.value),"%.1f", micInfo.getFreqResponsePoint(i)->ampl);
+    attr.push_back(item);
+    xml.simpleTagNoValue("Point", &attr);
+  }
+  xml.closeTag("FrequencyResponse");
+  xml.closeTag("Microphone");
+}
+
 void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
 {
   tAttrList attr;
@@ -88,6 +112,7 @@ void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int
   xml.simpleTag("Created", buf);
   xml.simpleTag("Notes",pNotes);
   xml.simpleTag("AutoProcess", "true");
+  initMicInfo(xml);
   xml.closeTag("BatExplorerProjectFile");
   xml.closeFile();
 }

@@ -1,5 +1,14 @@
 #include "cMicData.h"
 
+cMicData::cMicData(uint8_t pin) :
+_ds(new OneWire(pin))
+{
+  memset(&_info, 0, sizeof(_info));
+  strncpy(_info.id, "unknown", sizeof(_info.type));
+  strncpy(_info.type, "not detected", sizeof(_info.type));
+  _info.crc = calcCrc();
+}
+
 void cMicData::setId(const char* id) 
 {
   strncpy(_info.id, id, sizeof(_info.id));

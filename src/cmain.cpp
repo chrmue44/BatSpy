@@ -121,6 +121,7 @@ void setup()
   initDisplayVars();
   logStatus();
   digWrite(SPIN_LED_2, 0);
+  micInfo.read();
 }
 
 

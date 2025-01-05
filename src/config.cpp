@@ -413,6 +413,7 @@ void setAnalogPower(bool on)
 {
 #ifdef ARDUINO_TEENSY40
   digWrite(SPIN_PWR_ANA, on ? 1 : 0);
+  digWrite(PIN_EN_MIC, on ? 1 : 0);
 #endif
 }
 
