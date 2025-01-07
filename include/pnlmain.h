@@ -43,7 +43,7 @@ extern cParEnum f4MainItems;   ///< pop up menu F4
 #undef extern
 #endif
 
-void setFileToDisplay(const char* buf);
+void setFileToDisplay(const char* buf, size_t parSet);
 void initFunctionItemsExpert();
 void initFunctionItemsRecorder();
 void initFunctionItemsHandheld();

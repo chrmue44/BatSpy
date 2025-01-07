@@ -22,6 +22,14 @@
 class cParNum : public cParBase 
 {
  public:
+  cParNum() :
+    m_min(0.0),
+    m_max(1.0),
+    m_step(1),
+    m_decimals(0),
+    m_leadZeros(0),
+    m_val(0.0) {}
+
   cParNum(float v) :
     m_min(0.0),
     m_max(1.0),

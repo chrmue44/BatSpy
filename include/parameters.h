@@ -129,6 +129,8 @@ struct stStatus
 /**
  * @brief device parameters
  */
+#define PARS_BAT   0
+#define PARS_BIRD  1
 struct stParams
 {
   bool checkDebugLevel(int l)
@@ -139,25 +141,30 @@ struct stParams
     else
       return false;
   }
+
   cParNum volume =   6;              ///< volume setting
   cParNum mixFreq = 40;              ///< mixer frequency
-  cParNum recTime = 3;               ///< recording time
+  cParNum recTime[2];               ///< recording time
 #define PAR_RECTIM_MIN  1.0f
 #define PAR_RECTIM_MAX  30.0f
-  cParEnum sampleRate = enSampleRate::SR_384K;    ///< sample rate
+  cParEnum sampleRate[2];    ///< sample rate
 #define PAR_SR_MIN  enSampleRate::SR_19K
 #define PAR_SR_MAX  enSampleRate::SR_480K
+#define PAR_SR_DEF_BAT  enSampleRate::SR_384K
+#define PAR_SR_DEF_BIRD  enSampleRate::SR_44K
   cParEnum lang   = LANG_GER;        ///< display language
   cParStr fileName = "";             ///< actual file name
   cParNum threshHold = 10;           ///< threshhold level graph, waterfall
   cParNum fftLevelMin = 3500;        ///< low (threshhold) level for FFT display
   cParNum fftLevelMax = 70000;       ///< high level for FFT display
-  cParNum recThreshhold = -18;       ///< auto recording threshhold
+  cParNum recThreshhold[2];       ///< auto recording threshhold
 #define PAR_RECTHRESH_MIN -24.0f
 #define PAR_RECTHRESH_MAX -1.0f
-  cParNum deadTime = 3;              ///< timeout after one recording
+#define PAR_RECTHRESH_DEF -18.0f
+  cParNum deadTime[2];              ///< timeout after one recording
 #define PAR_DEADTIM_MIN  0.5f
 #define PAR_DEADTIM_MAX  30.0f
+#define PAR_DEADTIM_DEF  3.0f
   cParNum backLightTime = 120;       ///< time for backlight
   cParEnum displayMode = static_cast<uint32_t>(enDispMode::NORMAL);   ///< display mode
 #define PAR_BACKLIGHT_MIN     5.0f
@@ -170,14 +177,17 @@ struct stParams
   cParNum preTrigger = 20;           ///< pre trigger time [ms]
 #define PAR_PRETRIG_MIN 0.0
 #define PAR_PRETRIG_MAX 150.0
-  cParNum recFiltFreq = 16;          ///< hight pass freq for recording trigger
-  cParNum trigFiltFreq = 16; 
+  cParNum recFiltFreq[2];          ///< hight pass freq for recording trigger
+  cParNum trigFiltFreq[2]; 
 #define PAR_TRIGFILTFREQ_MIN   1.0f
 #define PAR_TRIGFILTFREQ_MAX  70.0f
-  cParEnum recFiltType = 0;          ///< filter type for recording trigger
-  cParEnum trigFiltType = 0;         ///< filter type for recording trigger
+#define PAR_TRIGFILTFREQ_DEF_BAT  16.0f
+#define PAR_TRIGFILTFREQ_DEF_BIRD  5.0f
+  cParEnum recFiltType[2];          ///< filter type for recording trigger
+  cParEnum trigFiltType[2];         ///< filter type for recording trigger
 #define PAR_TRIGFILTTYPE_MIN   0
 #define PAR_TRIGFILTTYPE_MAX   2
+#define PAR_TRIGFILTTYPE_DEF   0
   cParNum startH = 21;               ///< hour of start time
   cParNum startMin = 0;              ///< minute of start time
   cParNum stopH = 6;                 ///< hour of start time
@@ -193,12 +203,16 @@ struct stParams
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1
   cParEnum menueType = enMenueType::EXPERT;   ///< menue type
-  cParEnum triggerType = enTrigType::LEVEL;   ///< trigger type for recording
+  cParEnum triggerType[2];   ///< trigger type for recording
 #define PAR_TRIGTYPE_MIN  0
 #define PAR_TRIGTYPE_MAX  2
-  cParNum minEventLen = 1.0;         ///< minimal event length for trigger
+#define PAR_TRIGTYPE_DEF  enTrigType::LEVEL
+
+  cParNum minEventLen[2];         ///< minimal event length for trigger
 #define PAR_TRIGEVENT_MIN  0.5f
 #define PAR_TRIGEVENT_MAX  50.0f
+#define PAR_TRIGEVENT_DEF_BAT  1.0f
+#define PAR_TRIGEVENT_DEF_BIRD  10.0f
   cParNum ShutoffVoltage = 5.4f;
 #define PAR_SHUTOFF_MIN  3.6f
 #define PAR_SHUTOFF_MAX  8.0f
@@ -208,6 +222,26 @@ struct stParams
   cParEnum gpsBaudRate = static_cast<uint32_t>(enGpsBaudRate::BD_9600);
 #define PAR_GPS_BR_MIN  static_cast<uint32_t>(enGpsBaudRate::BD_9600)
 #define PAR_GPS_BR_MAX  static_cast<uint32_t>(enGpsBaudRate::BD_115200)
+
+  stParams()
+  {
+    sampleRate[PARS_BAT].set(PAR_SR_DEF_BAT) ;    ///< sample rate
+    sampleRate[PARS_BIRD].set(PAR_SR_DEF_BIRD) ;    ///< sample rate
+    recThreshhold[PARS_BAT].set(PAR_RECTHRESH_DEF);       ///< auto recording threshhold
+    recThreshhold[PARS_BIRD].set(PAR_RECTHRESH_DEF);       ///< auto recording threshhold
+    deadTime[PARS_BAT].set(PAR_DEADTIM_DEF);              ///< timeout after one recording
+    deadTime[PARS_BIRD].set(PAR_DEADTIM_DEF);              ///< timeout after one recording
+    recFiltFreq[PARS_BAT].set(PAR_TRIGFILTFREQ_DEF_BAT);          ///< hight pass freq for recording trigger
+    recFiltFreq[PARS_BIRD].set(PAR_TRIGFILTFREQ_DEF_BIRD);          ///< hight pass freq for recording trigger
+    trigFiltFreq[PARS_BAT].set(PAR_TRIGFILTFREQ_DEF_BAT); 
+    trigFiltFreq[PARS_BIRD].set(PAR_TRIGFILTFREQ_DEF_BIRD); 
+    triggerType[PARS_BAT].set(PAR_TRIGFILTTYPE_DEF);   ///< trigger type for recording
+    triggerType[PARS_BIRD].set(PAR_TRIGFILTTYPE_DEF);   ///< trigger type for recording
+    minEventLen[PARS_BAT].set(PAR_TRIGEVENT_DEF_BAT);         ///< minimal event length for trigger
+    minEventLen[PARS_BIRD].set(PAR_TRIGEVENT_DEF_BIRD);         ///< minimal event length for trigger
+
+  }
+
 };
 
 #endif //#ifndef _PARAMETERS_H_

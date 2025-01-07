@@ -256,32 +256,37 @@ void cAudio::setPreAmpGain(enGainRevB gain)
 #endif
 
 
-void cAudio::setTrigFilter(float freq, enFiltType type)
+void cAudio::setTrigFilter(float freq, enFiltType type, size_t paramSet)
 {
-  float maxFreq = m_sampleRate/2000;
-  float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
-  devPars.trigFiltFreq.init(5,maxFreq, 1, 0);
-  switch (type)
+  if(paramSet < 2)
   {
-    case enFiltType::HIGHPASS:
-      m_trigFilter.setHighpass(0, f, 0.7f);
-      break;
-    case enFiltType::LOWPASS:
-      m_trigFilter.setLowpass(0, f, 0.7f);
-      break;
-    case enFiltType::BANDPASS:
-      m_trigFilter.setBandpass(0, f, 0.7f);
-      break;  
-    default:
-      break;
+    float maxFreq = m_sampleRate/2000;
+    float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
+    devPars.trigFiltFreq[paramSet].init(5,maxFreq, 1, 0);
+    switch (type)
+    {
+      case enFiltType::HIGHPASS:
+        m_trigFilter.setHighpass(0, f, 0.7f);
+        break;
+      case enFiltType::LOWPASS:
+        m_trigFilter.setLowpass(0, f, 0.7f);
+        break;
+      case enFiltType::BANDPASS:
+        m_trigFilter.setBandpass(0, f, 0.7f);
+        break;  
+      default:
+        break;
+    }
   }
 }
 
-void cAudio::setRecFilter(float freq, enFiltType type)
+void cAudio::setRecFilter(float freq, enFiltType type, size_t paramSet)
 {
+  if(paramSet >= 2)
+    return;
   float maxFreq = m_sampleRate/2000;
   float f = freq * AUDIO_SAMPLE_RATE_EXACT / m_sampleRate;
-  devPars.recFiltFreq.init(0,maxFreq, 1, 0);
+  devPars.recFiltFreq[paramSet].init(0,maxFreq, 1, 0);
   switch (type)
   {
     case enFiltType::HIGHPASS:
@@ -301,14 +306,15 @@ void cAudio::setRecFilter(float freq, enFiltType type)
 bool cAudio::isSetupNeeded()
 {
   bool retVal = false;
+  size_t parSet = PARS_BAT; //TODO @@@
   if (m_old.sampleRate != m_sampleRate)
   {
     DPRINTF2("new sample rate %i, old %i\n", m_sampleRate, m_old.sampleRate);
     retVal = true;
   }
-  if (m_old.parSampleR != devPars.sampleRate.get())
+  if (m_old.parSampleR != devPars.sampleRate[parSet].get())
   {
-    DPRINTF2("new sample rate %i, old %i\n", devPars.sampleRate.get(), m_old.parSampleR);
+    DPRINTF2("new sample rate %i, old %i\n", devPars.sampleRate[parSet].get(), m_old.parSampleR);
     retVal = true;
   }
   if (m_old.oscFrequency != devPars.mixFreq.get())
@@ -332,6 +338,7 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
+  size_t parSet = PARS_BAT; //TODO @@@
   #ifdef ARDUINO_TEENSY41
   if(hasAmpRevB())  
     setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
@@ -353,7 +360,7 @@ void cAudio::setup()
     m_old.volume = devPars.volume.get();
     AudioNoInterrupts();
     delay(100);
-    setSampleRate((enSampleRate)devPars.sampleRate.get());
+    setSampleRate((enSampleRate)devPars.sampleRate[parSet].get());
     bool mic = false;
     float freq = 0;
     switch (devStatus.opMode.get()) {
@@ -367,7 +374,7 @@ void cAudio::setup()
         break;
 
       case enOpMode::PLAY_STRETCHED:
-        setSampleRate((enSampleRate)SR[devPars.sampleRate.get()].stretched);
+        setSampleRate((enSampleRate)SR[devPars.sampleRate[parSet].get()].stretched);
         break;
 
       case enOpMode::PLAY_DIRECT:
@@ -384,11 +391,11 @@ void cAudio::setup()
 
     setMixOscFrequency(freq * 1000.0);
     m_old.opMode = (enOpMode)devStatus.opMode.get();
-    m_trigger.setThreshold(pow(10, (devPars.recThreshhold.get() / 10.0)));
-    m_trigger.setMinEventLength(devPars.minEventLen.get(), m_sampleRate);
+    m_trigger.setThreshold(pow(10, (devPars.recThreshhold[parSet].get() / 10.0)));
+    m_trigger.setMinEventLength(devPars.minEventLen[parSet].get(), m_sampleRate);
     m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
-    setTrigFilter(devPars.trigFiltFreq.get() * 1000.0, (enFiltType)devPars.trigFiltType.get());
-    setRecFilter(devPars.recFiltFreq.get() * 1000.0, (enFiltType)devPars.recFiltType.get());
+    setTrigFilter(devPars.trigFiltFreq[parSet].get() * 1000.0, (enFiltType)devPars.trigFiltType[parSet].get(), parSet);
+    setRecFilter(devPars.recFiltFreq[parSet].get() * 1000.0, (enFiltType)devPars.recFiltType[parSet].get(), parSet);
     devStatus.liveMsPerDiv.clear();
     for(int i = 0; i < 4; i++)
       addLiveMsPerDiv(i, m_sampleRate);
@@ -437,7 +444,7 @@ void cAudio::updateCassMode()
       if ((m_cass.getMode() != enCassMode::REC) && cSdCard::inst().isMounted())
       {
         setAudioConnections(0);
-        startRecording();
+        startRecording(PARS_BAT);  //TODO @@@
         DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
         delay(5);
       }
@@ -497,7 +504,7 @@ void cAudio::checkAutoRecording(bool& recActive)
       if (recActive && m_trigger.getRecTrigger())
       {
         DPRINTLN4("checkAutorecording: start recording");
-        int res = startRecording();
+        int res = startRecording(PARS_BAT);  //TODO @@@
         delay(5);
         if(res != 0)
         {
@@ -582,7 +589,7 @@ void cAudio::openProject()
 }
 
 
-void cAudio::operate(bool liveFft)
+void cAudio::operate(bool liveFft, size_t parSet)
 {
   m_cass.operate();
   bool fftAvailable = m_fft.available();  
@@ -621,7 +628,7 @@ void cAudio::operate(bool liveFft)
     m_fftInfo.lastAvgPeak = (float)avgPeak / (float)bw;
     m_fftInfo.lastAvg =  (float)(avg - avgPeak) / 512.0;
     m_fftInfo.bw = (float)(bw * m_sampleRate) / 1024.0;
-    m_trigger.checkTrigger();
+    m_trigger.checkTrigger(parSet);
   }
 #ifdef SIMU_DISPLAY
   m_trigger.checkTrigger();
@@ -645,11 +652,11 @@ void cAudio::operate(bool liveFft)
           break;
 
         case enPlayStatus::REC:
-          m_timeout.setAlarm(devPars.deadTime.get());
+          m_timeout.setAlarm(devPars.deadTime[parSet].get());
           statusDisplay.setRecRunning(false);
           devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::TIMEOUT));
           devStatus.recStatus.set("T");
-          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt());
+          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), parSet);
 //        m_trigger.logTrigInfo(m_prj.getWavFileName());
           DPRINTLN4("start timeout");
           break;
@@ -787,7 +794,7 @@ void cAudio::sendFftBuffer(int delayTime, int part)
 }
 
 
-int cAudio::startRecording()
+int cAudio::startRecording(size_t parSet)
 {
   if (!m_prj.getIsOpen())
     openProject();
@@ -796,7 +803,7 @@ int cAudio::startRecording()
   m_prj.addFile();
   devStatus.recCount.set(m_prj.getRecCount());
   DPRINTF4("start recording: %i\n", (int)devStatus.recCount.get());
-  int retVal = m_cass.startRec(m_prj.getWavFileName(), devPars.recTime.get());
+  int retVal = m_cass.startRec(m_prj.getWavFileName(), devPars.recTime[parSet].get());
   if(retVal == 0)
   {
     devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));

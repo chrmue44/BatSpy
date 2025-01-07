@@ -37,7 +37,7 @@ class cTerminal {
  private:
   void parseDebugCmd(const char* buf);
   bool execCmd(char* buf, size_t& bufIdx);
-  bool parseRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
+  bool parseRecParams(const char* buf, bool write, size_t parSet, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool parseLocationParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool parseAutoRecParams(const char* buf, bool write, char* replyBuf = nullptr, size_t replyBufLen = 0);
   bool checkValI(int val, int min, int max) { return (min <= val) && (val <= max); }

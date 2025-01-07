@@ -15,7 +15,7 @@
 
 int initLivePanHandheld(cPanel* pan, tCoord lf);
 int initLivePanRecorder(cPanel* pan, tCoord lf);
-void setSampleRateLivePan();
+void setSampleRateLivePan(size_t parSet);
 cParGraph* getLiveFft();
 
 #endif // PNLLIVE_H

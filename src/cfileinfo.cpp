@@ -14,9 +14,9 @@
 #include <cstring>
 
 int MEMF cFileInfo::write(const char* fileName, float duration, const char* date,
-                     const char* wavFile, float lat, float lon, float peakVal, float temp, float humid)
+                     const char* wavFile, float lat, float lon, float peakVal, float temp, float humid, size_t parSet)
 {
-  int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+  int32_t sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate[parSet].get());
   enSdRes ret = cSdCard::inst().openFile(fileName, m_file, enMode::WRITE);
   if(ret == 0)
   {
@@ -40,15 +40,15 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
         if(ret != enSdRes::OK) break;
       ret = writeLine("<Trigger>");
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_TRIG_TYPE, devPars.triggerType.getActText());
+      ret = writeTag(TAG_TRIG_TYPE, devPars.triggerType[parSet].getActText());
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold.get(), "dB");
+      ret = writeTag(TAG_TRIG_LEVEL, devPars.recThreshhold[parSet].get(), "dB");
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_TRIG_EV_LEN, devPars.minEventLen.get(), "ms");
+      ret = writeTag(TAG_TRIG_EV_LEN, devPars.minEventLen[parSet].get(), "ms");
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_TRIG_FILT, devPars.trigFiltType.getActText());
+      ret = writeTag(TAG_TRIG_FILT, devPars.trigFiltType[parSet].getActText());
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_TRIG_FREQ, devPars.trigFiltFreq.get(), "kHz");
+      ret = writeTag(TAG_TRIG_FREQ, devPars.trigFiltFreq[parSet].get(), "kHz");
         if(ret != enSdRes::OK) break;
       ret = writeLine("</Trigger>");
         if(ret != enSdRes::OK) break;

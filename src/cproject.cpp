@@ -152,7 +152,7 @@ void MEMF cProject::reset()
   m_isOpen = false;
 }
 
-void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
+void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt, size_t parSet)
 {
   cFileInfo info;
   char date [32];
@@ -162,11 +162,11 @@ void MEMF cProject::writeInfoFile(float peakVal, size_t sampleCnt)
   cUtils::replace(m_wavFile, ".wav", ".xml", infoFile, sizeof(infoFile));
 
   snprintf(date,sizeof(date),"%02i.%02i.%02i %02i:%02i:%02i",m_fDay, m_fMo, m_fy, m_fh, m_fMin, m_fSec);
-  float sampleRate = cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate.get());
+  float sampleRate = cAudio::getSampleRateHz((enSampleRate) devPars.sampleRate[parSet].get());
   float duration = 0;
   if(sampleRate > 0.1)
     duration = (float)sampleCnt/ sampleRate;
   info.write(infoFile, duration, date, cUtils::getFileName(m_wavFile),
               devStatus.geoPos.getLat(), devStatus.geoPos.getLon(), peakVal,
-               devStatus.temperature.get(), devStatus.humidity.get());
+               devStatus.temperature.get(), devStatus.humidity.get(), parSet);
 }

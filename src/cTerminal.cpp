@@ -190,7 +190,7 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       
     case 'p':
       if (buf[1] == 0)
-        menue.printPars();
+        menue.printPars(PARS_BAT);  //TODO @@@
       else
         parseGetCmd(&buf[1]);
       Serial.write(m_endChar);
@@ -518,7 +518,7 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       gps.setMode((enGpsMode)devPars.srcPosition.get());
       break;
     case 'r':
-      replyOk = parseRecParams(&buf[1], true);
+      replyOk = parseRecParams(&buf[1], true, PARS_BAT); //TODO @@@
       break;
     case 'v':
       val = atoi(buf + 1);
@@ -690,7 +690,7 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     getValEnum(&buf[1], devPars.srcPosition, replyBuf, sizeof(replyBuf));
     break;
   case 'r':
-    replyOk = parseRecParams(&buf[1], false, replyBuf, sizeof(replyBuf));
+    replyOk = parseRecParams(&buf[1], false, PARS_BAT, replyBuf, sizeof(replyBuf));  //TODO @@@
     break;
   case 'v':
     val = atoi(buf + 1);
@@ -824,7 +824,7 @@ bool MEMF cTerminal::parseLocationParams(const char* buf, bool write, char* repl
 }
 
 
-bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, size_t replySize)
+bool MEMF cTerminal::parseRecParams(const char* buf, bool write, size_t parSet, char* reply, size_t replySize)
 {
   bool replyOk = true;
   if (replySize >= 2)
@@ -836,15 +836,15 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
   {	
     case 'd':
       if(write)
-        replyOk = setValFloat(buf + 1, PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, devPars.deadTime);
+        replyOk = setValFloat(buf + 1, PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, devPars.deadTime[parSet]);
       else
-        getValFloat(buf + 1, devPars.deadTime, reply, replySize);
+        getValFloat(buf + 1, devPars.deadTime[parSet], reply, replySize);
       break;
     case 'f':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq);
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq[parSet]);
       else
-        getValFloat(buf + 1, devPars.trigFiltFreq, reply, replySize);
+        getValFloat(buf + 1, devPars.trigFiltFreq[parSet], reply, replySize);
       break;
 	case 'g':
       if(write)
@@ -854,51 +854,51 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, char* reply, si
       break;
     case 'h':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, devPars.recThreshhold);
+        replyOk = setValFloat(buf + 1, PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, devPars.recThreshhold[parSet]);
       else
-        getValFloat(buf + 1, devPars.recThreshhold, reply, replySize);
+        getValFloat(buf + 1, devPars.recThreshhold[parSet], reply, replySize);
       break;
     case 'm':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, devPars.minEventLen);
+        replyOk = setValFloat(buf + 1, PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, devPars.minEventLen[parSet]);
       else
-        getValFloat(buf + 1, devPars.minEventLen, reply, replySize);
+        getValFloat(buf + 1, devPars.minEventLen[parSet], reply, replySize);
       break;
     case 'r':
       if (write)
-        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.triggerType);
+        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.triggerType[parSet]);
       else
-        getValEnum(buf + 1, devPars.triggerType, reply, replySize);
+        getValEnum(buf + 1, devPars.triggerType[parSet], reply, replySize);
       break;
     case 's':
       if (write)
-        replyOk = setValEnum(buf + 1, PAR_SR_MIN, PAR_SR_MAX, devPars.sampleRate);
+        replyOk = setValEnum(buf + 1, PAR_SR_MIN, PAR_SR_MAX, devPars.sampleRate[parSet]);
       else
-        getValEnum(buf + 1, devPars.sampleRate, reply, replySize);
+        getValEnum(buf + 1, devPars.sampleRate[parSet], reply, replySize);
       break;
     case 't':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_RECTIM_MIN, PAR_RECTIM_MAX, devPars.recTime);
+        replyOk = setValFloat(buf + 1, PAR_RECTIM_MIN, PAR_RECTIM_MAX, devPars.recTime[parSet]);
       else
-        getValFloat(buf + 1, devPars.recTime, reply, replySize);
+        getValFloat(buf + 1, devPars.recTime[parSet], reply, replySize);
       break;
     case 'u':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.recFiltFreq);
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.recFiltFreq[parSet]);
       else
-        getValFloat(buf + 1, devPars.recFiltFreq, reply, replySize);
+        getValFloat(buf + 1, devPars.recFiltFreq[parSet], reply, replySize);
       break;
     case 'v':
       if (write)
-        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.recFiltType);
+        replyOk = setValEnum(buf + 1, PAR_TRIGTYPE_MIN, PAR_TRIGTYPE_MAX, devPars.recFiltType[parSet]);
       else
-        getValEnum(buf + 1, devPars.recFiltType, reply, replySize);
+        getValEnum(buf + 1, devPars.recFiltType[parSet], reply, replySize);
       break;
     case 'y':
       if (write)
-        replyOk = setValEnum(buf + 1, 0, 1, devPars.trigFiltType);
+        replyOk = setValEnum(buf + 1, 0, 1, devPars.trigFiltType[parSet]);
       else
-        getValEnum(buf + 1, devPars.trigFiltType, reply, replySize);
+        getValEnum(buf + 1, devPars.trigFiltType[parSet], reply, replySize);
       break;
     case 'p':
       if (write)

@@ -79,33 +79,48 @@ void MEMP cMenue::initPars()
     devPars.preAmpGain.addItem(1353);
     devPars.preAmpGain.addItem(1355);
 #endif
-  for(int t = 1300; t <= 1308; t++)
-    devPars.sampleRate.addItem(t);
-  devPars.sampleRate.set(SR_312K);
-  devPars.recTime.init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
 
   devPars.threshHold.init(2.0, 80.0, 1.0, 0);
-  devPars.trigFiltFreq.init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
-  devPars.recFiltFreq.init(0, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
 
-  devPars.trigFiltType.clear();
-  devPars.trigFiltType.addItem(1171);
-  devPars.trigFiltType.addItem(1172);
-  devPars.trigFiltType.addItem(1173);
+  for(int i = PARS_BAT; i <= PARS_BIRD; i++)
+  {
+    devPars.recTime[i].init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
+  
+    for(int t = 1300; t <= 1308; t++)
+      devPars.sampleRate[i].addItem(t);
 
-  devPars.recFiltType.clear();
-  devPars.recFiltType.addItem(1171);
-  devPars.recFiltType.addItem(1172);
-  devPars.recFiltType.addItem(1173);
+    devPars.trigFiltFreq[i].init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
+    devPars.recFiltFreq[i].init(0, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
+    devPars.trigFiltType[i].clear();
+    devPars.trigFiltType[i].addItem(1171);
+    devPars.trigFiltType[i].addItem(1172);
+    devPars.trigFiltType[i].addItem(1173);
 
-  devPars.recThreshhold.init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
-  devPars.recThreshhold.set(-12);
+    devPars.recFiltType[i].clear();
+    devPars.recFiltType[i].addItem(1171);
+    devPars.recFiltType[i].addItem(1172);
+    devPars.recFiltType[i].addItem(1173);
 
-  devPars.deadTime.set(PAR_DEADTIM_MIN);
-  devPars.deadTime.init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 0.5f, 1);
+    devPars.recThreshhold[i].init(PAR_RECTHRESH_MIN, PAR_RECTHRESH_MAX, 1, 0);
+    devPars.recThreshhold[i].set(-12);
+
+    devPars.triggerType[i].clear();
+    devPars.triggerType[i].addItem(1361);
+    devPars.triggerType[i].addItem(1362);
+    devPars.triggerType[i].addItem(1363);
+
+    devPars.minEventLen[i].init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
+    devPars.deadTime[i].set(PAR_DEADTIM_MIN);
+    devPars.deadTime[i].init(PAR_DEADTIM_MIN, PAR_DEADTIM_MAX, 0.5f, 1);
+
+  }
+
+  devPars.sampleRate[PARS_BAT].set(SR_312K);
+  devPars.sampleRate[PARS_BIRD].set(SR_44K);
+
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);
   devPars.knobRotation.clear();
@@ -140,15 +155,9 @@ void MEMP cMenue::initPars()
   devPars.menueType.clear();
   devPars.menueType.addItem(1711);
   devPars.menueType.addItem(1712);
-    devPars.menueType.addItem(1713);
-    devPars.menueType.addItem(1714);
+  devPars.menueType.addItem(1713);
+  devPars.menueType.addItem(1714);
 
-  devPars.triggerType.clear();
-  devPars.triggerType.addItem(1361);
-  devPars.triggerType.addItem(1362);
-  devPars.triggerType.addItem(1363);
-
-  devPars.minEventLen.init(PAR_TRIGEVENT_MIN, PAR_TRIGEVENT_MAX, 0.5f, 1);
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
   devPars.debugLevel.init(0, 63, 1, 0);
@@ -294,24 +303,18 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.srcPosition.set(static_cast<uint32_t>(enPositionMode::FIX));
   devPars.menueType.set(enMenueType::COMPACT);
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);
-  devPars.recTime.set(3.0f);               ///< recording time
-  devPars.sampleRate.set(enSampleRate::SR_384K);    ///< sample rate
   devPars.preAmpGain.set(static_cast<uint32_t>(enGainRevC::GAINC_58DB));
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
-  devPars.recThreshhold.set(-18.0f);       ///< auto recording threshhold
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
   devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
   devPars.displayMode.set(static_cast<uint32_t>(enDispMode::NORMAL));
-  devPars.deadTime.set(3.0);              ///< timeout after one recording
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.lang.set(enLang::LANG_GER);        ///< display language
   devPars.debugLevel.set(0);
   devStatus.geoPos.setLat(49.5);
   devStatus.geoPos.setLon(8.3);
-  devPars.trigFiltFreq.set(16.0);             ///< hight pass freq for recording trigger
-  devPars.trigFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.startH.set(21);               ///< hour of start time
   devPars.startMin.set(0);              ///< minute of start time
   devPars.stopH.set(6);                 ///< hour of start time
@@ -320,10 +323,27 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.daylightSav.set(static_cast<uint32_t>(enDlSaving::AUTO));
   devPars.liveAmplitude.set(50);        ///< max. amplitude for live display
   devStatus.height.set(100);
-  devPars.recFiltFreq.set(1.0);             ///< hight pass freq for recording trigger
-  devPars.recFiltType.set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
-  devPars.triggerType.set(enTrigType::LEVEL);   ///< trigger type for recording
-  devPars.minEventLen.set(1.0f);         ///< minimal event length for trigger
+  devPars.recTime[PARS_BAT].set(3.0f);               ///< recording time
+  devPars.sampleRate[PARS_BAT].set(enSampleRate::SR_384K);    ///< sample rate
+  devPars.recThreshhold[PARS_BAT].set(-18.0f);       ///< auto recording threshhold
+  devPars.deadTime[PARS_BAT].set(3.0);              ///< timeout after one recording
+  devPars.trigFiltFreq[PARS_BAT].set(16.0);             ///< hight pass freq for recording trigger
+  devPars.trigFiltType[PARS_BAT].set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
+  devPars.recFiltFreq[PARS_BAT].set(1.0);             ///< hight pass freq for recording trigger
+  devPars.recFiltType[PARS_BAT].set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
+  devPars.triggerType[PARS_BAT].set(enTrigType::LEVEL);   ///< trigger type for recording
+  devPars.minEventLen[PARS_BAT].set(1.0f);         ///< minimal event length for trigger
+  devPars.recTime[PARS_BIRD].set(5.0f);               ///< recording time
+  devPars.sampleRate[PARS_BIRD].set(enSampleRate::SR_44K);    ///< sample rate
+  devPars.recThreshhold[PARS_BIRD].set(-18.0f);       ///< auto recording threshhold
+  devPars.deadTime[PARS_BIRD].set(3.0);              ///< timeout after one recording
+  devPars.trigFiltFreq[PARS_BIRD].set(5.0);             ///< hight pass freq for recording trigger
+  devPars.trigFiltType[PARS_BIRD].set(enFiltType::LOWPASS);             ///< filter type for recording trigger
+  devPars.recFiltFreq[PARS_BIRD].set(20.0);             ///< hight pass freq for recording trigger
+  devPars.recFiltType[PARS_BIRD].set(enFiltType::LOWPASS);             ///< filter type for recording trigger
+  devPars.triggerType[PARS_BIRD].set(enTrigType::LEVEL);   ///< trigger type for recording
+  devPars.minEventLen[PARS_BIRD].set(10.0f);         ///< minimal event length for trigger
+
   devPars.ShutoffVoltage.set(5.8f);
 //  devPars.voltFactor.set(1);
   devPars.gpsBaudRate.set(static_cast<uint32_t>(enGpsBaudRate::BD_9600));
@@ -518,6 +538,7 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 int MEMP cMenue::initCompactPanels(tCoord lf)
 {
   int err = 0;
+  size_t parSet = PARS_BAT; //TODO @@@
   panInfo = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initInfoPanCompact(getPan(panInfo), lf);
 
@@ -537,10 +558,10 @@ int MEMP cMenue::initCompactPanels(tCoord lf)
   err |= initParPanCompact(getPan(panParams), lf);
 
   panParRec = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
-  err |= initParRecCompact(getPan(panParRec), lf);
+  err |= initParRecCompact(getPan(panParRec), lf, parSet);
 
   panParTrig = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
-  err |= initParTriggerCompact(getPan(panParTrig), lf);
+  err |= initParTriggerCompact(getPan(panParTrig), lf, parSet);
 
   panDateTime = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initDateTimePanCompact(getPan(panDateTime), lf);
@@ -603,14 +624,14 @@ void cMenue::save()
   saveParsToEep();
 }
 
-void MEMP cMenue::printPars()
+void MEMP cMenue::printPars(size_t parSet)
 {
   Serial.printf("volume             [dB]: %.0f\n", devPars.volume.get());
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
-  Serial.printf("recording time      [s]: %.1f\n", devPars.recTime.get());
-  Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate.getActText());
+  Serial.printf("recording time      [s]: %.1f\n", devPars.recTime[parSet].get());
+  Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate[parSet].getActText());
   Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger.get());
-  Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold.get() * 100);
+  Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold[parSet].get() * 100);
   Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain.getActText());
 }
 

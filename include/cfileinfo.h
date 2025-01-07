@@ -49,7 +49,7 @@ class cFileInfo
 
  public:
   int write(const char* fileName, float duration, const char* date,
-            const char* wavFile, float lat, float lon, float peakVal, float temp, float humid);
+            const char* wavFile, float lat, float lon, float peakVal, float temp, float humid, size_t parset);
   int readParameter(const char* fileName, uint32_t& sampleRate);
 
  private:

@@ -16,10 +16,10 @@ cParGraph* getLiveFft()
 }
 
 
-void MEMP setSampleRateLivePan()
+void MEMP setSampleRateLivePan(size_t parSet)
 {
   cParGraph* g = getLiveFft();
-  enSampleRate idx = (enSampleRate)devPars.sampleRate.get();
+  enSampleRate idx = (enSampleRate)devPars.sampleRate[parSet].get();
   g->setSampleRate(cAudio::getSampleRateHz(idx));
   devStatus.freqMax.set(g->getMaxFreq(cAudio::getFftOutputSize()) / 1000);
   devStatus.freq1Tick.set(g->getMaxFreq(cAudio::getFftOutputSize())/ 1000 / Y_TICK_CNT);
@@ -29,15 +29,16 @@ void MEMP funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cParGraph* g = getLiveFft();
   int sq = g->getSqueeze();
+  size_t parSet = PARS_BAT; //TODO @@@
   switch (key) {
      case enKey::UP:
         g->setSqueeze(sq + 1, cAudio::getFftOutputSize());
-        setSampleRateLivePan();
+        setSampleRateLivePan(parSet);
         break;
 
       case enKey::DOWN:
         g->setSqueeze(sq - 1, cAudio::getFftOutputSize());
-        setSampleRateLivePan();
+        setSampleRateLivePan(parSet);
         break;
 
       default:

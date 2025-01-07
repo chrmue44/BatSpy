@@ -77,7 +77,7 @@ class cMenue : public cMenuesystem
   virtual void initDialogs();
   virtual void save();
   virtual void load();
-  void printPars();
+  void printPars(size_t parSet);
   void printStatus();
   virtual void setFactoryDefaults(enMode mode);
   void initFileRelatedParams();

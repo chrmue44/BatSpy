@@ -52,6 +52,7 @@ void MEMP powerOffFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f1DropFuncExpert(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
+  size_t parSet = PARS_BAT; //TODO @@@
   switch (pThis->getFocusItem()) {
     case 0:
       pThis->setMainPanel(panGeo);
@@ -60,7 +61,7 @@ void MEMP f1DropFuncExpert(cMenuesystem* pThis, enKey key, cParBase* pItem)
       break;
     case 1:
       devStatus.grafLive.initPlot(true);
-      setSampleRateLivePan();
+      setSampleRateLivePan(parSet);
       pThis->setMainPanel(pnlLive);
       pThis->setHdrPanel(hdrPanWaterfall);
       pThis->setFkeyPanel(fkeyMainPan);
@@ -103,7 +104,9 @@ void MEMP f1DropFuncExpert(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f1DropFuncHandheld(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  switch (pThis->getFocusItem()) {
+  size_t parSet = PARS_BAT; //TODO @@@
+  switch (pThis->getFocusItem()) 
+  {
   case 0:
     pThis->setMainPanel(panGeo);
     pThis->setHdrPanel(hdrMainPanel);
@@ -111,7 +114,7 @@ void MEMP f1DropFuncHandheld(cMenuesystem* pThis, enKey key, cParBase* pItem)
     break;
   case 1:
     devStatus.grafLive.initPlot(true);
-    setSampleRateLivePan();
+    setSampleRateLivePan(parSet);
     pThis->setMainPanel(pnlLive);
     pThis->setHdrPanel(hdrPanWaterfall);
     pThis->setFkeyPanel(fkeyMainPan);
@@ -176,7 +179,9 @@ void MEMP f1DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  switch (pThis->getFocusItem()) {
+  size_t parSet = PARS_BAT; //TODO @@@
+  switch (pThis->getFocusItem()) 
+  {
   case 0:
     pThis->setMainPanel(panGeo);
     setHeaderPanelText(pThis, 100);
@@ -185,7 +190,7 @@ void MEMP f1DropFuncRecorder(cMenuesystem* pThis, enKey key, cParBase* pItem)
     break;
   case 1:
     devStatus.grafLive.initPlot(true);
-    setSampleRateLivePan();
+    setSampleRateLivePan(parSet);
     pThis->setMainPanel(pnlLive);
     setHeaderPanelText(pThis, 101);
     pThis->setHdrPanel(hdrMainPanel);
@@ -600,7 +605,7 @@ void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
 
 
-void MEMP setFileToDisplay(const char* buf)
+void MEMP setFileToDisplay(const char* buf, size_t parSet)
 {
   char infoFile[FILENAME_LEN];
   cUtils::replace(buf, ".raw", ".xml", infoFile, sizeof(infoFile));
@@ -608,7 +613,7 @@ void MEMP setFileToDisplay(const char* buf)
   uint32_t sampleRate;
   int ret = info.readParameter(infoFile, sampleRate);
   if(ret != 0)
-    sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate.get());
+    sampleRate = cAudio::getSampleRateHz((enSampleRate)devPars.sampleRate[parSet].get());
   devStatus.freqMax.set((float)sampleRate / 2000);
   devStatus.graph.setPlotFile(devPars.fileName.get(), sampleRate);
   devStatus.waterf.setPlotFile(devPars.fileName.get(), sampleRate);

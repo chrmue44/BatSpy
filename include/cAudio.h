@@ -126,22 +126,22 @@ private:
   void updateCassMode();
   //void checkAutoRecording(cMenue& menue, cRtc& rtc);
   void checkAutoRecording(bool& recActive);
-  void operate(bool liveFft);
+  void operate(bool liveFft, size_t parset);
   float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
   void closeProject() { if (m_prj.getIsOpen()) m_prj.closePrjFile(); }
   void openProject();
   void sendFftBuffer(int delayTime, int part);
   void stopRecording();
-  int startRecording();
+  int startRecording(size_t parSet);
   bool isRecordingActive();
 #ifdef SIMU_DISPLAY
   DMAChannel* getDma() { return m_audioIn.getDma(); }
 #endif
  private:
   void setMixOscFrequency(float freq);
-  void setTrigFilter(float freq, enFiltType type);
-  void setRecFilter(float freq, enFiltType type);
+  void setTrigFilter(float freq, enFiltType type, size_t paramSet);
+  void setRecFilter(float freq, enFiltType type, size_t paramSet);
   bool isSetupNeeded();
   void setAudioConnections(int i) {}
   void calcLiveFft();

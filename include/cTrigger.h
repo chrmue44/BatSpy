@@ -50,7 +50,7 @@ class cTrigger
 
  public:
   cTrigger(stFftInfo& info, AudioAnalyzePeak& peak);
-  void checkTrigger();
+  void checkTrigger(size_t parSet);
   void releaseLiveTrigger();
   void releaseRecTrigger();
  // void setRecTrigger() { m_recTrigger = true; m_stateRec = enTrigState::TRIGGERED; }
@@ -64,7 +64,7 @@ class cTrigger
 
  private:
   void checkLiveTrigger(float fFilter);
-  void checkRecordingTrigger(float fFilter);
+  void checkRecordingTrigger(float fFilter, size_t parSet);
 
  protected:
   cTrigger();

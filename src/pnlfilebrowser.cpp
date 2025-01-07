@@ -104,7 +104,7 @@ void MEMP funcSel(cMenuesystem* pThis, enKey key, cParBase* pItem)
     strcat(buf,pStr->get());
     devPars.fileName.set(buf);
     pThis->refreshHdrPanel();
-    setFileToDisplay(buf);
+    setFileToDisplay(buf, PARS_BAT);  //TODO @@@
   }
 }
 

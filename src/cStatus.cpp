@@ -159,7 +159,7 @@ void cStatus::execFunction()
     else
     {
       DPRINTLN4("cStatus startRecording()");
-      audio.startRecording();
+      audio.startRecording(PARS_BAT);  //TODO @@@
     }
     break;
   }

@@ -14,8 +14,8 @@
 int initParPan(cPanel* pan, tCoord lf);
 int initParPanCompact(cPanel* pan, tCoord lf);
 int initParRec(cPanel* pan, tCoord lf);
-int initParRecCompact(cPanel* pan, tCoord lf);
-int initParTriggerCompact(cPanel* pan, tCoord lf);
+int initParRecCompact(cPanel* pan, tCoord lf, size_t parSet);
+int initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet);
 int initDateTimePan(cPanel* pan, tCoord lf);
 int initDateTimePanCompact(cPanel* pan, tCoord lf);
 int initPositionPan(cPanel* pan, tCoord lf);

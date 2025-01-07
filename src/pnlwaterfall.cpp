@@ -27,7 +27,7 @@ void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
         strcat(buf, pName);
         devPars.fileName.set(buf);
 
-        setFileToDisplay(buf);
+        setFileToDisplay(buf, PARS_BAT);  //TODO @@@
 
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
@@ -43,8 +43,10 @@ void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
   }
 }
 
-void MEMP f3WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP f3WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
+{
   devStatus.fileIndex++;
+  size_t parSet = PARS_BAT; //TODO @@@
   while(devStatus.fileIndex < devStatus.dir.size())
   {
     char ext[8];
@@ -52,14 +54,15 @@ void MEMP f3WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
     {
       char* pName = devStatus.dir[devStatus.fileIndex].name;
       cUtils::getExtension(pName, ext, sizeof(ext));
-      if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0))  {
+      if((strcmp(ext,"RAW") == 0) || (strcmp(ext,"raw") == 0)) 
+      {
         char buf[FILENAME_LEN];
         strncpy(buf, cSdCard::inst().getActDir(), sizeof(buf));
         strcat(buf,"/");
         strcat(buf, pName);
         devPars.fileName.set(buf);
 
-        setFileToDisplay(buf);
+        setFileToDisplay(buf, parSet);
 
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);

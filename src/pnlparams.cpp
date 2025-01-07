@@ -99,23 +99,23 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   int  err = 0;
   int r = 1;
   err |= pan->addTextItem(1110,                  15, 20            ,  80, lf);
-  err |= pan->addEnumItem(&devPars.sampleRate,  190, 20            ,  30, lf, true);
+  err |= pan->addEnumItem(&devPars.sampleRate[PARS_BAT],  190, 20            ,  30, lf, true);
   err |= pan->addTextItem(1120,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,      190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recTime[PARS_BAT],      190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1140,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold,190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recThreshhold[PARS_BAT],190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1360,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.triggerType, 190, 20 +  r++ * lf, 120, lf, true);
+  err |= pan->addEnumItem(&devPars.triggerType[PARS_BAT], 190, 20 +  r++ * lf, 120, lf, true);
   err |= pan->addTextItem(1370,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.minEventLen,  190, 20 +  r++ * lf,  40, lf, true);
+  err |= pan->addNumItem(&devPars.minEventLen[PARS_BAT],  190, 20 +  r++ * lf,  40, lf, true);
   err |= pan->addTextItem(1170,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.trigFiltFreq, 190, 20 +  r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.trigFiltFreq[PARS_BAT], 190, 20 +  r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.trigFiltType,190, 20 +  r++ * lf,  70, lf, true);
+  err |= pan->addEnumItem(&devPars.trigFiltType[PARS_BAT],190, 20 +  r++ * lf,  70, lf, true);
   err |= pan->addTextItem(1330,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deadTime,     190, 20 +  r++ * lf,  20, lf, true);
+  err |= pan->addNumItem(&devPars.deadTime[PARS_BAT],     190, 20 +  r++ * lf,  20, lf, true);
   err |= pan->addTextItem(25,                    15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recAuto,     190, 20 +  r++ * lf,  80, lf, true, fuCalcSunrise);
   err |= pan->addTextItem(1180,                  15, 20 +  r   * lf,  80, lf);
@@ -129,40 +129,40 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   return err;
 }
 
-int MEMP initParRecCompact(cPanel* pan, tCoord lf)
+int MEMP initParRecCompact(cPanel* pan, tCoord lf, size_t parSet)
 {
   int  err = 0;
   int r = 2;
   int x = 95;
   err |= pan->addTextItem(1120,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recTime,       x,      r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recTime[parSet],       x,      r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1110,                  1,      r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.sampleRate,   x,      r++ * lf,  30, lf, true);
+  err |= pan->addEnumItem(&devPars.sampleRate[parSet],   x,      r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
   err |= pan->addTextItem(1177,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recFiltFreq,   x,      r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recFiltFreq[parSet],   x,      r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  1,      r   * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.recFiltType,  x - 20, r++ * lf,  50, lf, true);
+  err |= pan->addEnumItem(&devPars.recFiltType[parSet],  x - 20, r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1145,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deadTime,      x,      r++ * lf,  20, lf, true);
+  err |= pan->addNumItem(&devPars.deadTime[parSet],      x,      r++ * lf,  20, lf, true);
 
   return err;
 }
 
-int MEMP initParTriggerCompact(cPanel* pan, tCoord lf)
+int MEMP initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet)
 {
   int x = 80;
   int err = 0;
   int r = 2;
   err |= pan->addTextItem(1360,                  1,      r   * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.triggerType,  x - 30, r++ * lf, 72, lf, true);
+  err |= pan->addEnumItem(&devPars.triggerType[parSet],  x - 30, r++ * lf, 72, lf, true);
   err |= pan->addTextItem(1141,                  1,      r   * lf, 80, lf);
-  err |= pan->addNumItem(&devPars.recThreshhold, x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addNumItem(&devPars.recThreshhold[parSet], x + 15, r++ * lf, 30, lf, true);
   err |= pan->addTextItem(1370,                  1,      r   * lf, 80, lf);
-  err |= pan->addNumItem(&devPars.minEventLen,   x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addNumItem(&devPars.minEventLen[parSet],   x + 15, r++ * lf, 30, lf, true);
   err |= pan->addTextItem(1176,                  1,      r   * lf, 80, lf);
-  err |= pan->addNumItem(&devPars.trigFiltFreq,  x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addNumItem(&devPars.trigFiltFreq[parSet],  x + 15, r++ * lf, 30, lf, true);
   err |= pan->addTextItem(1330,                  1,      r   * lf, 80, lf);
   err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf, 30, lf, true);
   return err;

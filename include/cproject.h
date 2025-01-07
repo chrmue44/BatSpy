@@ -28,7 +28,7 @@ public:
   void createPrjFile(const char* pNotes);
   void closePrjFile();
   void addFile();
-  void writeInfoFile(float peakVal, size_t sampleCnt);
+  void writeInfoFile(float peakVal, size_t sampleCnt, size_t parSet);
   void reset();
   
   bool getIsOpen() { return m_isOpen; }

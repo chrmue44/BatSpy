@@ -97,7 +97,7 @@ void setup()
   menue.initFileRelatedParams();
   // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
-  menue.printPars();
+  menue.printPars(PARS_BAT);  //TODO @@@
   getSerialNr(serialNumber, sizeof(serialNumber));
   audio.setup();
   wheels.setDirection(true);
@@ -133,7 +133,7 @@ void handleDisplayAndWheel(bool oneSec)
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
   else
     rtFft = terminal.isOnline();
-  audio.operate( rtFft );
+  audio.operate( rtFft, PARS_BAT ); //TODO @@@
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);

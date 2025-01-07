@@ -25,10 +25,10 @@ void cTrigger::setMinEventLength(float len, uint32_t sampleRate)
     m_minEventLen = 1;
 }
 
-void cTrigger::checkTrigger()
+void cTrigger::checkTrigger(size_t parSet)
 {
-  float fFilter = devPars.trigFiltFreq.get() * 1000.0;
-  checkRecordingTrigger(fFilter);
+  float fFilter = devPars.trigFiltFreq[parSet].get() * 1000.0;
+  checkRecordingTrigger(fFilter, parSet);
  // checkLiveTrigger(fFilter);
 }
 
@@ -58,7 +58,7 @@ void cTrigger::releaseRecTrigger()
   }
 }
 
-void cTrigger::checkRecordingTrigger(float fFilter)
+void cTrigger::checkRecordingTrigger(float fFilter, size_t parSet)
 {
   switch (m_stateRec)
   {
@@ -66,14 +66,14 @@ void cTrigger::checkRecordingTrigger(float fFilter)
     case enTrigState::ARMED:
       if (m_peak.available())
         m_peakVal = m_peak.read();
-      if (((devPars.triggerType.get() == enTrigType::LEVEL) && (m_peakVal >= m_recThresh)) ||
+      if (((devPars.triggerType[parSet].get() == enTrigType::LEVEL) && (m_peakVal >= m_recThresh)) ||
        (devPars.checkDebugLevel(DBG_PERM_REC)))
       {
         DPRINTF4("recording triggered, peak %.3f, thresh %.3f\n", m_peakVal, m_recThresh);
         m_recTrigger = true;
         m_stateRec = enTrigState::TRIGGERED;
       }
-      else if (devPars.triggerType.get() == enTrigType::FREQUENCY)
+      else if (devPars.triggerType[parSet].get() == enTrigType::FREQUENCY)
       {
         if ((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) && (m_fftInfo.lastMaxFreq >= fFilter))
         {
@@ -82,7 +82,7 @@ void cTrigger::checkRecordingTrigger(float fFilter)
           DPRINTF4("pre trigger f: %f\n", m_fftInfo.lastMaxFreq);
         }
       }
-      else if (devPars.triggerType.get() == enTrigType::FREQ_LEVEL)
+      else if (devPars.triggerType[parSet].get() == enTrigType::FREQ_LEVEL)
       {
         if ((m_fftInfo.lastMaxAmpl > FREQ_THRESHOLD) &&
             (m_fftInfo.lastMaxFreq >= fFilter) && (m_peakVal >= m_recThresh))
