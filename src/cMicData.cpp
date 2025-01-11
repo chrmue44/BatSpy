@@ -1,4 +1,5 @@
 #include "cMicData.h"
+#include "Arduino.h"
 
 cMicData::cMicData(uint8_t pin) :
 _ds(new OneWire(pin))
@@ -65,10 +66,10 @@ bool cMicData::flashRead(void)
 bool cMicData::flashWrite(uint16_t startAddr, uint16_t len)
 {
   // Write to the Flash
-
   // Each loop is a 4 byte chunk
   uint8_t bytesPerWrite = 8;
   _info.crc = calcCrc();  
+#ifndef SIMU_DISPLAY
   char* p = (char*) &_info;
   for( uint16_t offset = startAddr; offset < (len/bytesPerWrite); offset++)
   {
@@ -133,6 +134,12 @@ bool cMicData::flashWrite(uint16_t startAddr, uint16_t len)
       // Confirmation bytes
     _ds->write(a1);
     _ds->write(a2);
+#else
+    {
+  uint8_t eaDS = 0;
+  _ds->writeSimu(&_info, sizeof(_info));
+#endif //#ifndef SIMU_DISPLAY
+
     _ds->write(eaDS, 1); // Pullup!
     delay(5); // Wait 5 ms per spec.
   }

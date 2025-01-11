@@ -23,6 +23,7 @@
 #include "cproject.h"
 #include "cTrigger.h"
 
+
 #define EXTFFT_H  128
 #define EXTFFT_W  256
 
@@ -107,6 +108,7 @@ private:
   stFftInfo m_fftInfo;              // some variables to handle FFT operation
   cTrigger m_trigger;               // state machine to detect trigger
   bool m_haltLiveFft = false;       // stop live FFT during ext readout of buffer
+  enRecStatus m_recStatus = enRecStatus::REC_OFF; // recording status
 
  public:
   cAudio();
@@ -124,17 +126,18 @@ private:
   #endif
   void setup();
   void updateCassMode();
-  //void checkAutoRecording(cMenue& menue, cRtc& rtc);
-  void checkAutoRecording(bool& recActive);
-  void operate(bool liveFft, size_t parset);
+  void checkAutoRecording(enRecStatus recActive);
+  void operate(bool liveFft);
   float getLastPeakVal() { return m_trigger.lastPeakVal();}
   bool isRecording() { return m_cass.getMode() == enCassMode::REC;}
   void closeProject() { if (m_prj.getIsOpen()) m_prj.closePrjFile(); }
-  void openProject();
+  void openProject(bool night);
   void sendFftBuffer(int delayTime, int part);
   void stopRecording();
-  int startRecording(size_t parSet);
-  bool isRecordingActive();
+  int startRecording();
+  enRecStatus isRecordingActive();
+  size_t getActiveParSet() { return (m_recStatus == enRecStatus::REC_BIRDS) ? PARS_BIRD : PARS_BAT; }
+  void setRecStatus(enPlayStatus s);
 #ifdef SIMU_DISPLAY
   DMAChannel* getDma() { return m_audioIn.getDma(); }
 #endif
@@ -148,6 +151,7 @@ private:
   void addLiveMsPerDiv(int waitTick, int sampleRate);
   int getLiveMsPerDiv(int waitTick, int sampleRate);
   void updateExtFftBuf();
+
 };
 
 #endif   //#ifndef _CAUDIO_H

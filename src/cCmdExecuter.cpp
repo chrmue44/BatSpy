@@ -27,7 +27,7 @@ void cmdUpdateInfos(void* pData)
   size_t freeSpace;  size_t totSpace;
   cSdCard::inst().getFreeMem(freeSpace, totSpace);
   devStatus.freeSpace.set(freeSpace / 1024/1024);
-  if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
+  if(checkTwilight((enRecAuto) devPars.recAuto.get()))
     calcSunrise();
   logStatus();
   checkSupplyVoltage();

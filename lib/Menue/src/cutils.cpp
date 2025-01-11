@@ -112,71 +112,77 @@ int cUtils::replaceAll(const char* str, const char* toSearch, const char* replac
     return -1;
 }
 
-int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize) {
+int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t resultSize) 
+{
   if(str == nullptr)
      return 0;
 
-  bool found = false;
-  int retVal = replaceAll(str, S_UML, CH_SS, result, resultSize);
+  char bufRes[256];
+  char bufSrc[256];
+
+  strncpy(bufSrc, str, sizeof(bufSrc));
+
+  int retVal = replaceAll(bufSrc, S_UML, CH_SS, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, A_UML_CAP, CH_AE, bufRes, sizeof(bufRes));
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, A_UML_CAP, CH_AE, result, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, O_UML_CAP, CH_OE, bufRes, sizeof(bufRes));
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, O_UML_CAP, CH_OE, result, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, U_UML_CAP, CH_UE, bufRes, sizeof(bufRes));
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, U_UML_CAP, CH_UE, result, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, A_UML_SMALL, CH_AEs, bufRes, sizeof(bufRes));
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, A_UML_SMALL, CH_AEs, result, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, O_UML_SMALL, CH_OEs, bufRes, sizeof(bufRes));
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, O_UML_SMALL, CH_OEs, result, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, U_UML_SMALL, CH_UEs, result, resultSize);
   if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, U_UML_SMALL, CH_UEs, result, resultSize);
-  if(retVal == 0)
-    found = true; 
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
   retVal = replaceAll(str, DEG_SIGN, CH_DEG, result, resultSize);
   if(retVal == 0)
-    found = true;
-  if(!found)
-    strncpy(result, str, resultSize);
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  strncpy(result, bufSrc, resultSize);
   return retVal;
 }
 
-int cUtils::replaceInternalCodingWithUTF8(const char* str, char* result, size_t resultSize) {
+int cUtils::replaceInternalCodingWithUTF8(const char* str, char* result, size_t resultSize) 
+{
   if(str == nullptr)
      return 0;
+  char bufRes[256];
+  char bufSrc[256];
 
-  bool found = false;
-  int retVal = replaceAll(str, CH_SS, S_UML,  result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_AE, A_UML_CAP,  result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_OE, O_UML_CAP, result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_UE, U_UML_CAP,  result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_AEs, A_UML_SMALL, result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_OEs, O_UML_SMALL,  result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_UEs, U_UML_SMALL, result, resultSize);
-  if(retVal == 0)
-    found = true; 
-  retVal = replaceAll(str, CH_DEG, DEG_SIGN, result, resultSize);
-  if(retVal == 0)
-    found = true;
-  if(!found)
-    strncpy(result, str, resultSize);
+  strncpy(bufSrc, str, sizeof(bufSrc));
+  int retVal = replaceAll(bufSrc, CH_SS, S_UML, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_AE, A_UML_CAP, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_OE, O_UML_CAP, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_UE, U_UML_CAP,  bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_AEs, A_UML_SMALL, bufRes , sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_OEs, O_UML_SMALL, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_UEs, U_UML_SMALL, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  retVal = replaceAll(bufSrc, CH_DEG, DEG_SIGN, bufRes, sizeof(bufRes));
+  if (retVal == 0)
+    strncpy(bufSrc, bufRes, sizeof(bufSrc));
+  strncpy(result, bufSrc, resultSize);
   return retVal;
 }
 

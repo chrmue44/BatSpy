@@ -21,6 +21,7 @@ int initDateTimePanCompact(cPanel* pan, tCoord lf);
 int initPositionPan(cPanel* pan, tCoord lf);
 void setPosFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
 void displayModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem);
+bool checkTwilight(enRecAuto r);
 void calcSunrise();
 
 #endif // PNLPARAMS_H

@@ -194,6 +194,12 @@ inline bool hasAmpRevB() { return  isRevisionB(); }
 #define portExpSetBit(x, y)   digitalWrite(x, y)
 
 #endif // defined (ARDUINO_TEENSY41)
+
+// https://forum.pjrc.com/index.php?threads/how-to-reset-restart-teensy-3-5-using-sotware.44857/
+#define RESTART_ADDR 0xE000ED0C
+//#define READ_RESTART() (*(volatile uint32_t *)RESTART_ADDR)
+#define WRITE_RESTART(val) ((*(volatile uint32_t *)RESTART_ADDR) = (val))
+
 enDisplayType hasDisplay();
 void testDisplay();
 float readSupplyVoltage();
@@ -216,6 +222,7 @@ void initTempSensor();
 void setDisplayColorsInverse(bool inv);
 bool isBackLightOn();
 void setBackLight(bool on);
+void restart();
 
 
 #define PATH_NOTES1  "/info/notes1.txt"

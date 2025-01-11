@@ -418,6 +418,10 @@ void setAnalogPower(bool on)
 #endif
 }
 
+void restart()
+{
+  WRITE_RESTART(0x5FA0004);
+}
 
 void checkSupplyVoltage()
 {

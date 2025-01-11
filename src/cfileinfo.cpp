@@ -34,7 +34,7 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
         if(ret != enSdRes::OK) break;
       ret = writeTag(TAG_SAMPLE_RATE, sampleRate, "Hz");
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_GAIN, devPars.preAmpGain.getActText());
+      ret = writeTag(TAG_GAIN, devPars.preAmpGain[parSet].getActText());
         if(ret != enSdRes::OK) break;
       ret = writeTag(TAG_INP_FILTER, "None");
         if(ret != enSdRes::OK) break;

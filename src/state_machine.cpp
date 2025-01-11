@@ -10,16 +10,21 @@ static enMainState mainState = enMainState::INIT;
 
 void handleIdleState()
 {
-  bool recOn = audio.isRecordingActive();
+  enRecStatus recOn = audio.isRecordingActive();
   if(year() < 2024)
   {
-    recOn = false;
+    recOn = enRecStatus::REC_OFF;
     devStatus.recStatus.set("!!!");
   }
   else
   {
-    if(devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
-      devStatus.recStatus.set(recOn ? "\xF2" : "\xF1");
+    if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
+    {
+      if (recOn)
+        audio.setRecStatus(enPlayStatus::STOP);
+      else
+        devStatus.recStatus.set("\xF1");
+    }
   }
 
   if (menue.keyPauseLongEnough(devPars.backLightTime.get() * 1000))

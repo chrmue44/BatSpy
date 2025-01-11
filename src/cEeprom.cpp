@@ -107,25 +107,18 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_SEND_DELAY,   (int16_t)devPars.sendDelay.get());
   writeInt16ToEep(EEPADDR_SRC_POSITION, devPars.srcPosition.get());
   writeInt16ToEep(EEPADDR_MENU_TYPE,    devPars.menueType.get());
-  writeFloatToEep(EEPADDR_REC_TIME,     devPars.recTime[PARS_BAT].get());
-  writeInt16ToEep(EEPADDR_SAMPLE_RATE,  devPars.sampleRate[PARS_BAT].get());
-  writeInt16ToEep(EEPADDR_PRE_AMP_GAIN, devPars.preAmpGain.get());
   writeFloatToEep(EEPADDR_TRESHHOLD,    devPars.threshHold.get());
   writeFloatToEep(EEPADDR_FFT_LEV_MIN,  devPars.fftLevelMin.get());
   writeFloatToEep(EEPADDR_FFT_LEV_MAX,  devPars.fftLevelMax.get());
-  writeFloatToEep(EEPADDR_REC_TRESH,    devPars.recThreshhold[PARS_BAT].get());
   writeInt16ToEep(EEPADDR_KNOB_ROT,     devPars.knobRotation.get());
   writeInt16ToEep(EEPADDR_DISP_ORIENT,  devPars.dispOrient.get());
   writeFloatToEep(EEPADDR_PRE_TRIGGER,  devPars.preTrigger.get());
   writeInt16ToEep(EEPADDR_DISP_MODE,    devPars.displayMode.get());
-  writeFloatToEep(EEPADDR_DEAD_TIME,    devPars.deadTime[PARS_BAT].get());
   writeFloatToEep(EEPADDR_BACKLIGHT,    devPars.backLightTime.get());
   writeInt16ToEep(EEPADDR_LANGUAGE,     devPars.lang.get());
   writeFloatToEep(EEPADDR_DEBUG_LEVEL , devPars.debugLevel.get());
   writeFloatToEep(EEPADDR_LAT,          devStatus.geoPos.getLat());
   writeFloatToEep(EEPADDR_LON,          devStatus.geoPos.getLon());
-  writeFloatToEep(EEPADDR_TFILT_FREQ,    devPars.trigFiltFreq[PARS_BAT].get());
-  writeInt16ToEep(EEPADDR_TFILT_TYPE,    devPars.trigFiltType[PARS_BAT].get());
   writeInt16ToEep(EEPADDR_START_H,      (int16_t)devPars.startH.get());
   writeInt16ToEep(EEPADDR_START_MIN,    (int16_t)devPars.startMin.get());
   writeInt16ToEep(EEPADDR_STOP_H,       (int16_t)devPars.stopH.get());
@@ -134,12 +127,31 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_DAYLIGHT_SAV, (int16_t)devPars.daylightSav.get());
   writeInt16ToEep(EEPADDR_LIVE_AMPL,    (int16_t)devPars.liveAmplitude.get());
   writeFloatToEep(EEPADDR_ALTITUDE,     devStatus.height.get());
-  writeInt16ToEep(EEPADDR_TRIG_TYPE,    (int16_t)devPars.triggerType[PARS_BAT].get());
-  writeFloatToEep(EEPADDR_MIN_EV_LEN,   devPars.minEventLen[PARS_BAT].get());
   writeFloatToEep(EEPADDR_SHUTOFF_V,    devPars.ShutoffVoltage.get());
-  writeFloatToEep(EEPADDR_RFILT_FREQ,   devPars.recFiltFreq[PARS_BAT].get());
-  writeInt16ToEep(EEPADDR_RFILT_TYPE,   devPars.recFiltType[PARS_BAT].get());
   writeInt16ToEep(EEPADDR_BAUD_GPS,     devPars.gpsBaudRate.get());
+
+  writeFloatToEep(EEPADDR_REC_TIME_BAT,     devPars.recTime[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_REC_TRESH_BAT,    devPars.recThreshhold[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_DEAD_TIME_BAT,    devPars.deadTime[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_TFILT_FREQ_BAT,   devPars.trigFiltFreq[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_MIN_EV_LEN_BAT,   devPars.minEventLen[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_RFILT_FREQ_BAT,   devPars.recFiltFreq[PARS_BAT].get());
+  writeInt16ToEep(EEPADDR_SAMPLE_RATE_BAT,  devPars.sampleRate[PARS_BAT].get());
+  writeInt16ToEep(EEPADDR_TFILT_TYPE_BAT,   devPars.trigFiltType[PARS_BAT].get());
+  writeInt16ToEep(EEPADDR_TRIG_TYPE_BAT,    (int16_t)devPars.triggerType[PARS_BAT].get());
+  writeInt16ToEep(EEPADDR_RFILT_TYPE_BAT,   devPars.recFiltType[PARS_BAT].get());
+  writeInt16ToEep(EEPADDR_PRE_AMP_GAIN_BAT, devPars.preAmpGain[PARS_BAT].get());
+  writeFloatToEep(EEPADDR_REC_TIME_BIRD,    devPars.recTime[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_REC_TRESH_BIRD,   devPars.recThreshhold[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_DEAD_TIME_BIRD,   devPars.deadTime[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_TFILT_FREQ_BIRD,  devPars.trigFiltFreq[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_MIN_EV_LEN_BIRD,  devPars.minEventLen[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_RFILT_FREQ_BIRD,  devPars.recFiltFreq[PARS_BIRD].get());
+  writeInt16ToEep(EEPADDR_SAMPLE_RATE_BIRD, devPars.sampleRate[PARS_BIRD].get());
+  writeInt16ToEep(EEPADDR_TFILT_TYPE_BIRD,  devPars.trigFiltType[PARS_BIRD].get());
+  writeInt16ToEep(EEPADDR_TRIG_TYPE_BIRD,   (int16_t)devPars.triggerType[PARS_BIRD].get());
+  writeInt16ToEep(EEPADDR_RFILT_TYPE_BIRD,  devPars.recFiltType[PARS_BIRD].get());
+  writeInt16ToEep(EEPADDR_PRE_AMP_GAIN_BIRD,devPars.preAmpGain[PARS_BIRD].get());
 
   int addr = EEPADDR_FIRSTFREE;
   for(int i = 0; i < 20; i++)
@@ -176,25 +188,18 @@ bool MEMP loadParsFromEep()
       devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
       devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
     }
-    devPars.recTime[PARS_BAT].set(readFloatFromEep(EEPADDR_REC_TIME));
-    devPars.sampleRate[PARS_BAT].set(readInt16FromEep(EEPADDR_SAMPLE_RATE));
-    devPars.preAmpGain.set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN));
     devPars.threshHold.set(readFloatFromEep(EEPADDR_TRESHHOLD));
     devPars.fftLevelMin.set(readFloatFromEep(EEPADDR_FFT_LEV_MIN));
     devPars.fftLevelMax.set(readFloatFromEep(EEPADDR_FFT_LEV_MAX));
-    devPars.recThreshhold[PARS_BAT].set(readFloatFromEep(EEPADDR_REC_TRESH));
     devPars.dispOrient.set(readInt16FromEep(EEPADDR_DISP_ORIENT));
     devPars.preTrigger.set(readFloatFromEep(EEPADDR_PRE_TRIGGER));
     devPars.displayMode.set(readInt16FromEep(EEPADDR_DISP_MODE));
     //    devPars.recFmt.set(readInt16FromEep(EEPADDR_REC_FMT));
-    devPars.deadTime[PARS_BAT].set(readFloatFromEep(EEPADDR_DEAD_TIME));
     devPars.backLightTime.set(readFloatFromEep(EEPADDR_BACKLIGHT));
     devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
     devPars.debugLevel.set(readFloatFromEep(EEPADDR_DEBUG_LEVEL));
     devStatus.geoPos.setLat(readFloatFromEep(EEPADDR_LAT));
     devStatus.geoPos.setLon(readFloatFromEep(EEPADDR_LON));
-    devPars.trigFiltFreq[PARS_BAT].set(readFloatFromEep(EEPADDR_TFILT_FREQ));
-    devPars.trigFiltType[PARS_BAT].set(readInt16FromEep(EEPADDR_TFILT_TYPE));
     devPars.startH.set(readInt16FromEep(EEPADDR_START_H));   //if addr changes see also pnlparams.cpp
     devPars.startMin.set(readInt16FromEep(EEPADDR_START_MIN)); //if addr changes see also pnlparams.cpp
     devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));    //if addr changes see also pnlparams.cpp
@@ -205,10 +210,31 @@ bool MEMP loadParsFromEep()
     devPars.liveAmplitude.set(readInt16FromEep(EEPADDR_LIVE_AMPL));
     //  devPars.projectType.set(readInt16FromEep(EEPADDR_PRJ_TYPE));
     devStatus.height.set(readFloatFromEep(EEPADDR_ALTITUDE));
-    devPars.recFiltFreq[PARS_BAT].set(readFloatFromEep(EEPADDR_RFILT_FREQ));
-    devPars.recFiltType[PARS_BAT].set(readInt16FromEep(EEPADDR_RFILT_TYPE));
-    devPars.triggerType[PARS_BAT].set(readInt16FromEep(EEPADDR_TRIG_TYPE));
-    devPars.minEventLen[PARS_BAT].set(readFloatFromEep(EEPADDR_MIN_EV_LEN));
+
+    devPars.recTime[PARS_BAT].set(readFloatFromEep(EEPADDR_REC_TIME_BAT));
+    devPars.sampleRate[PARS_BAT].set(readInt16FromEep(EEPADDR_SAMPLE_RATE_BAT));
+    devPars.recThreshhold[PARS_BAT].set(readFloatFromEep(EEPADDR_REC_TRESH_BAT));
+    devPars.deadTime[PARS_BAT].set(readFloatFromEep(EEPADDR_DEAD_TIME_BAT));
+    devPars.trigFiltFreq[PARS_BAT].set(readFloatFromEep(EEPADDR_TFILT_FREQ_BAT));
+    devPars.trigFiltType[PARS_BAT].set(readInt16FromEep(EEPADDR_TFILT_TYPE_BAT));
+    devPars.recFiltFreq[PARS_BAT].set(readFloatFromEep(EEPADDR_RFILT_FREQ_BAT));
+    devPars.recFiltType[PARS_BAT].set(readInt16FromEep(EEPADDR_RFILT_TYPE_BAT));
+    devPars.triggerType[PARS_BAT].set(readInt16FromEep(EEPADDR_TRIG_TYPE_BAT));
+    devPars.minEventLen[PARS_BAT].set(readFloatFromEep(EEPADDR_MIN_EV_LEN_BAT));
+    devPars.preAmpGain[PARS_BAT].set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN_BAT));
+
+    devPars.recTime[PARS_BIRD].set(readFloatFromEep(EEPADDR_REC_TIME_BIRD));
+    devPars.sampleRate[PARS_BIRD].set(readInt16FromEep(EEPADDR_SAMPLE_RATE_BIRD));
+    devPars.recThreshhold[PARS_BIRD].set(readFloatFromEep(EEPADDR_REC_TRESH_BIRD));
+    devPars.deadTime[PARS_BIRD].set(readFloatFromEep(EEPADDR_DEAD_TIME_BIRD));
+    devPars.trigFiltFreq[PARS_BIRD].set(readFloatFromEep(EEPADDR_TFILT_FREQ_BIRD));
+    devPars.trigFiltType[PARS_BIRD].set(readInt16FromEep(EEPADDR_TFILT_TYPE_BIRD));
+    devPars.recFiltFreq[PARS_BIRD].set(readFloatFromEep(EEPADDR_RFILT_FREQ_BIRD));
+    devPars.recFiltType[PARS_BIRD].set(readInt16FromEep(EEPADDR_RFILT_TYPE_BIRD));
+    devPars.triggerType[PARS_BIRD].set(readInt16FromEep(EEPADDR_TRIG_TYPE_BIRD));
+    devPars.minEventLen[PARS_BIRD].set(readFloatFromEep(EEPADDR_MIN_EV_LEN_BIRD));
+    devPars.preAmpGain[PARS_BIRD].set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN_BIRD));
+
     //devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
     devPars.ShutoffVoltage.set(5.8);
     devPars.gpsBaudRate.set(readInt16FromEep(EEPADDR_BAUD_GPS));

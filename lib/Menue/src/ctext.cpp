@@ -35,10 +35,11 @@ void Txt::setResource(stTxtList* p)
     m_size++;
   }
 }
+
 /*
 const char* Txt::get(thText id) 
 {
-    const char* p = NULL;
+  const char* p = NULL;
     bool found = false;
     thText i = 0;
     if(m_pTextList == NULL)

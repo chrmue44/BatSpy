@@ -29,9 +29,11 @@ extern thPanel hdrPanWaterfall;
 extern thPanel hdrBatInfo;
 extern thPanel panFileBrowser;
 extern thPanel fkeyFilePan;
-extern thPanel panParams;      ///< panel for general parameter settings
-extern thPanel panParRec;      ///< panel for recording settings
-extern thPanel panParTrig;     ///< pnael for trigger settings
+extern thPanel panParams;         ///< panel for general parameter settings
+extern thPanel panParRecNight;    ///< panel for recording settings during night
+extern thPanel panParRecDay;      ///< panel for recording settings during night
+extern thPanel panParTrigNight;   ///< pnael for trigger settings during night
+extern thPanel panParTrigDay;     ///< pnael for trigger settings during day
 extern thPanel panPosition;    ///< panel for setting of position
 extern thPanel panBats;        ///< panel for bat infos
 extern thPanel panDateTime;    ///< panel to set time and date
@@ -44,15 +46,12 @@ extern cParEnum f4MainItems;   ///< pop up menu F4
 #endif
 
 void setFileToDisplay(const char* buf, size_t parSet);
-void initFunctionItemsExpert();
-void initFunctionItemsRecorder();
 void initFunctionItemsHandheld();
 void initFunctionsCompact();
 
 int initFkeyPanel(cPanel* pan, tCoord lf);
 int initCompactFkeyPanel(cPanel* pan, tCoord lf);
 int initMainPanelExpert(cPanel* pan, tCoord lf);
-int initMainPanelRecorder(cPanel* pan, tCoord lf);
 int initMainPanelHandheld(cPanel* pan, tCoord lf);
 int initMainPanelCompact(cPanel* pan, tCoord lf);
 

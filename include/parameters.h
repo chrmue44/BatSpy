@@ -10,6 +10,7 @@
 #define _PARAMETERS_H_
 
 #include "MenueSystem.h"
+#include "types.h"
 
 #define FREQ_MIN   0
 #define FREQ_MAX   150
@@ -129,8 +130,6 @@ struct stStatus
 /**
  * @brief device parameters
  */
-#define PARS_BAT   0
-#define PARS_BIRD  1
 struct stParams
 {
   bool checkDebugLevel(int l)
@@ -169,7 +168,7 @@ struct stParams
   cParEnum displayMode = static_cast<uint32_t>(enDispMode::NORMAL);   ///< display mode
 #define PAR_BACKLIGHT_MIN     5.0f
 #define PAR_BACKLIGHT_MAX   300.0f
-  cParEnum preAmpGain = 1;           ///< gain of pre amplifier
+  cParEnum preAmpGain[2];           ///< gain of pre amplifier
 #define PAR_GAIN_MIN   0
 #define PAR_GAIN_MAX   1
   cParEnum dispOrient = enDispOrient::RIGHT_HAND; ///< display orientation
@@ -202,7 +201,7 @@ struct stParams
   cParEnum srcPosition = static_cast<uint32_t>(enPositionMode::FIX);  ///< source of position (fixed, GPS)
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1
-  cParEnum menueType = enMenueType::EXPERT;   ///< menue type
+  cParEnum menueType = enMenueType::COMPACT;   ///< menue type
   cParEnum triggerType[2];   ///< trigger type for recording
 #define PAR_TRIGTYPE_MIN  0
 #define PAR_TRIGTYPE_MAX  2
@@ -239,7 +238,8 @@ struct stParams
     triggerType[PARS_BIRD].set(PAR_TRIGFILTTYPE_DEF);   ///< trigger type for recording
     minEventLen[PARS_BAT].set(PAR_TRIGEVENT_DEF_BAT);         ///< minimal event length for trigger
     minEventLen[PARS_BIRD].set(PAR_TRIGEVENT_DEF_BIRD);         ///< minimal event length for trigger
-
+    preAmpGain[PARS_BAT].set(1);
+    preAmpGain[PARS_BIRD].set(1);
   }
 
 };

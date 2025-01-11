@@ -29,7 +29,7 @@ void MEMP funcFmax(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   cParGraph* g = getLiveFft();
   int sq = g->getSqueeze();
-  size_t parSet = PARS_BAT; //TODO @@@
+  size_t parSet = audio.getActiveParSet();
   switch (key) {
      case enKey::UP:
         g->setSqueeze(sq + 1, cAudio::getFftOutputSize());
@@ -52,6 +52,8 @@ int MEMP initLivePanHandheld(cPanel* pan, tCoord lf)
   int h = 128;
   int p1 = 32;
   int p2 = 18;
+  size_t parSet = audio.getActiveParSet();
+  pan->clear();
   int err = pan->addNumItem(&devStatus.freqMax,     5,  p2,                25, lf, true, funcFmax);
      err |= pan->addTextItem(300,                   5,  p2 + 1 * lf,       25, lf);
      err |= pan->addNumItem(&devStatus.freqMin,     5,  p2 + 128,          25, lf, false);
@@ -65,7 +67,7 @@ int MEMP initLivePanHandheld(cPanel* pan, tCoord lf)
      err |= pan->addTextItem(204,                 190,  p1 + h + 2 * lf,   80, lf);
      err |= pan->addNumItem(&devPars.volume,      280,  p1 + h + 2 * lf,   20, lf, true);
      err |= pan->addTextItem(1325,                  5,  p1 + h + 3 * lf,   80, lf);
-     err |= pan->addEnumItem(&devPars.preAmpGain, 125,  p1 + h + 3 * lf,   33, lf, true);
+     err |= pan->addEnumItem(&devPars.preAmpGain[parSet], 125, p1 + h + 3 * lf, 33, lf, true);
      err |= pan->addTextItem(1338,                190,  p1 + h + 4 * lf,   80, lf);
      err |= pan->addNumItem(&devStatus.lastCallF, 280,  p1 + h + 4 * lf,   40, lf, false);
 
@@ -78,6 +80,8 @@ int MEMP initLivePanRecorder(cPanel* pan, tCoord lf)
   int h = 128;
   int p1 = 32;
   int p2 = 18;
+  size_t parSet = audio.getActiveParSet();
+  pan->clear();
   int err = pan->addNumItem(&devStatus.freqMax,      5, p2, 25, lf, true, funcFmax);
   err |= pan->addTextItem(300,                       5, p2 + 1 * lf, 25, lf);
   err |= pan->addNumItem(&devStatus.freqMin,         5, p2 + 128, 25, lf, false);
@@ -88,7 +92,7 @@ int MEMP initLivePanRecorder(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(475,                       5, p1 + h + 1 * lf, 80, lf);
   err |= pan->addNumItem(&devPars.liveAmplitude,   125, p1 + h + 1 * lf, 25, lf, true);
   err |= pan->addTextItem(1325,                      5, p1 + h + 2 * lf, 80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,     125, p1 + h + 2 * lf, 33, lf, true);
+  err |= pan->addEnumItem(&devPars.preAmpGain[parSet], 125, p1 + h + 2 * lf, 33, lf, true);
   err |= pan->addTextItem(1338,                    190, p1 + h + 4 * lf, 80, lf);
   err |= pan->addNumItem(&devStatus.lastCallF,     280, p1 + h + 4 * lf, 40, lf, false);
 

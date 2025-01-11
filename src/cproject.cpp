@@ -34,15 +34,23 @@ const char* PROGMEM MSG_OPEN_PRJ  = "successfully loaded project file with %i re
 const char* PROGMEM MSG_CLOSE_PRJ = "closed project file\n";
 
 
-void MEMF cProject::createPrjFile(const char* pNotes)
+void MEMF cProject::createPrjFile(const char* pNotes, bool night)
 {
   char buf[FILENAME_LEN];
 
   int startY = year();
   int startM = month();
   int startD = day();
-  snprintf(m_prjName, sizeof(m_prjName),"%04i%02i%02i", startY, startM, startD);
-  snprintf(buf, sizeof (buf), "/prj/%04i%02i%02i", startY, startM, startD);
+  if (night)
+  {
+    snprintf(m_prjName, sizeof(m_prjName), "%04i%02i%02i_BAT", startY, startM, startD);
+    snprintf(buf, sizeof(buf), "/prj/%04i%02i%02i_BAT", startY, startM, startD);
+  }
+  else
+  {
+    snprintf(m_prjName, sizeof(m_prjName), "%04i%02i%02i_BIRD", startY, startM, startD);
+    snprintf(buf, sizeof(buf), "/prj/%04i%02i%02i_BIRD", startY, startM, startD);
+  }
   cSdCard::inst().mkDir("/prj");
   cSdCard::inst().mkDir(buf);
   cSdCard::inst().chdir(buf);
@@ -57,7 +65,7 @@ void MEMF cProject::createPrjFile(const char* pNotes)
   if(!cSdCard::inst().fileExists(buf))
   {
     DPRINTF4("Create new project file %s\n", buf);
-    initializePrjFile(buf, pNotes, startY, startM, startD);
+    initializePrjFile(buf, pNotes, startY, startM, startD, night);
     m_recCount = 0;
   }
   m_isOpen = true;
@@ -87,7 +95,7 @@ void MEMF cProject::initMicInfo(cXmlHelper& xml)
   xml.closeTag("Microphone");
 }
 
-void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD)
+void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD, bool  night)
 {
   tAttrList attr;
   cXmlHelper xml;
@@ -110,6 +118,10 @@ void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int
   char buf[128];
   snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", startY, startM, startD, hour(),  minute(), m_fSec);
   xml.simpleTag("Created", buf);
+  if(night)
+    xml.simpleTag("ProjectType", "Bats");
+  else
+    xml.simpleTag("ProjectType", "Birds");
   xml.simpleTag("Notes",pNotes);
   xml.simpleTag("AutoProcess", "true");
   initMicInfo(xml);

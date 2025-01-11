@@ -71,6 +71,8 @@ void initDisplayVars()
 
 void setup()
 {
+  size_t parSet = PARS_BAT;
+
   Serial.begin(9600);
   delay(200);
   initPins();
@@ -97,7 +99,7 @@ void setup()
   menue.initFileRelatedParams();
   // tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
   menue.refreshAll();
-  menue.printPars(PARS_BAT);  //TODO @@@
+  menue.printPars(parSet);
   getSerialNr(serialNumber, sizeof(serialNumber));
   audio.setup();
   wheels.setDirection(true);
@@ -122,6 +124,7 @@ void setup()
   logStatus();
   digWrite(SPIN_LED_2, 0);
   micInfo.read();
+  Serial.printf("Microphone: %s\n",micInfo.getId());
 }
 
 
@@ -133,7 +136,7 @@ void handleDisplayAndWheel(bool oneSec)
               ((menue.getMainPanel() == pnlLive) && (menue.getFocusPanel() == menue.getFkeyPanel()));
   else
     rtFft = terminal.isOnline();
-  audio.operate( rtFft, PARS_BAT ); //TODO @@@
+  audio.operate( rtFft);
   if (tick300ms.check())
   {
     menue.handleKey(enKey::TICK);

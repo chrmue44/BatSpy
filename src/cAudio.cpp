@@ -306,7 +306,7 @@ void cAudio::setRecFilter(float freq, enFiltType type, size_t paramSet)
 bool cAudio::isSetupNeeded()
 {
   bool retVal = false;
-  size_t parSet = PARS_BAT; //TODO @@@
+  size_t parSet = getActiveParSet();
   if (m_old.sampleRate != m_sampleRate)
   {
     DPRINTF2("new sample rate %i, old %i\n", m_sampleRate, m_old.sampleRate);
@@ -338,7 +338,6 @@ bool cAudio::isSetupNeeded()
 
 void cAudio::setup()
 {
-  size_t parSet = PARS_BAT; //TODO @@@
   #ifdef ARDUINO_TEENSY41
   if(hasAmpRevB())  
     setPreAmpGain((enGainRevB)devPars.preAmpGain.get());
@@ -349,8 +348,9 @@ void cAudio::setup()
   }
   #endif
   setAnalogPower(true);
+  size_t parSet = getActiveParSet();
   #ifdef ARDUINO_TEENSY40
-  setPreAmpGain((enGainRevC)devPars.preAmpGain.get());
+  setPreAmpGain((enGainRevC)devPars.preAmpGain[parSet].get());
   #endif
   if (isSetupNeeded())
   {
@@ -405,17 +405,17 @@ void cAudio::setup()
 
     DPRINTLN4("\n[***** AUDIO SETTINGS ******]\n");
     DPRINTF4("       op mode: %i %s\n", devStatus.opMode.get(), devStatus.opMode.getActText());
-    DPRINTF4("   sample rate: %s  index: %i   value: %i Hz\n", devPars.sampleRate.getActText(), devPars.sampleRate.get(), m_sampleRate);
+    DPRINTF4("   sample rate: %s  index: %i   value: %i Hz\n", devPars.sampleRate[parSet].getActText(), devPars.sampleRate[parSet].get(), m_sampleRate); 
     DPRINTF4("      mix freq: %.1f kHz; real osc freq: %.1f Hz\n", freq, m_freq_oscillator);
-    DPRINTF4("rec threshhold: %.1f dB\n", devPars.recThreshhold.get());
-    DPRINTF4("  trig. filter: %.1f kHz\n", devPars.trigFiltFreq.get())
-    DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger.get());
+    DPRINTF4("rec threshhold: %.1f dB\n", devPars.recThreshhold[parSet].get());
+    DPRINTF4("  trig. filter: %.1f kHz\n", devPars.trigFiltFreq[parSet].get());
+    DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger.get()); 
     DPRINTF4("         mixer: %s\n", mic ? "mic" : "play");
     DPRINTF4("        volume: %.4f\n", vol);
   }
   else
     DPRINTLN2("no setup needed");
-  DPRINTF4("  pre amp gain: %s\n", devPars.preAmpGain.getActText());
+  DPRINTF4("  pre amp gain: %s\n", devPars.preAmpGain[parSet].getActText());
 }
 
 
@@ -444,7 +444,7 @@ void cAudio::updateCassMode()
       if ((m_cass.getMode() != enCassMode::REC) && cSdCard::inst().isMounted())
       {
         setAudioConnections(0);
-        startRecording(PARS_BAT);  //TODO @@@
+        startRecording();
         DPRINTF4("updateCassMode start recording: %i\n", (int)devStatus.recCount.get());
         delay(5);
       }
@@ -467,44 +467,72 @@ void cAudio::setMixOscFrequency(float freq)
   m_old.oscFrequency = devPars.mixFreq.get();
 }
 
-bool cAudio::isRecordingActive()
+bool checkBats(enRecAuto r)
 {
-  bool retVal = false;
-  if(devPars.recAuto.get() == enRecAuto::OFF)
-    retVal = false;
-  else if(devPars.recAuto.get() == enRecAuto::ON)
-    retVal = true;
+  return (r == enRecAuto::TIME_ALL) || (r == enRecAuto::TIME_BATS) ||
+         (r == enRecAuto::TWILIGHT_ALL) || (r == enRecAuto::TWILIGHT_BATS);
+}
+
+bool checkBirds(enRecAuto r)
+{
+  return (r == enRecAuto::TIME_ALL) || (r == enRecAuto::TIME_BIRDS) ||
+    (r == enRecAuto::TWILIGHT_ALL) || (r == enRecAuto::TWILIGHT_BIRDS);
+}
+
+enRecStatus cAudio::isRecordingActive()
+{
+  enRecStatus retVal = enRecStatus::REC_OFF;
+  if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
+    retVal = enRecStatus::REC_BIRDS;
+  else if (devPars.recAuto.get() == enRecAuto::ON_BAT)
+    retVal = REC_BATS;
   else
   {
+    bool night;
     if(devPars.startH.get() > devPars.stopH.get())
     {
-      retVal = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+      night = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
                (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
     }
     else
     {
-      retVal = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
-                 (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+      night = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
+               (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
     }
+    if (night && checkBats((enRecAuto)devPars.recAuto.get()))
+      retVal = enRecStatus::REC_BATS;
+    else if (!night && checkBirds((enRecAuto)devPars.recAuto.get()))
+      retVal = enRecStatus::REC_BIRDS;
   }
+
+  if(retVal != m_recStatus)
+  {
+    if (m_prj.getIsOpen())
+      m_prj.closePrjFile();
+    if (retVal != enRecStatus::REC_OFF)
+      setup();
+    m_recStatus = retVal;
+  }
+  
   return retVal;
 }
 
 
-void cAudio::checkAutoRecording(bool& recActive)
+void cAudio::checkAutoRecording(enRecStatus recActive)
 {
+  m_recStatus = recActive;
   if((devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP)) &&
      (m_cass.getMode() == enCassMode::STOP) &&
      cSdCard::inst().isMounted())
   {
     if (menue.keyPauseLongEnough(300) && (devPars.recAuto.get() != enRecAuto::OFF))
     {
-      if (!recActive && m_prj.getIsOpen())
+      if ((recActive  == enRecStatus::REC_OFF) && m_prj.getIsOpen())
         m_prj.closePrjFile();
       if (recActive && m_trigger.getRecTrigger())
       {
         DPRINTLN4("checkAutorecording: start recording");
-        int res = startRecording(PARS_BAT);  //TODO @@@
+        int res = startRecording();
         delay(5);
         if(res != 0)
         {
@@ -516,7 +544,7 @@ void cAudio::checkAutoRecording(bool& recActive)
           m_prj.reset();
           cSdCard::inst().mount();
           delay(100);
-          openProject();
+          openProject(m_recStatus == enRecStatus::REC_BATS);
           sysLog.log("reinitialized SD card after failure");
         }
       }
@@ -570,29 +598,23 @@ void cAudio::checkAutoRecording(cMenue &menue, cRtc& rtc)
 }
 */
 
-void cAudio::openProject()
+void cAudio::openProject(bool night)
 {
   char buf[2 * PAR_STR_LEN + 3];
-  /*
-  cUtils::replaceInternalCodingWithUTF8(devStatus.notes1.getActText(), buf, sizeof(buf));
-  strncat(buf, "\n", 2);
-  size_t len = strlen(buf);
-  if (len < sizeof(buf))
-    cUtils::replaceInternalCodingWithUTF8(devStatus.notes2.getActText(), buf + len, sizeof(buf) - len);
-  */
   if (!m_prj.getIsOpen())
   {
     buf[0] = 0;
-    m_prj.createPrjFile(buf);
+    m_prj.createPrjFile(buf, night);
     devStatus.recCount.set(m_prj.getRecCount());
   }
 }
 
 
-void cAudio::operate(bool liveFft, size_t parSet)
+void cAudio::operate(bool liveFft)
 {
   m_cass.operate();
-  bool fftAvailable = m_fft.available();  
+  bool fftAvailable = m_fft.available();
+  size_t parSet = getActiveParSet();
   if(fftAvailable)
   {
     int idx = m_fft.find_max_amp();
@@ -631,7 +653,7 @@ void cAudio::operate(bool liveFft, size_t parSet)
     m_trigger.checkTrigger(parSet);
   }
 #ifdef SIMU_DISPLAY
-  m_trigger.checkTrigger();
+  m_trigger.checkTrigger(parSet);
 #endif
 
   if(liveFft && fftAvailable && !m_haltLiveFft)
@@ -648,7 +670,7 @@ void cAudio::operate(bool liveFft, size_t parSet)
       {
         case enPlayStatus::PLAY:
           devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
-          devStatus.recStatus.set("\xF1");
+          setRecStatus(enPlayStatus::STOP);
           break;
 
         case enPlayStatus::REC:
@@ -690,10 +712,10 @@ void cAudio::operate(bool liveFft, size_t parSet)
     {
       m_timeout.stop();
       devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
-      devStatus.recStatus.set("\xF2");
+      setRecStatus(enPlayStatus::STOP);
       m_trigger.releaseLiveTrigger();
       m_trigger.releaseRecTrigger();
-      DPRINTF4("timeout over, timeout %f,  timer %f\n", devPars.deadTime.get(), m_timeout.runTime());
+      DPRINTF4("timeout over, timeout %f,  timer %f\n", devPars.deadTime[getActiveParSet()].get(), m_timeout.runTime());
     }
   }
 }
@@ -704,7 +726,7 @@ void cAudio::stopRecording()
   DPRINTLN4("stop recording");
   m_cass.stop();
   devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::STOP));
-  devStatus.recStatus.set("\xF2");
+  setRecStatus(enPlayStatus::STOP);
 }
 
 
@@ -793,11 +815,29 @@ void cAudio::sendFftBuffer(int delayTime, int part)
     m_haltLiveFft = false;
 }
 
-
-int cAudio::startRecording(size_t parSet)
+void cAudio::setRecStatus(enPlayStatus s)
 {
+  char buf[8];
+ if(s == enPlayStatus::REC)
+   buf[0] = 0xF0;
+ else if(s == enPlayStatus::STOP)
+   buf[0] = 0xF2;
+ else if (s == enPlayStatus::PLAY)
+   buf[0] = 0xF1;
+ buf[1] = ' ';
+ if (getActiveParSet() == PARS_BAT)
+   strncpy(&buf[2], Txt::get(110), sizeof(buf) - 2);
+else
+  strncpy(&buf[2], Txt::get(112), sizeof(buf) - 2);
+ devStatus.recStatus.set(buf);
+}
+
+int cAudio::startRecording()
+{ 
+  bool night = (m_recStatus == enRecStatus::REC_BATS);
+  size_t parSet = m_recStatus == enRecStatus::REC_BATS ? PARS_BAT : PARS_BIRD;
   if (!m_prj.getIsOpen())
-    openProject();
+    openProject(night);
   statusDisplay.setRecRunning(true);
   m_prj.createElekonFileName();
   m_prj.addFile();
@@ -807,7 +847,7 @@ int cAudio::startRecording(size_t parSet)
   if(retVal == 0)
   {
     devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::REC));
-    devStatus.recStatus.set("\xF0");
+    setRecStatus(enPlayStatus::REC);
   }
   else
   {

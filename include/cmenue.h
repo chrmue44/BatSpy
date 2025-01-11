@@ -88,8 +88,6 @@ protected:
   virtual void refreshDisplay();
 
 private:
-  int initExpertPanels(tCoord lf);
-  int initRecorderPanels(tCoord lf);
   int initHandheldPanels(tCoord lf);
   int initCompactPanels(tCoord lf);
 

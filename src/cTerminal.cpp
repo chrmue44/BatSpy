@@ -190,7 +190,12 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       
     case 'p':
       if (buf[1] == 0)
-        menue.printPars(PARS_BAT);  //TODO @@@
+      {
+        Serial.println("Bat mode:");
+        menue.printPars(PARS_BAT);
+        Serial.println("Bird mode:");
+        menue.printPars(PARS_BIRD);
+      }
       else
         parseGetCmd(&buf[1]);
       Serial.write(m_endChar);
@@ -205,6 +210,15 @@ bool MEMF cTerminal::execCmd(char* buf, size_t& bufIdx)
       cSdCard::inst().sendFileToTerminal(&buf[1], devPars.sendDelay.get());
       break;
     
+    case 'R':
+      if((buf[1] == 'e') && (buf[2] == 's'))
+      {
+        restart();
+        retVal = true;
+      }
+      else
+        retVal = false;
+      break;
 
     case 's':
       parseGetStatusCmd(&buf[1]);
@@ -518,7 +532,10 @@ void MEMF cTerminal::parseSetCmd(const char* buf)
       gps.setMode((enGpsMode)devPars.srcPosition.get());
       break;
     case 'r':
-      replyOk = parseRecParams(&buf[1], true, PARS_BAT); //TODO @@@
+      replyOk = parseRecParams(&buf[1], true, PARS_BAT);
+      break;
+    case 'R':
+      replyOk = parseRecParams(&buf[1], true, PARS_BIRD);
       break;
     case 'v':
       val = atoi(buf + 1);
@@ -611,7 +628,7 @@ void cTerminal::parseSetMicCmd(char const* buf)
         break;
 
       case 'e':
-        micInfo.write();
+        replyOk = micInfo.write();
         break;
 
       case 'f':
@@ -690,7 +707,10 @@ void MEMF cTerminal::parseGetCmd(const char* buf)
     getValEnum(&buf[1], devPars.srcPosition, replyBuf, sizeof(replyBuf));
     break;
   case 'r':
-    replyOk = parseRecParams(&buf[1], false, PARS_BAT, replyBuf, sizeof(replyBuf));  //TODO @@@
+    replyOk = parseRecParams(&buf[1], false, PARS_BAT, replyBuf, sizeof(replyBuf));
+    break;
+  case 'R':
+    replyOk = parseRecParams(&buf[1], false, PARS_BIRD, replyBuf, sizeof(replyBuf));
     break;
   case 'v':
     val = atoi(buf + 1);
@@ -848,9 +868,9 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, size_t parSet, 
       break;
 	case 'g':
       if(write)
-        replyOk = setValEnum(buf + 1, PAR_GAIN_MIN, PAR_GAIN_MAX, devPars.preAmpGain);
+        replyOk = setValEnum(buf + 1, PAR_GAIN_MIN, PAR_GAIN_MAX, devPars.preAmpGain[parSet]);
       else
-        getValEnum(buf + 1, devPars.preAmpGain, reply, replySize);
+        getValEnum(buf + 1, devPars.preAmpGain[parSet], reply, replySize);
       break;
     case 'h':
       if (write)
@@ -1104,28 +1124,50 @@ void MEMF cTerminal::showCommands()
   Serial.println("pn       get language");
   Serial.println("Pv<val>  set volume [dB] (-30 .. 18 dB)");
   Serial.println("pv       get volume [dB]");
-  Serial.println("Prd<val> set dead time after recording [s] (1 .. 30)");
-  Serial.println("prd      get dead time after recording [s]");
-  Serial.println("Prf<val> set trig filter frequency [kHz] (5 .. 70)");
-  Serial.println("prf      get trig filter frequency [kHz]");
-  Serial.println("Prg<val> set gain (0 .. 1)");
-  Serial.println("prg      get gain");  
-  Serial.println("Prh<val> set trig threshold [dB] (-24 ... -1)");
-  Serial.println("prh      get trig threshold [dB]");
-  Serial.println("Prm<val> set trig event time [ms] (0.5 ... 10)");
-  Serial.println("prm      get trig event time [ms]");
-  Serial.println("Prr<val> set trig type (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
-  Serial.println("prr      get trig type");
-  Serial.println("Prs<val> set sample rate (0 .. 8)");
-  Serial.println("prs      get sample rate");
-  Serial.println("Prt<val> set recording time [s] (1 .. 30)");
-  Serial.println("prt      get recording time [s]");
-  Serial.println("Pru<val> set recording filter frequency [kHz] (5 .. 70)");
-  Serial.println("pru<val> get recording filter frequency [kHz]");
-  Serial.println("Prv<val> set recording filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
-  Serial.println("prv<val> get recording filter type");
-  Serial.println("Pry<val> set trig filter type (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
-  Serial.println("pry<val> get trig filter type");
+  Serial.println("Prd<val> set dead time after recording, night [s] (1 .. 30)" );
+  Serial.println("prd      get dead time after recording, night [s]");
+  Serial.println("PRd<val> set dead time after recording, day [s] (1 .. 30)");
+  Serial.println("pRd      get dead time after recording, day [s]");
+  Serial.println("Prf<val> set trig filter frequency, night [kHz] (5 .. 70)");
+  Serial.println("prf      get trig filter frequency, night [kHz]");
+  Serial.println("PRf<val> set trig filter frequency, day [kHz] (5 .. 70)");
+  Serial.println("pRf      get trig filter frequency, day [kHz]");
+  Serial.println("Prg<val> set gain, night (0 .. 1)");
+  Serial.println("prg      get gain, night");  
+  Serial.println("PRg<val> set gain, day (0 .. 1)");
+  Serial.println("pRg      get gain, day");
+  Serial.println("Prh<val> set trig threshold, night [dB] (-24 ... -1)");
+  Serial.println("prh      get trig threshold, night [dB]");
+  Serial.println("PRh<val> set trig threshold, day [dB] (-24 ... -1)");
+  Serial.println("pRh      get trig threshold, day [dB]");
+  Serial.println("Prm<val> set trig event time, night [ms] (0.5 ... 10)");
+  Serial.println("prm      get trig event time, night [ms]");
+  Serial.println("PRm<val> set trig event time, day [ms] (0.5 ... 10)");
+  Serial.println("pRm      get trig event time, day [ms]");
+  Serial.println("Prr<val> set trig type, night (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
+  Serial.println("prr      get trig type, night");
+  Serial.println("PRr<val> set trig type, day (0=LEVEL, 1=FREQ, 2=LEVEL + FREQ)");
+  Serial.println("pRr      get trig type, day");
+  Serial.println("Prs<val> set sample rate, night (0 .. 8)");
+  Serial.println("prs      get sample rate, night");
+  Serial.println("PRs<val> set sample rate, day (0 .. 8)");
+  Serial.println("pRs      get sample rate, day");
+  Serial.println("Prt<val> set recording time, night [s] (1 .. 30)");
+  Serial.println("prt      get recording time, night [s]");
+  Serial.println("PRt<val> set recording time, day [s] (1 .. 30)");
+  Serial.println("pRt      get recording time, day [s]");
+  Serial.println("Pru<val> set recording filter frequency, night [kHz] (5 .. 70)");
+  Serial.println("pru<val> get recording filter frequency, night [kHz]");
+  Serial.println("PRu<val> set recording filter frequency, day [kHz] (5 .. 70)");
+  Serial.println("pRu<val> get recording filter frequency, day [kHz]");
+  Serial.println("Prv<val> set recording filter type, night (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("prv<val> get recording filter type, night");
+  Serial.println("PRv<val> set recording filter type, day (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("pRv<val> get recording filter type, day");
+  Serial.println("Pry<val> set trig filter type, night (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("pry<val> get trig filter type, night");
+  Serial.println("PRy<val> set trig filter type, day (0=HIGHPASS , 1=LOWPASS, 2=BANDPASS)");
+  Serial.println("pRy<val> get trig filter type, day");
   Serial.println("sa       get audio mem usage [%]");
   Serial.println("sb       get temperature [°C]");
   Serial.println("sc       get humidity [%]");

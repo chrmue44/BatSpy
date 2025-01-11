@@ -111,10 +111,23 @@ enum enFiltType
 // automatic recording
 enum enRecAuto
 {
-  OFF      = 0,
-  ON       = 1,
-  TIME     = 2,
-  TWILIGHT = 3
+  OFF            = 0,
+  ON_BAT         = 1,
+  ON_BIRD        = 2,
+  TIME_ALL       = 3,
+  TIME_BATS      = 4,
+  TIME_BIRDS     = 5,
+  TWILIGHT_ALL   = 6,
+  TWILIGHT_BATS  = 7,
+  TWILIGHT_BIRDS = 8
+};
+
+
+enum enRecStatus
+{
+  REC_OFF   = 0,
+  REC_BATS = 1,
+  REC_BIRDS   = 2
 };
 
 enum class enPlayStatus
@@ -129,10 +142,8 @@ enum class enPlayStatus
 /// menu level
 enum enMenueType
 {
-  EXPERT = 0,
-  RECORDER = 1,
-  HANDHELD = 2,
-  COMPACT = 3
+  COMPACT  = 0,
+  HANDHELD = 1
 };
 
 
@@ -201,5 +212,9 @@ enum class enGpsBaudRate
   BD_9600 = 0,
   BD_152000 = 1,
 };
+
+#define PARS_BAT   0  // array index for bat recording parameters
+#define PARS_BIRD  1  // array index for bird recording parameters
+
 
 #endif    //#ifndef _TYPES_H

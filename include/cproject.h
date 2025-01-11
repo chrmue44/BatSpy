@@ -25,7 +25,7 @@ class cProject
 {
 public:
   cProject();
-  void createPrjFile(const char* pNotes);
+  void createPrjFile(const char* pNotes, bool night);
   void closePrjFile();
   void addFile();
   void writeInfoFile(float peakVal, size_t sampleCnt, size_t parSet);
@@ -37,7 +37,7 @@ public:
   const char* createElekonFileName();
 
 private:
-  void initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD);
+  void initializePrjFile(const char* fName, const char* pNotes, int startY, int startM, int startD, bool night);
   void initMicInfo(cXmlHelper& xml);
   void saveStartTime();
 

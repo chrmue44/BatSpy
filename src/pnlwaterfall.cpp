@@ -10,7 +10,9 @@
 #include "cutils.h"
 #include "globals.h"
 
-void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
+void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
+{
+  size_t parSet = audio.getActiveParSet();
   if(devStatus.fileIndex > 0)
     devStatus.fileIndex--;
   while(devStatus.fileIndex >= 0 )
@@ -27,7 +29,7 @@ void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
         strcat(buf, pName);
         devPars.fileName.set(buf);
 
-        setFileToDisplay(buf, PARS_BAT);  //TODO @@@
+        setFileToDisplay(buf, parSet);
 
         devStatus.graph.initPlot(true);
         devStatus.waterf.initPlot(true);
@@ -46,7 +48,7 @@ void MEMP f2WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) {
 void MEMP f3WaterFunc(cMenuesystem* pThis, enKey key, cParBase* pItem) 
 {
   devStatus.fileIndex++;
-  size_t parSet = PARS_BAT; //TODO @@@
+  size_t parSet = audio.getActiveParSet();
   while(devStatus.fileIndex < devStatus.dir.size())
   {
     char ext[8];

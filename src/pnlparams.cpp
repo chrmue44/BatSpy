@@ -17,6 +17,11 @@
 
 extern cRtc rtc;
 
+bool checkTwilight(enRecAuto r)
+{
+  return (r == TWILIGHT_ALL) || (r == TWILIGHT_BATS) || (r == TWILIGHT_BIRDS);
+}
+
 void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch(devPars.lang.get()) {
@@ -63,14 +68,14 @@ void MEMP calcSunrise()
 
 void MEMP fuCalcSunrise(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
-  if(devPars.recAuto.get() == enRecAuto::TWILIGHT)
+  if(checkTwilight((enRecAuto)devPars.recAuto.get()))
     calcSunrise();
   else
   {
-    devPars.startH.set(readInt16FromEep(0x0054));   //if addr changes see also pnlparams.cpp
-    devPars.startMin.set(readInt16FromEep(0x0056)); //if addr changes see also pnlparams.cpp
-    devPars.stopH.set(readInt16FromEep(0x0058));    //if addr changes see also pnlparams.cpp
-    devPars.stopMin.set(readInt16FromEep(0x005A));  //if addr changes see also pnlparams.cpp
+    devPars.startH.set(readInt16FromEep(EEPADDR_START_H));
+    devPars.startMin.set(readInt16FromEep(EEPADDR_START_MIN));
+    devPars.stopH.set(readInt16FromEep(EEPADDR_STOP_H));
+    devPars.stopMin.set(readInt16FromEep(EEPADDR_STOP_MIN));
   }
 }
 
@@ -81,15 +86,12 @@ void MEMP fuMenuMode(cMenuesystem* pThis, enKey key, cParBase* pItem)
   f4MainItems.clear();
   switch (m)
   {
-    default:
-    case enMenueType::EXPERT:
-      initFunctionItemsExpert();
-      break;
     case enMenueType::HANDHELD:
       initFunctionItemsHandheld();
       break;
-    case enMenueType::RECORDER:
-      initFunctionItemsRecorder();
+    default:
+    case enMenueType::COMPACT:
+      initFunctionsCompact();
       break;
   }
 }
@@ -139,13 +141,13 @@ int MEMP initParRecCompact(cPanel* pan, tCoord lf, size_t parSet)
   err |= pan->addTextItem(1110,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.sampleRate[parSet],   x,      r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1325,                  1,      r   * lf,   x, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,   x,      r++ * lf,  45, lf, true);
+  err |= pan->addEnumItem(&devPars.preAmpGain[parSet],   x - 20, r++ * lf,  45, lf, true);
   err |= pan->addTextItem(1177,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.recFiltFreq[parSet],   x,      r++ * lf,  30, lf, true);
+  err |= pan->addNumItem(&devPars.recFiltFreq[parSet],   x - 20, r++ * lf,  30, lf, true);
   err |= pan->addTextItem(1175,                  1,      r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.recFiltType[parSet],  x - 20, r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1145,                  1,      r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.deadTime[parSet],      x,      r++ * lf,  20, lf, true);
+  err |= pan->addNumItem(&devPars.deadTime[parSet],      x - 20, r++ * lf,  20, lf, true);
 
   return err;
 }
@@ -155,7 +157,7 @@ int MEMP initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet)
   int x = 80;
   int err = 0;
   int r = 2;
-  err |= pan->addTextItem(1360,                  1,      r   * lf, 80, lf);
+  err |= pan->addTextItem(1359,                  1,      r   * lf, 80, lf);
   err |= pan->addEnumItem(&devPars.triggerType[parSet],  x - 30, r++ * lf, 72, lf, true);
   err |= pan->addTextItem(1141,                  1,      r   * lf, 80, lf);
   err |= pan->addNumItem(&devPars.recThreshhold[parSet], x + 15, r++ * lf, 30, lf, true);
@@ -163,6 +165,8 @@ int MEMP initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet)
   err |= pan->addNumItem(&devPars.minEventLen[parSet],   x + 15, r++ * lf, 30, lf, true);
   err |= pan->addTextItem(1176,                  1,      r   * lf, 80, lf);
   err |= pan->addNumItem(&devPars.trigFiltFreq[parSet],  x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addTextItem(1178,                  1,      r   * lf, 80, lf);
+  err |= pan->addEnumItem(&devPars.trigFiltType[parSet], x - 5, r++ * lf, 50, lf, true);
   err |= pan->addTextItem(1330,                  1,      r   * lf, 80, lf);
   err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf, 30, lf, true);
   return err;
@@ -177,8 +181,6 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
   err |= pan->addEnumItem(&devPars.menueType,     170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
   err |= pan->addTextItem(1148,                    15, 20 +  2 * lf,  80, lf);
   err |= pan->addNumItem(&devPars.backLightTime,  170, 20 +  2 * lf,  25, lf, true);
-  err |= pan->addTextItem(1325,                    15, 20 +  4 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.preAmpGain,    170, 20 +  4 * lf,  80, lf, true);
   err |= pan->addTextItem(1150,                    15, 20 +  5 * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.knobRotation,  170, 20 +  5 * lf, 100, lf, true);
   err |= pan->addTextItem(1160,                    15, 20 +  6 * lf,  80, lf);

@@ -35,6 +35,7 @@
 //#define DEBUG_LEVEL  1
 
 
+
 cMenue::cMenue(int width, int height, Adafruit_GFX* pDisplay) :
   cMenuesystem(width, height, pDisplay) {
 }
@@ -53,32 +54,6 @@ void MEMP cMenue::initPars()
   devPars.volume.init(-30,15, 3, 0);
   devPars.volume.set(-18);
 
-  devPars.preAmpGain.clear();
-#ifdef ARDUINO_TEENSY41
-  if(hasAmpRevB())
-  {
-    devPars.preAmpGain.addItem(1350);
-    devPars.preAmpGain.addItem(1351);
-    devPars.preAmpGain.addItem(1352);
-    devPars.preAmpGain.addItem(1353);
-    devPars.preAmpGain.addItem(1354);
-    devPars.preAmpGain.addItem(1355);
-    devPars.preAmpType.addItem(1322);
-  }
-  else
-  {
-    devPars.preAmpGain.addItem(1331);
-    devPars.preAmpGain.addItem(1332);
-    devPars.preAmpGain.addItem(1333);
-    devPars.preAmpGain.addItem(1334);
-    devPars.preAmpType.addItem(1321);
-    devPars.preAmpType.addItem(1322);
-  }
-#endif
-#ifdef ARDUINO_TEENSY40
-    devPars.preAmpGain.addItem(1353);
-    devPars.preAmpGain.addItem(1355);
-#endif
 
   devPars.fftLevelMin.init(0, 10000, 200, 0);
   devPars.fftLevelMax.init(0, 300000, 5000, 0);
@@ -87,6 +62,34 @@ void MEMP cMenue::initPars()
 
   for(int i = PARS_BAT; i <= PARS_BIRD; i++)
   {
+    devPars.preAmpGain[i].clear();
+#ifdef ARDUINO_TEENSY41
+    devPars.preAmpType.clear();
+    if (hasAmpRevB())
+    {
+      devPars.preAmpGain[i].addItem(1350);
+      devPars.preAmpGain[i].addItem(1351);
+      devPars.preAmpGain[i].addItem(1352);
+      devPars.preAmpGain[i].addItem(1353);
+      devPars.preAmpGain[i].addItem(1354);
+      devPars.preAmpGain[i].addItem(1355);
+      devPars.preAmpType.addItem(1322);
+    }
+    else
+    {
+      devPars.preAmpGain[i].addItem(1331);
+      devPars.preAmpGain[i].addItem(1332);
+      devPars.preAmpGain[i].addItem(1333);
+      devPars.preAmpGain[i].addItem(1334);
+      devPars.preAmpType.addItem(1321);
+      devPars.preAmpType.addItem(1322);
+    }
+#endif
+#ifdef ARDUINO_TEENSY40
+    devPars.preAmpGain[i].addItem(1353);
+    devPars.preAmpGain[i].addItem(1355);
+#endif
+
     devPars.recTime[i].init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
   
     for(int t = 1300; t <= 1308; t++)
@@ -143,6 +146,11 @@ void MEMP cMenue::initPars()
   devPars.recAuto.addItem(1401),
   devPars.recAuto.addItem(1402),
   devPars.recAuto.addItem(1403),
+  devPars.recAuto.addItem(1404),
+  devPars.recAuto.addItem(1405),
+  devPars.recAuto.addItem(1406),
+  devPars.recAuto.addItem(1407),
+  devPars.recAuto.addItem(1408),
 
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
@@ -153,11 +161,9 @@ void MEMP cMenue::initPars()
   devPars.srcPosition.addItem(1413);
 
   devPars.menueType.clear();
-  devPars.menueType.addItem(1711);
-  devPars.menueType.addItem(1712);
-  devPars.menueType.addItem(1713);
   devPars.menueType.addItem(1714);
-
+  devPars.menueType.addItem(1713);
+ 
   devPars.ShutoffVoltage.init(PAR_SHUTOFF_MIN, PAR_SHUTOFF_MAX, 0.05, 2);
 
   devPars.debugLevel.init(0, 63, 1, 0);
@@ -272,7 +278,7 @@ void MEMP cMenue::initPars()
   load();
   setPosFunc(this, enKey::NO, nullptr);
 
-  if (devPars.recAuto.get() == enRecAuto::TWILIGHT)
+  if (checkTwilight((enRecAuto) devPars.recAuto.get()))
     calcSunrise();
   devStatus.time.set();
   devStatus.date.set();
@@ -303,7 +309,6 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.srcPosition.set(static_cast<uint32_t>(enPositionMode::FIX));
   devPars.menueType.set(enMenueType::COMPACT);
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);
-  devPars.preAmpGain.set(static_cast<uint32_t>(enGainRevC::GAINC_58DB));
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
@@ -333,6 +338,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.recFiltType[PARS_BAT].set(enFiltType::HIGHPASS);             ///< filter type for recording trigger
   devPars.triggerType[PARS_BAT].set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen[PARS_BAT].set(1.0f);         ///< minimal event length for trigger
+  devPars.preAmpGain[PARS_BAT].set(static_cast<uint32_t>(enGainRevC::GAINC_58DB));
   devPars.recTime[PARS_BIRD].set(5.0f);               ///< recording time
   devPars.sampleRate[PARS_BIRD].set(enSampleRate::SR_44K);    ///< sample rate
   devPars.recThreshhold[PARS_BIRD].set(-18.0f);       ///< auto recording threshhold
@@ -343,6 +349,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.recFiltType[PARS_BIRD].set(enFiltType::LOWPASS);             ///< filter type for recording trigger
   devPars.triggerType[PARS_BIRD].set(enTrigType::LEVEL);   ///< trigger type for recording
   devPars.minEventLen[PARS_BIRD].set(10.0f);         ///< minimal event length for trigger
+  devPars.preAmpGain[PARS_BIRD].set(static_cast<uint32_t>(enGainRevC::GAINC_58DB));
 
   devPars.ShutoffVoltage.set(5.8f);
 //  devPars.voltFactor.set(1);
@@ -377,99 +384,17 @@ void MEMP cMenue::initDialogs()
   switch (devPars.menueType.get())
   {
     default:
-    case enMenueType::EXPERT:
-      initFunctionItemsExpert();
-      initExpertPanels(lf);
-      break;
-    case enMenueType::RECORDER:
-      initFunctionItemsRecorder();
-      initRecorderPanels(lf);
+    case enMenueType::COMPACT:
+      initFunctionsCompact();
+      initCompactPanels(lf);
       break;
     case enMenueType::HANDHELD:
       initFunctionItemsHandheld();
       initHandheldPanels(lf);
       break;
-    case enMenueType::COMPACT:
-      initFunctionsCompact();
-      initCompactPanels(lf);
-      break;
   }
 }
 
-int MEMP cMenue::initExpertPanels(tCoord lf)
-{
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  setFkeyPanel(fkeyMainPan);
-  int err = initFkeyPanel(getPan(fkeyMainPan), lf);
-
-  // main panel
-  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() - getHdrHeight() + 1);
-  err |= initMainPanelExpert(getPan(panGeo), lf);
-
-  // F-KEYs for waterfall panel
-  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
-
-  hdrPanWaterfall = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
-  err |= getPan(hdrPanWaterfall)->addTextItem(205, 3, 1, 35, lf);
-  err |= getPan(hdrPanWaterfall)->addStrItem(&devPars.fileName, 38, 1, 310, lf);
-
-  panWaterfall = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initWaterPan(getPan(panWaterfall), lf);
-
-  // x-t-diagram panel
-  panTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initTimePan(getPan(panTime), lf);
-
-  pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initLivePanHandheld(getPan(pnlLive), lf);
-
-  panFont = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= getPan(panFont)->addTextItem(12000, 15, 20, 200, lf);
-  err |= getPan(panFont)->addTextItem(12001, 15, 20 + lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12002, 15, 20 + 2 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12003, 15, 20 + 3 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12004, 15, 20 + 4 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12005, 15, 20 + 5 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12006, 15, 20 + 6 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12007, 15, 20 + 7 * lf, 200, lf);
-  err |= getPan(panFont)->addTextItem(12010, 15, 20 + 8 * lf, 200, 2 * lf, false, NULL, 2);
-
-  hdrBatInfo = createPanel(PNL_HEADER, 0, 0, DISP_WIDTH_TFT, getHdrHeight());
-  err |= getPan(hdrBatInfo)->addTextItem(1500, 3, 1, 80, lf);
-  err |= getPan(hdrBatInfo)->addStrItem(&devStatus.bats.nameLat, 95, 1, 225, lf);
-
-
-  panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initInfoPanExpert(getPan(panInfo), lf);
-
-  // parameter panel
-  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initParPan(getPan(panParams), lf);
-
-  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initParRec(getPan(panParRec), lf);
-
-  panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initPositionPan(getPan(panPosition), lf);
-
-  panBats = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initBatPan(getPan(panBats), lf);
-
-  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initDateTimePan(getPan(panDateTime), lf);
-
-  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
-
-  panFileBrowser = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initFileBrowserPan(getPan(panFileBrowser), lf);
-  initFileBrowser(getPan(panFileBrowser), "/");
-
-  setMainPanel(panGeo);
-
-  return err;
-}
 
 int MEMP cMenue::initHandheldPanels(tCoord lf)
 {
@@ -511,8 +436,8 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
   panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initParPan(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initParRec(getPan(panParRec), lf);
+  panParRecNight = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
+  err |= initParRec(getPan(panParRecNight), lf);
 
   panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
   err |= initPositionPan(getPan(panPosition), lf);
@@ -538,7 +463,6 @@ int MEMP cMenue::initHandheldPanels(tCoord lf)
 int MEMP cMenue::initCompactPanels(tCoord lf)
 {
   int err = 0;
-  size_t parSet = PARS_BAT; //TODO @@@
   panInfo = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initInfoPanCompact(getPan(panInfo), lf);
 
@@ -552,16 +476,23 @@ int MEMP cMenue::initCompactPanels(tCoord lf)
   setMainPanel(panGeo);
   setFkeyPanel(fkeyMainPan);
   enableEditPosition(this, devPars.srcPosition.get() == static_cast<uint32_t>(enPositionMode::FIX));
-  enableEditTimes(this, (devPars.recAuto.get() != enRecAuto::OFF) && (devPars.recAuto.get() != enRecAuto::ON));
+  enableEditTimes(this, (devPars.recAuto.get() != enRecAuto::OFF) && (devPars.recAuto.get() != enRecAuto::ON_BIRD) && 
+                  (devPars.recAuto.get() != enRecAuto::ON_BAT));
 
   panParams = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initParPanCompact(getPan(panParams), lf);
 
-  panParRec = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
-  err |= initParRecCompact(getPan(panParRec), lf, parSet);
+  panParRecNight = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
+  err |= initParRecCompact(getPan(panParRecNight), lf, PARS_BAT);
 
-  panParTrig = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
-  err |= initParTriggerCompact(getPan(panParTrig), lf, parSet);
+  panParTrigNight = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
+  err |= initParTriggerCompact(getPan(panParTrigNight), lf, PARS_BAT);
+
+  panParRecDay = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
+  err |= initParRecCompact(getPan(panParRecDay), lf, PARS_BIRD);
+
+  panParTrigDay = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
+  err |= initParTriggerCompact(getPan(panParTrigDay), lf, PARS_BIRD);
 
   panDateTime = createPanel(PNL_MAIN, 0, getHdrHeight(), getWidth(), getHeight() - getFkeypanHeight() - getHdrHeight());
   err |= initDateTimePanCompact(getPan(panDateTime), lf);
@@ -569,50 +500,6 @@ int MEMP cMenue::initCompactPanels(tCoord lf)
   return err;
 }
 
-int MEMP cMenue::initRecorderPanels(tCoord lf)
-{
-  fkeyMainPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  setFkeyPanel(fkeyMainPan);
-  int err = initFkeyPanel(getPan(fkeyMainPan), lf);
-
-  // main panel
-  panGeo = createPanel(PNL_MAIN, 0, getHdrHeight(), DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() - getHdrHeight() + 1);
-  err |= initMainPanelRecorder(getPan(panGeo), lf);
-
-  // F-KEYs for waterfall panel
-  fkeyWaterPan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  err |= initFkeysWaterPan(getPan(fkeyWaterPan), lf);
-
-  pnlLive = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initLivePanRecorder(getPan(pnlLive), lf);
-
-  panInfo = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initInfoPanRecorder(getPan(panInfo), lf);
-
-  // parameter panel
-  panParams = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initParPan(getPan(panParams), lf);
-
-  panParRec = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initParRec(getPan(panParRec), lf);
-
-  panPosition = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initPositionPan(getPan(panPosition), lf);
-
-  panDateTime = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initDateTimePan(getPan(panDateTime), lf);
-
-  fkeyFilePan = createPanel(PNL_FKEYS, 0, 226, DISP_WIDTH_TFT, getFkeypanHeight());
-  err |= initFkeyFilePanel(getPan(fkeyFilePan), lf);
-
-  panFileBrowser = createPanel(PNL_MAIN, 0, getFkeypanHeight() + 1, DISP_WIDTH_TFT, DISP_HEIGHT_TFT - getFkeypanHeight() * 2 - 1);
-  err |= initFileBrowserPan(getPan(panFileBrowser), lf);
-  initFileBrowser(getPan(panFileBrowser), "/");
-
-  setMainPanel(panGeo);
-
-  return err;
-}
 
 void cMenue::load()
 {
@@ -632,7 +519,7 @@ void MEMP cMenue::printPars(size_t parSet)
   Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate[parSet].getActText());
   Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger.get());
   Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold[parSet].get() * 100);
-  Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain.getActText());
+  Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain[parSet].getActText());
 }
 
 

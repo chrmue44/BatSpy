@@ -50,6 +50,7 @@
         "cstdbool": "cpp",
         "typeinfo": "cpp",
         "charconv": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "memory": "cpp"
     }
 }
