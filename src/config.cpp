@@ -54,7 +54,7 @@ void initPins()
   pinMode(PIN_ROT_LEFT_S, INPUT_PULLUP);
  // pinMode(SPIN_LED_DISP, OUTPUT);
  // pinMode(SPIN_LED_2, OUTPUT); 
-
+  
   Wire.begin();
   Wire.setClock(400000);
   ioex.attach(Wire);
@@ -414,7 +414,7 @@ void setAnalogPower(bool on)
 #ifdef ARDUINO_TEENSY40
   digWrite(SPIN_PWR_ANA, on ? 1 : 0);
   //pinMode(PIN_EN_MIC, OUTPUT);
-  digWrite(PIN_EN_MIC, on ? 1 : 0);
+//  digWrite(PIN_EN_MIC, on ? 1 : 0);
 #endif
 }
 

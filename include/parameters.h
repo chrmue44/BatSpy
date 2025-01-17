@@ -54,7 +54,8 @@ struct stStatus
   grafLive(enGraphMode::LIVE_FFT)
   {  
   }
-
+  cParStr micId = "unknown";      ///< Microphone ID
+  cParStr micType = "";           ///< Microphone Type
   cParEnum opMode = enOpMode::HEAR_HET; ///< display mode
   cParNum recCount = 0;           ///< nr of recordings
   cParGeoPos geoPos;              ///< actual geographic position

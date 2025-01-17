@@ -996,6 +996,27 @@ void MEMF cTerminal::getValEnum(const char* buf, cParEnum& par, char* reply, siz
     snprintf(reply, replySize, "%i", (int)par.get());
 }
 
+#define UNKNOWN_PIN 0xFF
+
+uint8_t getPinMode(uint8_t pin)
+{
+#ifndef SIMU_DISPLAY
+  if (pin >= CORE_NUM_DIGITAL)
+   return 0xFF;
+	const struct digital_pin_bitband_and_config_table_struct *p;
+
+  p = digital_pin_to_info_PGM + pin;
+	if	(*(p->reg + 1) & p->mask)
+    return OUTPUT;
+  else
+    return INPUT;
+#else
+  return INPUT;
+#endif
+}
+
+
+
 void MEMF cTerminal::parseDebugCmd(const char* buf)
 {
   int ioNr;
@@ -1027,6 +1048,19 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
     case 'l':
       ioNr = atoi(&buf[1]);
       sysLog.setLogLevel(ioNr);
+      break;
+
+    case 'm':
+      {
+        ioNr = atoi(&buf[1]);
+        uint8_t mode = getPinMode(ioNr);
+        if(mode == INPUT)
+           Serial.printf("digital port %i mode: INPUT\n", ioNr);
+        else if (mode == OUTPUT)
+           Serial.printf("digital port %i mode: OUTPUT\n", ioNr);
+        else
+           Serial.printf("digital port %i mode: ?\n", ioNr);
+      }
       break;
 
     case 'o':

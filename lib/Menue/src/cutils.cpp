@@ -140,10 +140,10 @@ int cUtils::replaceUTF8withInternalCoding(const char* str, char* result, size_t 
   retVal = replaceAll(bufSrc, O_UML_SMALL, CH_OEs, bufRes, sizeof(bufRes));
   if(retVal == 0)
     strncpy(bufSrc, bufRes, sizeof(bufSrc));
-  retVal = replaceAll(bufSrc, U_UML_SMALL, CH_UEs, result, resultSize);
+  retVal = replaceAll(bufSrc, U_UML_SMALL, CH_UEs, bufRes, sizeof(bufRes));
   if(retVal == 0)
     strncpy(bufSrc, bufRes, sizeof(bufSrc));
-  retVal = replaceAll(str, DEG_SIGN, CH_DEG, result, resultSize);
+  retVal = replaceAll(bufSrc, DEG_SIGN, CH_DEG, bufRes, sizeof(bufRes));
   if(retVal == 0)
     strncpy(bufSrc, bufRes, sizeof(bufSrc));
   strncpy(result, bufSrc, resultSize);

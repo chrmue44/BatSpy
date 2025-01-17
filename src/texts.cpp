@@ -61,6 +61,7 @@ struct stTxtList PROGMEM Texts[] =
   {   108, "Ausschalten..."            ,"Power Off..."},
   {   110, "Fled."                     ,"Bat"},
   {   112, "Vög."                      ,"Bird"},
+  {   130, "Mikrofon"                  ,"Microphone"},
   // {   150, "Übersicht"                 ,"Overview"},
   {   190, "Anzahl Satelliten"         ,"Number of Satellites"},
   {   191, "GPS Log an"                ,"GPS Log on"},

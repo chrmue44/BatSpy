@@ -462,28 +462,40 @@ void MEMP setVisibilityRecCount(cMenuesystem* pThis)
 
 const char* PROGMEM MSG_REC_MODE_ON = "set recording mode ON";
 const char* PROGMEM MSG_REC_MODE_OFF = "set recording mode OFF";
+const char* PROGMEM MSG_REC_MODE_TIME = "set recording mode timed";
 
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
 
   setVisibilityRecCount(pThis);
   calcSunrise();
-  if (devPars.recAuto.get() == enRecAuto::ON_BIRD)
+  if ((devPars.recAuto.get() == enRecAuto::ON_BIRD) ||
+      (devPars.recAuto.get() == enRecAuto::ON_BAT) 
+    )
   {
-    audio.openProject(true);
+//    audio.openProject(true);
     enableEditTimes(pThis, false);
     if (devPars.checkDebugLevel(DBG_COMMANDS))
       command.addToQueue(enCmd::LOG, (void*)MSG_REC_MODE_ON);
   }
   else if (devPars.recAuto.get() == enRecAuto::OFF)
   {
-    audio.closeProject();
+//    audio.closeProject();
     enableEditTimes(pThis, false);
     if (devPars.checkDebugLevel(DBG_COMMANDS))
       command.addToQueue(enCmd::LOG, (void*)MSG_REC_MODE_OFF);
   }
-  else
+  else if ((devPars.recAuto.get() == enRecAuto::TIME_ALL) ||
+    (devPars.recAuto.get() == enRecAuto::TIME_BATS) ||
+    (devPars.recAuto.get() == enRecAuto::TIME_BIRDS))
+  {
     enableEditTimes(pThis, true);
+    if (devPars.checkDebugLevel(DBG_COMMANDS))
+      command.addToQueue(enCmd::LOG, (void*)MSG_REC_MODE_TIME);
+  }
+  else
+    enableEditTimes(pThis, false);
+
 }
 
 

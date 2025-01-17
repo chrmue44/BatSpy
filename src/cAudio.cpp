@@ -303,10 +303,9 @@ void cAudio::setRecFilter(float freq, enFiltType type, size_t paramSet)
   }
 }
 
-bool cAudio::isSetupNeeded()
+bool cAudio::isSetupNeeded(size_t parSet)
 {
   bool retVal = false;
-  size_t parSet = getActiveParSet();
   if (m_old.sampleRate != m_sampleRate)
   {
     DPRINTF2("new sample rate %i, old %i\n", m_sampleRate, m_old.sampleRate);
@@ -352,7 +351,7 @@ void cAudio::setup()
   #ifdef ARDUINO_TEENSY40
   setPreAmpGain((enGainRevC)devPars.preAmpGain[parSet].get());
   #endif
-  if (isSetupNeeded())
+  if (isSetupNeeded(parSet))
   {
     float vol = pow(10, (devPars.volume.get() / 10));
     if (vol > 32)
@@ -402,7 +401,7 @@ void cAudio::setup()
     delay(100);
     AudioInterrupts();
     delay(20);
-
+    sysLog.logf("param set %s, sampling rate: %s\n", parSet == PARS_BAT ? "Bats" : "Birds", devPars.sampleRate[parSet].getActText());
     DPRINTLN4("\n[***** AUDIO SETTINGS ******]\n");
     DPRINTF4("       op mode: %i %s\n", devStatus.opMode.get(), devStatus.opMode.getActText());
     DPRINTF4("   sample rate: %s  index: %i   value: %i Hz\n", devPars.sampleRate[parSet].getActText(), devPars.sampleRate[parSet].get(), m_sampleRate); 
@@ -509,9 +508,9 @@ enRecStatus cAudio::isRecordingActive()
   {
     if (m_prj.getIsOpen())
       m_prj.closePrjFile();
+    m_recStatus = retVal;
     if (retVal != enRecStatus::REC_OFF)
       setup();
-    m_recStatus = retVal;
   }
   
   return retVal;

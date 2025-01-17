@@ -28,8 +28,6 @@ int MEMP initInfoPanExpert(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.peakVal,     145,  30 +  3 * lf,  35, lf, false);
   err |= pan->addTextItem(302,                   185,  30 +  3 * lf,  80, lf);
   err |= pan->addBtnItem(309,                    145,  30 +  5 * lf,  90, lf + 3, btnAudioFunc);
-  err |= pan->addTextItem(430,                     3,  30 +  7 * lf,  80, lf);
-  err |= pan->addStrItem(&devStatus.version,     145,  30 +  7 * lf,  80, lf);
   err |= pan->addTextItem(435,                     3,  30 +  8 * lf,  80, lf);
   err |= pan->addStrItem(&devStatus.hwVersion,    145, 30 +  8 * lf,  80, lf);
   err |= pan->addTextItem(440,                     3,  30 +  9 * lf,  80, lf);
@@ -48,8 +46,9 @@ int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
   int r = 2;
   int x = 80;
   int err = 0;
-  err |= pan->addTextItem(430,                   1,      r++ * lf - 7,  120, lf);
-  err |= pan->addStrItem(&devStatus.version,     1,      r++ * lf - 7,  x, lf);
+  err |= pan->addTextItem(130,                   1,      r   * lf - 7,  120, lf);
+  err |= pan->addStrItem(&devStatus.micId,      65,      r++ * lf - 7, 63, lf);
+  err |= pan->addStrItem(&devStatus.micType,     1,      r++ * lf - 7,  5, lf);
   err |= pan->addTextItem(415,                   1,      r   * lf,  x, lf);
   err |= pan->addNumItem(&devStatus.peakVal,     x,      r   * lf, 20, lf, false);
   err |= pan->addTextItem(302,                   x + 30, r++ * lf, 15, lf);

@@ -124,7 +124,9 @@ void setup()
   logStatus();
   digWrite(SPIN_LED_2, 0);
   micInfo.read();
-  Serial.printf("Microphone: %s\n",micInfo.getId());
+  devStatus.micId.set(micInfo.getId());
+  devStatus.micType.set(micInfo.getType());
+  // Serial.printf("Microphone: %s\n",micInfo.getId());
 }
 
 

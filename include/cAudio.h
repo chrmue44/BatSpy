@@ -145,7 +145,7 @@ private:
   void setMixOscFrequency(float freq);
   void setTrigFilter(float freq, enFiltType type, size_t paramSet);
   void setRecFilter(float freq, enFiltType type, size_t paramSet);
-  bool isSetupNeeded();
+  bool isSetupNeeded(size_t parSet);
   void setAudioConnections(int i) {}
   void calcLiveFft();
   void addLiveMsPerDiv(int waitTick, int sampleRate);
