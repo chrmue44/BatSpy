@@ -22,7 +22,7 @@
 #include "config.h"
 #include "cproject.h"
 #include "cTrigger.h"
-
+#include "cdownsample.h"
 
 #define EXTFFT_H  128
 #define EXTFFT_W  256
@@ -79,8 +79,9 @@ private:
   AudioEffectDelay         m_delay;       // delay for pre trigger
   cCassette                m_cass;        // player/recorder
   AudioAnalyzePeak         m_peak;
-  AudioAnalyzeFFT1024      m_fft;       // FFT analyzer
-  AudioFilterBiquad        m_filtDisp;  // high pass filter for live display
+  AudioAnalyzeFFT1024      m_fft;         // FFT analyzer
+  AudioFilterBiquad        m_filtDisp;    // high pass filter for live display
+  cDownSample              m_downSample;  // downsampler with FIR filter for bird recording
   unsigned char            m_extFftBuf[EXTFFT_H*EXTFFT_W];  // fft buffer for external display
   unsigned char*           m_extFftBufPtr = m_extFftBuf;
 

@@ -16,6 +16,21 @@
 #include <utility/imxrt_hw.h>
 #endif
 
+// parameter for FIR-filter for downsampling
+//http://t-filter.engineerjs.com
+// calculated for 384 kS
+// passband 0.. 20 kHZ, 1 dB ripple
+// stopband 190kHz, -80 dB
+
+static int16_t filter_taps[] = 
+{
+  1319,
+  8372,
+  14103,
+  8372,
+  1319
+};
+
 // SRtext and position for the FFT spectrum display scale
 const stSrDesc SR[] =
     { //SR_CODE   SR_FREQ, MUL_Fs, DIV_Fs, FFT_N
@@ -92,6 +107,7 @@ void cAudio::init()
   AudioStream::initialize_memory(data, 600);
   m_old.oscFrequency = 999;
   m_filtDisp.setHighpass(0, 50);
+  m_downSample.setParams(sizeof(filter_taps) / sizeof(filter_taps[0]), &filter_taps[0], 8);
 }
 
 void cAudio::enable(bool on)
