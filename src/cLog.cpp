@@ -17,10 +17,11 @@
 
 
 
-MEMF cLog::cLog(const char* name)
+MEMF cLog::cLog(const char* dir, const char* name)
 :m_create(false)
 {
   strncpy(m_name, name, sizeof(m_name) - 1);
+  strncpy(m_dir, dir, sizeof(m_dir) - 1);
 }
 
 void MEMF cLog::timeStamp()
@@ -37,8 +38,8 @@ void cLog::create()
     enSdRes ret = sd.chdir("/log");
     if(ret != enSdRes::OK) 
       ret = sd.mkDir("/log");
-    snprintf(m_fileName, sizeof(m_fileName),"/log/%s_%02i%02i%02i-%02i%02i.log", 
-             m_name, year()%100, month(),day(),hour(), minute());
+    snprintf(m_fileName, sizeof(m_fileName),"%s/%s_%02i%02i%02i-%02i%02i.log", 
+             m_dir,m_name, year()%100, month(),day(),hour(), minute());
     DPRINTF1("created file name %s\n", m_fileName);
     enSdRes res = sd.openFile(m_fileName, m_fd, enMode::WRITE);
     if(res == enSdRes::OK)

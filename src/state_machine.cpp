@@ -20,7 +20,7 @@ void handleIdleState()
   {
     if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
     {
-      if (recOn)
+      if (recOn != enRecStatus::REC_OFF)
         audio.setRecStatus(enPlayStatus::STOP);
       else
         devStatus.recStatus.set("\xF1");

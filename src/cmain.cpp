@@ -160,14 +160,12 @@ void handleDisplayAndWheel(bool oneSec)
       {
         setBackLight(true);
         menue.resetTimer();
-//        command.addToQueue(enCmd::BACKLIGHT_ON);
       }
       else
       {
         menue.handleKey(key);
         audio.setup();
         audio.updateCassMode();
-//        tft.setRotation(devPars.dispOrient.get() == 0 ? 3 : 1);
         pDisplay->setRotation(devPars.dispOrient.get() == 0 ? 0 : 2);
         wheels.setDirection(devPars.knobRotation.get() == 0);
       }

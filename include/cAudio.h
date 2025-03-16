@@ -139,6 +139,8 @@ private:
   enRecStatus isRecordingActive();
   size_t getActiveParSet() { return (m_recStatus == enRecStatus::REC_BIRDS) ? PARS_BIRD : PARS_BAT; }
   void setRecStatus(enPlayStatus s);
+  void openTrigLog(const char* dir);
+
 #ifdef SIMU_DISPLAY
   DMAChannel* getDma() { return m_audioIn.getDma(); }
 #endif

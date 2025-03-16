@@ -16,9 +16,9 @@
 class cLog
 {
  public:
-  cLog(const char* name);
+  cLog(const char* dir, const char* name);
   void log(const char* msg, bool keepOpen = false);
-
+  void setDirectory(const char* dir) {strncpy(m_dir, dir, sizeof(m_dir));}
   void logf(const char* fmt, ...);
   void close();
   void setLogLevel(int level) { m_logLevel = level; }
@@ -39,6 +39,7 @@ class cLog
   char m_fileName[40];
   char m_timeStamp[20];
   char m_name[8];
+  char m_dir[30];
   int m_logLevel = 0;
 };
 #endif //#ifndef _CLOG_H_

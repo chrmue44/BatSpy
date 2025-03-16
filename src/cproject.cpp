@@ -54,13 +54,15 @@ void MEMF cProject::createPrjFile(const char* pNotes, bool night)
   cSdCard::inst().mkDir("/prj");
   cSdCard::inst().mkDir(buf);
   cSdCard::inst().chdir(buf);
+  if(devPars.checkDebugLevel(DBG_TRIGGER))
+    audio.openTrigLog(cSdCard::inst().getActDir());
   cSdCard::inst().mkDir("Records");
   cSdCard::inst().chdir("/");
 
   strcat(buf, "/");
   strcat(buf, m_prjName);
   strcat(buf, ".batspy");
-  //trigLog.log("fileName,count,ampl,freq,avg, avgPeak,bandwidth");
+  
   DPRINTF4("open project %s \n", buf);
   if(!cSdCard::inst().fileExists(buf))
   {
@@ -156,7 +158,8 @@ void MEMF cProject::closePrjFile()
 {
   m_recCount = 0;
   m_isOpen = false;
-    //trigLog.close();
+  sysLog.log("close project");
+  trigLog.close();
 }
 
 void MEMF cProject::reset()

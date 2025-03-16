@@ -80,6 +80,7 @@ m_cMu2Or(m_mult1, 0, m_audioOut, 1),
 //m_cMi2De(m_audioIn, 0, m_delay, 0),
 m_cMi2De(m_recFilter, 0, m_delay, 0),
 m_cDe2Ca(m_delay, 7, m_cass.getRecorder(), 0),
+
 m_cMi2Hp(m_audioIn, m_filtDisp),
 m_cHp2Ft(m_filtDisp, m_fft),
 m_trigger(m_fftInfo, m_peak)
@@ -294,6 +295,11 @@ void cAudio::setTrigFilter(float freq, enFiltType type, size_t paramSet)
         break;
     }
   }
+}
+
+void cAudio::openTrigLog(const char* dir)
+{
+  m_trigger.initTrigLog(dir);
 }
 
 void cAudio::setRecFilter(float freq, enFiltType type, size_t paramSet)
@@ -511,8 +517,8 @@ enRecStatus cAudio::isRecordingActive()
     }
     else
     {
-      night = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) && 
-               (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+      night = (devStatus.time.getMinOfDay() >= (devPars.stopH.get() * 60 + devPars.stopMin.get())) && 
+               (devStatus.time.getMinOfDay() <= (devPars.startH.get() * 60 + devPars.startMin.get()));
     }
     if (night && checkBats((enRecAuto)devPars.recAuto.get()))
       retVal = enRecStatus::REC_BATS;
@@ -522,6 +528,7 @@ enRecStatus cAudio::isRecordingActive()
 
   if(retVal != m_recStatus)
   {
+    sysLog.log("switch mode");
     if (m_prj.getIsOpen())
       m_prj.closePrjFile();
     m_recStatus = retVal;
@@ -694,7 +701,8 @@ void cAudio::operate(bool liveFft)
           devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::TIMEOUT));
           devStatus.recStatus.set("T");
           m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), parSet);
-//        m_trigger.logTrigInfo(m_prj.getWavFileName());
+          if(devPars.checkDebugLevel(DBG_TRIGGER))
+            m_trigger.logTrigInfo(m_prj.getWavFileName());
           DPRINTLN4("start timeout");
           break;
 

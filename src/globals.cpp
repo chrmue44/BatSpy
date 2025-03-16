@@ -9,9 +9,9 @@
 #include "globals.h"
 
 cWheels wheels(PIN_ROT_LEFT_A, PIN_ROT_LEFT_B, PIN_ROT_LEFT_S);
-cLog sysLog("sys");
-cLog gpsLog("gps");
-//cLog trigLog("trig");
+cLog sysLog("/log","sys");
+cLog gpsLog("/log","gps");
+cLog trigLog("/log","trig");
 cGps gps;
 Adafruit_GFX* pDisplay = nullptr;
 cAudio audio;  // audio control

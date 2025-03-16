@@ -115,12 +115,18 @@ void cTrigger::checkRecordingTrigger(float fFilter, size_t parSet)
   }
 }
 
+void cTrigger::initTrigLog(const char* dir)
+{
+  trigLog.close();
+  trigLog.setDirectory(dir);
+  trigLog.log("fileName, countRec, peakVal, threshold, maxAmpl, maxFreq,avg, avgPeak, bandwidth");
+}
+
 void cTrigger::logTrigInfo(const char* fileName)
 {
-/* trigLog.logf(",%s, %i, %i, %.1f, %.1f, %.1f, %.1f\n", 
-                fileName, m_countRec, m_trigInfo.lastMaxAmpl,
+   trigLog.logf(",%s,  %i, %.2f, %.2f, %.1f, %.1f, %.1f, %.1f\n", 
+                fileName, m_countRec, m_peakVal, m_recThresh, m_trigInfo.lastMaxAmpl,
                 m_trigInfo.lastMaxFreq, m_trigInfo.lastAvg, m_trigInfo.lastAvgPeak, m_trigInfo.bw);
-*/
 }
 
 void cTrigger::checkLiveTrigger(float fFilter)

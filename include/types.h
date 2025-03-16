@@ -204,7 +204,7 @@ enum class enCmd
   BACKLIGHT_OFF,
   BACKLIGHT_ON,
   CLOSE_PROJECT,
-  POWER_OFF
+  POWER_OFF,
 };
 
 enum class enGpsBaudRate

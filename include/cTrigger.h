@@ -60,6 +60,7 @@ class cTrigger
   float lastPeakVal() { return m_peakVal;}
   void setThreshold(float level) { m_recThresh = level; }
   void setMinEventLength(float len, uint32_t sampleRate);
+  void initTrigLog(const char* dir);
   void logTrigInfo(const char* fileName);
 
  private:

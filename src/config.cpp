@@ -593,7 +593,7 @@ void powerOff()
   blink(3);
   sysLog.close();
   gpsLog.close();
-  //trigLog.close();
+  trigLog.close();
   cSdCard::inst().unmount();
   delay(300);
   blink(3);
