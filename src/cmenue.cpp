@@ -134,7 +134,8 @@ void MEMP cMenue::initPars()
   devPars.dispOrient.addItem(1161);
   devPars.dispOrient.addItem(1162);
 
-  devPars.preTrigger.init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, 1.0, 0);
+  devPars.preTrigger[PARS_BAT].init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX_BAT, PAR_PRETRIG_STEP_BAT, 0);
+  devPars.preTrigger[PARS_BIRD].init(PAR_PRETRIG_MIN, PAR_PRETRIG_MAX_BIRD, PAR_PRETRIG_STEP_BIRD, 0);
   devPars.startH.init(0, 23, 1, 0, 2);
   devPars.startMin.init(0, 59, 1, 0, 2);
   devPars.stopH.init(0, 23, 1, 0, 2);
@@ -313,7 +314,8 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
   devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
-  devPars.preTrigger.set(20.0f);           ///< pre trigger time [ms]
+  devPars.preTrigger[PARS_BAT].set(20.0f);           ///< pre trigger time [ms]
+  devPars.preTrigger[PARS_BIRD].set(8*20.0f);           ///< pre trigger time [ms]
   devPars.displayMode.set(static_cast<uint32_t>(enDispMode::NORMAL));
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.lang.set(enLang::LANG_GER);        ///< display language
@@ -517,7 +519,7 @@ void MEMP cMenue::printPars(size_t parSet)
   Serial.printf("mixer frequency   [kHz]: %.0f\n", devPars.mixFreq.get());
   Serial.printf("recording time      [s]: %.1f\n", devPars.recTime[parSet].get());
   Serial.printf("sampling rate     [kHz]: %s\n", devPars.sampleRate[parSet].getActText());
-  Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger.get());
+  Serial.printf("pre trigger        [ms]: %.0f\n", devPars.preTrigger[parSet].get());
   Serial.printf("trigger level       [%]: %.3f\n", devPars.recThreshhold[parSet].get() * 100);
   Serial.printf("pre amp gain           : %s\n", devPars.preAmpGain[parSet].getActText());
 }

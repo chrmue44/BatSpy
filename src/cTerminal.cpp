@@ -922,9 +922,12 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, size_t parSet, 
       break;
     case 'p':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_PRETRIG_MIN, PAR_PRETRIG_MAX, devPars.preTrigger);
+      {
+        float maxVal = parSet == PARS_BAT ? PAR_PRETRIG_MAX_BAT : PAR_PRETRIG_MAX_BIRD;
+        replyOk = setValFloat(buf + 1, PAR_PRETRIG_MIN, maxVal, devPars.preTrigger[parSet]);
+      }
       else
-        getValFloat(buf + 1, devPars.preTrigger, reply, replySize);
+        getValFloat(buf + 1, devPars.preTrigger[parSet], reply, replySize);
       break;
   }
   if (!write && (reply[0] != '?') && (replySize >= 2))

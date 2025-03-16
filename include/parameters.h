@@ -174,10 +174,13 @@ struct stParams
 #define PAR_GAIN_MAX   1
   cParEnum dispOrient = enDispOrient::RIGHT_HAND; ///< display orientation
   cParEnum knobRotation = enKnobRot::CLOCKWISE;   ///< knob rotation
-  cParNum preTrigger = 20;           ///< pre trigger time [ms]
+  cParNum preTrigger[2];           ///< pre trigger time [ms]
 #define PAR_PRETRIG_MIN 0.0
-#define PAR_PRETRIG_MAX 150.0
-  cParNum recFiltFreq[2];          ///< hight pass freq for recording trigger
+#define PAR_PRETRIG_MAX_BAT 150.0
+#define PAR_PRETRIG_STEP_BAT 1.0
+#define PAR_PRETRIG_MAX_BIRD 1200.0
+#define PAR_PRETRIG_STEP_BIRD 10.0
+    cParNum recFiltFreq[2];          ///< hight pass freq for recording trigger
   cParNum trigFiltFreq[2]; 
 #define PAR_TRIGFILTFREQ_MIN   1.0f
 #define PAR_TRIGFILTFREQ_MAX  70.0f

@@ -40,14 +40,14 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_MENU_TYPE         0x0012   // devPars.menueType,     INT16
 #define EEPADDR_REC_TIME_BAT      0x0014   // devPars.recTime,       float
 #define EEPADDR_SAMPLE_RATE_BAT   0x0018   // devPars.sampleRate     INT16
-#define EEPADDR_PRE_AMP_GAIN_BAT      0x001A   // devPars.preAmpGain,    INT16
+#define EEPADDR_PRE_AMP_GAIN_BAT  0x001A   // devPars.preAmpGain,    INT16
 #define EEPADDR_TRESHHOLD         0x001C   // devPars.threshHold,    float
 #define EEPADDR_FFT_LEV_MIN       0x0020   // devPars.fftLevelMin,   float
 #define EEPADDR_FFT_LEV_MAX       0x0024   // devPars.fftLevelMax,   float
 #define EEPADDR_REC_TRESH_BAT     0x002C   // devPars.recThreshhold, float
 #define EEPADDR_KNOB_ROT          0x0030   // devPars.knobRotation,  INT16
 #define EEPADDR_DISP_ORIENT       0x0032   // devPars.dispOrient,    INT16
-#define EEPADDR_PRE_TRIGGER       0x0034   // devPars.preTrigger,    float
+#define EEPADDR_PRE_TRIGGER_BAT   0x0034   // devPars.preTrigger,    float
 #define EEPADDR_DISP_MODE         0x0038   // devPars.displayMode,   INT16
 #define EEPADDR_DEAD_TIME_BAT     0x003A   // devPars.deadTime,      float
 #define EEPADDR_BACKLIGHT         0x003E   // devPars.backLightTime  float
@@ -84,8 +84,9 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_TRIG_TYPE_BIRD    0x009A   // devPars.triggerType   INT16
 #define EEPADDR_RFILT_TYPE_BIRD   0x009C   // devPars.recFiltType   INT16
 #define EEPADDR_PRE_AMP_GAIN_BIRD 0x009E   // devPars.preAmpGain    INT16
+#define EEPADDR_PRE_TRIGGER_BIRD  0x00A0   // devPars.preTrigger,    float
 
-#define EEPADDR_FIRSTFREE     0x00A0
+#define EEPADDR_FIRSTFREE     0x00A4
 
 #define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
 #define EEP_SERIAL_SIZE       12       // size of the string

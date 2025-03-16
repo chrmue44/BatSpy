@@ -115,7 +115,7 @@ int MEMP initParRec(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(1175,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addEnumItem(&devPars.trigFiltType[PARS_BAT],190, 20 +  r++ * lf,  70, lf, true);
   err |= pan->addTextItem(1330,                  15, 20 +  r   * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,   190, 20 +  r++ * lf,  80, lf, true);
+  err |= pan->addNumItem(&devPars.preTrigger[PARS_BAT],   190, 20 +  r++ * lf,  80, lf, true);
   err |= pan->addTextItem(1144,                  15, 20 +  r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.deadTime[PARS_BAT],     190, 20 +  r++ * lf,  20, lf, true);
   err |= pan->addTextItem(25,                    15, 20 +  r   * lf,  80, lf);
@@ -168,7 +168,7 @@ int MEMP initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet)
   err |= pan->addTextItem(1178,                  1,      r   * lf, 80, lf);
   err |= pan->addEnumItem(&devPars.trigFiltType[parSet], x - 5, r++ * lf, 50, lf, true);
   err |= pan->addTextItem(1330,                  1,      r   * lf, 80, lf);
-  err |= pan->addNumItem(&devPars.preTrigger,    x + 15, r++ * lf, 30, lf, true);
+  err |= pan->addNumItem(&devPars.preTrigger[parSet],    x + 15, r++ * lf, 30, lf, true);
   return err;
 }
 

@@ -414,7 +414,7 @@ void cAudio::setup()
     m_old.opMode = (enOpMode)devStatus.opMode.get();
     m_trigger.setThreshold(pow(10, (devPars.recThreshhold[parSet].get() / 10.0)));
     m_trigger.setMinEventLength(devPars.minEventLen[parSet].get(), m_sampleRate);
-    m_delay.delay(7, devPars.preTrigger.get() *  m_sampleRate / 44100);
+    m_delay.delay(7, devPars.preTrigger[parSet].get() *  m_sampleRate / 44100);
     setTrigFilter(devPars.trigFiltFreq[parSet].get() * 1000.0, (enFiltType)devPars.trigFiltType[parSet].get(), parSet);
     setRecFilter(devPars.recFiltFreq[parSet].get() * 1000.0, (enFiltType)devPars.recFiltType[parSet].get(), parSet);
     devStatus.liveMsPerDiv.clear();
