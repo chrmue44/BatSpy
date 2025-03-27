@@ -95,8 +95,6 @@ void MEMP cMenue::initPars()
     for(int t = 1300; t <= 1308; t++)
       devPars.sampleRate[i].addItem(t);
 
-    devPars.trigFiltFreq[i].init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
-    devPars.recFiltFreq[i].init(0, PAR_TRIGFILTFREQ_MAX, 1.0, 0);
     devPars.trigFiltType[i].clear();
     devPars.trigFiltType[i].addItem(1171);
     devPars.trigFiltType[i].addItem(1172);
@@ -123,6 +121,10 @@ void MEMP cMenue::initPars()
 
   devPars.sampleRate[PARS_BAT].set(SR_312K);
   devPars.sampleRate[PARS_BIRD].set(SR_44K);
+  devPars.trigFiltFreq[PARS_BAT].init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX_BAT, 1.0, 0);
+  devPars.recFiltFreq[PARS_BAT].init(0, PAR_TRIGFILTFREQ_MAX_BAT, 1.0, 0);
+  devPars.trigFiltFreq[PARS_BIRD].init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX_BIRD, 1.0, 0);
+  devPars.recFiltFreq[PARS_BIRD].init(0, PAR_TRIGFILTFREQ_MAX_BIRD, 1.0, 0);
 
 //  devPars.backLightTime.set(120);
   devPars.backLightTime.init(PAR_BACKLIGHT_MIN, PAR_BACKLIGHT_MAX, 1, 0);

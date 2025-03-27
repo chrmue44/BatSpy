@@ -183,7 +183,8 @@ struct stParams
     cParNum recFiltFreq[2];          ///< hight pass freq for recording trigger
   cParNum trigFiltFreq[2]; 
 #define PAR_TRIGFILTFREQ_MIN   1.0f
-#define PAR_TRIGFILTFREQ_MAX  70.0f
+#define PAR_TRIGFILTFREQ_MAX_BAT  100.0f
+#define PAR_TRIGFILTFREQ_MAX_BIRD  20.0f
 #define PAR_TRIGFILTFREQ_DEF_BAT  16.0f
 #define PAR_TRIGFILTFREQ_DEF_BIRD  5.0f
   cParEnum recFiltType[2];          ///< filter type for recording trigger

@@ -862,7 +862,10 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, size_t parSet, 
       break;
     case 'f':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.trigFiltFreq[parSet]);
+      { 
+        float max = parSet == PARS_BAT ? PAR_TRIGFILTFREQ_MAX_BAT : PAR_TRIGFILTFREQ_MAX_BIRD;
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, max, devPars.trigFiltFreq[parSet]);
+      }
       else
         getValFloat(buf + 1, devPars.trigFiltFreq[parSet], reply, replySize);
       break;
@@ -904,7 +907,10 @@ bool MEMF cTerminal::parseRecParams(const char* buf, bool write, size_t parSet, 
       break;
     case 'u':
       if (write)
-        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX, devPars.recFiltFreq[parSet]);
+      {
+        float max = parSet == PARS_BAT ? PAR_TRIGFILTFREQ_MAX_BAT : PAR_TRIGFILTFREQ_MAX_BIRD;
+        replyOk = setValFloat(buf + 1, PAR_TRIGFILTFREQ_MIN, max, devPars.recFiltFreq[parSet]);
+      }
       else
         getValFloat(buf + 1, devPars.recFiltFreq[parSet], reply, replySize);
       break;
