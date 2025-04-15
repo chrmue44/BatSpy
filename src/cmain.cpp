@@ -234,6 +234,7 @@ void handleButtonsAndLeds()
 
 // *********************** main loop **************************
 int loopCount = 0;
+bool gpsValidOld = false;
 extern void stateMachine();
 void loop()
 {
@@ -260,7 +261,7 @@ void loop()
        digWrite(SPIN_LED_2, 1);
     else
        digWrite(SPIN_LED_2, 0);
-    if(gpsValid)
+    if (gpsValid)
     {
       devStatus.geoPos.set(gps.getLat(), gps.getLon());
       devStatus.lonSign.set(devStatus.geoPos.getSignLon());
@@ -272,7 +273,11 @@ void loop()
       devStatus.latDeg.set(devStatus.geoPos.getDegLat());
       devStatus.latMin.set(devStatus.geoPos.getMinLat());
       devStatus.latSec.set(devStatus.geoPos.getSecLat());
+      if (gpsValidOld != gpsValid)
+        calcSunrise();
     }
+    gpsValidOld = gpsValid;
+
     if (devPars.srcPosition.get() != static_cast<uint32_t>(enPositionMode::FIX))
       devStatus.satCount.set(gps.getSatCount());
     devStatus.gpsStatus.set(gps.getStatus());

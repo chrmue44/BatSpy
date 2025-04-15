@@ -65,6 +65,7 @@ void initPins()
   ioex.output(ioexOut);
   digWrite(SPIN_LED_2, 1);
   digWrite(SPIN_POWER_OFF, 1);
+  digWrite(SPIN_PWR_SD, 1);
 #endif
 
 #ifdef ARDUINO_TEENSY41
@@ -413,9 +414,7 @@ void setAnalogPower(bool on)
 {
 #ifdef ARDUINO_TEENSY40
   digWrite(SPIN_PWR_ANA, on ? 1 : 0);
-  //pinMode(PIN_EN_MIC, OUTPUT);
-//  digWrite(PIN_EN_MIC, on ? 1 : 0);
-#endif
+  #endif
 }
 
 void restart()
@@ -509,22 +508,29 @@ float calcVoltageFactor(float volt)
 
 void initTempSensor()
 {
-  sht.begin(Wire, SHT40_I2C_ADDR_44);
-  sht.softReset();
-  delay(10);
-  uint32_t serialNumber = 0;
-  int error = sht.serialNumber(serialNumber);
-  if (error != 0) 
+  if(isRevClosed(1))
   {
-    sysLog.log("attempt to init temp sensor I2S addr 0x44 failed");
-    sht.begin(Wire, SHT40_I2C_ADDR_45);
+    hdc1080.begin(I2C_ADDR_HUMID_TI);
+  }
+  else
+  {
+    sht.begin(Wire, SHT40_I2C_ADDR_44);
     sht.softReset();
     delay(10);
-    error = sht.serialNumber(serialNumber);
-    if (error != 0)
-    { 
-      sysLog.log("attempt to init temp sensor I2S addr 0x45 failed");
-      return;
+    uint32_t serialNumber = 0;
+    int error = sht.serialNumber(serialNumber);
+    if (error != 0) 
+    {
+      sysLog.log("attempt to init temp sensor I2S addr 0x44 failed");
+      sht.begin(Wire, SHT40_I2C_ADDR_45);
+      sht.softReset();
+      delay(10);
+      error = sht.serialNumber(serialNumber);
+      if (error != 0)
+      { 
+        sysLog.log("attempt to init temp sensor I2S addr 0x45 failed");
+        return;
+      }
     }
   }
   sysLog.log("temp sensor successfully initialized");
@@ -532,29 +538,35 @@ void initTempSensor()
 
 float readTemperature(float& humidity)
 {
-#ifdef ARDUINO_TEENSY41
-  if(is12V())
-    return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
-  else
-    return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
-  humidity = 0.0;
-#endif
 #ifdef SIMU_DISPLAY
   humidity = 58.9;
   return 25.2;
 #elif defined ARDUINO_TEENSY40
   float t;
-
-  Wire.setClock(100000);
-  int err = sht.measureHighPrecision(t, humidity);
-  if(err != 0)
+  if(isRevClosed(1))
   {
-    t = 333;
-    humidity = NAN;
-    sysLog.log("error reading temp sensor");
+    t = hdc1080.readTemperature();
+    humidity = hdc1080.readHumidity();  
   }
-  Wire.setClock(400000);
+  else
+  {
+    Wire.setClock(100000);
+    int err = sht.measureHighPrecision(t, humidity);
+    if(err != 0)
+    {
+      t = 333;
+      humidity = NAN;
+      sysLog.log("error reading temp sensor");
+    }
+    Wire.setClock(400000);
+  }
   return t;
+  #elif defined ARDUINO_TEENSY41
+  if(is12V())
+    return InternalTemperature.readTemperatureC() - TEMP_OFFS_STATIONARY;
+  else
+    return InternalTemperature.readTemperatureC() - TEMP_OFFS_PORTABLE;
+  humidity = 0.0;
 #endif
 }
 
@@ -609,10 +621,8 @@ void powerOff()
 enDisplayType hasDisplay()
 {
 #ifdef ARDUINO_TEENSY40
-  if (digitalRead(PIN_REV0) == 0)
+  if (isRevClosed(0))
     return enDisplayType::OLED_128;
-  else if (digitalRead(PIN_REV1) == 0)
-    return enDisplayType::TFT_320;
   else
     return enDisplayType::NO_DISPLAY;
 #endif

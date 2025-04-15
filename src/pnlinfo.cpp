@@ -46,9 +46,10 @@ int MEMP initInfoPanCompact(cPanel* pan, tCoord lf)
   int r = 2;
   int x = 80;
   int err = 0;
-  err |= pan->addTextItem(130,                   1,      r   * lf - 7,  120, lf);
-  err |= pan->addStrItem(&devStatus.micId,      65,      r++ * lf - 7, 63, lf);
-  err |= pan->addStrItem(&devStatus.micType,     1,      r++ * lf - 7,  5, lf);
+  err |= pan->addTextItem(130,                   1,      r   * lf - 7, 45, lf);
+  err |= pan->addStrItem(&devStatus.micId,      45,      r++ * lf - 7, 83, lf);
+  err |= pan->addTextItem(131,                   1,      r   * lf - 7, 50, lf);
+  err |= pan->addStrItem(&devStatus.micType,    45,      r++ * lf - 7, 83, lf);
   err |= pan->addTextItem(415,                   1,      r   * lf,  x, lf);
   err |= pan->addNumItem(&devStatus.peakVal,     x,      r   * lf, 20, lf, false);
   err |= pan->addTextItem(302,                   x + 30, r++ * lf, 15, lf);

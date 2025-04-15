@@ -362,7 +362,7 @@ void MEMP f4DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
 
     case 4:
       pThis->setMainPanel(panParTrigDay);
-      setHeaderPanelText(pThis, 1365);
+      setHeaderPanelText(pThis, 1364);
       pThis->setHdrPanel(hdrMainPanel);
       pThis->setFkeyPanel(fkeyMainPan);
       break;

@@ -33,6 +33,7 @@ SensirionI2cSht4x sht;
 char serialNumber[EEP_SERIAL_SIZE];
 cCmdExecuter command;
 cMicData micInfo(PIN_EN_MIC);
+ClosedCube_HDC1080 hdc1080;
 #ifdef ARDUINO_TEENSY40
 TCA9534 ioex;
 #endif

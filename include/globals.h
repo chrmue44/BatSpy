@@ -28,6 +28,7 @@ extern TCA9534 ioex;
 #include "SensirionI2cSht4x.h"
 #include "cCmdExecuter.h"
 #include "cMicData.h"
+#include "ClosedCube_HDC1080.h"
 
 extern cLog sysLog;
 extern cLog gpsLog;
@@ -49,6 +50,7 @@ extern stParams devPars;            ///< parameters of the device
 extern cnotes notes1;
 extern cnotes notes2;
 extern SensirionI2cSht4x sht;
+extern ClosedCube_HDC1080 hdc1080;
 extern cStatus statusDisplay;
 extern char serialNumber[EEP_SERIAL_SIZE];
 extern cMicData micInfo;

@@ -81,6 +81,8 @@
 #define I2C_ADDR_OLED     0x3C
 #define I2C_ADDR_HUMID_A  0x44
 #define I2C_ADDR_HUMID_B  0x45
+#define I2C_ADDR_HUMID_TI 0x40
+
 
 
 // *****   pin definitions *****
@@ -91,7 +93,7 @@
 #define SPIN_TFT_RES     0x8008      // Reset TFT-Display
 #define SPIN_PWR_ANA     0x8020      // Poser supply analog stage
 #define SPIN_PWR_GPS     0x8040      // power supply GPS
-#define SPIN_SPARE3      0x8080      // spare pin
+#define SPIN_PWR_SD      0x8080      // spare pin
 
 #define PIN_REV0         4           // 
 #define PIN_REV1         5           // revision bit 0
@@ -118,6 +120,18 @@
 
 inline bool hasAmpRevB() { return  false; }
 inline bool isRevisionB() { return false; }
+inline bool isRevClosed(int r)
+{
+  if(r == 0)
+    return (digitalRead(PIN_REV0) == 0);
+  else if(r == 1)
+    return (digitalRead(PIN_REV1) == 0);
+  else if(r == 2)
+    return (digitalRead(PIN_REV2) == 0);
+  else
+    return false;
+}
+
 void portExpSetBit(uint8_t port, uint8_t state);
 #endif //ARDUINO_TEENSY40
 

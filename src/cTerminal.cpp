@@ -1096,6 +1096,10 @@ void MEMF cTerminal::parseDebugCmd(const char* buf)
         portExpSetBit(mask, 1);
       }
       break;
+    case 'r':
+      restart();
+      break;
+
     default:
       Serial.print("1");
   }
@@ -1121,6 +1125,7 @@ void MEMF cTerminal::showCommands()
   Serial.println("ei<nr>   read digital value from pin (nr 0..30)");
   Serial.println("eo<nr>   set digital output OFF (nr 0..30 direct IO, 100 .. 107 port extender)");
   Serial.println("eO<nr>   set digital output ON (nr 0..30 direct IO, 100 .. 107 port extender)");
+  Serial.println("er       restart");
   Serial.println("f        get live fft");
   Serial.println("g        GPS test cmd: Serial connected to GPS, terminate with 'q!'");
   Serial.println("Ic<com>  set microphone comment");

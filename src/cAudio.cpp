@@ -430,7 +430,7 @@ void cAudio::setup()
     DPRINTF4("      mix freq: %.1f kHz; real osc freq: %.1f Hz\n", freq, m_freq_oscillator);
     DPRINTF4("rec threshhold: %.1f dB\n", devPars.recThreshhold[parSet].get());
     DPRINTF4("  trig. filter: %.1f kHz\n", devPars.trigFiltFreq[parSet].get());
-    DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger.get()); 
+    DPRINTF4("   pre trigger: %.1f ms\n", devPars.preTrigger[parSet].get());
     DPRINTF4("         mixer: %s\n", mic ? "mic" : "play");
     DPRINTF4("        volume: %.4f\n", vol);
   }
