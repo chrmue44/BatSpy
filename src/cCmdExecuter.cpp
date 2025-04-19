@@ -24,9 +24,9 @@ void cmdUpdateInfos(void* pData)
 {
   if(devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD update infos");
-  size_t freeSpace;  size_t totSpace;
-  cSdCard::inst().getFreeMem(freeSpace, totSpace);
-  devStatus.freeSpace.set(freeSpace / 1024/1024);
+  size_t totSpace;
+  cSdCard::inst().getFreeMem(devStatus.freeDiskSpace, totSpace);
+  devStatus.freeSpace.set(devStatus.freeDiskSpace / 1024/1024);
   if(checkTwilight((enRecAuto) devPars.recAuto.get()))
     calcSunrise();
   logStatus();

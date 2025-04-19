@@ -127,7 +127,8 @@ enum enRecStatus
 {
   REC_OFF   = 0,
   REC_BATS = 1,
-  REC_BIRDS   = 2
+  REC_BIRDS   = 2,
+  REC_DISK_FULL = 3,
 };
 
 enum class enPlayStatus

@@ -119,6 +119,7 @@ struct stStatus
   cParNum chargeLevel = 0;
   cParStr battSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
   cParStr recStatus = "\xF1";
+  size_t freeDiskSpace; //free disk space in kBytes
 };
 
 

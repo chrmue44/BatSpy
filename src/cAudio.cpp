@@ -503,7 +503,9 @@ bool checkBirds(enRecAuto r)
 enRecStatus cAudio::isRecordingActive()
 {
   enRecStatus retVal = enRecStatus::REC_OFF;
-  if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
+  if(devStatus.freeDiskSpace < 50000)
+    retVal = enRecStatus::REC_DISK_FULL;
+  else if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
     retVal = enRecStatus::REC_BIRDS;
   else if (devPars.recAuto.get() == enRecAuto::ON_BAT)
     retVal = REC_BATS;

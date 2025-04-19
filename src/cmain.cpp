@@ -57,9 +57,9 @@ void logStatus()
 
 void initDisplayVars()
 {
-  size_t freeSpace;  size_t totSpace;
-  cSdCard::inst().getFreeMem(freeSpace, totSpace);
-  devStatus.freeSpace.set(freeSpace / 1024/1024);
+  size_t totSpace;
+  cSdCard::inst().getFreeMem(devStatus.freeDiskSpace, totSpace);
+  devStatus.freeSpace.set(devStatus.freeDiskSpace / 1024/1024);
   float humidity;
   float temp = readTemperature(humidity);
   devStatus.temperature.set(temp);

@@ -349,13 +349,8 @@ void MEMF cTerminal::parseGetStatusCmd(const char* buf)
       Serial.print(&replyBuf[0]);
       break;
     case 'b':
-      {
-        int ok = sht.measureHighPrecision(temp, humid);
-        if(ok == 0)
-          Serial.printf("%.1f", temp);
-        else
-          Serial.println("Error reading temperature");
-      }
+      temp = readTemperature(humid);
+      Serial.printf("%.1f",  temp);
       break;
     case 'c':
       Serial.printf("%.1f",  humid);

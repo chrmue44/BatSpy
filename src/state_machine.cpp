@@ -16,8 +16,13 @@ void handleIdleState()
     recOn = enRecStatus::REC_OFF;
     devStatus.recStatus.set("!!!");
   }
+  else if (recOn == enRecStatus::REC_DISK_FULL)
+  {
+    devStatus.recStatus.set(Txt::get(113));
+  }
   else
   {
+    if(recOn == enRecStatus::REC_DISK_FULL)
     if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
     {
       if (recOn != enRecStatus::REC_OFF)
