@@ -609,6 +609,9 @@ void powerOff()
   cSdCard::inst().unmount();
   delay(300);
   blink(3);
+  uint8_t errCnt = getErrCount();
+  if (errCnt > 0)
+    setErrCount(0);
 #ifdef ARDUINO_TEENSY41
   digitalWrite(PIN_POWER_OFF, 0);
 #endif

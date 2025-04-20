@@ -563,18 +563,15 @@ void cAudio::checkAutoRecording(enRecStatus recActive)
           sysLog.log("detected SD card failure");
           cSdCard::inst().unmount();
           delay(100);
-          sysLog.reset();
-          gpsLog.reset();
-          m_prj.reset();
-          cSdCard::inst().mount();
-          delay(100);
-          openProject(m_recStatus == enRecStatus::REC_BATS);
-          sysLog.log("reinitialized SD card after failure");
+          uint8_t errCnt = getErrCount();
+          errCnt++;
+          setErrCount(errCnt);
+          digWrite(SPIN_PWR_SD, 0);
+          delay(500);
+          restart();
         }
       }
     }
-//    else                            //28.8.24 why????
-//      m_prj.closePrjFile();
   }
 }
 

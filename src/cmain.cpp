@@ -19,6 +19,7 @@
 #include "cEeprom.h"
 #include "cBattery.h"
 
+static char su[10];
 extern struct stTxtList Texts[];
 /*
 const tChunkTab memChunks[] = {
@@ -127,6 +128,10 @@ void setup()
   devStatus.micId.set(micInfo.getId());
   devStatus.micType.set(micInfo.getType());
   // Serial.printf("Microphone: %s\n",micInfo.getId());
+  uint8_t errCnt = getErrCount();
+  if(errCnt > 0)
+    sysLog.logf("restart after SD card error: %i errors\n", errCnt);
+
 }
 
 

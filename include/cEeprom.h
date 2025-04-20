@@ -26,7 +26,8 @@ bool isSystemLocked();
 bool setSerialNr(const char* serial);
 void getSerialNr(char* pBuf, size_t bufSize);
 bool setVoltageFactor(const char* p);
-
+uint8_t getErrCount();
+void setErrCount(uint8_t c);
 
 #define UNLOCK_PW  "System889376"
 
@@ -86,12 +87,12 @@ bool setVoltageFactor(const char* p);
 #define EEPADDR_PRE_AMP_GAIN_BIRD 0x009E   // devPars.preAmpGain    INT16
 #define EEPADDR_PRE_TRIGGER_BIRD  0x00A0   // devPars.preTrigger,    float
 
-#define EEPADDR_FIRSTFREE     0x00A4
+#define EEPADDR_FIRSTFREE         0x00A4
 
-#define EEPADDR_SERIAL        0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
-#define EEP_SERIAL_SIZE       12       // size of the string
-#define EEPADDR_VOLT_FACT     0x0310   // devPars.voltFactor       float
-
+#define EEPADDR_SERIAL            0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
+#define EEP_SERIAL_SIZE           12       // size of the string
+#define EEPADDR_VOLT_FACT         0x0310   // devPars.voltFactor       float
+#define EEPADDR_ERR_CNT           0x0320   // error counter sD card
 
 
 #endif  //#ifndef _CEEPROM_H_

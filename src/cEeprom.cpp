@@ -46,6 +46,16 @@ void MEMP writeFloatToEep(int32_t addr, float val)
   EEPROM.write(addr++, s.b[3]);
 }
 
+uint8_t MEMP getErrCount()
+{
+  return EEPROM.read(EEPADDR_ERR_CNT);
+}
+
+void MEMP setErrCount(uint8_t c)
+{
+  EEPROM.write(EEPADDR_ERR_CNT, c);
+}
+
 void MEMP writeInt16ToEep(int32_t addr, int16_t val) 
 {
   union  
