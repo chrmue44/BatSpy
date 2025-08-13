@@ -19,7 +19,7 @@
 #include "cEeprom.h"
 #include "cBattery.h"
 
-static char su[10];
+//static char su[10];
 extern struct stTxtList Texts[];
 /*
 const tChunkTab memChunks[] = {

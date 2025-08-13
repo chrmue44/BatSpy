@@ -550,7 +550,6 @@ float readTemperature(float& humidity)
   }
   else
   {
-    Wire.setClock(100000);
     int err = sht.measureHighPrecision(t, humidity);
     if(err != 0)
     {
@@ -558,7 +557,6 @@ float readTemperature(float& humidity)
       humidity = NAN;
       sysLog.log("error reading temp sensor");
     }
-    Wire.setClock(400000);
   }
   return t;
   #elif defined ARDUINO_TEENSY41

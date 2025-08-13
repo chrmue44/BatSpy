@@ -22,7 +22,6 @@ void handleIdleState()
   }
   else
   {
-    if(recOn == enRecStatus::REC_DISK_FULL)
     if (devStatus.playStatus.get() == static_cast<uint32_t>(enPlayStatus::STOP))
     {
       if (recOn != enRecStatus::REC_OFF)

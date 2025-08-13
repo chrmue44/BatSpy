@@ -508,7 +508,7 @@ enRecStatus cAudio::isRecordingActive()
   else if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
     retVal = enRecStatus::REC_BIRDS;
   else if (devPars.recAuto.get() == enRecAuto::ON_BAT)
-    retVal = REC_BATS;
+    retVal = enRecStatus::REC_BATS;
   else
   {
     bool night;
@@ -530,7 +530,7 @@ enRecStatus cAudio::isRecordingActive()
 
   if(retVal != m_recStatus)
   {
-    sysLog.log("switch mode");
+    sysLog.logf("switch mode, old: %i, new:%i", m_recStatus, retVal);
     if (m_prj.getIsOpen())
       m_prj.closePrjFile();
     m_recStatus = retVal;
