@@ -164,6 +164,19 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_RFILT_TYPE_BIRD,  devPars.recFiltType[PARS_BIRD].get());
   writeInt16ToEep(EEPADDR_PRE_AMP_GAIN_BIRD,devPars.preAmpGain[PARS_BIRD].get());
 
+  writeCRC();
+ // Serial.printf("EEPROM written; max. Addr: %i; Checksum %i\n", addr - 2, chks);
+}
+
+void MEMP writePosition()
+{
+  writeFloatToEep(EEPADDR_LAT,          devStatus.geoPos.getLat());
+  writeFloatToEep(EEPADDR_LON,          devStatus.geoPos.getLon());
+  writeCRC();
+}
+
+void MEMP writeCRC()
+{
   int addr = EEPADDR_FIRSTFREE;
   for(int i = 0; i < 20; i++)
   {
@@ -176,7 +189,6 @@ void MEMP saveParsToEep()
   for(int i = 4; i <= addr - 2; i++)
     chks += readCharFromEep(i);
   writeInt16ToEep(EEPADDR_CHKS_PAR, chks);
- // Serial.printf("EEPROM written; max. Addr: %i; Checksum %i\n", addr - 2, chks);
 }
 
 bool MEMP loadParsFromEep()

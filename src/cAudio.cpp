@@ -566,6 +566,7 @@ void cAudio::checkAutoRecording(enRecStatus recActive)
           uint8_t errCnt = getErrCount();
           errCnt++;
           setErrCount(errCnt);
+          writePosition();
           digWrite(SPIN_PWR_SD, 0);
           delay(500);
           restart();

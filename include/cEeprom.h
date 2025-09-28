@@ -12,6 +12,8 @@
 #include <Arduino.h>
 
 bool checkCRC();
+void writeCRC();
+void writePosition();
 void writeFloatToEep(int32_t addr, float val);
 void writeInt16ToEep(int32_t addr, int16_t val);
 float readFloatFromEep(int addr);

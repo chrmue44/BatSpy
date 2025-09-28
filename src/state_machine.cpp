@@ -11,7 +11,7 @@ static enMainState mainState = enMainState::INIT;
 void handleIdleState()
 {
   enRecStatus recOn = audio.isRecordingActive();
-  if(year() < 2024)
+  if(year() < 2025)
   {
     recOn = enRecStatus::REC_OFF;
     devStatus.recStatus.set("!!!");
