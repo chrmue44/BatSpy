@@ -198,7 +198,7 @@ int MEMP initParPan(cPanel* pan, tCoord lf)
 int MEMP initParPanCompact(cPanel* pan, tCoord lf)
 {
   int  err = 0;
-  int x = 70;
+  int x = 68;
   int r = 2;
   err |= pan->addTextItem(1100,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.lang,         x,      r++ * lf,  50, lf, true, languageFunc);
@@ -210,6 +210,8 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devPars.debugLevel,    x,      r++ * lf,  48, lf, true);
   err |= pan->addTextItem(1385,                  1,      r   * lf,   x, lf);
   err |= pan->addEnumItem(&devPars.gpsBaudRate,  x,      r++ * lf,  48, lf, true);
+  err |= pan->addTextItem(1392,                  1,      r   * lf,   x, lf);
+  err |= pan->addEnumItem(&devPars.metaData,     x,      r++ * lf,  60, lf, true);
   err |= pan->addBtnItem(1390,                   1,  5 + r   * lf,  60, lf + 2, displayTestFunc);
   err |= pan->addBtnItem(5,                      64, 5 + r   * lf,  60, lf + 2, f2FormatFunc);
 

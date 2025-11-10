@@ -55,7 +55,7 @@ void setErrCount(uint8_t c);
 #define EEPADDR_DEAD_TIME_BAT     0x003A   // devPars.deadTime,      float
 #define EEPADDR_BACKLIGHT         0x003E   // devPars.backLightTime  float
 #define EEPADDR_LANGUAGE          0x0042   // devPars.lang,          INT16
-#define EEPADDR_FREE_INT16_2      0x0044   
+#define EEPADDR_METADATA          0x0044   // devPars.metaData       INT16
 #define EEPADDR_LAT               0x0046   // devStatus.geoPos.getLat, float
 #define EEPADDR_LON               0x004A   // devStatus.geoPos.getLon, float
 #define EEPADDR_TFILT_FREQ_BAT    0x004E   // devPars.trigFiltFreq,    float

@@ -84,6 +84,8 @@ class cCassette
     void writeWord(uint32_t value, size_t size = sizeof(uint32_t));
     void finalizeWavFile();
     uint32_t calcRecSamples(float time) { return (uint32_t)(time * (float)m_sampleRate); }
+    uint32_t writeGuanoData(char* buffer, size_t bufLen, char* filename);
+
 
   private:
     enCassMode m_mode = enCassMode::STOP;
@@ -97,10 +99,10 @@ class cCassette
     uint8_t m_buffern[BUFFSIZE] __attribute__((aligned(16)));
 #endif
     uint32_t m_nj = 0;
-    size_t m_wr;
-    uint32_t m_sampleRate;
-    uint32_t m_sampleCnt;
-    uint32_t m_maxRecSamples;
+    size_t m_wr = 0;
+    uint32_t m_sampleRate = 0;
+    uint32_t m_sampleCnt = 0;
+    uint32_t m_maxRecSamples = 0;
 
 #ifdef WAV
     AudioPlayFatsWav m_player;

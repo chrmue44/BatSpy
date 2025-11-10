@@ -227,6 +227,10 @@ struct stParams
   cParEnum gpsBaudRate = static_cast<uint32_t>(enGpsBaudRate::BD_9600);
 #define PAR_GPS_BR_MIN  static_cast<uint32_t>(enGpsBaudRate::BD_9600)
 #define PAR_GPS_BR_MAX  static_cast<uint32_t>(enGpsBaudRate::BD_115200)
+  cParEnum metaData = static_cast<uint32_t>(enMetaData::XML);
+#define PAR_METADATA_MIN   static_cast<uint32_t>(enMetaData::XML)
+#define PAR_METADATA_MAX   static_cast<uint32_t>(enMetaData::GUANO)
+
 
   stParams()
   {
@@ -246,6 +250,7 @@ struct stParams
     minEventLen[PARS_BIRD].set(PAR_TRIGEVENT_DEF_BIRD);         ///< minimal event length for trigger
     preAmpGain[PARS_BAT].set(1);
     preAmpGain[PARS_BIRD].set(1);
+    metaData.set(PAR_METADATA_MIN);
   }
 
 };

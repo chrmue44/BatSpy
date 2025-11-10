@@ -36,7 +36,7 @@ int MEMF cFileInfo::write(const char* fileName, float duration, const char* date
         if(ret != enSdRes::OK) break;
       ret = writeTag(TAG_GAIN, devPars.preAmpGain[parSet].getActText());
         if(ret != enSdRes::OK) break;
-      ret = writeTag(TAG_INP_FILTER, "None");
+        ret = writeTag(TAG_INP_FILTER, devPars.recFiltType[parSet].getActText());
         if(ret != enSdRes::OK) break;
       ret = writeLine("<Trigger>");
         if(ret != enSdRes::OK) break;

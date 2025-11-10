@@ -214,6 +214,12 @@ enum class enGpsBaudRate
   BD_152000 = 1,
 };
 
+enum class enMetaData
+{
+  XML = 0,
+  GUANO = 1
+};
+
 #define PARS_BAT   0  // array index for bat recording parameters
 #define PARS_BIRD  1  // array index for bird recording parameters
 

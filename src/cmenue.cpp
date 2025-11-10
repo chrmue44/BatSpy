@@ -37,10 +37,12 @@
 
 
 cMenue::cMenue(int width, int height, Adafruit_GFX* pDisplay) :
-  cMenuesystem(width, height, pDisplay) {
+  cMenuesystem(width, height, pDisplay) 
+{
 }
 
-cMenue::~cMenue() {
+cMenue::~cMenue() 
+{
 }
 
 void MEMP cMenue::initPars()
@@ -92,6 +94,7 @@ void MEMP cMenue::initPars()
 
     devPars.recTime[i].init(PAR_RECTIM_MIN, PAR_RECTIM_MAX, 1, 0);
   
+    devPars.sampleRate[i].clear();
     for(int t = 1300; t <= 1308; t++)
       devPars.sampleRate[i].addItem(t);
 
@@ -184,6 +187,10 @@ void MEMP cMenue::initPars()
   devPars.gpsBaudRate.clear();
   devPars.gpsBaudRate.addItem(1386);
   devPars.gpsBaudRate.addItem(1387);
+
+  devPars.metaData.clear();
+  devPars.metaData.addItem(1393);
+  devPars.metaData.addItem(1394);
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
@@ -321,6 +328,7 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.displayMode.set(static_cast<uint32_t>(enDispMode::NORMAL));
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.lang.set(enLang::LANG_GER);        ///< display language
+  devPars.metaData.set(static_cast<uint32_t>(enMetaData::GUANO));
   devPars.debugLevel.set(0);
   devStatus.geoPos.setLat(49.5);
   devStatus.geoPos.setLon(8.3);

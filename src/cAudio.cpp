@@ -503,7 +503,9 @@ bool checkBirds(enRecAuto r)
 enRecStatus cAudio::isRecordingActive()
 {
   enRecStatus retVal = enRecStatus::REC_OFF;
-  if(devStatus.freeDiskSpace < 50000)
+  if(year() < 2025)
+    retVal = enRecStatus::REC_OFF;  
+  else if(devStatus.freeDiskSpace < 50000)
     retVal = enRecStatus::REC_DISK_FULL;
   else if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
     retVal = enRecStatus::REC_BIRDS;
@@ -700,7 +702,8 @@ void cAudio::operate(bool liveFft)
           statusDisplay.setRecRunning(false);
           devStatus.playStatus.set(static_cast<uint32_t>(enPlayStatus::TIMEOUT));
           devStatus.recStatus.set("T");
-          m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), parSet);
+          if((enMetaData)devPars.metaData.get() == enMetaData::XML)
+            m_prj.writeInfoFile(m_trigger.lastPeakVal(), m_cass.getSampleCnt(), parSet);
           if(devPars.checkDebugLevel(DBG_TRIGGER))
             m_trigger.logTrigInfo(m_prj.getWavFileName());
           DPRINTLN4("start timeout");

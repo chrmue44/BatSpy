@@ -13,7 +13,7 @@
 #include "cmenue.h"
 #include "cRtc.h"
 #include "globals.h"
-//#define DEBUG_LEVEL 4
+#define DEBUG_LEVEL 4
 #include "debug.h"
 
 
@@ -64,6 +64,59 @@ int cCassette::startRec()
 }
 
 
+
+uint32_t cCassette::writeGuanoData(char* buffer, size_t bufLen, char* filename) 
+{
+  uint32_t length = sprintf(buffer, "guan") + 4;
+  int parSet = audio.getActiveParSet();
+  /* General information */
+  length += snprintf(buffer + length, bufLen - length, "GUANO|Version:1.0\nMake:Christian Mueller\nModel:BatSpy\nSerial:%s \n", serialNumber );
+  length += snprintf(buffer + length, bufLen - length, "Firmware Version:%s \n", devStatus.version.get());
+
+  /* Timestamp */
+  length += snprintf(buffer + length, bufLen - length, "Timestamp:%04d-%02d-%02dT%02d:%02d:%02d", year(),month(), day(), hour(),minute(), second());
+
+  /* Location position and source */
+  if ((gps.getStatus() == enGpsStatus::GPS_FIXED) || (gps.getStatus() == enGpsStatus::GPS_FIXED_OFF)) 
+    length += snprintf(buffer + length, bufLen - length, "Loc Position:%f %f\nOAD|Loc Source:GPS\n", gps.getLat(), gps.getLon());
+  else
+    length += snprintf(buffer + length, bufLen - length, "Loc Position:%f %f\nOAD|Loc Source:Configuration app\n", devStatus.geoPos.getLat(), devStatus.geoPos.getLon());
+
+  /* Filename */
+  length += snprintf(buffer + length, bufLen - length, "Original Filename:%s\n", filename);
+
+  /* Recording settings */
+  length += snprintf(buffer + length, bufLen - length, "Samplerate:%ld\n", audio.getSampleRateHz((enSampleRate)devPars.sampleRate->get()));
+  length += snprintf(buffer + length, bufLen - length, "BatSpy|GAIN: %s\n", devPars.preAmpGain->getActText());
+  bool frequencyTriggerEnabled = (devPars.triggerType[parSet].get() == enTrigType::FREQ_LEVEL) || (devPars.triggerType[parSet].get() == enTrigType::FREQUENCY);
+  bool amplitudeThresholdEnabled =(devPars.triggerType[parSet].get() == enTrigType::FREQ_LEVEL) || (devPars.triggerType[parSet].get() == enTrigType::LEVEL);
+
+  length += snprintf(buffer + length, bufLen - length, "BatSpy|Trigger TYPE:%s\n", devPars.triggerType[parSet].getActText());
+  if (amplitudeThresholdEnabled)
+    length += snprintf(buffer + length, bufLen - length, "BatSpy|Trigger AMP:%.2f\n", devPars.recThreshhold[parSet].get());
+  if (frequencyTriggerEnabled)
+  {
+    length += snprintf(buffer + length, bufLen - length, "BatSpy|Trigger EVENTLEN:%.2f\n", devPars.minEventLen[parSet].get());
+    length += snprintf(buffer + length, bufLen - length, "BatSpy|Trigger FREQ:%.0f\n", devPars.trigFiltFreq[parSet].get() * 1000);
+    length += snprintf(buffer + length, bufLen - length, "BatSpy|Trigger FILTTYPE:");
+    if (devPars.trigFiltType[parSet].get() == enFiltType::LOWPASS)
+      length += snprintf(buffer + length, bufLen - length, "LPF\n");
+    else if (devPars.trigFiltType[parSet].get() == enFiltType::BANDPASS)
+      length += snprintf(buffer + length, bufLen - length, "BPF\n");
+    else if (devPars.trigFiltType[parSet].get() == enFiltType::HIGHPASS)
+      length += snprintf(buffer + length, bufLen - length, "HPF\n");
+  }
+
+  length += snprintf(buffer + length, bufLen - length,"Temperature:%.1f\n", devStatus.temperature.get());
+  length += snprintf(buffer + length, bufLen - length, "Humidity:%.1f\n", devStatus.humidity.get());
+
+  /* Set GUANO chunk size */
+  *(uint32_t*)(buffer + 4) = length - 8;
+
+  return length;
+}
+
+
 int cCassette::operate()
 {
   int retVal = 0;
@@ -94,7 +147,7 @@ int cCassette::operate()
 
           cSdCard& sd = cSdCard::inst();
           size_t cnt = av * AUDIO_BLOCK_SAMPLES * sizeof(int16_t);
-          rc = sd.writeFile (m_fil, (const char*)m_buffern, m_wr, cnt);
+          rc = sd.writeFile(m_fil, (const char*)m_buffern, m_wr, cnt);
           DPRINTF1("wr buf %lu\n", cnt);
           if (rc != OK)
           { // IO error
@@ -201,10 +254,19 @@ void cCassette::writeWord(uint32_t value, size_t size)
 
 void cCassette::finalizeWavFile() 
 {
-  
   size_t file_length = cSdCard::inst().fileSize(m_fil);
   cSdCard::inst().setFilePos(m_fil, WAV_DATACHUNK_POS + 4);
-  writeWord(file_length - WAV_DATACHUNK_POS + 8 );
+  writeWord(file_length - WAV_DATACHUNK_POS - 8);
+
+  if ((enMetaData)devPars.metaData.get() == enMetaData::GUANO)
+  {
+    char buf[1024];
+    size_t len = writeGuanoData(buf, sizeof(buf), m_fileName);
+    DPRINTF4("guano length: %dl\n", len);
+    cSdCard::inst().setFilePos(m_fil, SEEK_END);
+    cSdCard::inst().writeFile(m_fil, buf, m_wr, len);
+    file_length = cSdCard::inst().fileSize(m_fil);
+  }
 
   cSdCard::inst().setFilePos(m_fil, 0 + 4);
   writeWord(file_length - 8, 4 ); 
