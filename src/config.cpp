@@ -258,6 +258,36 @@ void MEMP showSplashScreen(Adafruit_GFX& tft, bool waitBtn)
     oled.clearDisplay();
 }
 
+void testTempSensor()
+{
+  char buf[20];
+  for (;;)
+  {
+    pDisplay->fillRect(0, 0, pDisplay->width(), pDisplay->height(), 0xFF);
+    oled.setTextColor(SSD1327_BLACK);
+    oled.setCursor(30, 50);
+    oled.print("TempSensor test");
+    oled.setCursor(30, 62);
+    oled.print("stop with OK");
+    float humid = 0;
+    float temp = readTemperature(humid);
+    oled.setCursor(30, 74);
+    sprintf(buf,  "%.1f C", temp);
+    oled.print(buf);
+    oled.setCursor(30, 86);
+    sprintf(buf,  "%.1f %%", humid);
+    oled.print(buf);
+    oled.display();
+    delay(250);
+    if (!digitalRead(PIN_ROT_LEFT_S))
+    {
+      oled.clearDisplay();
+      Serial.println("end test temp");
+      break;
+    }
+  }
+}
+
 void testDisplay()
 {
   int x = 44, y = 2;
@@ -616,6 +646,7 @@ void powerOff()
 #ifdef ARDUINO_TEENSY40
   digWrite(SPIN_POWER_OFF, 0);
 #endif
+  Serial.println("power OFF");
   for(;;)  { }
 }
 

@@ -13,7 +13,7 @@
 #include "cmenue.h"
 #include "cRtc.h"
 #include "globals.h"
-#define DEBUG_LEVEL 4
+//#define DEBUG_LEVEL 4
 #include "debug.h"
 
 

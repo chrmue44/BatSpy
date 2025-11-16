@@ -58,6 +58,8 @@ void logStatus()
 
 void initDisplayVars()
 {
+  if(hasDisplay() == enDisplayType::OLED_128)
+    devPars.dispOrient.set(enDispOrient::LEFT_HAND);
   size_t totSpace;
   cSdCard::inst().getFreeMem(devStatus.freeDiskSpace, totSpace);
   devStatus.freeSpace.set(devStatus.freeDiskSpace / 1024/1024);

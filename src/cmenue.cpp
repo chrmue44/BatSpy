@@ -310,7 +310,7 @@ void cMenue::initFileRelatedParams()
   notes2.initListPar(devStatus.notes2);
 }
 
-void cMenue::setFactoryDefaults(enMode mode)
+void cMenue::setFactoryDefaults()
 {
   devPars.volume.set(6.0f);              ///< volume setting
   devPars.mixFreq.set(40.0f);              ///< mixer frequency
@@ -322,13 +322,13 @@ void cMenue::setFactoryDefaults(enMode mode)
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
   devPars.fftLevelMax.set(70000.0f);       ///< high level for FFT display
-  devPars.dispOrient.set(enDispOrient::RIGHT_HAND); ///< display orientation
+  devPars.dispOrient.set(enDispOrient::LEFT_HAND); ///< display orientation
   devPars.preTrigger[PARS_BAT].set(20.0f);           ///< pre trigger time [ms]
   devPars.preTrigger[PARS_BIRD].set(8*20.0f);           ///< pre trigger time [ms]
   devPars.displayMode.set(static_cast<uint32_t>(enDispMode::NORMAL));
   devPars.backLightTime.set(120.0);       ///< time for backlight
   devPars.lang.set(enLang::LANG_GER);        ///< display language
-  devPars.metaData.set(static_cast<uint32_t>(enMetaData::GUANO));
+  devPars.metaData.set(static_cast<uint32_t>(enMetaData::XML));
   devPars.debugLevel.set(0);
   devStatus.geoPos.setLat(49.5);
   devStatus.geoPos.setLon(8.3);

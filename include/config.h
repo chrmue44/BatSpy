@@ -216,6 +216,7 @@ inline bool hasAmpRevB() { return  isRevisionB(); }
 
 enDisplayType hasDisplay();
 void testDisplay();
+void testTempSensor();
 float readSupplyVoltage();
 void initPins();
 float calcVoltageFactor(float volt);

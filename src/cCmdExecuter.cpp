@@ -12,6 +12,8 @@
 #include "cCmdExecuter.h"
 #include "globals.h"
 #include "pnlparams.h"
+//#define DEBUG_LEVEL 4
+#include "debug.h"
 
 
 void cmdLog(void* pData)
@@ -22,6 +24,7 @@ void cmdLog(void* pData)
 
 void cmdUpdateInfos(void* pData)
 {
+  DPRINT4("CMD update infos\n");
   if(devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD update infos");
   size_t totSpace;
@@ -35,6 +38,7 @@ void cmdUpdateInfos(void* pData)
 
 void cmdMeasTemperature(void* pData)
 {
+  DPRINT4("CMD meas temperature\n");
   float humidity;
   float temp = readTemperature(humidity);
   if (devPars.checkDebugLevel(DBG_COMMANDS))
@@ -52,25 +56,27 @@ void cmdMeasTemperature(void* pData)
 
 void cmdCheckAndSetTime(void* pData)
 {
+  DPRINT4("CMD check and set time\n");
   if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD check and set time");
   rtc.checkAndSetTime(gps.getYear(), gps.getMonth(), gps.getDay(),
                       gps.getHour(), gps.getMinute(), gps.getSec(),
                      (enDlSaving)devPars.daylightSav.get());
-
 }
 
 
 void cmdBacklightOff(void* pData)
 {
+    DPRINT4("CMD backlight off\n");
   if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Backlight Off");
   setBackLight(false);
-}
+  }
 
 
 void cmdBacklightOn(void* pData)
 {
+    DPRINT4("CMD backlight on\n");
   if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Backlight On");
   setBackLight(true);
@@ -79,6 +85,8 @@ void cmdBacklightOn(void* pData)
 
 void cmdCloseProject(void* pData)
 {
+    DPRINT4("CMD close project\n");
+
   if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD Close project");
   audio.closeProject();
@@ -86,12 +94,14 @@ void cmdCloseProject(void* pData)
 
 void cmdPowerOff(void* pData)
 {
+    DPRINT4("CMD power off\n");
+
   if (devPars.checkDebugLevel(DBG_COMMANDS))
     sysLog.log("CMD power off");
   powerOff();
 }
 
-const stCmdTabEntry cmdTab[] =
+MEMP const stCmdTabEntry cmdTab[] =
 {
 	{ enCmd::LOG,                &cmdLog },
   { enCmd::UPDATE_INFOS,       &cmdUpdateInfos },
@@ -103,7 +113,9 @@ const stCmdTabEntry cmdTab[] =
   { enCmd::POWER_OFF,          &cmdPowerOff },
 };
 
-cCmdExecuter::cCmdExecuter()
+cCmdExecuter::cCmdExecuter() :
+m_pRead(m_queue),
+m_pWrite(m_queue)
 {
   memset(m_queue, 0, sizeof(m_queue));
 }
@@ -125,7 +137,7 @@ void cCmdExecuter::addToQueue(enCmd cmd, void* pData)
   m_pWrite->pData = pData;
   incQueuePtr(m_pWrite);
   if(m_pRead == m_pWrite)
-	m_queueFull = true;
+	  m_queueFull = true;
 }
 
 stQueueEntry* cCmdExecuter::getCmd()

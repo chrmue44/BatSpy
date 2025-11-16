@@ -79,7 +79,7 @@ class cMenue : public cMenuesystem
   virtual void load();
   void printPars(size_t parSet);
   void printStatus();
-  virtual void setFactoryDefaults(enMode mode);
+  virtual void setFactoryDefaults();
   void initFileRelatedParams();
 
 

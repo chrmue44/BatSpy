@@ -263,6 +263,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1386, "9600"                      , 0},
   { 1387, "115200"                    , 0},
   { 1390, "Disp.test"                 , 0},
+  { 1391, "Temp.test"                 , 0},
   { 1392, "Metadaten",                 "Meta Data"},
   { 1393, "XML-Datei",                 "XML File"},
   { 1394, "Guano (wav)",               0},
