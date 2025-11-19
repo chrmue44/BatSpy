@@ -74,7 +74,7 @@ uint32_t cCassette::writeGuanoData(char* buffer, size_t bufLen, char* filename)
   length += snprintf(buffer + length, bufLen - length, "Firmware Version:%s \n", devStatus.version.get());
 
   /* Timestamp */
-  length += snprintf(buffer + length, bufLen - length, "Timestamp:%04d-%02d-%02dT%02d:%02d:%02d", year(),month(), day(), hour(),minute(), second());
+  length += snprintf(buffer + length, bufLen - length, "Timestamp:%04d-%02d-%02dT%02d:%02d:%02d\n", year(),month(), day(), hour(),minute(), second());
 
   /* Location position and source */
   if ((gps.getStatus() == enGpsStatus::GPS_FIXED) || (gps.getStatus() == enGpsStatus::GPS_FIXED_OFF)) 
@@ -107,8 +107,9 @@ uint32_t cCassette::writeGuanoData(char* buffer, size_t bufLen, char* filename)
       length += snprintf(buffer + length, bufLen - length, "HPF\n");
   }
 
-  length += snprintf(buffer + length, bufLen - length,"Temperature:%.1f\n", devStatus.temperature.get());
+  length += snprintf(buffer + length, bufLen - length,"Temperature Ext:%.1f\n", devStatus.temperature.get());
   length += snprintf(buffer + length, bufLen - length, "Humidity:%.1f\n", devStatus.humidity.get());
+  length += snprintf(buffer + length, bufLen - length, "TE:1\n");
 
   /* Set GUANO chunk size */
   *(uint32_t*)(buffer + 4) = length - 8;
@@ -263,7 +264,7 @@ void cCassette::finalizeWavFile()
     char buf[1024];
     size_t len = writeGuanoData(buf, sizeof(buf), m_fileName);
     DPRINTF4("guano length: %dl\n", len);
-    cSdCard::inst().setFilePos(m_fil, SEEK_END);
+    cSdCard::inst().setFilePos(m_fil, file_length);
     cSdCard::inst().writeFile(m_fil, buf, m_wr, len);
     file_length = cSdCard::inst().fileSize(m_fil);
   }

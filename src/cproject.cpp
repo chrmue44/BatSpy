@@ -120,6 +120,10 @@ void MEMF cProject::initializePrjFile(const char* fName, const char* pNotes, int
   char buf[128];
   snprintf(buf, sizeof(buf),"%04i-%02i-%02iT%02i:%02i:%02i", startY, startM, startD, hour(),  minute(), m_fSec);
   xml.simpleTag("Created", buf);
+  if(devPars.metaData.get() == (int)enMetaData::GUANO)
+    xml.simpleTag("MetaData","Guano");
+  else
+    xml.simpleTag("MetaData","Xml");
   if(night)
     xml.simpleTag("ProjectType", "Bats");
   else
