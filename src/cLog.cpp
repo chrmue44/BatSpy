@@ -16,7 +16,6 @@
 #include "debug.h"
 
 
-
 MEMF cLog::cLog(const char* dir, const char* name)
 :m_create(false)
 {
@@ -74,6 +73,8 @@ void MEMF cLog::debugLog(int level, const char c, bool keepOpen)
     create();
     if (m_open)
     {
+      if(diskFull())
+        return;
       size_t written;
       cSdCard::inst().writeFile(m_fd, &c, written, 1);
       if (!keepOpen)
@@ -92,6 +93,8 @@ void MEMF cLog::log(const char* msg, bool keepOpen)
   create();
   if (m_open)
   {
+    if(diskFull())
+      return;
     char buf[256];
     if (msg[strlen(msg) - 1] == '\n')
       snprintf(buf, sizeof(buf), "%s %s", m_timeStamp, msg);

@@ -79,20 +79,20 @@ void setup()
   Serial.begin(9600);
   delay(200);
   initPins();
+//  waitForSerial();
   if(hasDisplay() == enDisplayType::NO_DISPLAY)
   {
     digWrite(SPIN_LED_DISP, 1);
     digWrite(SPIN_LED_2, 1);
   }
-//  waitForSerial();
   audio.init();
   Txt::setResource(Texts);
   int orientation = readInt16FromEep(EEPADDR_DISP_ORIENT) == 0 ? 0 : 2;
   bool dispModeInv = readInt16FromEep(EEPADDR_DISP_MODE) != 0;
   initDisplay(orientation, 255, dispModeInv, true);
   enSdRes res = cSdCard::inst().mount();
-   char serial[16];
-   getSerialNr(serial, sizeof(serial));
+  char serial[16];
+  getSerialNr(serial, sizeof(serial));
   delay(500);
   sysLog.log("power on");
   sysLog.logf("Serial Nr: %s, Software Version: %s\n",serial, devStatus.version.get());
@@ -133,7 +133,6 @@ void setup()
   uint8_t errCnt = getErrCount();
   if(errCnt > 0)
     sysLog.logf("restart after SD card error: %i errors\n", errCnt);
-
 }
 
 
@@ -299,8 +298,10 @@ void loop()
       devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
       devStatus.battSymbol.set(cBattery::getBatterySymbol(devStatus.chargeLevel.get()));
     }
-    else if(((minute() % 15) == 0) && (sec == 10))
+    else if(sec == 3)
       command.addToQueue(enCmd::MEAS_TEMPERATURE, nullptr);
+    else if(sec == 5)
+      command.addToQueue(enCmd::UPDATE_INFOS, nullptr);
     //  if(hasDisplay())
     //    /*cParGraph* g =*/ getLiveFft();
     devStatus.time.set();
@@ -308,5 +309,7 @@ void loop()
   }
 
   if(tick15Min.check())
-    command.addToQueue(enCmd::UPDATE_INFOS, nullptr);
+  {
+
+  }
 }

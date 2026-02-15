@@ -238,6 +238,7 @@ void setDisplayColorsInverse(bool inv);
 bool isBackLightOn();
 void setBackLight(bool on);
 void restart();
+bool diskFull();
 
 
 #define PATH_NOTES1  "/info/notes1.txt"

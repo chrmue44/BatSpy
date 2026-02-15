@@ -505,7 +505,7 @@ enRecStatus cAudio::isRecordingActive()
   enRecStatus retVal = enRecStatus::REC_OFF;
   if(year() < 2025)
     retVal = enRecStatus::REC_OFF;  
-  else if(devStatus.freeDiskSpace < 50000)
+  else if(diskFull())
     retVal = enRecStatus::REC_DISK_FULL;
   else if(devPars.recAuto.get() == enRecAuto::ON_BIRD)
     retVal = enRecStatus::REC_BIRDS;

@@ -360,6 +360,13 @@ void setDisplayColorsInverse(bool inv)
   }
 }
 
+bool diskFull()
+{
+  bool retVal = false;
+  retVal = devStatus.freeDiskSpace < 100000;
+  return retVal;
+}
+
 void initDisplay(int orientation, uint8_t brightness, bool dispModeInv, bool showSplash)
 {
   enDisplayType dType = (enDisplayType)hasDisplay();
