@@ -147,16 +147,24 @@ void MEMP cMenue::initPars()
   devPars.stopMin.init(0, 59, 1, 0, 2);
   devPars.voltFactor.init(0, 1, 0.0000001f, 5);
 
+  int16_t mt = readInt16FromEep(EEPADDR_MENU_TYPE);
+
+  devStatus.recAutoCompact.clear();
+  devStatus.recAutoCompact.addItem(1400);
+  devStatus.recAutoCompact.addItem(1414);
+  devStatus.recAutoCompact.addItem(1415);
+  devStatus.recAutoCompact.addItem(1416);
+
   devPars.recAuto.clear();
-  devPars.recAuto.addItem(1400),
-  devPars.recAuto.addItem(1401),
-  devPars.recAuto.addItem(1402),
-  devPars.recAuto.addItem(1403),
-  devPars.recAuto.addItem(1404),
-  devPars.recAuto.addItem(1405),
-  devPars.recAuto.addItem(1406),
-  devPars.recAuto.addItem(1407),
-  devPars.recAuto.addItem(1408),
+  devPars.recAuto.addItem(1400);
+  devPars.recAuto.addItem(1401);
+  devPars.recAuto.addItem(1402);
+  devPars.recAuto.addItem(1403);
+  devPars.recAuto.addItem(1404);
+  devPars.recAuto.addItem(1405);
+  devPars.recAuto.addItem(1406);
+  devPars.recAuto.addItem(1407);
+  devPars.recAuto.addItem(1408);
 
   devPars.sendDelay.init(0, 20, 1, 0);
   devPars.liveAmplitude.init(10,300, 2, 0);
@@ -191,6 +199,10 @@ void MEMP cMenue::initPars()
   devPars.metaData.clear();
   devPars.metaData.addItem(1393);
   devPars.metaData.addItem(1394);
+
+  devPars.menueType.clear();
+  devPars.menueType.addItem(1397);
+  devPars.menueType.addItem(1398);
 
   devStatus.opMode.clear();
   devStatus.opMode.addItem(20);
@@ -317,7 +329,7 @@ void cMenue::setFactoryDefaults()
   devPars.recAuto.set(0);
   devPars.sendDelay.set(2.0);
   devPars.srcPosition.set(static_cast<uint32_t>(enPositionMode::FIX));
-  devPars.menueType.set(enMenueType::COMPACT);
+  devPars.menueType.set(enMenueType::COMPACT_BAT_BIRD);
   devPars.knobRotation.set(enKnobRot::CLOCKWISE);
   devPars.threshHold.set(10.0f);           ///< threshhold level graph, waterfall
   devPars.fftLevelMin.set(3500.0f);        ///< low (threshhold) level for FFT display
@@ -396,8 +408,12 @@ void MEMP cMenue::initDialogs()
   switch (devPars.menueType.get())
   {
     default:
-    case enMenueType::COMPACT:
-      initFunctionsCompact();
+    case enMenueType::COMPACT_BAT_BIRD:
+      initFunctionsCompactBatBird();
+      initCompactPanels(lf);
+      break;
+    case enMenueType::COMPACT_BAT_ONLY:
+      initFunctionsCompactBatOnly();
       initCompactPanels(lf);
       break;
     case enMenueType::HANDHELD:

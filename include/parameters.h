@@ -120,6 +120,7 @@ struct stStatus
   cParStr battSymbol = "\xEC\xED\xED\xED\xED\xED\xED\xED\xED\xED\xED\xEF";
   cParStr recStatus = "\xF1";
   size_t freeDiskSpace; //free disk space in kBytes
+  cParEnum recAutoCompact = 0;       ///< display variable for bat only mode 
 };
 
 
@@ -207,7 +208,7 @@ struct stParams
   cParEnum srcPosition = static_cast<uint32_t>(enPositionMode::FIX);  ///< source of position (fixed, GPS)
 #define PAR_LOCSRC_MIN   0
 #define PAR_LOCSRC_MAX   1
-  cParEnum menueType = enMenueType::COMPACT;   ///< menue type
+  cParEnum menueType = enMenueType::COMPACT_BAT_BIRD;   ///< menue type
   cParEnum triggerType[2];   ///< trigger type for recording
 #define PAR_TRIGTYPE_MIN  0
 #define PAR_TRIGTYPE_MAX  2

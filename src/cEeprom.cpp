@@ -204,14 +204,19 @@ bool MEMP loadParsFromEep()
     devPars.srcPosition.set(readInt16FromEep(EEPADDR_SRC_POSITION));
     if (hasDisplay() == enDisplayType::OLED_128)
     {
-      devPars.menueType.set(enMenueType::COMPACT);
+//      devPars.menueType.set(enMenueType::COMPACT);
       devPars.knobRotation.set(enKnobRot::CLOCKWISE);
     }
     else
     {
-      devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
       devPars.knobRotation.set(readInt16FromEep(EEPADDR_KNOB_ROT));
     }
+    devPars.menueType.set(readInt16FromEep(EEPADDR_MENU_TYPE));
+    if((devPars.menueType.get() != enMenueType::COMPACT_BAT_BIRD) &&
+       (devPars.menueType.get() != enMenueType::COMPACT_BAT_ONLY) &&
+       (devPars.menueType.get() != enMenueType::HANDHELD))
+       devPars.menueType.set(enMenueType::COMPACT_BAT_BIRD);
+    
     devPars.threshHold.set(readFloatFromEep(EEPADDR_TRESHHOLD));
     devPars.fftLevelMin.set(readFloatFromEep(EEPADDR_FFT_LEV_MIN));
     devPars.fftLevelMax.set(readFloatFromEep(EEPADDR_FFT_LEV_MAX));
@@ -279,7 +284,7 @@ void MEMP loadLanguage()
 {
   if(checkCRC())
   {
-    devPars.lang.set(readInt16FromEep(0x0042));
+    devPars.lang.set(readInt16FromEep(EEPADDR_LANGUAGE));
     if(devPars.lang.get() == 1)
       Txt::setLang(LANG_EN);
     else

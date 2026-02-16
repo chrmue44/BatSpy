@@ -47,7 +47,8 @@ extern cParEnum f4MainItems;   ///< pop up menu F4
 
 void setFileToDisplay(const char* buf, size_t parSet);
 void initFunctionItemsHandheld();
-void initFunctionsCompact();
+void initFunctionsCompactBatBird();
+void initFunctionsCompactBatOnly();
 
 int initFkeyPanel(cPanel* pan, tCoord lf);
 int initCompactFkeyPanel(cPanel* pan, tCoord lf);

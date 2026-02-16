@@ -34,6 +34,14 @@ void MEMP languageFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+void MEMP menuTypeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  if (key == enKey::KEY_OK) 
+  {
+    pThis->save();
+  }
+}
+
 void MEMP displayModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   setDisplayColorsInverse(devPars.displayMode.get());
@@ -96,8 +104,11 @@ void MEMP fuMenuMode(cMenuesystem* pThis, enKey key, cParBase* pItem)
       initFunctionItemsHandheld();
       break;
     default:
-    case enMenueType::COMPACT:
-      initFunctionsCompact();
+    case enMenueType::COMPACT_BAT_BIRD:
+      initFunctionsCompactBatBird();
+      break;
+    case enMenueType::COMPACT_BAT_ONLY:
+      initFunctionsCompactBatOnly();
       break;
   }
 }
@@ -181,22 +192,23 @@ int MEMP initParTriggerCompact(cPanel* pan, tCoord lf, size_t parSet)
 int MEMP initParPan(cPanel* pan, tCoord lf)
 {
   int  err = 0;
-  err |= pan->addTextItem(1100,                    15, 20,            80, lf);
-  err |= pan->addEnumItem(&devPars.lang,          170, 20,           100, lf, true, languageFunc);
-  err |= pan->addTextItem(1710,                    15, 20 +  1 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.menueType,     170, 20 +  1 * lf, 100, lf, true, fuMenuMode);
-  err |= pan->addTextItem(1148,                    15, 20 +  2 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.backLightTime,  170, 20 +  2 * lf,  25, lf, true);
-  err |= pan->addTextItem(1150,                    15, 20 +  5 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.knobRotation,  170, 20 +  5 * lf, 100, lf, true);
-  err |= pan->addTextItem(1160,                    15, 20 +  6 * lf,  80, lf);
-  err |= pan->addEnumItem(&devPars.dispOrient,    170, 20 +  6 * lf,  80, lf, true);
-  err |= pan->addTextItem(1165,                    15, 20 +  7 * lf,  80, lf);
-  err |= pan->addNumItem(&devStatus.setVoltage,   170, 20 +  7 * lf,  80, lf, true, voltageFunc);
-  err |= pan->addTextItem(1166,                    15, 20 +  8 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.ShutoffVoltage, 170, 20 +  8 * lf,  80, lf, true);
-  err |= pan->addTextItem(1167,                    15, 20 +  9 * lf,  80, lf);
-  err |= pan->addNumItem(&devPars.sendDelay,      170, 20 +  9 * lf,  80, lf, true);
+  int ls = 20;
+  err |= pan->addTextItem(1100,                    15, ls,            80, lf);
+  err |= pan->addEnumItem(&devPars.lang,          170, ls,           100, lf, true, languageFunc);
+  err |= pan->addTextItem(1710,                    15, ls +  1 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.menueType,     170, ls +  1 * lf, 100, lf, true, fuMenuMode);
+  err |= pan->addTextItem(1148,                    15, ls +  2 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.backLightTime,  170, ls +  2 * lf,  25, lf, true);
+  err |= pan->addTextItem(1150,                    15, ls +  5 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.knobRotation,  170, ls +  5 * lf, 100, lf, true);
+  err |= pan->addTextItem(1160,                    15, ls +  6 * lf,  80, lf);
+  err |= pan->addEnumItem(&devPars.dispOrient,    170, ls +  6 * lf,  80, lf, true);
+  err |= pan->addTextItem(1165,                    15, ls +  7 * lf,  80, lf);
+  err |= pan->addNumItem(&devStatus.setVoltage,   170, ls +  7 * lf,  80, lf, true, voltageFunc);
+  err |= pan->addTextItem(1166,                    15, ls +  8 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.ShutoffVoltage, 170, ls +  8 * lf,  80, lf, true);
+  err |= pan->addTextItem(1167,                    15, ls +  9 * lf,  80, lf);
+  err |= pan->addNumItem(&devPars.sendDelay,      170, ls +  9 * lf,  80, lf, true);
 
   return err;
 }
@@ -205,22 +217,25 @@ int MEMP initParPanCompact(cPanel* pan, tCoord lf)
 {
   int  err = 0;
   int x = 68;
-  int r = 2;
-  err |= pan->addTextItem(1100,                  1,      r   * lf,  x, lf);
-  err |= pan->addEnumItem(&devPars.lang,         x,      r++ * lf, 50, lf, true, languageFunc);
-  err |= pan->addTextItem(1155,                  1,      r   * lf,  x, lf);
-  err |= pan->addEnumItem(&devPars.displayMode,  x,      r++ * lf, 50, lf, true, displayModeFunc);
-  err |= pan->addTextItem(1148,                  1,      r   * lf,  x, lf);
-  err |= pan->addNumItem(&devPars.backLightTime, x + 30, r++ * lf, 25, lf, true);
-  err |= pan->addTextItem(1380,                  1,      r   * lf,  x, lf);
-  err |= pan->addNumItem(&devPars.debugLevel,    x,      r++ * lf, 48, lf, true);
-  err |= pan->addTextItem(1385,                  1,      r   * lf,  x, lf);
-  err |= pan->addEnumItem(&devPars.gpsBaudRate,  x,      r++ * lf, 48, lf, true);
-  err |= pan->addTextItem(1392,                  1,      r   * lf,  x, lf);
-  err |= pan->addEnumItem(&devPars.metaData,     x,      r++ * lf, 60, lf, true);
-  err |= pan->addBtnItem(1390,                   1,  3 + r   * lf, 60, lf + 2, displayTestFunc);
-  err |= pan->addBtnItem(5,                     64,  3 + r++ * lf, 60, lf + 2, f2FormatFunc);
-  err |= pan->addBtnItem(1391,                   1,  6 + r   * lf, 60, lf + 2, tempTestFunc);
+  int r = 1;
+  int of = 2;
+  err |= pan->addTextItem(1100,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addEnumItem(&devPars.lang,          x,      of + r++ * lf, 50, lf, true, languageFunc);
+  err |= pan->addTextItem(1396,                   1,      of + r   * lf, x, lf);
+  err |= pan->addEnumItem(&devPars.menueType,    37,     of + r++ * lf, 90, lf, true, menuTypeFunc);
+  err |= pan->addTextItem(1155,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addEnumItem(&devPars.displayMode,   x,      of + r++ * lf, 50, lf, true, displayModeFunc);
+  err |= pan->addTextItem(1148,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addNumItem(&devPars.backLightTime,  x + 30, of + r++ * lf, 25, lf, true);
+  err |= pan->addTextItem(1380,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addNumItem(&devPars.debugLevel,     x,      of + r++ * lf, 48, lf, true);
+  err |= pan->addTextItem(1385,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addEnumItem(&devPars.gpsBaudRate,   x,      of + r++ * lf, 48, lf, true);
+  err |= pan->addTextItem(1392,                   1,      of + r   * lf,  x, lf);
+  err |= pan->addEnumItem(&devPars.metaData,      x,      of + r++ * lf, 60, lf, true);
+  err |= pan->addBtnItem(1390,                    1,  of + 3 + r   * lf, 60, lf + 2, displayTestFunc);
+  err |= pan->addBtnItem(5,                      64,  of + 3 + r++ * lf, 60, lf + 2, f2FormatFunc);
+  err |= pan->addBtnItem(1391,                    1,  of + 6 + r   * lf, 60, lf + 2, tempTestFunc);
 
   return err;
 }

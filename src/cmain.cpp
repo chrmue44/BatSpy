@@ -20,7 +20,7 @@
 #include "cBattery.h"
 
 //static char su[10];
-extern struct stTxtList Texts[];
+extern const struct stTxtList PROGMEM Texts[];
 /*
 const tChunkTab memChunks[] = {
   {1024, 10},

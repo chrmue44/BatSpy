@@ -10,7 +10,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-
+#include "WString.h"
 #ifndef size_t
 typedef  std::size_t size_t;
 #endif
@@ -45,19 +45,19 @@ typedef const char tText;
 
 struct stTxtList {
   uint32_t id;
-  const char* pGeText;
-  const char* pEnText;
+  const __FlashStringHelper* pGeText;
+  const __FlashStringHelper* pEnText;
 };
 
 class Txt {
  public:
-  static void setResource(stTxtList* p);
+  static void setResource(const stTxtList* p);
   static void setLang(enLang lang);
   static const char* get(thText id);
 
  private:
   static enLang m_actLang;
-  static stTxtList* m_pTextList;
+  static const stTxtList* m_pTextList;
   static size_t m_size;
 };
 #endif // CTEXT_H

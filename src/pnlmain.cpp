@@ -149,8 +149,25 @@ void MEMP initFunctionItemsHandheld()
   f4MainItems.addItem(1035);
 }
 
+void MEMP initFunctionsCompactBatOnly()
+{
+  f1MainItems.clear();
+  f1MainItems.addItem(100);
+  f1MainItems.addItem(105);
+  f1MainItems.addItem(1000);
 
-void MEMP initFunctionsCompact()
+  f4MainItems.clear();
+  f4MainItems.addItem(1030);
+  f4MainItems.addItem(1037);
+  f4MainItems.addItem(1359);
+  f4MainItems.addItem(1031);
+  f4MainItems.addItem(1035);
+  f4MainItems.addItem(1001);
+  f4MainItems.addItem(1021);
+
+}
+
+void MEMP initFunctionsCompactBatBird()
 {
   f1MainItems.clear();
   f1MainItems.addItem(100);
@@ -181,7 +198,8 @@ void MEMP f1Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
     pThis->createDropDown(item, 1, DISP_HEIGHT_TFT - f1MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f1DropFuncHandheld);
     break;
   default:
-  case enMenueType::COMPACT:
+  case enMenueType::COMPACT_BAT_BIRD:
+  case enMenueType::COMPACT_BAT_ONLY:
     pThis->createDropDown(item, 1, DISP_HEIGHT_OLED - f1MainItems.size() * LINE_HEIGHT_OLED - 13, 90, f1DropFuncCompact);
     break;
   }
@@ -328,7 +346,7 @@ void MEMP f4DropFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 }
 
 
-void MEMP f4DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
+void MEMP f4DropFuncCompactBatBird(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   switch (pThis->getFocusItem())
   {
@@ -393,6 +411,58 @@ void MEMP f4DropFuncCompact(cMenuesystem* pThis, enKey key, cParBase* pItem)
   }
 }
 
+
+void MEMP f4DropFuncCompactBatOnly(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  switch (pThis->getFocusItem())
+  {
+  case 0:
+    pThis->setMainPanel(panParams);
+    setHeaderPanelText(pThis, 1030);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 1:
+    pThis->setMainPanel(panParRecNight);
+    setHeaderPanelText(pThis, 1034);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 2:
+    pThis->setMainPanel(panParTrigNight);
+    setHeaderPanelText(pThis, 1360);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 3:
+    devStatus.year.set((float)devStatus.date.getYear());
+    devStatus.month.set((float)devStatus.date.getMonth());
+    devStatus.day.set((float)devStatus.date.getDay());
+    devStatus.hour.set((float)devStatus.time.getHour());
+    devStatus.minute.set((float)devStatus.time.getMin());
+    pThis->setMainPanel(panDateTime);
+    setHeaderPanelText(pThis, 1031);
+    pThis->setHdrPanel(hdrMainPanel);
+    pThis->setFkeyPanel(fkeyMainPan);
+    break;
+
+  case 4:
+    pThis->showMsg(enMsg::YESNO, f4FactSetFunc, true, Txt::get(1007), Txt::get(1009), Txt::get(1006));
+    break;
+
+  case 5:
+    pThis->showMsg(enMsg::YESNO, f4LoadFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1006));
+    break;
+
+  case 6:
+    pThis->showMsg(enMsg::YESNO, f4SaveFunc, true, Txt::get(1007), Txt::get(1008), Txt::get(1025));
+    break;
+  }
+}
+
 void MEMP f3Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
   stPanelItem item;
@@ -416,8 +486,11 @@ void MEMP f4Func(cMenuesystem* pThis, enKey key, cParBase* pItem)
       pThis->createDropDown(item, DISP_WIDTH_TFT - 120 - 1, DISP_HEIGHT_TFT - f4MainItems.size() * LINE_HEIGHT_TFT - 15, 120, f4DropFunc);
       break;
     default:
-    case enMenueType::COMPACT:
-      pThis->createDropDown(item, DISP_WIDTH_OLED - 110, DISP_HEIGHT_OLED - f4MainItems.size() * LINE_HEIGHT_OLED - 13, 107, f4DropFuncCompact);
+    case enMenueType::COMPACT_BAT_BIRD:
+      pThis->createDropDown(item, DISP_WIDTH_OLED - 110, DISP_HEIGHT_OLED - f4MainItems.size() * LINE_HEIGHT_OLED - 13, 107, f4DropFuncCompactBatBird);
+      break;
+    case enMenueType::COMPACT_BAT_ONLY:
+      pThis->createDropDown(item, DISP_WIDTH_OLED - 110, DISP_HEIGHT_OLED - f4MainItems.size() * LINE_HEIGHT_OLED - 13, 107, f4DropFuncCompactBatOnly);
       break;
   }
 }
@@ -464,6 +537,7 @@ const char* PROGMEM MSG_REC_MODE_ON = "set recording mode ON";
 const char* PROGMEM MSG_REC_MODE_OFF = "set recording mode OFF";
 const char* PROGMEM MSG_REC_MODE_TIME = "set recording mode timed";
 
+
 void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 {
 
@@ -499,6 +573,18 @@ void MEMP dispModeFunc(cMenuesystem* pThis, enKey key, cParBase* pItem)
 }
 
 
+void MEMP dispModeFuncBatOnly(cMenuesystem* pThis, enKey key, cParBase* pItem)
+{
+  if (devStatus.recAutoCompact.get() == 0)
+    devPars.recAuto.set(enRecAuto::OFF);
+  else if (devStatus.recAutoCompact.get() == 1)
+    devPars.recAuto.set(enRecAuto::ON_BAT);
+  else if (devStatus.recAutoCompact.get() == 2)
+    devPars.recAuto.set(enRecAuto::TIME_BATS);
+  else if (devStatus.recAutoCompact.get() == 3)
+    devPars.recAuto.set(enRecAuto::TWILIGHT_BATS);
+  dispModeFunc(pThis, key, pItem);
+}
 
 
 void MEMP setFileToDisplay(const char* buf, size_t parSet)
@@ -577,7 +663,8 @@ my_vector<int, 10> posIndex;
 
 void enableEditPosition(cMenuesystem* pThis, bool on)
 {
-  if (devPars.menueType.get() == enMenueType::COMPACT)
+  if ((devPars.menueType.get() == enMenueType::COMPACT_BAT_BIRD) ||
+      (devPars.menueType.get() == enMenueType::COMPACT_BAT_ONLY))
   {
     cPanel* pan = pThis->getPan(panGeo);
     for (size_t i = 0; i < posIndex.size(); i++)
@@ -591,7 +678,8 @@ void enableEditPosition(cMenuesystem* pThis, bool on)
 my_vector<int, 10> timeIndex;
 void enableEditTimes(cMenuesystem* pThis, bool on)
 {
-  if (devPars.menueType.get() == enMenueType::COMPACT)
+  if ((devPars.menueType.get() == enMenueType::COMPACT_BAT_BIRD) ||
+      (devPars.menueType.get() == enMenueType::COMPACT_BAT_ONLY))
   {
     cPanel* pan = pThis->getPan(panGeo);
     for (size_t i = 0; i < timeIndex.size(); i++)
@@ -645,7 +733,10 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addTextItem(454,                  85, y + r++ * lf, 13, lf);
   y += 4;
   err |= pan->addTextItem(26,                    1, y + r   * lf, 70, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,  x - 7, y + r++ * lf, 73, lf, true, dispModeFunc);
+  if (devPars.menueType.get() == enMenueType::COMPACT_BAT_ONLY)
+    err |= pan->addEnumItem(&devStatus.recAutoCompact, x - 7, y + r++ * lf, 73, lf, true, dispModeFuncBatOnly);
+  else
+    err |= pan->addEnumItem(&devPars.recAuto,  x - 7, y + r++ * lf, 73, lf, true, dispModeFunc);
   
   timeIndex.clear();
   timeIndex.push_back(pan->itemList.size());
@@ -690,38 +781,6 @@ int MEMP initMainPanelCompact(cPanel* pan, tCoord lf)
   err |= pan->addNumItem(&devStatus.lonSec,   107, y + r++ * lf, 18, lf, true, setPosFunc);
 
   err |= pan->addBtnItem(108, 15, y + r * lf + 5, 90, 15, switchOffFunc);
-
-  /*
-  err |= pan->addTextItem(26,                    1,      y + r * lf,   70, lf);
-  err |= pan->addEnumItem(&devPars.recAuto,      x -  7, y + r++ * lf, 73, lf, true, dispModeFunc);
-  err |= pan->addTextItem(27,                    1,      y + r * lf,   70, lf);
-  err |= pan->addNumItem(&devStatus.recCount,    x,      y + r++ * lf, 50, lf, false);
- // pan->itemList[visRecCntIndex].isVisible = false;
-  err |= pan->addTextItem(1365,                  1,      y + r * lf,   45, lf);
-  err |= pan->addStrItem(&devStatus.recStatus,  45,      y + r * lf,    8, lf);
-  err |= pan->addEnumItem(&devStatus.playStatus, x,      y + r++ * lf,120, lf, false);
-
- // err |= pan->addTextItem(193,                 1,      y + r * lf,   80, lf);
- // err |= pan->addNumItem(&devStatus.height,    x,      y + r++ * lf, 50, lf, devPars.srcPosition.get() == enPositionMode::POS_FIX);
-//  err |= pan->addTextItem(451,                   1,      y + r * lf,   70, lf);
-  err |= pan->addStrItem(&devStatus.batSymbol,    1,     y + r * lf, 25, lf);
-  err |= pan->addNumItem(&devStatus.chargeLevel, 30,     y + r * lf,   13, lf, false);
-  err |= pan->addTextItem(453,                   45,     y + r * lf,    6, lf);
-  err |= pan->addTextItem(441,                   60,     y + r * lf,   10, lf);
-  err |= pan->addNumItem(&devStatus.freeSpace,   70,     y + r * lf,   13, lf, false);
-  err |= pan->addTextItem(454,                   85,     y + r++ * lf, 13, lf);
-  r++;
-  //  err |= pan->addNumItem(&devStatus.voltage,     x + 32, y + r * lf,   23, lf, false);
-//  err |= pan->addTextItem(452,                   x + 56, y + r++ * lf,  8, lf);
-  err |= pan->addDateItem(&devStatus.date,       1,      y + r * lf,   70, lf);
-  err |= pan->addTimeItem(&devStatus.time,       x,      y + r++ * lf, 70, lf);
-  err |= pan->addTextItem(460,                   1,      y + r * lf,   70, lf);
-  err |= pan->addEnumItem(&devStatus.gpsStatus,  x - 30, y + r * lf,   35, lf, false);
-  err |= pan->addTextItem(461,                   x + 15, y + r * lf,   23, lf);
-  err |= pan->addNumItem(&devStatus.satCount,    x + 40, y + r++ * lf, 15, lf, false);
-
-  err |= pan->addBtnItem(108, 15, y + r * lf + 5, 80, 15, switchOffFunc);
-  */
   return err;
 }
 

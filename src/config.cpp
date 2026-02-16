@@ -464,6 +464,9 @@ void checkSupplyVoltage()
   float volt =readSupplyVoltage();
   bool ok = false;
   ok = volt >= devPars.ShutoffVoltage.get();
+#ifdef SIMU_DISPLAY
+  ok = true;
+#endif
   if(!ok)
   {
     sysLog.logf("power down voltage too low : %f \n ", volt);

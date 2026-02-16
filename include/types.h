@@ -143,8 +143,9 @@ enum class enPlayStatus
 /// menu level
 enum enMenueType
 {
-  COMPACT  = 0,
-  HANDHELD = 1
+  COMPACT_BAT_ONLY = 0,
+  COMPACT_BAT_BIRD = 1,
+  HANDHELD = 2
 };
 
 

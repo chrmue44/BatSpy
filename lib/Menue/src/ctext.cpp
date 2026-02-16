@@ -16,7 +16,7 @@ typedef std::size_t size_t;
 #endif
 
 enLang Txt::m_actLang = LANG_GER;
-stTxtList* Txt::m_pTextList = NULL;
+const stTxtList* Txt::m_pTextList = NULL;
 size_t Txt::m_size;
 
 void Txt::setLang(enLang lang) 
@@ -24,7 +24,7 @@ void Txt::setLang(enLang lang)
   m_actLang = lang;
 }
 
-void Txt::setResource(stTxtList* p)
+void Txt::setResource(const stTxtList* p)
 {
   m_pTextList = p;
   m_size = 0;
@@ -75,7 +75,7 @@ const char* Txt::get(thText id)
 
 const char* Txt::get(thText id)
 {
-  const char* p = NULL;
+  const __FlashStringHelper* p = NULL;
   bool found = false;
   size_t iFirst = 0;
   size_t iLast = m_size;
@@ -108,9 +108,9 @@ const char* Txt::get(thText id)
       iLast = i;
   }
   if (p != NULL)
-    return p;
+    return (const char*)p;
   else if (found)
-    return m_pTextList[i].pGeText;
+    return (const char*)m_pTextList[i].pGeText;
   else
     return "Text not found!";
 }

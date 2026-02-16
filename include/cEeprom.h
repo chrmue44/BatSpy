@@ -68,7 +68,7 @@ void setErrCount(uint8_t c);
 #define EEPADDR_DAYLIGHT_SAV      0x005E   // devPars.daylightSav      INT16
 #define EEPADDR_BAUD_GPS          0x0060   // devPars.gpsBaudRate      INT16
 #define EEPADDR_LIVE_AMPL         0x0062   // devPars.liveAmplitude,   INT16
-#define EEPADDR_FREE_INT16_3      0x0064   
+#define EEPADDR_FREE_INT          0x0064   // free                     INT16
 #define EEPADDR_ALTITUDE          0x0066   // devStatus.height,        float
 #define EEPADDR_TRIG_TYPE_BAT     0x006A   // devPars.triggerType,     INT16
 #define EEPADDR_MIN_EV_LEN_BAT    0x006C   // devPars.minEventLen,     float
