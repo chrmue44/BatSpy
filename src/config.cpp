@@ -26,6 +26,7 @@
 #include "cutils.h"
 #include "globals.h"
 #include "startup_pic.c_"
+#include "cmath"
 
 #if defined(__IMXRT1062__)
 extern "C" uint32_t set_arm_clock(uint32_t frequency);
@@ -485,7 +486,11 @@ float readSupplyVoltage()
   int digs = digits.get(digSingle);
   devStatus.digits.set((float)digs);
 
-  volt = (float)digs * devPars.voltFactor.get();
+  float voltFactor = devPars.voltFactor.get();
+  if((voltFactor < 1e-6) || (std::isnan(voltFactor)))
+    volt = 7.11;
+  else
+    volt = (float)digs * voltFactor;
 
   DPRINTF2("get Voltage: digits: %i single: %i  voltage: %f  factor: %f\n", digs, digSingle, volt,devPars.voltFactor.get());
   return volt;

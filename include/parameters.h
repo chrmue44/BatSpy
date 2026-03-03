@@ -159,7 +159,7 @@ struct stParams
   cParNum fftLevelMin = 3500;        ///< low (threshhold) level for FFT display
   cParNum fftLevelMax = 70000;       ///< high level for FFT display
   cParNum recThreshhold[2];       ///< auto recording threshhold
-#define PAR_RECTHRESH_MIN -24.0f
+#define PAR_RECTHRESH_MIN -45.0f
 #define PAR_RECTHRESH_MAX -1.0f
 #define PAR_RECTHRESH_DEF -18.0f
   cParNum deadTime[2];              ///< timeout after one recording
