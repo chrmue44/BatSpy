@@ -83,7 +83,8 @@
 #define I2C_ADDR_HUMID_B  0x45
 #define I2C_ADDR_HUMID_TI 0x40
 
-
+#define I2C_LOW_SPEED    400000
+#define I2C_HIGH_SPEED   400000
 
 // *****   pin definitions *****
 #define SPIN_POWER_OFF   0x8010      // power off if voltage too low

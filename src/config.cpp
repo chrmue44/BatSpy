@@ -57,7 +57,7 @@ void initPins()
  // pinMode(SPIN_LED_2, OUTPUT); 
   
   Wire.begin();
-  Wire.setClock(400000);
+  Wire.setClock(I2C_HIGH_SPEED);
   ioex.attach(Wire);
   initTempSensor();
   ioex.setDeviceAddress(I2C_ADDR_PORT_EXT);
@@ -121,7 +121,7 @@ strncpy(buf, "RevC", sizeof(buf));
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(PIN_TFT_CS, PIN_TFT_DC_REVA,
                             PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_MISO);
-Adafruit_SSD1327 oled(128, 128, &Wire, -1, 400000, 100000);
+Adafruit_SSD1327 oled(128, 128, &Wire, -1, I2C_HIGH_SPEED, I2C_LOW_SPEED);
 
 const stColors PROGMEM TftColors
 {
