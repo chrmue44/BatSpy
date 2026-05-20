@@ -122,6 +122,8 @@ void MEMP cMenue::initPars()
 
   }
 
+  devPars.recTimePerDay.init(1, 12, 0.5, 1);
+
   devPars.sampleRate[PARS_BAT].set(SR_312K);
   devPars.sampleRate[PARS_BIRD].set(SR_44K);
   devPars.trigFiltFreq[PARS_BAT].init(PAR_TRIGFILTFREQ_MIN, PAR_TRIGFILTFREQ_MAX_BAT, 1.0, 0);

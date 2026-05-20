@@ -88,8 +88,8 @@ void setErrCount(uint8_t c);
 #define EEPADDR_RFILT_TYPE_BIRD   0x009C   // devPars.recFiltType   INT16
 #define EEPADDR_PRE_AMP_GAIN_BIRD 0x009E   // devPars.preAmpGain    INT16
 #define EEPADDR_PRE_TRIGGER_BIRD  0x00A0   // devPars.preTrigger,    float
-
-#define EEPADDR_FIRSTFREE         0x00A4
+#define EEPADDR_RECTIME_P_DAY     0x00A4   // devPars.recTimePerDay, float
+#define EEPADDR_FIRSTFREE         0x00A8
 
 #define EEPADDR_SERIAL            0x0300   // serial Nr: 12 char string  eg. BS40_C_0001 
 #define EEP_SERIAL_SIZE           12       // size of the string

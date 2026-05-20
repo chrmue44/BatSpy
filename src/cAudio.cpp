@@ -514,19 +514,25 @@ enRecStatus cAudio::isRecordingActive()
   else
   {
     bool night;
+    bool birdActive;
+    float mins = devStatus.time.getMinOfDay();
     if(devPars.startH.get() > devPars.stopH.get())
     {
-      night = (devStatus.time.getMinOfDay() >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
-               (devStatus.time.getMinOfDay() <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+      night = (mins >= (devPars.startH.get() * 60 + devPars.startMin.get())) ||
+              (mins <= (devPars.stopH.get() * 60 + devPars.stopMin.get()));
+      birdActive = !night && (mins >= (devPars.stopH.get() * 60 + devPars.stopMin.get())) &&
+                             (mins <= ((devPars.stopH.get() + devPars.recTimePerDay.get()) * 60 + devPars.stopMin.get()));
     }
     else
     {
-      night = (devStatus.time.getMinOfDay() >= (devPars.stopH.get() * 60 + devPars.stopMin.get())) && 
-               (devStatus.time.getMinOfDay() <= (devPars.startH.get() * 60 + devPars.startMin.get()));
+      night = (mins >= (devPars.stopH.get() * 60 + devPars.stopMin.get())) && 
+              (mins <= (devPars.startH.get() * 60 + devPars.startMin.get()));
+      birdActive = !night && (mins >= (devPars.startH.get() * 60 + devPars.startMin.get())) &&
+        (mins <= ((devPars.startH.get() + devPars.recTimePerDay.get()) * 60 + devPars.startMin.get()));
     }
     if (night && checkBats((enRecAuto)devPars.recAuto.get()))
       retVal = enRecStatus::REC_BATS;
-    else if (!night && checkBirds((enRecAuto)devPars.recAuto.get()))
+    else if (birdActive && checkBirds((enRecAuto)devPars.recAuto.get()))
       retVal = enRecStatus::REC_BIRDS;
   }
 

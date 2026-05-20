@@ -230,6 +230,7 @@ struct stParams
   cParEnum metaData = static_cast<uint32_t>(enMetaData::XML);
 #define PAR_METADATA_MIN   static_cast<uint32_t>(enMetaData::XML)
 #define PAR_METADATA_MAX   static_cast<uint32_t>(enMetaData::GUANO)
+  cParNum recTimePerDay = 1;
 
 
   stParams()

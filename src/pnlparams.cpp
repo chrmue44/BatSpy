@@ -154,7 +154,12 @@ int MEMP initParRecCompact(cPanel* pan, tCoord lf, size_t parSet)
   err |= pan->addEnumItem(&devPars.recFiltType[parSet],  x - 20, r++ * lf,  50, lf, true);
   err |= pan->addTextItem(1145,                  1,      r   * lf,  80, lf);
   err |= pan->addNumItem(&devPars.deadTime[parSet],      x - 20, r++ * lf,  20, lf, true);
+  if (parSet == PARS_BIRD)
+  {
+    err |= pan->addTextItem(1147, 1, r * lf, 80, lf);
+    err |= pan->addNumItem(&devPars.recTimePerDay,       x,       r++ * lf, 20, lf, true);
 
+  }
   return err;
 }
 

@@ -164,6 +164,7 @@ void MEMP saveParsToEep()
   writeInt16ToEep(EEPADDR_TRIG_TYPE_BIRD,   (int16_t)devPars.triggerType[PARS_BIRD].get());
   writeInt16ToEep(EEPADDR_RFILT_TYPE_BIRD,  devPars.recFiltType[PARS_BIRD].get());
   writeInt16ToEep(EEPADDR_PRE_AMP_GAIN_BIRD,devPars.preAmpGain[PARS_BIRD].get());
+  writeFloatToEep(EEPADDR_RECTIME_P_DAY,    devPars.recTimePerDay.get());
 
   writeCRC();
  // Serial.printf("EEPROM written; max. Addr: %i; Checksum %i\n", addr - 2, chks);
@@ -260,6 +261,7 @@ bool MEMP loadParsFromEep()
     devPars.triggerType[PARS_BIRD].set(readInt16FromEep(EEPADDR_TRIG_TYPE_BIRD));
     devPars.minEventLen[PARS_BIRD].set(readFloatFromEep(EEPADDR_MIN_EV_LEN_BIRD));
     devPars.preAmpGain[PARS_BIRD].set(readInt16FromEep(EEPADDR_PRE_AMP_GAIN_BIRD));
+    devPars.recTimePerDay.set(readFloatFromEep(EEPADDR_RECTIME_P_DAY));
 
     //devPars.ShutoffVoltage.set(readFloatFromEep(EEPADDR_SHUTOFF_V));
     devPars.ShutoffVoltage.set(5.8);

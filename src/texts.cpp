@@ -171,6 +171,7 @@ struct stTxtList PROGMEM Texts[] =
   { 1143, "Zeit"                      ,"Time" },
   { 1144, "Totzeit n. Aufnahme [s]"   ,"Timeout after rec. [s]" },
   { 1145, "Totzeit [s]"               ,"Timeout [s]" },
+  { 1147, "Aufn.Zeit/Tag [h]"         ,"Rec time/day [h]" },
   { 1148, "Nachleuchtzeit [s]"        ,"Backlight time [s]" },
   { 1150, "Drehsinn Drehknopf"        ,"Direction rotary knob" },
   { 1151, "Uhrzeigersinn"             ,"Clockwise" },
