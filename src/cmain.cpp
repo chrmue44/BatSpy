@@ -51,8 +51,8 @@ void logStatus()
 {
   devStatus.voltage.set(readSupplyVoltage());
   devStatus.chargeLevel = cBattery::getChargeCondition(devStatus.voltage.get());
-  sysLog.logf("supply voltage: %2.3f V, Battery %.0f %%, temperature: %2.1f °C, Humidity: %.0f\n", 
-               devStatus.voltage.get(), devStatus.chargeLevel.get(), devStatus.temperature.get(), devStatus.humidity.get());
+  sysLog.logf("supply voltage: %2.3f V, Battery %.0f %%, temperature: %2.1f °C, Humidity: %.0f, free disk space: %3.1f GB\n", 
+               devStatus.voltage.get(), devStatus.chargeLevel.get(), devStatus.temperature.get(), devStatus.humidity.get(), devStatus.freeSpace.get());
 }
 
 
@@ -62,7 +62,7 @@ void initDisplayVars()
     devPars.dispOrient.set(enDispOrient::LEFT_HAND);
   size_t totSpace;
   cSdCard::inst().getFreeMem(devStatus.freeDiskSpace, totSpace);
-  devStatus.freeSpace.set(devStatus.freeDiskSpace / 1024/1024);
+  devStatus.freeSpace.set((float)devStatus.freeDiskSpace / 1024.0/1024.0);
   float humidity;
   float temp = readTemperature(humidity);
   devStatus.temperature.set(temp);

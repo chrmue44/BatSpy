@@ -27,3 +27,4 @@ lib/ILI9341_t3/docs
 /lib/Sensirion-core-main/examples
 /lib/arduino-i2c-sht4x/images
 /lib/arduino-i2c-sht4x/examples
+/lib/Adafruit_BME280/examples

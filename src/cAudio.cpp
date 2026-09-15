@@ -561,7 +561,7 @@ void cAudio::checkAutoRecording(enRecStatus recActive)
     {
       if ((recActive  == enRecStatus::REC_OFF) && m_prj.getIsOpen())
         m_prj.closePrjFile();
-      if (recActive && m_trigger.getRecTrigger())
+      else if (((recActive == enRecStatus::REC_BATS) || (recActive == enRecStatus::REC_BIRDS)) && m_trigger.getRecTrigger())
       {
         DPRINTLN4("checkAutorecording: start recording");
         int res = startRecording();
